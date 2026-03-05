@@ -6,6 +6,8 @@
 <title>Kalkulator Ulaganja</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDMyIDMyIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0ibGluZSIgeDE9IjAlIiB5MT0iMTAwJSIgeDI9IjEwMCUiIHkyPSIwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMxYTdmZDQiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMTZjNDdmIi8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8IS0tIFB1cmUgd2hpdGUgYmFja2dyb3VuZCAtLT4KICA8cmVjdCB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHJ4PSI3IiBmaWxsPSIjZmZmZmZmIi8+CiAgPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZTBlOGYwIiBzdHJva2Utd2lkdGg9IjEiLz4KICA8IS0tIENoYXJ0IGJhcnMgLS0+CiAgPHJlY3QgeD0iNSIgIHk9IjIxIiB3aWR0aD0iNCIgaGVpZ2h0PSI2IiAgZmlsbD0iIzFhN2ZkNCIgb3BhY2l0eT0iMC4yNSIgcng9IjEiLz4KICA8cmVjdCB4PSIxMCIgeT0iMTciIHdpZHRoPSI0IiBoZWlnaHQ9IjEwIiBmaWxsPSIjMWE3ZmQ0IiBvcGFjaXR5PSIwLjMiICByeD0iMSIvPgogIDxyZWN0IHg9IjE1IiB5PSIxMyIgd2lkdGg9IjQiIGhlaWdodD0iMTQiIGZpbGw9IiMxNmM0N2YiIG9wYWNpdHk9IjAuMzUiIHJ4PSIxIi8+CiAgPHJlY3QgeD0iMjAiIHk9IjkiICB3aWR0aD0iNCIgaGVpZ2h0PSIxOCIgZmlsbD0iIzE2YzQ3ZiIgb3BhY2l0eT0iMC40NSIgcng9IjEiLz4KICA8IS0tIFRyZW5kIGxpbmUgLS0+CiAgPHBvbHlsaW5lIHBvaW50cz0iNywyMiAxMiwxNyAxNywxMyAyNCw4IiBzdHJva2U9InVybCgjbGluZSkiIHN0cm9rZS13aWR0aD0iMi4yIiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KICA8IS0tIEFycm93IC0tPgogIDxwb2x5bGluZSBwb2ludHM9IjIwLDcgMjUsNyAyNSwxMiIgc3Ryb2tlPSJ1cmwoI2xpbmUpIiBzdHJva2Utd2lkdGg9IjIuMiIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CiAgPGNpcmNsZSBjeD0iMjUiIGN5PSI3IiByPSIyIiBmaWxsPSIjMTZjNDdmIi8+Cjwvc3ZnPg==">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -516,7 +518,7 @@ tr:hover td { background:var(--surface2); }
 }
 .home-hero .tagline {
   font-size: clamp(1rem, 2.5vw, 1.25rem);
-  color: var(--muted2); max-width: 560px; margin: 0 auto 2rem; line-height: 1.6;
+  color: var(--text); max-width: 560px; margin: 0 auto 2rem; line-height: 1.6; text-shadow: 0 1px 8px rgba(255,255,255,0.3);
 }
 .home-hero .hero-badges {
   display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; margin-bottom: 2.5rem;
@@ -526,10 +528,10 @@ tr:hover td { background:var(--surface2); }
   font-size: 0.75rem; font-weight: 600; letter-spacing: 0.04em;
   border: 1px solid var(--border);
 }
-.hero-badge.b-green { color: var(--etf-l); border-color: rgba(74,232,160,0.3); background: rgba(74,232,160,0.07); }
-.hero-badge.b-blue  { color: var(--pepp-l); border-color: rgba(74,159,232,0.3); background: rgba(74,159,232,0.07); }
-.hero-badge.b-gold  { color: var(--dmf-l); border-color: rgba(232,164,74,0.3); background: rgba(232,164,74,0.07); }
-.hero-badge.b-purple{ color: var(--combo-l); border-color: rgba(199,122,245,0.3); background: rgba(199,122,245,0.07); }
+.hero-badge.b-green { color: #0e7a4a; border-color: rgba(14,122,74,0.4); background: rgba(74,232,160,0.12); }
+.hero-badge.b-blue  { color: #0d5fa0; border-color: rgba(13,95,160,0.4); background: rgba(74,159,232,0.12); }
+.hero-badge.b-gold  { color: #8a5a00; border-color: rgba(138,90,0,0.4); background: rgba(232,164,74,0.12); }
+.hero-badge.b-purple{ color: #6b1fa8; border-color: rgba(107,31,168,0.4); background: rgba(199,122,245,0.12); }
 
 .home-cta {
   display: inline-flex; align-items: center; gap: 0.5rem;
@@ -644,6 +646,195 @@ tr:hover td { background:var(--surface2); }
   cursor: pointer; transition: background 0.15s;
 }
 .vlink:hover { background: rgba(74,159,232,0.1); }
+
+/* FOOTER */
+.site-footer {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 2rem 2rem 1.25rem;
+  margin-top: 2.5rem;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+}
+@media (max-width: 720px) {
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+}
+@media (max-width: 420px) {
+  .footer-grid { grid-template-columns: 1fr; }
+}
+.footer-brand .fb-name {
+  font-family: 'Dancing Script', cursive;
+  font-size: 1.6rem; font-weight: 700;
+  background: linear-gradient(135deg, var(--pepp-l), var(--etf-l));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  margin-bottom: 0.4rem;
+}
+.footer-brand p { font-size: 0.75rem; color: var(--muted); line-height: 1.6; max-width: 240px; }
+.footer-col h4 { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 0.75rem; }
+.footer-col a, .footer-col span {
+  display: block; font-size: 0.78rem; color: var(--muted2);
+  text-decoration: none; padding: 0.22rem 0; cursor: pointer;
+  transition: color 0.15s;
+}
+.footer-col a:hover, .footer-col span:hover { color: var(--etf-l); }
+.footer-disclaimer {
+  border-top: 1px solid var(--border);
+  padding-top: 1rem; margin-top: 0.5rem;
+  font-size: 0.68rem; color: var(--muted); line-height: 1.7;
+}
+.footer-disclaimer strong { color: var(--red); }
+.footer-bottom {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 0.5rem;
+  margin-top: 0.75rem; padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+.footer-bottom span { font-size: 0.68rem; color: var(--muted); }
+.footer-version { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--etf-l); }
+
+/* FEEDBACK PAGE */
+.feedback-hero {
+  text-align: center; padding: 2rem 1rem 1.5rem;
+}
+.feedback-hero h1 { font-family: 'DM Serif Display', serif; font-size: 2rem; margin-bottom: 0.5rem; }
+.feedback-hero p { color: var(--muted2); font-size: 0.9rem; max-width: 500px; margin: 0 auto; }
+
+.rating-section {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1.5rem; margin-bottom: 1.25rem; text-align: center;
+}
+.rating-section h3 { font-family: 'DM Serif Display', serif; font-size: 1.1rem; margin-bottom: 1rem; }
+.stars-row { display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 0.75rem; }
+.star-btn {
+  font-size: 2rem; cursor: pointer; opacity: 0.35;
+  transition: opacity 0.15s, transform 0.1s; background: none; border: none;
+  line-height: 1;
+}
+.star-btn.active, .star-btn:hover { opacity: 1; transform: scale(1.15); }
+.rating-label { font-size: 0.8rem; color: var(--muted2); min-height: 1.2rem; }
+
+.feedback-form-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1.5rem; margin-bottom: 1.25rem;
+}
+.feedback-form-card h3 { font-family: 'DM Serif Display', serif; font-size: 1.1rem; margin-bottom: 1rem; }
+.fb-type-row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.fb-type-btn {
+  padding: 0.35rem 0.85rem; border-radius: 999px; border: 1px solid var(--border);
+  font-size: 0.75rem; font-weight: 600; cursor: pointer; background: var(--surface2);
+  color: var(--muted2); transition: all 0.15s;
+}
+.fb-type-btn.active { background: var(--surface3); color: var(--etf-l); border-color: rgba(74,232,160,0.4); }
+.fb-textarea {
+  width: 100%; min-height: 110px; resize: vertical;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 10px; color: var(--text);
+  font-family: 'DM Sans', sans-serif; font-size: 0.85rem;
+  padding: 0.75rem 1rem; outline: none; box-sizing: border-box;
+  transition: border-color 0.15s;
+}
+.fb-textarea:focus { border-color: var(--etf); }
+.fb-submit-btn {
+  margin-top: 0.85rem; padding: 0.65rem 1.75rem;
+  background: linear-gradient(135deg, var(--pepp), var(--etf));
+  color: #0b0d12; font-weight: 700; font-size: 0.88rem;
+  border: none; border-radius: 999px; cursor: pointer; transition: opacity 0.2s;
+}
+.fb-submit-btn:hover { opacity: 0.85; }
+.fb-submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.feedback-sent {
+  display: none; text-align: center; padding: 1.5rem;
+  color: var(--etf-l); font-size: 1rem; font-weight: 600;
+}
+
+/* AI CHAT WIDGET */
+.ai-chat-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; overflow: hidden; margin-bottom: 1.25rem;
+}
+.ai-chat-header {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 1rem 1.25rem; border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+}
+.ai-chat-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, #c77af5, #4a9fe8);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; flex-shrink: 0;
+}
+.ai-chat-title { font-weight: 700; font-size: 0.9rem; }
+.ai-chat-sub { font-size: 0.7rem; color: var(--muted); }
+.ai-online-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--etf); margin-left: auto; flex-shrink: 0;
+  box-shadow: 0 0 6px var(--etf);
+}
+.ai-messages {
+  padding: 1rem 1.25rem; min-height: 180px; max-height: 340px;
+  overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem;
+}
+.ai-msg {
+  display: flex; gap: 0.6rem; align-items: flex-start;
+  animation: fadeInUp 0.2s ease;
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.ai-msg.user { flex-direction: row-reverse; }
+.ai-msg-avatar {
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; font-weight: 700;
+}
+.ai-msg.bot .ai-msg-avatar { background: linear-gradient(135deg, #c77af5, #4a9fe8); }
+.ai-msg.user .ai-msg-avatar { background: var(--surface3); color: var(--muted2); }
+.ai-msg-bubble {
+  max-width: 78%; padding: 0.6rem 0.9rem; border-radius: 12px;
+  font-size: 0.82rem; line-height: 1.55;
+}
+.ai-msg.bot .ai-msg-bubble { background: var(--surface2); color: var(--text); border-radius: 4px 12px 12px 12px; }
+.ai-msg.user .ai-msg-bubble { background: linear-gradient(135deg, var(--pepp), #2d5fa0); color: #fff; border-radius: 12px 4px 12px 12px; }
+.ai-typing { display: flex; gap: 4px; align-items: center; padding: 0.5rem 0.2rem; }
+.ai-typing span { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); animation: typingDot 1.2s infinite; }
+.ai-typing span:nth-child(2) { animation-delay: 0.2s; }
+.ai-typing span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typingDot { 0%,60%,100%{opacity:0.2;transform:scale(0.8)} 30%{opacity:1;transform:scale(1)} }
+.ai-input-row {
+  display: flex; gap: 0.5rem; padding: 0.85rem 1.25rem;
+  border-top: 1px solid var(--border); background: var(--surface2);
+}
+.ai-input {
+  flex: 1; background: var(--surface3); border: 1px solid var(--border);
+  border-radius: 999px; color: var(--text);
+  font-family: 'DM Sans', sans-serif; font-size: 0.83rem;
+  padding: 0.5rem 1rem; outline: none; transition: border-color 0.15s;
+}
+.ai-input:focus { border-color: var(--etf); }
+.ai-send-btn {
+  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--pepp), var(--etf));
+  border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 0.9rem; transition: opacity 0.15s;
+}
+.ai-send-btn:hover { opacity: 0.85; }
+.ai-send-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.ai-quick-btns {
+  display: flex; gap: 0.4rem; flex-wrap: wrap;
+  padding: 0 1.25rem 0.75rem;
+}
+.ai-quick-btn {
+  font-size: 0.7rem; padding: 0.25rem 0.65rem; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--surface2);
+  color: var(--muted2); cursor: pointer; transition: all 0.15s; white-space: nowrap;
+}
+.ai-quick-btn:hover { color: var(--etf-l); border-color: rgba(74,232,160,0.4); background: var(--surface3); }
 </style>
 </head>
 <body>
@@ -657,6 +848,7 @@ tr:hover td { background:var(--surface2); }
     <div class="nav-tab" data-page="p1">3. Stup vs PEPP</div>
     <div class="nav-tab" data-page="p2">Pension vs ETF</div>
     <div class="nav-tab" data-page="p3">Pension + ETF</div>
+    <div class="nav-tab" data-page="feedback">💬 Feedback</div>
   </div>
 </nav>
 
@@ -879,15 +1071,15 @@ tr:hover td { background:var(--surface2); }
     </div>
     <div class="ctrl-group c-neutral">
       <label>Iznos uplate</label>
-      <div class="row"><input type="range" id="p0a-uplata" min="0" max="5000" step="50" value="663"><input type="number" class="ctrl-val-input" id="p0a-uplata-v" data-decimals="2" min="10" max="5000" step="any" placeholder="1000"></div>
+      <div class="row"><input type="range" id="p0a-uplata" min="0" max="5000" step="50" value="663"><input type="number" class="ctrl-val-input" id="p0a-uplata-v" value="663.00" data-decimals="2" min="10" max="5000" step="any" placeholder="1000"></div>
     </div>
     <div class="ctrl-group c-neutral">
       <label>Početna uplata (€)</label>
-      <div class="row"><input type="range" id="p0a-initial" min="0" max="5000" step="100" value="0"><input type="number" class="ctrl-val-input" id="p0a-initial-v" data-decimals="2" min="0" max="20000" step="any" placeholder="1000"></div>
+      <div class="row"><input type="range" id="p0a-initial" min="0" max="5000" step="100" value="0"><input type="number" class="ctrl-val-input" id="p0a-initial-v" value="0.00" data-decimals="2" min="0" max="20000" step="any" placeholder="1000"></div>
     </div>
     <div class="ctrl-group c-neutral">
       <label>Broj godina</label>
-      <div class="row"><input type="range" id="p0a-god" min="5" max="60" step="1" value="25"><input type="number" class="ctrl-val-input" id="p0a-god-v" min="5" max="60" step="1" placeholder="25"></div>
+      <div class="row"><input type="range" id="p0a-god" min="5" max="60" step="1" value="25"><input type="number" class="ctrl-val-input" id="p0a-god-v" value="25" min="5" max="60" step="1" placeholder="25"></div>
     </div>
     <div class="ctrl-group c-neutral">
       <label>Koristiti državni poticaj?</label>
@@ -933,11 +1125,33 @@ tr:hover td { background:var(--surface2); }
   <div class="chart-card">
     <h3>Usporedba svih fondova — ista uplata, isti period</h3>
     <canvas id="p0a-chart-all"></canvas>
+    <div class="chart-controls">
+      <div class="period-btns" id="p0a-chart-all-periods">
+        <span style="font-size:0.62rem;color:var(--muted);margin-right:0.2rem">Period:</span>
+        <button class="period-btn" data-years="1" data-chart="p0a-chart-all">1Y</button><button class="period-btn" data-years="3" data-chart="p0a-chart-all">3Y</button><button class="period-btn" data-years="5" data-chart="p0a-chart-all">5Y</button><button class="period-btn" data-years="10" data-chart="p0a-chart-all">10Y</button><button class="period-btn" data-years="15" data-chart="p0a-chart-all">15Y</button><button class="period-btn" data-years="20" data-chart="p0a-chart-all">20Y</button><button class="period-btn" data-years="25" data-chart="p0a-chart-all">25Y</button><button class="period-btn" data-years="30" data-chart="p0a-chart-all">30Y</button>
+        <button class="period-btn active" data-years="all" data-chart="p0a-chart-all">SVE</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem">
+        <span class="chart-zoom-hint">🔍 Scroll/pinch za zoom · drag za pan</span>
+        <button class="zoom-reset-btn" data-chart="p0a-chart-all" onclick="resetZoom('p0a-chart-all')">↺ Reset zoom</button>
+      </div>
+    </div>
   </div>
 
   <div class="chart-card">
     <h3>Rast odabranog fonda kroz godine</h3>
     <canvas id="p0a-chart"></canvas>
+    <div class="chart-controls">
+      <div class="period-btns" id="p0a-chart-periods">
+        <span style="font-size:0.62rem;color:var(--muted);margin-right:0.2rem">Period:</span>
+        <button class="period-btn" data-years="1" data-chart="p0a-chart">1Y</button><button class="period-btn" data-years="3" data-chart="p0a-chart">3Y</button><button class="period-btn" data-years="5" data-chart="p0a-chart">5Y</button><button class="period-btn" data-years="10" data-chart="p0a-chart">10Y</button><button class="period-btn" data-years="15" data-chart="p0a-chart">15Y</button><button class="period-btn" data-years="20" data-chart="p0a-chart">20Y</button><button class="period-btn" data-years="25" data-chart="p0a-chart">25Y</button><button class="period-btn" data-years="30" data-chart="p0a-chart">30Y</button>
+        <button class="period-btn active" data-years="all" data-chart="p0a-chart">SVE</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem">
+        <span class="chart-zoom-hint">🔍 Scroll/pinch za zoom · drag za pan</span>
+        <button class="zoom-reset-btn" data-chart="p0a-chart" onclick="resetZoom('p0a-chart')">↺ Reset zoom</button>
+      </div>
+    </div>
   </div>
 
   <div class="table-card">
@@ -1038,7 +1252,7 @@ tr:hover td { background:var(--surface2); }
     </div>
     <div class="ctrl-group c-etf" id="p0b-etf-custom-wrap" style="display:none">
       <label>Vlastiti prinos (%)</label>
-      <div class="row"><input type="range" id="p0b-custom-r" min="2" max="18" step="0.1" value="9.0"><input type="number" class="ctrl-val-input" id="p0b-custom-r-v" min="2" max="18" step="0.1" placeholder="8"></div>
+      <div class="row"><input type="range" id="p0b-custom-r" min="2" max="18" step="0.1" value="9.0"><input type="number" class="ctrl-val-input" id="p0b-custom-r-v" value="9.0" min="2" max="18" step="0.1" placeholder="8"></div>
     </div>
     <div class="ctrl-group c-neutral">
       <label>Platforma</label>
@@ -1051,15 +1265,15 @@ tr:hover td { background:var(--surface2); }
     </div>
     <div class="ctrl-group c-neutral">
       <label>Godišnja uplata</label>
-      <div class="row"><input type="range" id="p0b-uplata" min="0" max="5000" step="50" value="1200"><input type="number" class="ctrl-val-input" id="p0b-uplata-v" data-decimals="2" min="100" max="5000" step="any" placeholder="1000"></div>
+      <div class="row"><input type="range" id="p0b-uplata" min="0" max="5000" step="50" value="1200"><input type="number" class="ctrl-val-input" id="p0b-uplata-v" value="1200.00" data-decimals="2" min="100" max="5000" step="any" placeholder="1000"></div>
     </div>
     <div class="ctrl-group c-neutral">
       <label>Početna uplata (€)</label>
-      <div class="row"><input type="range" id="p0b-initial" min="0" max="20000" step="500" value="1000"><input type="number" class="ctrl-val-input" id="p0b-initial-v" data-decimals="2" min="0" max="20000" step="any" placeholder="1000"></div>
+      <div class="row"><input type="range" id="p0b-initial" min="0" max="20000" step="500" value="1000"><input type="number" class="ctrl-val-input" id="p0b-initial-v" value="1000.00" data-decimals="2" min="0" max="20000" step="any" placeholder="1000"></div>
     </div>
     <div class="ctrl-group c-neutral">
       <label>Broj godina</label>
-      <div class="row"><input type="range" id="p0b-god" min="2" max="60" step="1" value="20"><input type="number" class="ctrl-val-input" id="p0b-god-v" min="2" max="60" step="1" placeholder="25"></div>
+      <div class="row"><input type="range" id="p0b-god" min="2" max="60" step="1" value="20"><input type="number" class="ctrl-val-input" id="p0b-god-v" value="20" min="2" max="60" step="1" placeholder="25"></div>
     </div>
     <div class="ctrl-group c-neutral">
       <label>Porez na kapitalnu dobit</label>
@@ -1119,11 +1333,33 @@ tr:hover td { background:var(--surface2); }
   <div class="chart-card">
     <h3>Usporedba platformi — ista uplata, isti ETF, različite naknade</h3>
     <canvas id="p0b-chart-platforms"></canvas>
+    <div class="chart-controls">
+      <div class="period-btns" id="p0b-chart-platforms-periods">
+        <span style="font-size:0.62rem;color:var(--muted);margin-right:0.2rem">Period:</span>
+        <button class="period-btn" data-years="1" data-chart="p0b-chart-platforms">1Y</button><button class="period-btn" data-years="3" data-chart="p0b-chart-platforms">3Y</button><button class="period-btn" data-years="5" data-chart="p0b-chart-platforms">5Y</button><button class="period-btn" data-years="10" data-chart="p0b-chart-platforms">10Y</button><button class="period-btn" data-years="15" data-chart="p0b-chart-platforms">15Y</button><button class="period-btn" data-years="20" data-chart="p0b-chart-platforms">20Y</button><button class="period-btn" data-years="25" data-chart="p0b-chart-platforms">25Y</button><button class="period-btn" data-years="30" data-chart="p0b-chart-platforms">30Y</button>
+        <button class="period-btn active" data-years="all" data-chart="p0b-chart-platforms">SVE</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem">
+        <span class="chart-zoom-hint">🔍 Scroll/pinch za zoom · drag za pan</span>
+        <button class="zoom-reset-btn" data-chart="p0b-chart-platforms" onclick="resetZoom('p0b-chart-platforms')">↺ Reset zoom</button>
+      </div>
+    </div>
   </div>
 
   <div class="chart-card">
     <h3>Rast portfelja — bruto vs neto vs realno</h3>
     <canvas id="p0b-chart"></canvas>
+    <div class="chart-controls">
+      <div class="period-btns" id="p0b-chart-periods">
+        <span style="font-size:0.62rem;color:var(--muted);margin-right:0.2rem">Period:</span>
+        <button class="period-btn" data-years="1" data-chart="p0b-chart">1Y</button><button class="period-btn" data-years="3" data-chart="p0b-chart">3Y</button><button class="period-btn" data-years="5" data-chart="p0b-chart">5Y</button><button class="period-btn" data-years="10" data-chart="p0b-chart">10Y</button><button class="period-btn" data-years="15" data-chart="p0b-chart">15Y</button><button class="period-btn" data-years="20" data-chart="p0b-chart">20Y</button><button class="period-btn" data-years="25" data-chart="p0b-chart">25Y</button><button class="period-btn" data-years="30" data-chart="p0b-chart">30Y</button>
+        <button class="period-btn active" data-years="all" data-chart="p0b-chart">SVE</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem">
+        <span class="chart-zoom-hint">🔍 Scroll/pinch za zoom · drag za pan</span>
+        <button class="zoom-reset-btn" data-chart="p0b-chart" onclick="resetZoom('p0b-chart')">↺ Reset zoom</button>
+      </div>
+    </div>
   </div>
 
   <div class="table-card">
@@ -1153,7 +1389,7 @@ tr:hover td { background:var(--surface2); }
   <div class="controls">
     <div class="ctrl-group c-neutral">
       <label>Godišnja uplata</label>
-      <div class="row"><input type="range" id="p1-uplata" min="0" max="5000" step="50" value="663"><input type="number" class="ctrl-val-input" id="p1-uplata-v" data-decimals="2" min="0" max="5000" step="any" placeholder="663.61"></div>
+      <div class="row"><input type="range" id="p1-uplata" min="0" max="5000" step="50" value="663"><input type="number" class="ctrl-val-input" id="p1-uplata-v" value="663.00" data-decimals="2" min="0" max="5000" step="any" placeholder="663.61"></div>
     </div>
     <div class="ctrl-group c-neutral">
       <label>Državni poticaj (DMF)</label>
@@ -1165,15 +1401,15 @@ tr:hover td { background:var(--surface2); }
     </div>
     <div class="ctrl-group c-neutral">
       <label>Broj godina</label>
-      <div class="row"><input type="range" id="p1-god" min="5" max="60" step="1" value="30"><input type="number" class="ctrl-val-input" id="p1-god-v" min="5" max="60" step="1" placeholder="25"></div>
+      <div class="row"><input type="range" id="p1-god" min="5" max="60" step="1" value="30"><input type="number" class="ctrl-val-input" id="p1-god-v" value="30" min="5" max="60" step="1" placeholder="25"></div>
     </div>
     <div class="ctrl-group c-dmf">
       <label>Prinos DMF (%/god)</label>
-      <div class="row"><input type="range" id="p1-dmfr" min="1" max="8" step="0.1" value="3.5"><input type="number" class="ctrl-val-input" id="p1-dmfr-v" min="1" max="8" step="0.1" placeholder="8"></div>
+      <div class="row"><input type="range" id="p1-dmfr" min="1" max="8" step="0.1" value="3.5"><input type="number" class="ctrl-val-input" id="p1-dmfr-v" value="3.5" min="1" max="8" step="0.1" placeholder="8"></div>
     </div>
     <div class="ctrl-group c-pepp">
       <label>Prinos PEPP (%/god)</label>
-      <div class="row"><input type="range" id="p1-peppr" min="3" max="14" step="0.1" value="8.0"><input type="number" class="ctrl-val-input" id="p1-peppr-v" min="3" max="14" step="0.1" placeholder="8"></div>
+      <div class="row"><input type="range" id="p1-peppr" min="3" max="14" step="0.1" value="8.0"><input type="number" class="ctrl-val-input" id="p1-peppr-v" value="8.0" min="3" max="14" step="0.1" placeholder="8"></div>
     </div>
   </div>
 
@@ -1202,6 +1438,17 @@ tr:hover td { background:var(--surface2); }
   <div class="chart-card">
     <h3>Rast vrijednosti kroz godine</h3>
     <canvas id="p1-chart"></canvas>
+    <div class="chart-controls">
+      <div class="period-btns" id="p1-chart-periods">
+        <span style="font-size:0.62rem;color:var(--muted);margin-right:0.2rem">Period:</span>
+        <button class="period-btn" data-years="1" data-chart="p1-chart">1Y</button><button class="period-btn" data-years="3" data-chart="p1-chart">3Y</button><button class="period-btn" data-years="5" data-chart="p1-chart">5Y</button><button class="period-btn" data-years="10" data-chart="p1-chart">10Y</button><button class="period-btn" data-years="15" data-chart="p1-chart">15Y</button><button class="period-btn" data-years="20" data-chart="p1-chart">20Y</button><button class="period-btn" data-years="25" data-chart="p1-chart">25Y</button><button class="period-btn" data-years="30" data-chart="p1-chart">30Y</button>
+        <button class="period-btn active" data-years="all" data-chart="p1-chart">SVE</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem">
+        <span class="chart-zoom-hint">🔍 Scroll/pinch za zoom · drag za pan</span>
+        <button class="zoom-reset-btn" data-chart="p1-chart" onclick="resetZoom('p1-chart')">↺ Reset zoom</button>
+      </div>
+    </div>
   </div>
 
   <div class="table-card">
@@ -1228,7 +1475,7 @@ tr:hover td { background:var(--surface2); }
   <div class="controls">
     <div class="ctrl-group c-neutral">
       <label>Godišnja uplata (ukupno)</label>
-      <div class="row"><input type="range" id="p2-uplata" min="0" max="5000" step="50" value="1200"><input type="number" class="ctrl-val-input" id="p2-uplata-v" data-decimals="2" min="0" max="5000" step="any" placeholder="1200"></div>
+      <div class="row"><input type="range" id="p2-uplata" min="0" max="5000" step="50" value="1200"><input type="number" class="ctrl-val-input" id="p2-uplata-v" value="1200.00" data-decimals="2" min="0" max="5000" step="any" placeholder="1200"></div>
     </div>
     <div class="ctrl-group c-neutral">
       <label>Državni poticaj (DMF)</label>
@@ -1240,15 +1487,15 @@ tr:hover td { background:var(--surface2); }
     </div>
     <div class="ctrl-group c-neutral">
       <label>Broj godina</label>
-      <div class="row"><input type="range" id="p2-god" min="5" max="60" step="1" value="25"><input type="number" class="ctrl-val-input" id="p2-god-v" min="5" max="60" step="1" placeholder="25"></div>
+      <div class="row"><input type="range" id="p2-god" min="5" max="60" step="1" value="25"><input type="number" class="ctrl-val-input" id="p2-god-v" value="25" min="5" max="60" step="1" placeholder="25"></div>
     </div>
     <div class="ctrl-group c-dmf">
       <label>Prinos DMF (%/god)</label>
-      <div class="row"><input type="range" id="p2-dmfr" min="1" max="8" step="0.1" value="3.5"><input type="number" class="ctrl-val-input" id="p2-dmfr-v" min="1" max="8" step="0.1" placeholder="8"></div>
+      <div class="row"><input type="range" id="p2-dmfr" min="1" max="8" step="0.1" value="3.5"><input type="number" class="ctrl-val-input" id="p2-dmfr-v" value="3.5" min="1" max="8" step="0.1" placeholder="8"></div>
     </div>
     <div class="ctrl-group c-pepp">
       <label>Prinos PEPP (%/god)</label>
-      <div class="row"><input type="range" id="p2-peppr" min="3" max="14" step="0.1" value="8.0"><input type="number" class="ctrl-val-input" id="p2-peppr-v" min="3" max="14" step="0.1" placeholder="8"></div>
+      <div class="row"><input type="range" id="p2-peppr" min="3" max="14" step="0.1" value="8.0"><input type="number" class="ctrl-val-input" id="p2-peppr-v" value="8.0" min="3" max="14" step="0.1" placeholder="8"></div>
     </div>
     <div class="ctrl-group c-etf">
       <label>Odaberi ETF</label>
@@ -1264,7 +1511,7 @@ tr:hover td { background:var(--surface2); }
     </div>
     <div class="ctrl-group c-etf" id="p2-etf-custom-wrap" style="display:none">
       <label>Vlastiti prinos ETF (%)</label>
-      <div class="row"><input type="range" id="p2-etfr-custom" min="3" max="18" step="0.1" value="9.0"><input type="number" class="ctrl-val-input" id="p2-etfr-custom-v" min="3" max="18" step="0.1" placeholder="8"></div>
+      <div class="row"><input type="range" id="p2-etfr-custom" min="3" max="18" step="0.1" value="9.0"><input type="number" class="ctrl-val-input" id="p2-etfr-custom-v" value="9.0" min="3" max="18" step="0.1" placeholder="8"></div>
     </div>
   </div>
 
@@ -1306,6 +1553,17 @@ tr:hover td { background:var(--surface2); }
   <div class="chart-card">
     <h3>Rast vrijednosti — usporedba strategija</h3>
     <canvas id="p2-chart"></canvas>
+    <div class="chart-controls">
+      <div class="period-btns" id="p2-chart-periods">
+        <span style="font-size:0.62rem;color:var(--muted);margin-right:0.2rem">Period:</span>
+        <button class="period-btn" data-years="1" data-chart="p2-chart">1Y</button><button class="period-btn" data-years="3" data-chart="p2-chart">3Y</button><button class="period-btn" data-years="5" data-chart="p2-chart">5Y</button><button class="period-btn" data-years="10" data-chart="p2-chart">10Y</button><button class="period-btn" data-years="15" data-chart="p2-chart">15Y</button><button class="period-btn" data-years="20" data-chart="p2-chart">20Y</button><button class="period-btn" data-years="25" data-chart="p2-chart">25Y</button><button class="period-btn" data-years="30" data-chart="p2-chart">30Y</button>
+        <button class="period-btn active" data-years="all" data-chart="p2-chart">SVE</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem">
+        <span class="chart-zoom-hint">🔍 Scroll/pinch za zoom · drag za pan</span>
+        <button class="zoom-reset-btn" data-chart="p2-chart" onclick="resetZoom('p2-chart')">↺ Reset zoom</button>
+      </div>
+    </div>
   </div>
 
   <div class="table-card">
@@ -1333,15 +1591,15 @@ tr:hover td { background:var(--surface2); }
   <div class="controls">
     <div class="ctrl-group c-neutral">
       <label>Ukupna godišnja uplata</label>
-      <div class="row"><input type="range" id="p3-uplata" min="0" max="5000" step="50" value="2400"><input type="number" class="ctrl-val-input" id="p3-uplata-v" data-decimals="2" min="500" max="5000" step="any" placeholder="1000"></div>
+      <div class="row"><input type="range" id="p3-uplata" min="0" max="5000" step="50" value="2400"><input type="number" class="ctrl-val-input" id="p3-uplata-v" value="2400.00" data-decimals="2" min="500" max="5000" step="any" placeholder="1000"></div>
     </div>
     <div class="ctrl-group c-neutral">
       <label>Broj godina ulaganja</label>
-      <div class="row"><input type="range" id="p3-god" min="5" max="60" step="1" value="25"><input type="number" class="ctrl-val-input" id="p3-god-v" min="5" max="60" step="1" placeholder="25"></div>
+      <div class="row"><input type="range" id="p3-god" min="5" max="60" step="1" value="25"><input type="number" class="ctrl-val-input" id="p3-god-v" value="25" min="5" max="60" step="1" placeholder="25"></div>
     </div>
     <div class="ctrl-group c-combo">
       <label>Udio ETF-a (%)</label>
-      <div class="row"><input type="range" id="p3-etf-share" min="0" max="100" step="5" value="60"><input type="number" class="ctrl-val-input" id="p3-etf-share-v" min="0" max="100" step="1" placeholder="8"></div>
+      <div class="row"><input type="range" id="p3-etf-share" min="0" max="100" step="5" value="60"><input type="number" class="ctrl-val-input" id="p3-etf-share-v" value="60" min="0" max="100" step="1" placeholder="8"></div>
     </div>
     <div class="ctrl-group c-neutral">
       <label>Mirovinski fond</label>
@@ -1352,7 +1610,7 @@ tr:hover td { background:var(--surface2); }
     </div>
     <div class="ctrl-group c-dmf" id="p3-dmf-rate-wrap">
       <label>Prinos mirovinskog (%)</label>
-      <div class="row"><input type="range" id="p3-penr" min="1" max="12" step="0.1" value="8.0"><input type="number" class="ctrl-val-input" id="p3-penr-v" min="1" max="12" step="0.1" placeholder="8"></div>
+      <div class="row"><input type="range" id="p3-penr" min="1" max="12" step="0.1" value="8.0"><input type="number" class="ctrl-val-input" id="p3-penr-v" value="8.0" min="1" max="12" step="0.1" placeholder="8"></div>
     </div>
     <div class="ctrl-group c-etf">
       <label>ETF fond</label>
@@ -1367,11 +1625,11 @@ tr:hover td { background:var(--surface2); }
     </div>
     <div class="ctrl-group c-etf" id="p3-etf-custom-wrap" style="display:none">
       <label>Vlastiti prinos ETF (%)</label>
-      <div class="row"><input type="range" id="p3-etfr-custom" min="3" max="18" step="0.1" value="9.0"><input type="number" class="ctrl-val-input" id="p3-etfr-custom-v" min="3" max="18" step="0.1" placeholder="8"></div>
+      <div class="row"><input type="range" id="p3-etfr-custom" min="3" max="18" step="0.1" value="9.0"><input type="number" class="ctrl-val-input" id="p3-etfr-custom-v" value="9.0" min="3" max="18" step="0.1" placeholder="8"></div>
     </div>
     <div class="ctrl-group c-neutral">
       <label>Inflacija (%/god)</label>
-      <div class="row"><input type="range" id="p3-inf" min="0" max="5" step="0.1" value="2.5"><input type="number" class="ctrl-val-input" id="p3-inf-v" min="0" max="5" step="0.1" placeholder="8"></div>
+      <div class="row"><input type="range" id="p3-inf" min="0" max="5" step="0.1" value="2.5"><input type="number" class="ctrl-val-input" id="p3-inf-v" value="2.5" min="0" max="5" step="0.1" placeholder="8"></div>
     </div>
   </div>
 
@@ -1446,6 +1704,17 @@ tr:hover td { background:var(--surface2); }
   <div class="chart-card">
     <h3>Rast portfelja kroz godine</h3>
     <canvas id="p3-chart"></canvas>
+    <div class="chart-controls">
+      <div class="period-btns" id="p3-chart-periods">
+        <span style="font-size:0.62rem;color:var(--muted);margin-right:0.2rem">Period:</span>
+        <button class="period-btn" data-years="1" data-chart="p3-chart">1Y</button><button class="period-btn" data-years="3" data-chart="p3-chart">3Y</button><button class="period-btn" data-years="5" data-chart="p3-chart">5Y</button><button class="period-btn" data-years="10" data-chart="p3-chart">10Y</button><button class="period-btn" data-years="15" data-chart="p3-chart">15Y</button><button class="period-btn" data-years="20" data-chart="p3-chart">20Y</button><button class="period-btn" data-years="25" data-chart="p3-chart">25Y</button><button class="period-btn" data-years="30" data-chart="p3-chart">30Y</button>
+        <button class="period-btn active" data-years="all" data-chart="p3-chart">SVE</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem">
+        <span class="chart-zoom-hint">🔍 Scroll/pinch za zoom · drag za pan</span>
+        <button class="zoom-reset-btn" data-chart="p3-chart" onclick="resetZoom('p3-chart')">↺ Reset zoom</button>
+      </div>
+    </div>
   </div>
 
   <div class="table-card">
@@ -1563,7 +1832,7 @@ function updateP1() {
     {label:'3. Stup (DMF)',data:dmfArr,borderColor:'#e8a44a',backgroundColor:'rgba(232,164,74,0.07)',fill:true,borderWidth:2.5,pointRadius:0,tension:0.4},
     {label:'PEPP',data:peppArr,borderColor:'#4a9fe8',backgroundColor:'rgba(74,159,232,0.07)',fill:true,borderWidth:2.5,pointRadius:0,tension:0.4},
   ];
-  if(!chart1){ chart1=makeChart('p1-chart',labels,ds); }
+  if(!chart1){ chart1=makeChart('p1-chart',labels,ds); storeChartData('p1-chart', labels, ds); }
   else { chart1.data.labels=labels; chart1.data.datasets.forEach((d,i)=>{ d.data=ds[i].data; }); chart1.update(); }
 }
 ['p1-uplata','p1-god','p1-dmfr','p1-peppr'].forEach(id => $(id).addEventListener('syncedInput', updateP1));
@@ -1674,7 +1943,7 @@ function updateP2() {
     {label:'PEPP',data:peppArr,borderColor:'#4a9fe8',backgroundColor:'rgba(74,159,232,0.06)',fill:true,borderWidth:p2vis.pepp?2.5:0,pointRadius:0,tension:0.4,hidden:!p2vis.pepp},
     {label:etfName,data:etfArr,borderColor:'#4ae8a0',backgroundColor:'rgba(74,232,160,0.06)',fill:true,borderWidth:p2vis.etf?2.5:0,pointRadius:0,tension:0.4,hidden:!p2vis.etf},
   ];
-  if(!chart2){ chart2=makeChart('p2-chart',labels,ds); }
+  if(!chart2){ chart2=makeChart('p2-chart',labels,ds); storeChartData('p2-chart', labels, ds); }
   else {
     chart2.data.labels=labels;
     chart2.data.datasets.forEach((d,i)=>{ d.data=ds[i].data; d.label=ds[i].label; d.hidden=ds[i].hidden; d.borderWidth=ds[i].borderWidth; });
@@ -1812,7 +2081,7 @@ function updateP3() {
     {label:'Kombinirano',data:comboArr,borderColor:'#c77af5',backgroundColor:'rgba(199,122,245,0.08)',fill:true,borderWidth:2.5,pointRadius:0,tension:0.4},
     {label:'Realna vrijednost',data:realArr,borderColor:'#5a6180',backgroundColor:'transparent',fill:false,borderWidth:1.5,pointRadius:0,tension:0.4,borderDash:[5,4]},
   ];
-  if(!chart3){ chart3=makeChart('p3-chart',labels,ds); }
+  if(!chart3){ chart3=makeChart('p3-chart',labels,ds); storeChartData('p3-chart', labels, ds); }
   else{
     chart3.data.labels=labels;
     chart3.data.datasets.forEach((d,i)=>{ d.data=ds[i].data; d.label=ds[i].label; d.borderColor=ds[i].borderColor; d.backgroundColor=ds[i].backgroundColor; if(ds[i].borderDash) d.borderDash=ds[i].borderDash; });
@@ -1835,6 +2104,18 @@ function makeChart(canvasId, labels, datasets) {
           backgroundColor:'#1a1e2a', borderColor:'#242a3d', borderWidth:1,
           titleColor:'#e2e5f0', bodyColor:'#8890b0', padding:12,
           callbacks:{ label: ctx=>' '+ctx.dataset.label+': '+fmt(ctx.raw) }
+        },
+        zoom:{
+          pan:{ enabled:true, mode:'xy' },
+          zoom:{
+            wheel:{ enabled:true },
+            pinch:{ enabled:true },
+            mode:'xy',
+            onZoom: ({chart}) => {
+              const wrap = chart.canvas.closest('.chart-card');
+              if(wrap){ const btn=wrap.querySelector('.zoom-reset-btn'); if(btn) btn.classList.add('visible'); }
+            }
+          }
         }
       },
       scales:{
@@ -1844,6 +2125,7 @@ function makeChart(canvasId, labels, datasets) {
     }
   });
 }
+
 
 
 // ============ PAGE 0A: HRVATSKI DMF ============
@@ -2049,7 +2331,7 @@ function updateP0b() {
     {label:'Neto (naknade)',data:netoArr,borderColor:'#4a9fe8',backgroundColor:'rgba(74,159,232,0.06)',fill:true,borderWidth:2,pointRadius:0,tension:0.4},
     {label:'Neto (porez)',data:afterArr,borderColor:'#e8a44a',backgroundColor:'transparent',fill:false,borderWidth:1.5,pointRadius:0,tension:0.4,borderDash:[4,3]},
   ];
-  if(!chartP0b){ chartP0b=makeChart('p0b-chart',labels,ds); }
+  if(!chartP0b){ chartP0b=makeChart('p0b-chart',labels,ds); storeChartData('p0b-chart', labels, ds); }
   else{ chartP0b.data.labels=labels; chartP0b.data.datasets.forEach((d,i)=>{d.data=ds[i].data;}); chartP0b.update(); }
 
   // Platform comparison chart
@@ -2174,6 +2456,48 @@ function setupSyncPairs() {
 }
 
 
+
+// ============ CHART PERIOD FILTER & ZOOM RESET ============
+// Store full data per chart for period slicing
+const chartFullData = {};
+
+function storeChartData(chartId, labels, datasets) {
+  chartFullData[chartId] = { labels: [...labels], datasets: datasets.map(d=>({...d, data:[...d.data]})) };
+}
+
+function applyPeriod(chartId, years) {
+  const ch = Chart.getChart($(chartId));
+  if (!ch || !chartFullData[chartId]) return;
+  const full = chartFullData[chartId];
+  if (years === 'all') {
+    ch.data.labels = full.labels;
+    ch.data.datasets.forEach((d,i) => d.data = full.datasets[i].data);
+  } else {
+    const maxY = parseInt(years);
+    const slice = full.labels.map((l,i)=>i).filter(i => full.labels[i] <= maxY);
+    ch.data.labels = slice.map(i=>full.labels[i]);
+    ch.data.datasets.forEach((d,i) => d.data = slice.map(j=>full.datasets[i].data[j]));
+  }
+  ch.resetZoom && ch.resetZoom();
+  ch.update();
+  // update active button
+  const btns = document.querySelectorAll(`.period-btn[data-chart="${chartId}"]`);
+  btns.forEach(b => b.classList.toggle('active', b.dataset.years === String(years)));
+}
+
+function resetZoom(chartId) {
+  const ch = Chart.getChart($(chartId));
+  if (ch && ch.resetZoom) ch.resetZoom();
+  const wrap = $(chartId)?.closest('.chart-card');
+  if (wrap) { const btn = wrap.querySelector('.zoom-reset-btn'); if (btn) btn.classList.remove('visible'); }
+}
+
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.period-btn');
+  if (!btn) return;
+  applyPeriod(btn.dataset.chart, btn.dataset.years === 'all' ? 'all' : parseInt(btn.dataset.years));
+});
+
 // ============ CHART EXPAND (mobile landscape) ============
 let modalChart = null;
 
@@ -2254,9 +2578,250 @@ CHART_META.forEach(([canvasId, title]) => {
   });
 });
 
+
+// ============ FEEDBACK & AI CHAT ============
+
+// Star rating
+let selectedRating = 0;
+const ratingLabels = ['','😞 Loše','😐 Može biti bolje','🙂 Solidno','😊 Dobro','🤩 Odlično!'];
+document.querySelectorAll('.star-btn').forEach(btn => {
+  btn.addEventListener('mouseenter', () => {
+    const v = +btn.dataset.val;
+    document.querySelectorAll('.star-btn').forEach((b,i) => b.classList.toggle('active', i < v));
+    $('rating-label').textContent = ratingLabels[v];
+  });
+  btn.addEventListener('mouseleave', () => {
+    document.querySelectorAll('.star-btn').forEach((b,i) => b.classList.toggle('active', i < selectedRating));
+    $('rating-label').textContent = selectedRating ? ratingLabels[selectedRating] : 'Klikni za ocjenu';
+  });
+  btn.addEventListener('click', () => {
+    selectedRating = +btn.dataset.val;
+    $('rating-label').textContent = '✅ Ocjena ' + selectedRating + '/5 zabilježena — ' + ratingLabels[selectedRating];
+    try { localStorage.setItem('miv_rating', selectedRating); } catch(e){}
+  });
+});
+
+// Feedback type toggle
+document.querySelectorAll('.fb-type-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.fb-type-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+
+// Submit feedback
+function submitFeedback() {
+  const text = $('fb-text').value.trim();
+  if (!text) { $('fb-text').style.borderColor = 'var(--red)'; setTimeout(()=>$('fb-text').style.borderColor='',1500); return; }
+  const type = document.querySelector('.fb-type-btn.active')?.dataset.type || 'prijedlog';
+  const entry = { type, text, rating: selectedRating, ts: new Date().toISOString() };
+  try {
+    const prev = JSON.parse(localStorage.getItem('miv_feedback') || '[]');
+    prev.push(entry);
+    localStorage.setItem('miv_feedback', JSON.stringify(prev));
+  } catch(e){}
+  $('fb-submit-btn').disabled = true;
+  $('fb-text').value = '';
+  $('feedback-sent').style.display = 'block';
+  setTimeout(() => { $('feedback-sent').style.display='none'; $('fb-submit-btn').disabled=false; }, 4000);
+}
+
+// ── AI CHAT ──
+const AI_SYSTEM = `Ti si MarsanAI, prijateljski financijski asistent unutar MarsanInvest web aplikacije za hrvatsko tržište.
+Pomažeš korisnicima razumjeti:
+- Hrvatski 3. mirovinski stup (DMF fondovi) i državni poticaj (15% do 99.54€/god za uplate ≥663.61€)
+- PEPP (Pan-European Personal Pension Product) - npr. Finax PEPP
+- ETF fondove (VWCE, IWDA, CSPX, QQQ i dr.) i platforme (IBKR, Trading 212, Finax)
+- Razliku između mirovinskih fondova i ETF-a
+- Kako koristiti MarsanInvest kalkulator
+- Osnove ulaganja prilagođene HR tržištu
+
+Uvijek naglasi da nisu financijski savjet i predloži konzultaciju s licenciranim savjetnikom za konkretne odluke.
+Odgovaraj kratko, jasno i na hrvatskom jeziku. Koristi emoji umjereno.`;
+
+let aiHistory = [];
+let aiTyping = false;
+
+function addAiMsg(role, text) {
+  const msgs = $('ai-messages');
+  const isBot = role === 'bot';
+  const div = document.createElement('div');
+  div.className = 'ai-msg ' + role;
+  const nl2br = text.split('\n').join('<br>');
+  div.innerHTML = `<div class="ai-msg-avatar">${isBot ? '🤖' : '👤'}</div><div class="ai-msg-bubble">${nl2br}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showTyping() {
+  const msgs = $('ai-messages');
+  const div = document.createElement('div');
+  div.className = 'ai-msg bot'; div.id = 'ai-typing-indicator';
+  div.innerHTML = '<div class="ai-msg-avatar">🤖</div><div class="ai-msg-bubble"><div class="ai-typing"><span></span><span></span><span></span></div></div>';
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeTyping() {
+  const el = document.getElementById('ai-typing-indicator');
+  if (el) el.remove();
+}
+
+async function sendAiMsg() {
+  if (aiTyping) return;
+  const input = $('ai-input');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  $('ai-send-btn').disabled = true;
+  addAiMsg('user', text);
+  aiHistory.push({ role: 'user', content: text });
+  aiTyping = true;
+  showTyping();
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 600,
+        system: AI_SYSTEM,
+        messages: aiHistory.slice(-10)
+      })
+    });
+    const data = await resp.json();
+    const reply = data.content?.[0]?.text || 'Žao mi je, došlo je do greške. Pokušaj ponovo.';
+    removeTyping();
+    addAiMsg('bot', reply);
+    aiHistory.push({ role: 'assistant', content: reply });
+  } catch(e) {
+    removeTyping();
+    addAiMsg('bot', '⚠️ Greška pri spajanju na AI. Provjeri internet vezu i pokušaj ponovo.');
+  }
+  aiTyping = false;
+  $('ai-send-btn').disabled = false;
+  input.focus();
+}
+
+function sendQuickMsg(text) {
+  $('ai-input').value = text;
+  sendAiMsg();
+}
+
+// Restore saved rating
+try {
+  const r = localStorage.getItem('miv_rating');
+  if (r) {
+    selectedRating = +r;
+    document.querySelectorAll('.star-btn').forEach((b,i) => b.classList.toggle('active', i < selectedRating));
+    if($('rating-label')) $('rating-label').textContent = ratingLabels[selectedRating] || '';
+  }
+} catch(e){}
+
 // ============ INIT ============
-setupSyncPairs(); updateP0a(); updateP0b(); updateP1(); updateP2(); updateP3();
+// Ensure DOM is fully ready before init
+function initApp() {
+  setupSyncPairs();
+  // Also restore from localStorage if available
+  const STORE_KEYS = Object.keys(localStorage).filter(k => k.startsWith('miv_'));
+  if (STORE_KEYS.length > 0) {
+    STORE_KEYS.forEach(k => {
+      const id = k.replace('miv_', '');
+      const el = $(id);
+      if (el && el.tagName === 'INPUT') {
+        el.value = localStorage.getItem(k);
+        // sync slider if paired
+        const pair = SLIDER_PAIRS.find(p => p[1] === id);
+        if (pair) { const sl = $(pair[0]); if (sl) sl.value = el.value; }
+      }
+    });
+  }
+  updateP0a(); updateP0b(); updateP1(); updateP2(); updateP3();
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initApp);
+} else {
+  initApp();
+}
+
+// Save to localStorage on change
+SLIDER_PAIRS.forEach(([,numId]) => {
+  const el = $(numId);
+  if (el) el.addEventListener('change', () => {
+    localStorage.setItem('miv_' + numId, el.value);
+  });
+});
 </script>
+
+
+<!-- ========== FEEDBACK PAGE ========== -->
+<div class="page" id="feedback">
+  <div class="feedback-hero">
+    <h1>💬 Feedback & Prijedlozi</h1>
+    <p>Pomozi nam poboljšati MarsanInvest — ocijeni aplikaciju, pošalji prijedlog ili pitaj AI asistenta za pomoć.</p>
+  </div>
+
+  <!-- STAR RATING -->
+  <div class="rating-section">
+    <h3>Ocijeni MarsanInvest</h3>
+    <div class="stars-row" id="stars-row">
+      <button class="star-btn" data-val="1">⭐</button>
+      <button class="star-btn" data-val="2">⭐</button>
+      <button class="star-btn" data-val="3">⭐</button>
+      <button class="star-btn" data-val="4">⭐</button>
+      <button class="star-btn" data-val="5">⭐</button>
+    </div>
+    <div class="rating-label" id="rating-label">Klikni za ocjenu</div>
+  </div>
+
+  <!-- FEEDBACK FORM -->
+  <div class="feedback-form-card">
+    <h3>Pošalji povratnu informaciju</h3>
+    <div class="fb-type-row">
+      <button class="fb-type-btn active" data-type="prijedlog">💡 Prijedlog</button>
+      <button class="fb-type-btn" data-type="pohvala">👏 Pohvala</button>
+      <button class="fb-type-btn" data-type="greška">🐛 Greška</button>
+      <button class="fb-type-btn" data-type="pitanje">❓ Pitanje</button>
+    </div>
+    <textarea class="fb-textarea" id="fb-text" placeholder="Napiši svoju povratnu informaciju, prijedlog ili opis greške..."></textarea>
+    <br>
+    <button class="fb-submit-btn" id="fb-submit-btn" onclick="submitFeedback()">Pošalji feedback ✉️</button>
+    <div class="feedback-sent" id="feedback-sent">✅ Hvala! Tvoj feedback je zabilježen.</div>
+  </div>
+
+  <!-- AI CHAT ASISTENT -->
+  <div class="ai-chat-card">
+    <div class="ai-chat-header">
+      <div class="ai-chat-avatar">🤖</div>
+      <div>
+        <div class="ai-chat-title">MarsanAI Asistent</div>
+        <div class="ai-chat-sub">Postavi pitanje o ulaganju, fondovima ili korištenju aplikacije</div>
+      </div>
+      <div class="ai-online-dot"></div>
+    </div>
+    <div class="ai-messages" id="ai-messages">
+      <div class="ai-msg bot">
+        <div class="ai-msg-avatar">🤖</div>
+        <div class="ai-msg-bubble">Bok! Ja sam MarsanAI asistent. 👋 Mogu ti pomoći razumjeti razliku između DMF-a i PEPP-a, objasniti ETF fondove, ili te voditi kroz kalkulator. Što te zanima?</div>
+      </div>
+    </div>
+    <div class="ai-quick-btns">
+      <button class="ai-quick-btn" onclick="sendQuickMsg('Što je razlika između DMF i PEPP?')">DMF vs PEPP</button>
+      <button class="ai-quick-btn" onclick="sendQuickMsg('Koji ETF preporučuješ za početnike?')">ETF za početnike</button>
+      <button class="ai-quick-btn" onclick="sendQuickMsg('Kako koristiti kalkulator?')">Kako koristiti?</button>
+      <button class="ai-quick-btn" onclick="sendQuickMsg('Što je državni poticaj na 3. stup?')">Državni poticaj</button>
+      <button class="ai-quick-btn" onclick="sendQuickMsg('Koje su naknade na IBKR vs Trading 212?')">IBKR vs T212</button>
+    </div>
+    <div class="ai-input-row">
+      <input class="ai-input" id="ai-input" type="text" placeholder="Pitaj nešto o ulaganju..." 
+             onkeydown="if(event.key==='Enter') sendAiMsg()">
+      <button class="ai-send-btn" id="ai-send-btn" onclick="sendAiMsg()">➤</button>
+    </div>
+  </div>
+
+  <p class="disclaimer">⚠️ AI asistent pruža općenite informacije u edukativne svrhe. Nije zamjena za profesionalni financijski savjet.</p>
+</div>
 
 <!-- CHART FULLSCREEN MODAL -->
 <div class="chart-modal-overlay" id="chart-modal">
@@ -2270,5 +2835,44 @@ setupSyncPairs(); updateP0a(); updateP0b(); updateP1(); updateP2(); updateP3();
     </div>
   </div>
 </div>
+
+<!-- SITE FOOTER -->
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="fb-name">MarsanInvest</div>
+      <p>Besplatni kalkulator za usporedbu mirovinskih fondova i ETF ulaganja prilagođen hrvatskom tržištu.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Kalkulatori</h4>
+      <span onclick="document.querySelector('[data-page=p0a]').click()">Hrvatski DMF</span>
+      <span onclick="document.querySelector('[data-page=p0b]').click()">ETF Platforme</span>
+      <span onclick="document.querySelector('[data-page=p1]').click()">3. Stup vs PEPP</span>
+      <span onclick="document.querySelector('[data-page=p2]').click()">Pension vs ETF</span>
+      <span onclick="document.querySelector('[data-page=p3]').click()">Pension + ETF</span>
+    </div>
+    <div class="footer-col">
+      <h4>Resursi</h4>
+      <a href="https://www.hanfa.hr" target="_blank">HANFA</a>
+      <a href="https://www.regos.hr" target="_blank">REGOS</a>
+      <a href="https://www.mirovinsko.hr" target="_blank">HZMO</a>
+      <a href="https://finax.eu/hr" target="_blank">Finax HR</a>
+    </div>
+    <div class="footer-col">
+      <h4>Aplikacija</h4>
+      <span onclick="document.querySelector('[data-page=home]').click()">Početna</span>
+      <span onclick="document.querySelector('[data-page=feedback]').click()">💬 Feedback</span>
+      <span onclick="document.querySelector('[data-page=feedback]').click()">🤖 AI Asistent</span>
+    </div>
+  </div>
+  <div class="footer-disclaimer">
+    <strong>⚠️ DISCLAIMER:</strong> MarsanInvest je informativni alat namijenjen isključivo u edukativne svrhe. Nije izrađen od strane licenciranog financijskog savjetnika niti predstavlja financijski savjet. Sve projekcije su temeljene na historijskim podacima i <strong>ne garantiraju buduće rezultate</strong>. Autor ne preuzima nikakvu odgovornost za financijske gubitke nastale na temelju informacija prikazanih u ovoj aplikaciji. Prije donošenja bilo kakve investicijske odluke obvezno konzultiraj licenciranog financijskog savjetnika.
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 MarsanInvest · Sva prava pridržana</span>
+    <span class="footer-version">v0.9.1-beta</span>
+    <span>Podaci: HANFA 2024 · ETF historijski prosjeci</span>
+  </div>
+</footer>
 </body>
 </html>
