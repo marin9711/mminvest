@@ -54,10 +54,10 @@
 
 /* Quiz opcije tekst */
 .quiz-option-text strong {
-  color: #1a2035 !important;
+  color: var(--text) !important;
 }
 .quiz-option-text span {
-  color: #3a4a6b !important;
+  color: var(--muted2) !important;
 }
 
 /* Quiz result kartice */
