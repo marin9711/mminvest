@@ -965,6 +965,21 @@ tr:hover td { background:var(--surface2); }
 .hq-restart { background: transparent; border: 1px solid var(--border); color: var(--muted2); padding: 0.4rem 0.9rem; border-radius: 999px; font-size: 0.75rem; cursor: pointer; margin-top: 0.5rem; }
 .hq-restart:hover { border-color: var(--muted); color: var(--text); }
 
+/* LIKVIDNOST TAGOVI */
+.liq-tag { font-size: 0.68rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 999px; display: inline-block; margin-top: 0.25rem; }
+.liq-low { background: rgba(245,96,96,0.12); color: #f56060; border: 1px solid rgba(245,96,96,0.25); }
+.liq-mid { background: rgba(245,185,60,0.12); color: #f5b93c; border: 1px solid rgba(245,185,60,0.25); }
+.liq-high { background: rgba(74,232,160,0.12); color: var(--etf-l); border: 1px solid rgba(74,232,160,0.25); }
+.liq-info-box {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 10px;
+  padding: 0.75rem 1rem; margin: 0.75rem 0; font-size: 0.78rem; line-height: 1.5;
+}
+.liq-info-box .liq-row { display: flex; align-items: flex-start; gap: 0.6rem; margin-bottom: 0.4rem; }
+.liq-info-box .liq-row:last-child { margin-bottom: 0; }
+.liq-info-box .liq-icon { font-size: 0.9rem; flex-shrink: 0; margin-top: 0.05rem; }
+.liq-info-box .liq-text strong { color: var(--text); display: block; font-size: 0.78rem; }
+.liq-info-box .liq-text span { color: var(--muted2); font-size: 0.72rem; }
+
 .poll-change-btn {
   margin-top: 0.5rem; margin-left: 0.5rem; padding: 0.4rem 1rem;
   background: transparent; border: 1px solid var(--border); border-radius: 999px;
@@ -1575,6 +1590,7 @@ tr:hover td { background:var(--surface2); }
       <div class="sc-row"><div class="sr-lbl">Jednokratno (100%)</div><div class="sr-val" id="p0a-lump" style="font-size:.9rem">—</div></div>
       <div class="sc-row"><div class="sr-lbl">Mj. isplata (4%, 25g)</div><div class="sr-val" id="p0a-monthly" style="font-size:.9rem">—</div></div>
       <div class="sc-row"><div class="sr-sub" style="color:var(--muted);font-size:0.68rem">*Isplata od 55. god. Max 30% jednokratno</div></div>
+      <div class="sc-row"><div class="sr-sub liq-tag liq-low">🔒 Niska likvidnost</div></div>
     </div>
   </div>
 
@@ -1629,6 +1645,10 @@ tr:hover td { background:var(--surface2); }
       </tr></thead>
       <tbody id="p0a-tbody"></tbody>
     </table></div>
+  </div>
+  <div class="liq-info-box">
+    <div class="liq-row"><span class="liq-icon">🔒</span><div class="liq-text"><strong>Niska likvidnost — HR DMF (3. mirovinski stup)</strong><span>Novac je zaključan do <strong>55. godine</strong>. Možeš povući max <strong>30% jednokratno</strong>, ostatak se isplaćuje u mirovinskim ratama. Prijevremeni otkup nije moguć.</span></div></div>
+    <div class="liq-row"><span class="liq-icon">ℹ️</span><div class="liq-text"><strong>Zašto toliko dugo?</strong><span>DMF je mirovinski produkt — država daje poticaj (99.54€/god) upravo zato što je kapital zaključan. Nije za nužnu pričuvu — za to koristi ETF.</span></div></div>
   </div>
   <p class="disclaimer">⚠️ Prinosi su historijski podaci HANFA 2024. i ne garantiraju buduće rezultate. Državni poticaj 15% na max 663.61€/god = 99.54€. Isplata najranije s 55 god. Nije financijski savjet.</p>
 </div>
@@ -1720,6 +1740,10 @@ tr:hover td { background:var(--surface2); }
     </div>
   </div>
 
+  <div class="liq-info-box">
+    <div class="liq-row"><span class="liq-icon">🟡</span><div class="liq-text"><strong>Srednja likvidnost — PEPP (Finax)</strong><span>Isplata je moguća od <strong>55. godine</strong> (ili ranije u posebnim slučajevima: trajna nesposobnost, terminal illness). Sav kapital možeš povući odjednom — bez ograničenja na 30% kao kod HR DMF-a.</span></div></div>
+    <div class="liq-row"><span class="liq-icon">ℹ️</span><div class="liq-text"><strong>Razlika od HR DMF-a</strong><span>Kod HR DMF-a max 30% jednokratno + ostatak u ratama. Kod PEPP-a (Finax) možeš povući <strong>100% odjednom</strong> od 55. god. Veća fleksibilnost pri isplati.</span></div></div>
+  </div>
   <p class="disclaimer">⚠️ Informativni pregled. Finax je jedini PEPP ponuđač trenutno registriran u HR. Provjeri najnovije uvjete na finax.eu. Nije financijski savjet.</p>
 </div>
 
@@ -1928,6 +1952,10 @@ tr:hover td { background:var(--surface2); }
       <tbody id="p0b-tbody"></tbody>
     </table></div>
   </div>
+  <div class="liq-info-box">
+    <div class="liq-row"><span class="liq-icon">🟢</span><div class="liq-text"><strong>Visoka likvidnost — ETF fondovi</strong><span>Možeš prodati i povući novac <strong>u bilo kojem trenutku</strong> — nema dobnih ograničenja, nema kazni. Novac stiže u roku 2–3 radna dana (T+2 settlement).</span></div></div>
+    <div class="liq-row"><span class="liq-icon">⚠️</span><div class="liq-text"><strong>Ali pazi na porez</strong><span>U HR: kapitalnu dobit ne placaš ako držiš ETF <strong>2+ godine</strong>. Ako prodaš ranije, placaš 10% poreza + prirez. Likvidnost postoji, ali porezna optimizacija nagrađuje strpljenje.</span></div></div>
+  </div>
   <p class="disclaimer">⚠️ ETF prinosi su historijski prosjeci i ne garantiraju buduće rezultate. IBKR EU osiguranje 20.000€ (IBIE, Irska). T212 ICF do 20.000€ + Lloyd's polica. Finax NBS SK do 20.000€. Prinos slobodan od poreza ≥2 god za HR rezidente. Nije financijski savjet.</p>
 </div>
 
@@ -2014,6 +2042,11 @@ tr:hover td { background:var(--surface2); }
         <th style="color:var(--etf-l)">Razlika</th>
       </tr></thead><tbody id="p1-tbody"></tbody></table>
     </div>
+  </div>
+  <div class="liq-info-box">
+    <div class="liq-row"><span class="liq-icon">🔒</span><div class="liq-text"><strong>HR DMF — Niska likvidnost</strong><span>Isplata najranije od <strong>55. god.</strong> Max 30% jednokratno, ostatak u mirovinskim ratama. Nema prijevremenog otkupa.</span></div></div>
+    <div class="liq-row"><span class="liq-icon">🟡</span><div class="liq-text"><strong>PEPP (Finax) — Srednja likvidnost</strong><span>Isplata od <strong>55. god.</strong> ali možeš povući <strong>100% odjednom</strong> — bez ograničenja na 30% kao kod HR DMF-a. Veća fleksibilnost pri isplati.</span></div></div>
+    <div class="liq-row"><span class="liq-icon">ℹ️</span><div class="liq-text"><strong>Zašto je to važno?</strong><span>Ako možeš birati, PEPP daje više slobode pri isplati. HR DMF je bolji samo ako važan državni poticaj (99.54€/god) koji PEPP ne nudi.</span></div></div>
   </div>
   <p class="disclaimer">⚠️ Ilustrativna projekcija. Prinos DMF ~3.5% i PEPP ~8% su povijesni prosjeci, ne garancija. Državni poticaj 15% do 663.61€/god (max 99.54€). Nije financijski savjet.</p>
 </div>
@@ -2177,6 +2210,10 @@ tr:hover td { background:var(--surface2); }
     </table></div>
     <p class="fee-note">Stope su okvirne i pojednostavljene. Prije ulaganja provjeri aktualne cjenike fondova, brokera i porezna pravila.</p>
   </div>
+  <div class="liq-info-box">
+    <div class="liq-row"><span class="liq-icon">🟢</span><div class="liq-text"><strong>ETF — Visoka likvidnost</strong><span>Prodaješ kad hoćeš, novac za 2–3 dana. Bez dobnih ili vremenskih ograničenja. Idealno kao <strong>nužna pričuva ili fleksibilni kapital</strong>.</span></div></div>
+    <div class="liq-row"><span class="liq-icon">🔒</span><div class="liq-text"><strong>DMF/PEPP — Zaključano do 55. god.</strong><span>Nema pristupa prije mirovine. Ovo je ključna razlika — ETF možeš koristiti i prije umirovljenja, DMF/PEPP ne možeš.</span></div></div>
+  </div>
   <p class="disclaimer">⚠️ ETF prinosi su historijski prosjeci zadnjih 10–15 godina i ne uključuju poreze na kapitalnu dobit (25% + prirez u HR). Investiranje u ETF nosi rizik gubitka. Nije financijski savjet.</p>
 </div>
 
@@ -2330,6 +2367,10 @@ tr:hover td { background:var(--surface2); }
     </table></div>
   </div>
 
+  <div class="liq-info-box">
+    <div class="liq-row"><span class="liq-icon">⚖️</span><div class="liq-text"><strong>Kombinirana strategija — različita likvidnost</strong><span>DMF/PEPP dio je <strong>zaključan do 55. god.</strong> ETF dio je dostupan <strong>u bilo kojem trenutku</strong>. Ovo je ključna prednost kombinacije — imaš i sigurnost mirovine i fleksibilni kapital.</span></div></div>
+    <div class="liq-row"><span class="liq-icon">💡</span><div class="liq-text"><strong>Praktična preporuka</strong><span>Stavi u DMF/PEPP samo ono što si siguran da nećeš trebati prije 55. Ostatak u ETF — tu je tvoja likvidna rezerva i dugoročni rast.</span></div></div>
+  </div>
   <p class="disclaimer">
     ⚠️ *Realna vrijednost prilagođena inflacijom. 4% pravilo je uobičajena smjernica, ne garancija. ETF prinos ne uključuje porez na kapitalnu dobit (HR: 25% + prirez). Nije financijski savjet.
   </p>
