@@ -2176,10 +2176,6 @@ tr:hover td { background:var(--surface2); }
 </div>
 
 <script>
-var $ = id => document.getElementById(id);
-const fmt = n => new Intl.NumberFormat('hr-HR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n);
-const fmtX = (n,d=1) => n.toFixed(d)+'x';
-const fmtPct = n => (n>=0?'+':'')+n.toFixed(1)+'%';
 
 // NAV
 document.querySelectorAll('.nav-tab').forEach(tab => {
