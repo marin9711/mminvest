@@ -2893,17 +2893,8 @@ function submitFeedback() {
 }
 
 // ── AI CHAT ──
-const AI_SYSTEM = `Ti si MarsanAI, prijateljski financijski asistent unutar MarsanInvest web aplikacije za hrvatsko tržište.
-Pomažeš korisnicima razumjeti:
-- Hrvatski 3. mirovinski stup (DMF fondovi) i državni poticaj (15% do 99.54€/god za uplate ≥663.61€)
-- PEPP (Pan-European Personal Pension Product) - npr. Finax PEPP
-- ETF fondove (VWCE, IWDA, CSPX, QQQ i dr.) i platforme (IBKR, Trading 212, Finax)
-- Razliku između mirovinskih fondova i ETF-a
-- Kako koristiti MarsanInvest kalkulator
-- Osnove ulaganja prilagođene HR tržištu
-
-Uvijek naglasi da nisu financijski savjet i predloži konzultaciju s licenciranim savjetnikom za konkretne odluke.
-Odgovaraj kratko, jasno i na hrvatskom jeziku. Koristi emoji umjereno.`;
+// ⚠️ POSTAVI SVOJ WORKER URL OVDJE:
+const AI_WORKER_URL = 'https://empty-pine-8e64.marin-marsan.workers.dev';
 
 let aiHistory = [];
 let aiTyping = false;
@@ -2913,8 +2904,9 @@ function addAiMsg(role, text) {
   const isBot = role === 'bot';
   const div = document.createElement('div');
   div.className = 'ai-msg ' + role;
-  const nl2br = text.split('\n').join('<br>');
-  div.innerHTML = `<div class="ai-msg-avatar">${isBot ? '🤖' : '👤'}</div><div class="ai-msg-bubble">${nl2br}</div>`;
+  let html = text.split('\n').join('<br>');
+  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  div.innerHTML = `<div class="ai-msg-avatar">${isBot ? '🤖' : '👤'}</div><div class="ai-msg-bubble">${html}</div>`;
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
 }
@@ -2946,18 +2938,13 @@ async function sendAiMsg() {
   showTyping();
 
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    const resp = await fetch(AI_WORKER_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 600,
-        system: AI_SYSTEM,
-        messages: aiHistory.slice(-10)
-      })
+      body: JSON.stringify({ messages: aiHistory.slice(-10) })
     });
     const data = await resp.json();
-    const reply = data.content?.[0]?.text || 'Žao mi je, došlo je do greške. Pokušaj ponovo.';
+    const reply = data.content?.[0]?.text || data.error || 'Došlo je do greške. Pokušaj ponovo.';
     removeTyping();
     addAiMsg('bot', reply);
     aiHistory.push({ role: 'assistant', content: reply });
