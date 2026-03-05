@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalkulator Ulaganja</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0b0d12;
+  --surface: #13161f;
+  --surface2: #1a1e2a;
+  --surface3: #20253a;
+  --border: #242a3d;
+  --text: #e2e5f0;
+  --muted: #5a6180;
+  --muted2: #8890b0;
+  --dmf: #e8a44a;
+  --dmf-l: #f5c87a;
+  --pepp: #4a9fe8;
+  --pepp-l: #7abff5;
+  --etf: #4ae8a0;
+  --etf-l: #7af5c0;
+  --combo: #c77af5;
+  --combo-l: #dda5f7;
+  --red: #f56060;
+  --yellow: #f5d060;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+}
+
+/* NAV */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(11,13,18,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  overflow-x: auto;
+}
+.nav-brand {
+  font-family: 'Dancing Script', cursive;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+  margin-right: 2rem;
+  padding: 0.8rem 0;
+  flex-shrink: 0;
+  letter-spacing: 0.01em;
+  line-height: 1;
+}
+.nav-brand span { color: var(--etf); }
+.nav-tabs { display:flex; gap:0; }
+.nav-tab {
+  padding: 1rem 1.25rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--muted2);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+  user-select: none;
+}
+.nav-tab:hover { color: var(--text); }
+.nav-tab.active { color: var(--text); border-bottom-color: var(--etf); }
+
+/* PAGES */
+.page { display: none; padding: 2rem 1.5rem 4rem; max-width: 960px; margin: 0 auto; }
+.page.active { display: block; }
+
+/* PAGE HEADER */
+.page-header { margin-bottom: 2rem; }
+.page-header h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  line-height: 1.1;
+  margin-bottom: 0.4rem;
+}
+.page-header p { color: var(--muted2); font-size: 0.88rem; line-height: 1.5; }
+
+/* GRADIENT TEXTS */
+.grad-warm { background: linear-gradient(135deg, var(--dmf-l), var(--pepp-l)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.grad-cool { background: linear-gradient(135deg, var(--pepp-l), var(--etf-l)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.grad-combo { background: linear-gradient(135deg, var(--etf-l), var(--combo-l)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+
+/* CONTROLS PANEL */
+.controls {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 1.2rem;
+}
+.ctrl-group { display: flex; flex-direction: column; gap: 0.4rem; }
+.ctrl-group label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.ctrl-group .row { display:flex; align-items:center; gap: 0.5rem; }
+.ctrl-group input[type=range] {
+  flex:1; -webkit-appearance:none; height:3px;
+  border-radius:2px; background: var(--border); outline:none; cursor:pointer;
+}
+.ctrl-group input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance:none; width:14px; height:14px; border-radius:50%; cursor:pointer;
+}
+.ctrl-val {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.82rem; font-weight:500;
+  min-width: 62px; text-align:right;
+}
+.c-dmf input[type=range]::-webkit-slider-thumb { background:var(--dmf); }
+.c-dmf .ctrl-val { color: var(--dmf-l); }
+.c-pepp input[type=range]::-webkit-slider-thumb { background:var(--pepp); }
+.c-pepp .ctrl-val { color: var(--pepp-l); }
+.c-etf input[type=range]::-webkit-slider-thumb { background:var(--etf); }
+.c-etf .ctrl-val { color: var(--etf-l); }
+.c-neutral input[type=range]::-webkit-slider-thumb { background:var(--muted2); }
+.c-neutral .ctrl-val { color: var(--text); }
+.c-combo input[type=range]::-webkit-slider-thumb { background:var(--combo); }
+.c-combo .ctrl-val { color: var(--combo-l); }
+
+/* TOGGLES ROW */
+.toggles-row {
+  display: flex; flex-wrap: wrap; gap: 0.6rem;
+  margin-bottom: 1.5rem;
+}
+.toggle-btn {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--muted2);
+  font-size: 0.78rem; font-weight: 600;
+  cursor: pointer; transition: all 0.18s;
+  user-select: none;
+}
+.toggle-btn .dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.toggle-btn.active { border-color: currentColor; }
+.toggle-btn.t-dmf { color: var(--dmf-l); }
+.toggle-btn.t-dmf.active { background: rgba(232,164,74,0.12); }
+.toggle-btn.t-pepp { color: var(--pepp-l); }
+.toggle-btn.t-pepp.active { background: rgba(74,159,232,0.12); }
+.toggle-btn.t-etf { color: var(--etf-l); }
+.toggle-btn.t-etf.active { background: rgba(74,232,160,0.12); }
+.toggle-btn.t-combo { color: var(--combo-l); }
+.toggle-btn.t-combo.active { background: rgba(199,122,245,0.12); }
+
+/* SELECT */
+select {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 0.45rem 0.75rem;
+  font-size: 0.82rem;
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+  cursor: pointer;
+  width: 100%;
+}
+select:focus { border-color: var(--etf); }
+
+/* STAT CARDS GRID */
+.stat-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.25rem;
+  position: relative;
+  overflow: hidden;
+  transition: opacity 0.2s;
+}
+.stat-card.hidden { opacity: 0.3; }
+.stat-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+}
+.stat-card.sc-dmf::before { background: linear-gradient(90deg, var(--dmf), var(--dmf-l)); }
+.stat-card.sc-pepp::before { background: linear-gradient(90deg, var(--pepp), var(--pepp-l)); }
+.stat-card.sc-etf::before { background: linear-gradient(90deg, var(--etf), var(--etf-l)); }
+.stat-card.sc-combo::before { background: linear-gradient(90deg, var(--combo), var(--combo-l)); }
+.sc-label {
+  font-size: 0.65rem; font-weight:700; letter-spacing:0.1em;
+  text-transform: uppercase; margin-bottom: 0.2rem;
+}
+.sc-dmf .sc-label { color:var(--dmf); }
+.sc-pepp .sc-label { color:var(--pepp); }
+.sc-etf .sc-label { color:var(--etf); }
+.sc-combo .sc-label { color:var(--combo); }
+.sc-name {
+  font-family:'DM Serif Display', serif; font-size:1rem; margin-bottom:0.8rem; line-height:1.2;
+}
+.sc-row { margin-bottom:0.45rem; }
+.sc-row .sr-lbl { font-size:0.68rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; }
+.sc-row .sr-val {
+  font-family:'DM Mono', monospace; font-size:1.1rem; font-weight:500;
+}
+.sc-dmf .sr-val { color:var(--dmf-l); }
+.sc-pepp .sr-val { color:var(--pepp-l); }
+.sc-etf .sr-val { color:var(--etf-l); }
+.sc-combo .sr-val { color:var(--combo-l); }
+.sc-row .sr-sub { font-size:0.68rem; color:var(--muted); }
+
+/* WINNER BANNER */
+.winner-banner {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.2rem 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex; align-items: center; flex-wrap: wrap; gap: 1rem;
+}
+.wb-label { font-size:0.7rem; font-weight:700; letter-spacing:0.09em; text-transform:uppercase; color:var(--muted); }
+.wb-val { font-family:'DM Mono', monospace; font-size:1.8rem; font-weight:500; }
+.wb-desc { font-size:0.82rem; color:var(--muted2); line-height:1.5; }
+.wb-desc strong { color:var(--etf-l); }
+
+/* CHART */
+.chart-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.chart-card h3 {
+  font-family:'DM Serif Display', serif; font-size:1rem; margin-bottom:1.2rem;
+}
+.chart-card canvas { max-height: 320px; }
+
+/* TABLE */
+.table-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+.table-card h3 {
+  font-family:'DM Serif Display', serif; font-size:1rem;
+  padding:1rem 1.25rem; border-bottom:1px solid var(--border);
+}
+.tbl-wrap { overflow-x: auto; }
+table { width:100%; border-collapse:collapse; font-size:0.8rem; }
+th {
+  padding: 0.6rem 0.9rem; text-align:right; background:var(--surface2);
+  font-size:0.65rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;
+  color:var(--muted); border-bottom:1px solid var(--border);
+}
+th:first-child { text-align:center; }
+td {
+  padding: 0.55rem 0.9rem; text-align:right;
+  border-bottom:1px solid var(--border);
+  font-family:'DM Mono', monospace; font-size:0.78rem;
+}
+td:first-child { text-align:center; font-family:'DM Sans', sans-serif; font-weight:600; color:var(--muted); }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:var(--surface2); }
+
+/* PAGE 3 SPECIAL */
+.split-scenario {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.split-scenario h3 {
+  font-family:'DM Serif Display', serif; font-size:1.05rem; margin-bottom:1.2rem;
+}
+.allocation-row {
+  display:flex; align-items:center; gap:1rem; margin-bottom:1rem; flex-wrap:wrap;
+}
+.alloc-label { font-size:0.78rem; color:var(--muted2); min-width:120px; }
+.alloc-bar-wrap { flex:1; height:8px; background:var(--border); border-radius:4px; overflow:hidden; min-width:100px; }
+.alloc-bar { height:100%; border-radius:4px; transition: width 0.3s; }
+.alloc-pct { font-family:'DM Mono', monospace; font-size:0.82rem; min-width:40px; text-align:right; }
+
+/* PAYOUT GRID */
+.payout-grid {
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(220px,1fr)); gap:1rem; margin-bottom:1.5rem;
+}
+.payout-card {
+  background:var(--surface); border:1px solid var(--border); border-radius:14px;
+  padding:1.25rem;
+}
+.payout-card h4 {
+  font-size:0.7rem; font-weight:700; letter-spacing:0.09em; text-transform:uppercase;
+  margin-bottom:0.8rem;
+}
+.payout-big {
+  font-family:'DM Mono', monospace; font-size:1.5rem; font-weight:500; margin-bottom:0.25rem;
+}
+.payout-sub { font-size:0.72rem; color:var(--muted2); }
+.payout-row { display:flex; justify-content:space-between; align-items:center; padding:0.35rem 0; border-bottom:1px solid var(--border); }
+.payout-row:last-child { border-bottom:none; }
+.payout-row .pr-l { font-size:0.72rem; color:var(--muted2); }
+.payout-row .pr-v { font-family:'DM Mono', monospace; font-size:0.82rem; }
+
+/* DISCLAIMER */
+.disclaimer { font-size:0.72rem; color:var(--muted); line-height:1.7; text-align:center; padding:0 1rem 2rem; }
+
+/* RESPONSIVE */
+@media (max-width:640px) {
+  .stat-cards { grid-template-columns:1fr 1fr; }
+  .controls { grid-template-columns:1fr; }
+  .payout-grid { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">Marsan<span>Invest</span></div>
+  <div class="nav-tabs">
+    <div class="nav-tab active" data-page="p1">3. Stup vs PEPP</div>
+    <div class="nav-tab" data-page="p2">Pension vs ETF</div>
+    <div class="nav-tab" data-page="p3">Pension + ETF</div>
+  </div>
+</nav>
+
+<!-- ========== PAGE 1 ========== -->
+<div class="page active" id="p1">
+  <div class="page-header">
+    <h2><span class="grad-warm">3. Mirovinski Stup vs PEPP</span></h2>
+    <p>Usporedi domaći dobrovoljni mirovinski fond s državnim poticajem nasuprot pan-europske osobne mirovine.</p>
+  </div>
+
+  <div class="controls">
+    <div class="ctrl-group c-neutral">
+      <label>Godišnja uplata</label>
+      <div class="row"><input type="range" id="p1-uplata" min="200" max="2000" step="25" value="663"><span class="ctrl-val" id="p1-uplata-v">663 €</span></div>
+    </div>
+    <div class="ctrl-group c-neutral">
+      <label>Broj godina</label>
+      <div class="row"><input type="range" id="p1-god" min="5" max="40" step="1" value="30"><span class="ctrl-val" id="p1-god-v">30 god</span></div>
+    </div>
+    <div class="ctrl-group c-dmf">
+      <label>Prinos DMF (%/god)</label>
+      <div class="row"><input type="range" id="p1-dmfr" min="1" max="8" step="0.1" value="3.5"><span class="ctrl-val" id="p1-dmfr-v">3.5%</span></div>
+    </div>
+    <div class="ctrl-group c-pepp">
+      <label>Prinos PEPP (%/god)</label>
+      <div class="row"><input type="range" id="p1-peppr" min="3" max="14" step="0.1" value="8.0"><span class="ctrl-val" id="p1-peppr-v">8.0%</span></div>
+    </div>
+  </div>
+
+  <div class="stat-cards" id="p1-cards">
+    <div class="stat-card sc-dmf" id="p1-sc-dmf">
+      <div class="sc-label">3. Stup</div>
+      <div class="sc-name">DMF + Državni poticaj</div>
+      <div class="sc-row"><div class="sr-lbl">Ukupna vrijednost</div><div class="sr-val" id="p1-dmf-total">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Neto zarada</div><div class="sr-val" id="p1-dmf-earn" style="font-size:.95rem">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Ukupno uplaćeno</div><div class="sr-val" id="p1-dmf-in" style="font-size:.85rem">—</div><div class="sr-sub" id="p1-dmf-pot">poticaj: —</div></div>
+    </div>
+    <div class="stat-card sc-pepp" id="p1-sc-pepp">
+      <div class="sc-label">PEPP</div>
+      <div class="sc-name">Pan-europska mirovina</div>
+      <div class="sc-row"><div class="sr-lbl">Ukupna vrijednost</div><div class="sr-val" id="p1-pepp-total">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Neto zarada</div><div class="sr-val" id="p1-pepp-earn" style="font-size:.95rem">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Ukupno uplaćeno</div><div class="sr-val" id="p1-pepp-in" style="font-size:.85rem">—</div><div class="sr-sub">bez poticaja</div></div>
+    </div>
+  </div>
+
+  <div class="winner-banner">
+    <div><div class="wb-label">Razlika u korist pobjednika</div><div class="wb-val" id="p1-diff">—</div></div>
+    <div class="wb-desc" id="p1-desc">—</div>
+  </div>
+
+  <div class="chart-card">
+    <h3>Rast vrijednosti kroz godine</h3>
+    <canvas id="p1-chart"></canvas>
+  </div>
+
+  <div class="table-card">
+    <h3>Pregled po periodima</h3>
+    <div class="tbl-wrap">
+      <table><thead><tr>
+        <th>Godina</th>
+        <th style="color:var(--dmf-l)">3. Stup (DMF)</th>
+        <th style="color:var(--pepp-l)">PEPP</th>
+        <th style="color:var(--etf-l)">Razlika</th>
+      </tr></thead><tbody id="p1-tbody"></tbody></table>
+    </div>
+  </div>
+  <p class="disclaimer">⚠️ Ilustrativna projekcija. Prinos DMF ~3.5% i PEPP ~8% su povijesni prosjeci, ne garancija. Državni poticaj 15% do 663.61€/god (max 99.54€). Nije financijski savjet.</p>
+</div>
+
+<!-- ========== PAGE 2 ========== -->
+<div class="page" id="p2">
+  <div class="page-header">
+    <h2><span class="grad-cool">Pension vs ETF</span></h2>
+    <p>Usporedi mirovinske fondove s globalnim ETF-ovima. Uključi/isključi fondove i vidi koja strategija donosi više.</p>
+  </div>
+
+  <div class="controls">
+    <div class="ctrl-group c-neutral">
+      <label>Godišnja uplata (ukupno)</label>
+      <div class="row"><input type="range" id="p2-uplata" min="200" max="5000" step="50" value="1200"><span class="ctrl-val" id="p2-uplata-v">1200 €</span></div>
+    </div>
+    <div class="ctrl-group c-neutral">
+      <label>Broj godina</label>
+      <div class="row"><input type="range" id="p2-god" min="5" max="40" step="1" value="25"><span class="ctrl-val" id="p2-god-v">25 god</span></div>
+    </div>
+    <div class="ctrl-group c-dmf">
+      <label>Prinos DMF (%/god)</label>
+      <div class="row"><input type="range" id="p2-dmfr" min="1" max="8" step="0.1" value="3.5"><span class="ctrl-val" id="p2-dmfr-v">3.5%</span></div>
+    </div>
+    <div class="ctrl-group c-pepp">
+      <label>Prinos PEPP (%/god)</label>
+      <div class="row"><input type="range" id="p2-peppr" min="3" max="14" step="0.1" value="8.0"><span class="ctrl-val" id="p2-peppr-v">8.0%</span></div>
+    </div>
+    <div class="ctrl-group c-etf">
+      <label>Odaberi ETF</label>
+      <select id="p2-etf-select">
+        <option value="9.5">VWCE — Vanguard All World (9.5%)</option>
+        <option value="10.2">IWDA — iShares MSCI World (10.2%)</option>
+        <option value="11.0">CSPX — iShares S&P 500 (11.0%)</option>
+        <option value="8.8">VEUR — Vanguard Europe (8.8%)</option>
+        <option value="7.5">AGGH — Global Bonds (7.5%)</option>
+        <option value="12.5">QQQ — Nasdaq-100 (12.5%)</option>
+        <option value="9.0" id="custom-etf-opt">Vlastiti prinos...</option>
+      </select>
+    </div>
+    <div class="ctrl-group c-etf" id="p2-etf-custom-wrap" style="display:none">
+      <label>Vlastiti prinos ETF (%)</label>
+      <div class="row"><input type="range" id="p2-etfr-custom" min="3" max="18" step="0.1" value="9.0"><span class="ctrl-val" id="p2-etfr-custom-v">9.0%</span></div>
+    </div>
+  </div>
+
+  <div class="toggles-row" id="p2-toggles">
+    <div class="toggle-btn t-dmf active" data-key="dmf"><span class="dot" style="background:var(--dmf)"></span>3. Stup DMF</div>
+    <div class="toggle-btn t-pepp active" data-key="pepp"><span class="dot" style="background:var(--pepp)"></span>PEPP</div>
+    <div class="toggle-btn t-etf active" data-key="etf"><span class="dot" style="background:var(--etf)"></span>ETF</div>
+  </div>
+
+  <div class="stat-cards" id="p2-cards">
+    <div class="stat-card sc-dmf" id="p2-sc-dmf">
+      <div class="sc-label">3. Stup</div>
+      <div class="sc-name">DMF + Poticaj</div>
+      <div class="sc-row"><div class="sr-lbl">Krajnja vrijednost</div><div class="sr-val" id="p2-dmf-total">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Zarada</div><div class="sr-val" id="p2-dmf-earn" style="font-size:.9rem">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Multiplikator</div><div class="sr-val" id="p2-dmf-multi" style="font-size:.9rem">—</div></div>
+    </div>
+    <div class="stat-card sc-pepp" id="p2-sc-pepp">
+      <div class="sc-label">PEPP</div>
+      <div class="sc-name">Pan-europska mirovina</div>
+      <div class="sc-row"><div class="sr-lbl">Krajnja vrijednost</div><div class="sr-val" id="p2-pepp-total">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Zarada</div><div class="sr-val" id="p2-pepp-earn" style="font-size:.9rem">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Multiplikator</div><div class="sr-val" id="p2-pepp-multi" style="font-size:.9rem">—</div></div>
+    </div>
+    <div class="stat-card sc-etf" id="p2-sc-etf">
+      <div class="sc-label">ETF</div>
+      <div class="sc-name" id="p2-etf-name">VWCE</div>
+      <div class="sc-row"><div class="sr-lbl">Krajnja vrijednost</div><div class="sr-val" id="p2-etf-total">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Zarada</div><div class="sr-val" id="p2-etf-earn" style="font-size:.9rem">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Multiplikator</div><div class="sr-val" id="p2-etf-multi" style="font-size:.9rem">—</div></div>
+    </div>
+  </div>
+
+  <div class="winner-banner">
+    <div><div class="wb-label">Pobjednik</div><div class="wb-val" id="p2-winner">—</div></div>
+    <div class="wb-desc" id="p2-desc">—</div>
+  </div>
+
+  <div class="chart-card">
+    <h3>Rast vrijednosti — usporedba strategija</h3>
+    <canvas id="p2-chart"></canvas>
+  </div>
+
+  <div class="table-card">
+    <h3>Pregled po periodima</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr>
+        <th>Godina</th>
+        <th id="p2-th-dmf" style="color:var(--dmf-l)">3. Stup</th>
+        <th id="p2-th-pepp" style="color:var(--pepp-l)">PEPP</th>
+        <th id="p2-th-etf" style="color:var(--etf-l)">ETF</th>
+      </tr></thead>
+      <tbody id="p2-tbody"></tbody>
+    </table></div>
+  </div>
+  <p class="disclaimer">⚠️ ETF prinosi su historijski prosjeci zadnjih 10–15 godina i ne uključuju poreze na kapitalnu dobit (25% + prirez u HR). Investiranje u ETF nosi rizik gubitka. Nije financijski savjet.</p>
+</div>
+
+<!-- ========== PAGE 3 ========== -->
+<div class="page" id="p3">
+  <div class="page-header">
+    <h2><span class="grad-combo">Pension + ETF</span></h2>
+    <p>Simuliraj paralelnu strategiju — dio novca u sigurnost mirovinskog fonda, dio u rast ETF-a. Podesi alokaciju i vidi što dobivaš na kraju.</p>
+  </div>
+
+  <div class="controls">
+    <div class="ctrl-group c-neutral">
+      <label>Ukupna godišnja uplata</label>
+      <div class="row"><input type="range" id="p3-uplata" min="500" max="10000" step="100" value="2400"><span class="ctrl-val" id="p3-uplata-v">2400 €</span></div>
+    </div>
+    <div class="ctrl-group c-neutral">
+      <label>Broj godina ulaganja</label>
+      <div class="row"><input type="range" id="p3-god" min="5" max="40" step="1" value="25"><span class="ctrl-val" id="p3-god-v">25 god</span></div>
+    </div>
+    <div class="ctrl-group c-combo">
+      <label>Udio ETF-a (%)</label>
+      <div class="row"><input type="range" id="p3-etf-share" min="0" max="100" step="5" value="60"><span class="ctrl-val" id="p3-etf-share-v">60%</span></div>
+    </div>
+    <div class="ctrl-group c-neutral">
+      <label>Mirovinski fond</label>
+      <select id="p3-pension-type">
+        <option value="dmf">3. Stup DMF (s poticajem)</option>
+        <option value="pepp" selected>PEPP</option>
+      </select>
+    </div>
+    <div class="ctrl-group c-dmf" id="p3-dmf-rate-wrap">
+      <label>Prinos mirovinskog (%)</label>
+      <div class="row"><input type="range" id="p3-penr" min="1" max="12" step="0.1" value="8.0"><span class="ctrl-val" id="p3-penr-v">8.0%</span></div>
+    </div>
+    <div class="ctrl-group c-etf">
+      <label>ETF fond</label>
+      <select id="p3-etf-select">
+        <option value="9.5">VWCE (9.5%)</option>
+        <option value="10.2">IWDA (10.2%)</option>
+        <option value="11.0">CSPX — S&P 500 (11.0%)</option>
+        <option value="8.8">VEUR — Europa (8.8%)</option>
+        <option value="12.5">QQQ — Nasdaq (12.5%)</option>
+        <option value="custom">Vlastiti prinos...</option>
+      </select>
+    </div>
+    <div class="ctrl-group c-etf" id="p3-etf-custom-wrap" style="display:none">
+      <label>Vlastiti prinos ETF (%)</label>
+      <div class="row"><input type="range" id="p3-etfr-custom" min="3" max="18" step="0.1" value="9.0"><span class="ctrl-val" id="p3-etfr-custom-v">9.0%</span></div>
+    </div>
+    <div class="ctrl-group c-neutral">
+      <label>Inflacija (%/god)</label>
+      <div class="row"><input type="range" id="p3-inf" min="0" max="5" step="0.1" value="2.5"><span class="ctrl-val" id="p3-inf-v">2.5%</span></div>
+    </div>
+  </div>
+
+  <!-- Allocation viz -->
+  <div class="split-scenario">
+    <h3>Alokacija ulaganja</h3>
+    <div class="allocation-row">
+      <div class="alloc-label" id="p3-pension-label" style="color:var(--pepp-l)">PEPP</div>
+      <div class="alloc-bar-wrap"><div class="alloc-bar" id="p3-bar-pension" style="background:var(--pepp); width:40%"></div></div>
+      <div class="alloc-pct" id="p3-pension-pct" style="color:var(--pepp-l)">40%</div>
+      <div class="ctrl-val" id="p3-pension-eur" style="color:var(--pepp-l); min-width:70px">—</div>
+    </div>
+    <div class="allocation-row">
+      <div class="alloc-label" style="color:var(--etf-l)" id="p3-etf-alloc-label">ETF (VWCE)</div>
+      <div class="alloc-bar-wrap"><div class="alloc-bar" id="p3-bar-etf" style="background:var(--etf); width:60%"></div></div>
+      <div class="alloc-pct" id="p3-etf-pct" style="color:var(--etf-l)">60%</div>
+      <div class="ctrl-val" id="p3-etf-eur" style="color:var(--etf-l); min-width:70px">—</div>
+    </div>
+  </div>
+
+  <div class="stat-cards">
+    <div class="stat-card sc-pepp" id="p3-sc-pension">
+      <div class="sc-label" id="p3-sc-pen-lbl">PEPP</div>
+      <div class="sc-name">Mirovinski dio</div>
+      <div class="sc-row"><div class="sr-lbl">Vrijednost</div><div class="sr-val" id="p3-pen-total">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Zarada</div><div class="sr-val" id="p3-pen-earn" style="font-size:.9rem">—</div></div>
+    </div>
+    <div class="stat-card sc-etf">
+      <div class="sc-label">ETF</div>
+      <div class="sc-name" id="p3-etf-name">VWCE</div>
+      <div class="sc-row"><div class="sr-lbl">Vrijednost</div><div class="sr-val" id="p3-etf-total">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Zarada</div><div class="sr-val" id="p3-etf-earn" style="font-size:.9rem">—</div></div>
+    </div>
+    <div class="stat-card sc-combo">
+      <div class="sc-label">Kombinirano</div>
+      <div class="sc-name">Ukupni portfelj</div>
+      <div class="sc-row"><div class="sr-lbl">Ukupna vrijednost</div><div class="sr-val" id="p3-total">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Realna vrijednost*</div><div class="sr-val" id="p3-real" style="font-size:.9rem">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Ukupno uloženo</div><div class="sr-val" id="p3-in" style="font-size:.85rem">—</div></div>
+    </div>
+  </div>
+
+  <!-- Payout section -->
+  <div class="payout-grid">
+    <div class="payout-card">
+      <h4 style="color:var(--etf-l)">Isplata nakon perioda</h4>
+      <div class="payout-big" id="p3-payout-total">—</div>
+      <div class="payout-sub">Nominalna vrijednost portfelja</div>
+      <br>
+      <div class="payout-row"><div class="pr-l">Jednokratna isplata</div><div class="pr-v" id="p3-lump">—</div></div>
+      <div class="payout-row"><div class="pr-l">Mj. isplata (4% pravilo, 25g)</div><div class="pr-v" id="p3-monthly">—</div></div>
+      <div class="payout-row"><div class="pr-l">Realna mj. isplata*</div><div class="pr-v" id="p3-monthly-real">—</div></div>
+    </div>
+    <div class="payout-card">
+      <h4 style="color:var(--pepp-l)">Usporedba — samo mirovina</h4>
+      <div class="payout-big" id="p3-only-pen">—</div>
+      <div class="payout-sub">Da si sve stavio u mirovinski fond</div>
+      <br>
+      <div class="payout-row"><div class="pr-l">Mj. isplata (4%)</div><div class="pr-v" id="p3-pen-monthly">—</div></div>
+      <div class="payout-row"><div class="pr-l">Razlika vs kombinirano</div><div class="pr-v" id="p3-pen-diff">—</div></div>
+    </div>
+    <div class="payout-card">
+      <h4 style="color:var(--dmf-l)">Usporedba — samo ETF</h4>
+      <div class="payout-big" id="p3-only-etf">—</div>
+      <div class="payout-sub">Da si sve stavio u ETF</div>
+      <br>
+      <div class="payout-row"><div class="pr-l">Mj. isplata (4%)</div><div class="pr-v" id="p3-etf-monthly">—</div></div>
+      <div class="payout-row"><div class="pr-l">Razlika vs kombinirano</div><div class="pr-v" id="p3-etf-only-diff">—</div></div>
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <h3>Rast portfelja kroz godine</h3>
+    <canvas id="p3-chart"></canvas>
+  </div>
+
+  <div class="table-card">
+    <h3>Detaljna projekcija</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr>
+        <th>God.</th>
+        <th style="color:var(--pepp-l)" id="p3-th-pen">PEPP</th>
+        <th style="color:var(--etf-l)">ETF</th>
+        <th style="color:var(--combo-l)">Kombinirano</th>
+        <th style="color:var(--muted2)">Realna vr.*</th>
+      </tr></thead>
+      <tbody id="p3-tbody"></tbody>
+    </table></div>
+  </div>
+
+  <p class="disclaimer">
+    ⚠️ *Realna vrijednost prilagođena inflacijom. 4% pravilo je uobičajena smjernica, ne garancija. ETF prinos ne uključuje porez na kapitalnu dobit (HR: 25% + prirez). Nije financijski savjet.
+  </p>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const fmt = n => new Intl.NumberFormat('hr-HR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n);
+const fmtX = (n,d=1) => n.toFixed(d)+'x';
+const fmtPct = n => (n>=0?'+':'')+n.toFixed(1)+'%';
+
+// NAV
+document.querySelectorAll('.nav-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    tab.classList.add('active');
+    $(tab.dataset.page).classList.add('active');
+  });
+});
+
+// HELPERS
+function compoundFV(annual, rateP, years) {
+  let v=0;
+  for(let i=0;i<years;i++) v=(v+annual)*(1+rateP/100);
+  return v;
+}
+function compoundFVArr(annual, rateP, years) {
+  let v=0, arr=[];
+  for(let i=0;i<years;i++){ v=(v+annual)*(1+rateP/100); arr.push(Math.round(v)); }
+  return arr;
+}
+const POTICAJ = 99.54;
+
+// ============ PAGE 1 ============
+let chart1;
+function updateP1() {
+  const uplata = +$('p1-uplata').value;
+  const god = +$('p1-god').value;
+  const dmfR = +$('p1-dmfr').value;
+  const peppR = +$('p1-peppr').value;
+  $('p1-uplata-v').textContent = fmt(uplata);
+  $('p1-god-v').textContent = god+' god';
+  $('p1-dmfr-v').textContent = dmfR.toFixed(1)+'%';
+  $('p1-peppr-v').textContent = peppR.toFixed(1)+'%';
+
+  const dmfFinal = compoundFV(uplata+POTICAJ, dmfR, god);
+  const peppFinal = compoundFV(uplata, peppR, god);
+  const dmfIn = uplata*god;
+
+  $('p1-dmf-total').textContent = fmt(dmfFinal);
+  $('p1-dmf-earn').textContent = fmt(dmfFinal-dmfIn);
+  $('p1-dmf-in').textContent = fmt(dmfIn);
+  $('p1-dmf-pot').textContent = 'poticaj: '+fmt(POTICAJ*god);
+  $('p1-pepp-total').textContent = fmt(peppFinal);
+  $('p1-pepp-earn').textContent = fmt(peppFinal-dmfIn);
+  $('p1-pepp-in').textContent = fmt(dmfIn);
+
+  const diff = Math.abs(peppFinal-dmfFinal);
+  const winner = peppFinal>dmfFinal?'PEPP':'3. stup';
+  const winnerColor = peppFinal>dmfFinal?'var(--pepp-l)':'var(--dmf-l)';
+  $('p1-diff').textContent = fmt(diff);
+  $('p1-diff').style.color = winnerColor;
+  $('p1-desc').innerHTML = `<strong style="color:${winnerColor}">${winner}</strong> završava s više novca — ${((diff/Math.min(peppFinal,dmfFinal))*100).toFixed(1)}% razlika. Državni poticaj iznosi ukupno <strong>${fmt(POTICAJ*god)}</strong>.`;
+
+  const milestones = [5,10,15,20,25,30,35,40].filter(y=>y<=god);
+  if(!milestones.includes(god)) milestones.push(god);
+  $('p1-tbody').innerHTML = milestones.map(y=>{
+    const d=compoundFV(uplata+POTICAJ,dmfR,y);
+    const p=compoundFV(uplata,peppR,y);
+    const dif=p-d;
+    return `<tr><td>${y}. god</td><td style="color:var(--dmf-l)">${fmt(d)}</td><td style="color:var(--pepp-l)">${fmt(p)}</td><td style="color:${dif>0?'var(--etf-l)':'var(--dmf-l)'}">${dif>0?'+':''}${fmt(dif)}</td></tr>`;
+  }).join('');
+
+  const labels=[], dmfArr=[], peppArr=[];
+  for(let i=1;i<=god;i++){
+    labels.push(i);
+    dmfArr.push(Math.round(compoundFV(uplata+POTICAJ,dmfR,i)));
+    peppArr.push(Math.round(compoundFV(uplata,peppR,i)));
+  }
+  const ds = [
+    {label:'3. Stup (DMF)',data:dmfArr,borderColor:'#e8a44a',backgroundColor:'rgba(232,164,74,0.07)',fill:true,borderWidth:2.5,pointRadius:0,tension:0.4},
+    {label:'PEPP',data:peppArr,borderColor:'#4a9fe8',backgroundColor:'rgba(74,159,232,0.07)',fill:true,borderWidth:2.5,pointRadius:0,tension:0.4},
+  ];
+  if(!chart1){ chart1=makeChart('p1-chart',labels,ds); }
+  else { chart1.data.labels=labels; chart1.data.datasets.forEach((d,i)=>{ d.data=ds[i].data; }); chart1.update(); }
+}
+['p1-uplata','p1-god','p1-dmfr','p1-peppr'].forEach(id => $(id).addEventListener('input', updateP1));
+
+// ============ PAGE 2 ============
+let chart2;
+const p2vis = {dmf:true, pepp:true, etf:true};
+document.querySelectorAll('#p2-toggles .toggle-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const k=btn.dataset.key;
+    p2vis[k]=!p2vis[k];
+    btn.classList.toggle('active',p2vis[k]);
+    updateP2();
+  });
+});
+
+$('p2-etf-select').addEventListener('change', ()=>{
+  const isCustom = $('p2-etf-select').value==='9.0' && $('p2-etf-select').selectedIndex===8;
+  const sel = $('p2-etf-select');
+  $('p2-etf-custom-wrap').style.display = sel.options[sel.selectedIndex].text.includes('Vlastiti') ? 'flex' : 'none';
+  updateP2();
+});
+$('p2-etfr-custom').addEventListener('input',()=>{
+  $('p2-etfr-custom-v').textContent = $('p2-etfr-custom').value+'%';
+  updateP2();
+});
+
+function getP2EtfRate() {
+  const sel = $('p2-etf-select');
+  if(sel.options[sel.selectedIndex].text.includes('Vlastiti')) return +$('p2-etfr-custom').value;
+  return +sel.value;
+}
+function getP2EtfName() {
+  const sel = $('p2-etf-select');
+  return sel.options[sel.selectedIndex].text.split(' —')[0].split(' (')[0];
+}
+
+function updateP2() {
+  const uplata=+$('p2-uplata').value, god=+$('p2-god').value;
+  const dmfR=+$('p2-dmfr').value, peppR=+$('p2-peppr').value, etfR=getP2EtfRate();
+  $('p2-uplata-v').textContent=fmt(uplata);
+  $('p2-god-v').textContent=god+' god';
+  $('p2-dmfr-v').textContent=dmfR.toFixed(1)+'%';
+  $('p2-peppr-v').textContent=peppR.toFixed(1)+'%';
+
+  const dmfFinal=compoundFV(uplata+POTICAJ,dmfR,god);
+  const peppFinal=compoundFV(uplata,peppR,god);
+  const etfFinal=compoundFV(uplata,etfR,god);
+  const inp=uplata*god;
+  const etfName=getP2EtfName();
+  $('p2-etf-name').textContent=etfName;
+
+  $('p2-dmf-total').textContent=fmt(dmfFinal);
+  $('p2-dmf-earn').textContent=fmt(dmfFinal-inp);
+  $('p2-dmf-multi').textContent=fmtX(dmfFinal/inp);
+  $('p2-pepp-total').textContent=fmt(peppFinal);
+  $('p2-pepp-earn').textContent=fmt(peppFinal-inp);
+  $('p2-pepp-multi').textContent=fmtX(peppFinal/inp);
+  $('p2-etf-total').textContent=fmt(etfFinal);
+  $('p2-etf-earn').textContent=fmt(etfFinal-inp);
+  $('p2-etf-multi').textContent=fmtX(etfFinal/inp);
+
+  $('p2-sc-dmf').classList.toggle('hidden',!p2vis.dmf);
+  $('p2-sc-pepp').classList.toggle('hidden',!p2vis.pepp);
+  $('p2-sc-etf').classList.toggle('hidden',!p2vis.etf);
+
+  const vals={dmf:dmfFinal,pepp:peppFinal,etf:etfFinal};
+  const names={dmf:'3. Stup',pepp:'PEPP',etf:etfName};
+  const cols={dmf:'var(--dmf-l)',pepp:'var(--pepp-l)',etf:'var(--etf-l)'};
+  const visVals=Object.entries(vals).filter(([k])=>p2vis[k]);
+  if(visVals.length) {
+    const [wk,wv]=visVals.reduce((a,b)=>b[1]>a[1]?b:a);
+    const [lk,lv]=visVals.reduce((a,b)=>b[1]<a[1]?b:a);
+    $('p2-winner').textContent=names[wk];
+    $('p2-winner').style.color=cols[wk];
+    $('p2-desc').innerHTML=`<strong style="color:${cols[wk]}">${names[wk]}</strong> vodi za <strong>${fmt(wv-lv)}</strong> ispred <strong style="color:${cols[lk]}">${names[lk]}</strong>. To je ${((wv/lv-1)*100).toFixed(1)}% razlike.`;
+  }
+
+  const milestones=[5,10,15,20,25,30,35,40].filter(y=>y<=god);
+  if(!milestones.includes(god)) milestones.push(god);
+  $('p2-tbody').innerHTML=milestones.map(y=>{
+    const d=compoundFV(uplata+POTICAJ,dmfR,y);
+    const p=compoundFV(uplata,peppR,y);
+    const e=compoundFV(uplata,etfR,y);
+    return `<tr><td>${y}.</td>
+      <td style="color:var(--dmf-l);opacity:${p2vis.dmf?1:0.3}">${fmt(d)}</td>
+      <td style="color:var(--pepp-l);opacity:${p2vis.pepp?1:0.3}">${fmt(p)}</td>
+      <td style="color:var(--etf-l);opacity:${p2vis.etf?1:0.3}">${fmt(e)}</td></tr>`;
+  }).join('');
+
+  const labels=[];
+  const dmfArr=[],peppArr=[],etfArr=[];
+  for(let i=1;i<=god;i++){
+    labels.push(i);
+    dmfArr.push(Math.round(compoundFV(uplata+POTICAJ,dmfR,i)));
+    peppArr.push(Math.round(compoundFV(uplata,peppR,i)));
+    etfArr.push(Math.round(compoundFV(uplata,etfR,i)));
+  }
+  const ds=[
+    {label:'3. Stup',data:dmfArr,borderColor:'#e8a44a',backgroundColor:'rgba(232,164,74,0.06)',fill:true,borderWidth:p2vis.dmf?2.5:0,pointRadius:0,tension:0.4,hidden:!p2vis.dmf},
+    {label:'PEPP',data:peppArr,borderColor:'#4a9fe8',backgroundColor:'rgba(74,159,232,0.06)',fill:true,borderWidth:p2vis.pepp?2.5:0,pointRadius:0,tension:0.4,hidden:!p2vis.pepp},
+    {label:etfName,data:etfArr,borderColor:'#4ae8a0',backgroundColor:'rgba(74,232,160,0.06)',fill:true,borderWidth:p2vis.etf?2.5:0,pointRadius:0,tension:0.4,hidden:!p2vis.etf},
+  ];
+  if(!chart2){ chart2=makeChart('p2-chart',labels,ds); }
+  else {
+    chart2.data.labels=labels;
+    chart2.data.datasets.forEach((d,i)=>{ d.data=ds[i].data; d.label=ds[i].label; d.hidden=ds[i].hidden; d.borderWidth=ds[i].borderWidth; });
+    chart2.update();
+  }
+}
+['p2-uplata','p2-god','p2-dmfr','p2-peppr'].forEach(id=>$(id).addEventListener('input',updateP2));
+
+// ============ PAGE 3 ============
+let chart3;
+
+$('p3-etf-select').addEventListener('change',()=>{
+  const sel=$('p3-etf-select');
+  $('p3-etf-custom-wrap').style.display=sel.value==='custom'?'flex':'none';
+  updateP3();
+});
+$('p3-etfr-custom').addEventListener('input',()=>{ $('p3-etfr-custom-v').textContent=$('p3-etfr-custom').value+'%'; updateP3(); });
+$('p3-pension-type').addEventListener('change',updateP3);
+
+function getP3EtfRate(){ const sel=$('p3-etf-select'); return sel.value==='custom'?+$('p3-etfr-custom').value:+sel.value; }
+function getP3EtfName(){ const sel=$('p3-etf-select'); return sel.options[sel.selectedIndex].text.split(' (')[0]; }
+
+function updateP3() {
+  const uplata=+$('p3-uplata').value, god=+$('p3-god').value;
+  const etfShare=+$('p3-etf-share').value/100;
+  const penShare=1-etfShare;
+  const penType=$('p3-pension-type').value;
+  const penR=+$('p3-penr').value;
+  const etfR=getP3EtfRate();
+  const inf=+$('p3-inf').value;
+  const etfName=getP3EtfName();
+
+  $('p3-uplata-v').textContent=fmt(uplata);
+  $('p3-god-v').textContent=god+' god';
+  $('p3-etf-share-v').textContent=Math.round(etfShare*100)+'%';
+  $('p3-penr-v').textContent=penR.toFixed(1)+'%';
+  $('p3-inf-v').textContent=inf.toFixed(1)+'%';
+
+  const penUplata=uplata*penShare;
+  const etfUplata=uplata*etfShare;
+  const penBonus=penType==='dmf'?POTICAJ*penShare:0;
+
+  // Alloc bar
+  const penLabel=penType==='dmf'?'3. Stup DMF':'PEPP';
+  const penColor=penType==='dmf'?'var(--dmf-l)':'var(--pepp-l)';
+  const penBorderColor=penType==='dmf'?'var(--dmf)':'var(--pepp)';
+  $('p3-pension-label').textContent=penLabel;
+  $('p3-pension-label').style.color=penColor;
+  $('p3-bar-pension').style.width=(penShare*100)+'%';
+  $('p3-bar-pension').style.background=penBorderColor;
+  $('p3-pension-pct').textContent=Math.round(penShare*100)+'%';
+  $('p3-pension-pct').style.color=penColor;
+  $('p3-pension-eur').textContent=fmt(penUplata)+'/god';
+  $('p3-pension-eur').style.color=penColor;
+  $('p3-bar-etf').style.width=(etfShare*100)+'%';
+  $('p3-etf-pct').textContent=Math.round(etfShare*100)+'%';
+  $('p3-etf-eur').textContent=fmt(etfUplata)+'/god';
+  $('p3-etf-alloc-label').textContent='ETF ('+etfName+')';
+  $('p3-etf-name').textContent=etfName;
+  $('p3-sc-pen-lbl').textContent=penLabel;
+  $('p3-th-pen').textContent=penLabel;
+  $('p3-sc-pension').className='stat-card '+(penType==='dmf'?'sc-dmf':'sc-pepp');
+
+  const penFinal=compoundFV(penUplata+penBonus,penR,god);
+  const etfFinal=compoundFV(etfUplata,etfR,god);
+  const combined=penFinal+etfFinal;
+  const inp=uplata*god;
+  const realFactor=Math.pow(1+inf/100,god);
+  const realVal=combined/realFactor;
+
+  $('p3-pen-total').textContent=fmt(penFinal);
+  $('p3-pen-earn').textContent=fmt(penFinal-penUplata*god);
+  $('p3-etf-total').textContent=fmt(etfFinal);
+  $('p3-etf-earn').textContent=fmt(etfFinal-etfUplata*god);
+  $('p3-total').textContent=fmt(combined);
+  $('p3-real').textContent=fmt(realVal);
+  $('p3-in').textContent=fmt(inp);
+  $('p3-payout-total').textContent=fmt(combined);
+  $('p3-lump').textContent=fmt(combined);
+  const monthly=combined*0.04/12;
+  const monthlyReal=realVal*0.04/12;
+  $('p3-monthly').textContent=fmt(monthly)+'/mj';
+  $('p3-monthly-real').textContent=fmt(monthlyReal)+'/mj';
+
+  // Compare: all pension
+  const onlyPen=compoundFV(uplata+(penType==='dmf'?POTICAJ:0),penR,god);
+  const onlyEtf=compoundFV(uplata,etfR,god);
+  $('p3-only-pen').textContent=fmt(onlyPen);
+  $('p3-pen-monthly').textContent=fmt(onlyPen*0.04/12)+'/mj';
+  const penDiff=onlyPen-combined;
+  $('p3-pen-diff').textContent=(penDiff>0?'+':'')+fmt(penDiff);
+  $('p3-pen-diff').style.color=penDiff>0?'var(--etf-l)':'var(--red)';
+  $('p3-only-etf').textContent=fmt(onlyEtf);
+  $('p3-etf-monthly').textContent=fmt(onlyEtf*0.04/12)+'/mj';
+  const etfDiff=onlyEtf-combined;
+  $('p3-etf-only-diff').textContent=(etfDiff>0?'+':'')+fmt(etfDiff);
+  $('p3-etf-only-diff').style.color=etfDiff>0?'var(--etf-l)':'var(--red)';
+
+  // Chart + table
+  const milestones=[5,10,15,20,25,30,35,40].filter(y=>y<=god);
+  if(!milestones.includes(god)) milestones.push(god);
+  $('p3-tbody').innerHTML=milestones.map(y=>{
+    const pv=compoundFV(penUplata+penBonus,penR,y);
+    const ev=compoundFV(etfUplata,etfR,y);
+    const cv=pv+ev; const rf=Math.pow(1+inf/100,y);
+    return `<tr><td>${y}.</td>
+      <td style="color:${penColor}">${fmt(pv)}</td>
+      <td style="color:var(--etf-l)">${fmt(ev)}</td>
+      <td style="color:var(--combo-l)">${fmt(cv)}</td>
+      <td style="color:var(--muted2)">${fmt(cv/rf)}</td></tr>`;
+  }).join('');
+
+  const labels=[],penArr=[],etfArr2=[],comboArr=[],realArr=[];
+  for(let i=1;i<=god;i++){
+    labels.push(i);
+    const pv=compoundFV(penUplata+penBonus,penR,i);
+    const ev=compoundFV(etfUplata,etfR,i);
+    penArr.push(Math.round(pv));
+    etfArr2.push(Math.round(ev));
+    comboArr.push(Math.round(pv+ev));
+    realArr.push(Math.round((pv+ev)/Math.pow(1+inf/100,i)));
+  }
+  const penC=penType==='dmf'?'#e8a44a':'#4a9fe8';
+  const penBg=penType==='dmf'?'rgba(232,164,74,0.06)':'rgba(74,159,232,0.06)';
+  const ds=[
+    {label:penLabel,data:penArr,borderColor:penC,backgroundColor:penBg,fill:true,borderWidth:2,pointRadius:0,tension:0.4},
+    {label:'ETF ('+etfName+')',data:etfArr2,borderColor:'#4ae8a0',backgroundColor:'rgba(74,232,160,0.06)',fill:true,borderWidth:2,pointRadius:0,tension:0.4},
+    {label:'Kombinirano',data:comboArr,borderColor:'#c77af5',backgroundColor:'rgba(199,122,245,0.08)',fill:true,borderWidth:2.5,pointRadius:0,tension:0.4},
+    {label:'Realna vrijednost',data:realArr,borderColor:'#5a6180',backgroundColor:'transparent',fill:false,borderWidth:1.5,pointRadius:0,tension:0.4,borderDash:[5,4]},
+  ];
+  if(!chart3){ chart3=makeChart('p3-chart',labels,ds); }
+  else{
+    chart3.data.labels=labels;
+    chart3.data.datasets.forEach((d,i)=>{ d.data=ds[i].data; d.label=ds[i].label; d.borderColor=ds[i].borderColor; d.backgroundColor=ds[i].backgroundColor; if(ds[i].borderDash) d.borderDash=ds[i].borderDash; });
+    chart3.update();
+  }
+}
+['p3-uplata','p3-god','p3-etf-share','p3-penr','p3-inf'].forEach(id=>$(id).addEventListener('input',updateP3));
+
+// ============ CHART FACTORY ============
+function makeChart(canvasId, labels, datasets) {
+  return new Chart($(canvasId), {
+    type:'line',
+    data:{ labels, datasets },
+    options:{
+      responsive:true,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{ labels:{ color:'#5a6180', font:{ family:'DM Sans', size:11 }, padding:16, boxWidth:12 } },
+        tooltip:{
+          backgroundColor:'#1a1e2a', borderColor:'#242a3d', borderWidth:1,
+          titleColor:'#e2e5f0', bodyColor:'#8890b0', padding:12,
+          callbacks:{ label: ctx=>' '+ctx.dataset.label+': '+fmt(ctx.raw) }
+        }
+      },
+      scales:{
+        x:{ ticks:{color:'#5a6180',font:{family:'DM Mono',size:10},maxTicksLimit:10}, grid:{color:'#1a1e2a'}, title:{display:true,text:'Godina',color:'#5a6180',font:{size:11}} },
+        y:{ ticks:{ color:'#5a6180', font:{family:'DM Mono',size:10}, callback: v=>v>=1000000?(v/1000000).toFixed(1)+'M €':v>=1000?(v/1000).toFixed(0)+'k €':v+'€' }, grid:{color:'#1a1e2a'} }
+      }
+    }
+  });
+}
+
+// ============ INIT ============
+updateP1(); updateP2(); updateP3();
+</script>
+</body>
+</html>
