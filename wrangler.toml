@@ -1,0 +1,8 @@
+name = "empty-pine-8e64"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+account_id = "3e7eaa415aad36e91ce03732b88c3992"
+
+[[kv_namespaces]]
+binding = "AI_CONFIG"
+id = "9948ef6dccd047b59c91c3440f36abdd"
