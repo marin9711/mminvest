@@ -6,8 +6,8 @@
 <title>Kalkulator Ulaganja</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDMyIDMyIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0ibGluZSIgeDE9IjAlIiB5MT0iMTAwJSIgeDI9IjEwMCUiIHkyPSIwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMxYTdmZDQiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMTZjNDdmIi8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8IS0tIFB1cmUgd2hpdGUgYmFja2dyb3VuZCAtLT4KICA8cmVjdCB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHJ4PSI3IiBmaWxsPSIjZmZmZmZmIi8+CiAgPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZTBlOGYwIiBzdHJva2Utd2lkdGg9IjEiLz4KICA8IS0tIENoYXJ0IGJhcnMgLS0+CiAgPHJlY3QgeD0iNSIgIHk9IjIxIiB3aWR0aD0iNCIgaGVpZ2h0PSI2IiAgZmlsbD0iIzFhN2ZkNCIgb3BhY2l0eT0iMC4yNSIgcng9IjEiLz4KICA8cmVjdCB4PSIxMCIgeT0iMTciIHdpZHRoPSI0IiBoZWlnaHQ9IjEwIiBmaWxsPSIjMWE3ZmQ0IiBvcGFjaXR5PSIwLjMiICByeD0iMSIvPgogIDxyZWN0IHg9IjE1IiB5PSIxMyIgd2lkdGg9IjQiIGhlaWdodD0iMTQiIGZpbGw9IiMxNmM0N2YiIG9wYWNpdHk9IjAuMzUiIHJ4PSIxIi8+CiAgPHJlY3QgeD0iMjAiIHk9IjkiICB3aWR0aD0iNCIgaGVpZ2h0PSIxOCIgZmlsbD0iIzE2YzQ3ZiIgb3BhY2l0eT0iMC40NSIgcng9IjEiLz4KICA8IS0tIFRyZW5kIGxpbmUgLS0+CiAgPHBvbHlsaW5lIHBvaW50cz0iNywyMiAxMiwxNyAxNywxMyAyNCw4IiBzdHJva2U9InVybCgjbGluZSkiIHN0cm9rZS13aWR0aD0iMi4yIiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KICA8IS0tIEFycm93IC0tPgogIDxwb2x5bGluZSBwb2ludHM9IjIwLDcgMjUsNyAyNSwxMiIgc3Ryb2tlPSJ1cmwoI2xpbmUpIiBzdHJva2Utd2lkdGg9IjIuMiIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CiAgPGNpcmNsZSBjeD0iMjUiIGN5PSI3IiByPSIyIiBmaWxsPSIjMTZjNDdmIi8+Cjwvc3ZnPg==">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js" onerror="console.warn('Hammer.js not loaded')"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js" onerror="console.warn('Zoom plugin not loaded')"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -2105,7 +2105,7 @@ function makeChart(canvasId, labels, datasets) {
           titleColor:'#e2e5f0', bodyColor:'#8890b0', padding:12,
           callbacks:{ label: ctx=>' '+ctx.dataset.label+': '+fmt(ctx.raw) }
         },
-        zoom:{
+        zoom: (typeof ChartZoom !== 'undefined' || (Chart.registry && Chart.registry.plugins && Chart.registry.plugins.get && Chart.registry.plugins.get('zoom'))) ? {
           pan:{ enabled:true, mode:'xy' },
           zoom:{
             wheel:{ enabled:true },
@@ -2116,7 +2116,7 @@ function makeChart(canvasId, labels, datasets) {
               if(wrap){ const btn=wrap.querySelector('.zoom-reset-btn'); if(btn) btn.classList.add('visible'); }
             }
           }
-        }
+        } : {}
       },
       scales:{
         x:{ ticks:{color:'#5a6180',font:{family:'DM Mono',size:10},maxTicksLimit:10}, grid:{color:'#1a1e2a'}, title:{display:true,text:'Godina',color:'#5a6180',font:{size:11}} },
@@ -2729,20 +2729,36 @@ function initApp() {
     STORE_KEYS.forEach(k => {
       const id = k.replace('miv_', '');
       const el = $(id);
-      if (el && el.tagName === 'INPUT') {
-        el.value = localStorage.getItem(k);
-        // sync slider if paired
-        const pair = SLIDER_PAIRS.find(p => p[1] === id);
-        if (pair) { const sl = $(pair[0]); if (sl) sl.value = el.value; }
+      if (el && el.tagName === 'INPUT' && el.type === 'number') {
+        const saved = localStorage.getItem(k);
+        const num = parseFloat(saved);
+        if (!isNaN(num)) {
+          el.value = saved;
+          const pair = SLIDER_PAIRS.find(p => p[1] === id);
+          if (pair) { const sl = $(pair[0]); if (sl) sl.value = num; }
+        }
       }
     });
   }
-  updateP0a(); updateP0b(); updateP1(); updateP2(); updateP3();
+  [updateP0a, updateP0b, updateP1, updateP2, updateP3].forEach(fn => {
+    try { fn(); } catch(e) { console.error('Update error:', fn.name, e); }
+  });
+}
+function safeInitApp() {
+  try { initApp(); } catch(e) { 
+    console.error('InitApp error:', e);
+    // Try individual updates as fallback
+    try { updateP0a(); } catch(e2) {}
+    try { updateP0b(); } catch(e2) {}
+    try { updateP1(); } catch(e2) {}
+    try { updateP2(); } catch(e2) {}
+    try { updateP3(); } catch(e2) {}
+  }
 }
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initApp);
+  document.addEventListener('DOMContentLoaded', safeInitApp);
 } else {
-  initApp();
+  safeInitApp();
 }
 
 // Save to localStorage on change
