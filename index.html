@@ -9,6 +9,7 @@
 <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js" onerror="console.warn('Hammer.js not loaded')"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js" onerror="console.warn('Zoom plugin not loaded')"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 <style>
 :root {
   --bg: #181d28;
@@ -1930,7 +1931,7 @@ tr:hover td { background:var(--surface2); }
   </div>
 </div>
 
-<script>
+<script type="text/x-legacy-inline">
 var $ = id => document.getElementById(id);
 const fmt = n => new Intl.NumberFormat('hr-HR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n);
 const fmtX = (n,d=1) => n.toFixed(d)+'x';
@@ -3158,10 +3159,10 @@ SLIDER_PAIRS.forEach(([,numId]) => {
     <button class="fb-submit-btn" onclick="toggleAiChat()" style="margin-top:0;">Otvori AI chat 🤖</button>
   </div>
 
-  <p class="disclaimer">⚠️ AI asistent pruža općenite informacije u edukativne svrhe. Nije zamjena za profesionalni financijski savjet.</p>
+<p class="disclaimer">⚠️ AI asistent pruža općenite informacije u edukativne svrhe. Nije zamjena za profesionalni financijski savjet.</p>
 </div>
 
-<script>
+<script type="text/x-legacy-inline">
 // ============ FEEDBACK & AI CHAT ============
 
 // Star rating
@@ -3592,5 +3593,6 @@ function adminLogout() {
 </div>
 
 </footer>
+<script src="script.js"></script>
 </body>
 </html>

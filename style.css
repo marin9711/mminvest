@@ -1,0 +1,10 @@
+:root {
+  /* Pojačana vidljivost "muted" teksta na tamnijoj pozadini */
+  --muted2: #b9c3e6;
+}
+
+/* Dodatno podešavanje za disclaimer tekst da bude čitljiviji */
+.disclaimer {
+  color: #e5e9ff;
+}
+
