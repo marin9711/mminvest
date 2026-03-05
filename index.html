@@ -1125,9 +1125,10 @@ tr:hover td { background:var(--surface2); }
   <div class="nav-tabs">
     <div class="nav-tab active" data-page="home">Početna</div>
     <div class="nav-tab" data-page="p0a">Hrvatski DMF</div>
+    <div class="nav-tab" data-page="pepp">PEPP</div>
     <div class="nav-tab" data-page="p0b">ETF Platforme</div>
-    <div class="nav-tab" data-page="p1">3. Stup vs PEPP</div>
-    <div class="nav-tab" data-page="p2">Pension vs ETF</div>
+    <div class="nav-tab" data-page="p1">HR DMF (3.stup) vs PEPP</div>
+    <div class="nav-tab" data-page="p2">DMF/PEPP vs ETF</div>
     <div class="nav-tab" data-page="p3">Pension + ETF</div>
     <div class="nav-tab" data-page="kviz">🧭 Koji put?</div>
     <div class="nav-tab" data-page="edukacija">📚 Edukacija</div>
@@ -1171,11 +1172,11 @@ tr:hover td { background:var(--surface2); }
       <div class="fc-desc">Usporedi svih 8 dostupnih dobrovoljnih mirovinskih fondova u RH — prinosi, naknade, rizik. Kalkulator s državnim poticajem (15% godišnje).</div>
       <span class="fc-tag" style="color:var(--dmf-l)">Mjesečno & godišnje</span>
     </div>
-    <div class="feature-card fc-pepp" onclick="document.querySelector('[data-page=p1]').click()">
+    <div class="feature-card fc-pepp" onclick="document.querySelector('[data-page=pepp]').click()">
       <span class="fc-icon">🌍</span>
-      <div class="fc-title">3. Stup vs PEPP</div>
-      <div class="fc-desc">Direktna usporedba domaćeg DMF-a s Finaxovim PEPP-om. Je li europska mirovina bolja od državnog poticaja? Odgovor je ovdje.</div>
-      <span class="fc-tag" style="color:var(--pepp-l)">Projekcija 5–60 god</span>
+      <div class="fc-title">PEPP — Pan-europska mirovina</div>
+      <div class="fc-desc">Sve o PEPP-u — što je, kako funkcionira, tko ga nudi u HR, naknade i za koga je prikladan. Idealno za EU mobilne radnike.</div>
+      <span class="fc-tag" style="color:var(--pepp-l)">EU prenosivo · Finax</span>
     </div>
     <div class="feature-card fc-etf" onclick="document.querySelector('[data-page=p0b]').click()">
       <span class="fc-icon">📊</span>
@@ -1183,9 +1184,15 @@ tr:hover td { background:var(--surface2); }
       <div class="fc-desc">VWCE, IWDA, S&P 500, Nasdaq i više — usporedi ETF fondove po riziku i prinosu. IBKR vs Trading 212 vs Finax — sve naknade uračunate.</div>
       <span class="fc-tag" style="color:var(--etf-l)">11 ETF fondova · 4 platforme</span>
     </div>
-    <div class="feature-card fc-combo" onclick="document.querySelector('[data-page=p2]').click()">
+    <div class="feature-card fc-pepp" onclick="document.querySelector('[data-page=p1]').click()">
       <span class="fc-icon">⚖️</span>
-      <div class="fc-title">Pension vs ETF</div>
+      <div class="fc-title">HR DMF (3.stup) vs PEPP</div>
+      <div class="fc-desc">Direktna usporedba domaćeg DMF-a s Finaxovim PEPP-om. Je li europska mirovina bolja od državnog poticaja? Odgovor je ovdje.</div>
+      <span class="fc-tag" style="color:var(--dmf-l)">Projekcija 5–60 god</span>
+    </div>
+    <div class="feature-card fc-combo" onclick="document.querySelector('[data-page=p2]').click()">
+      <span class="fc-icon">📈</span>
+      <div class="fc-title">DMF/PEPP vs ETF</div>
       <div class="fc-desc">Što donosi više novca dugoročno — mirovinski fond ili ETF? Usporedi sve tri opcije paralelno s uključivanjem/isključivanjem pojedinih linija.</div>
       <span class="fc-tag" style="color:var(--combo-l)">Interaktivni grafovi</span>
     </div>
@@ -1454,6 +1461,95 @@ tr:hover td { background:var(--surface2); }
 </div>
 
 <!-- ========== PAGE 0B: ETF PLATFORME ========== -->
+<div class="page" id="pepp">
+  <div class="page-header">
+    <h2><span class="grad-cool">🌍 PEPP — Pan-europska osobna mirovina</span></h2>
+    <p>Pan-European Personal Pension Product (PEPP) je EU-reguliran mirovinski proizvod dostupan građanima svih država članica.</p>
+  </div>
+
+  <div class="stat-cards">
+    <div class="stat-card sc-pepp">
+      <div class="sc-label">Naknada</div>
+      <div class="sc-name">Max 1% godišnje</div>
+      <div class="sc-row"><div class="sr-lbl">Finax (jedini HR ponuđač)</div><div class="sr-val">1.0% / god</div></div>
+    </div>
+    <div class="stat-card sc-pepp">
+      <div class="sc-label">Portfelj</div>
+      <div class="sc-name">100% globalni ETF-ovi</div>
+      <div class="sc-row"><div class="sr-lbl">Strategija</div><div class="sr-val">Pasivni indeksni fond</div></div>
+    </div>
+    <div class="stat-card sc-pepp">
+      <div class="sc-label">Portabilnost</div>
+      <div class="sc-name">EU prenosivo</div>
+      <div class="sc-row"><div class="sr-lbl">Selidba unutar EU</div><div class="sr-val">✅ Zadržavaš račun</div></div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <h3>Ključne karakteristike PEPP-a</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Karakteristika</th><th>Detalji</th></tr></thead>
+        <tbody>
+          <tr><td>Puni naziv</td><td>Pan-European Personal Pension Product</td></tr>
+          <tr><td>Regulativa</td><td>EU Uredba 2019/1238 — vrijedi u svim EU državama</td></tr>
+          <tr><td>Ponuđač u HR</td><td>Finax (jedini trenutno registrirani u HR)</td></tr>
+          <tr><td>Naknada upravljanja</td><td>Max 1.0% godišnje (regulatorno ograničenje EU)</td></tr>
+          <tr><td>Minimalni ulog</td><td>20€/mj ili jednokratno</td></tr>
+          <tr><td>Investicijska strategija</td><td>Globalni ETF-ovi (MSCI World / All World)</td></tr>
+          <tr><td>Državni poticaj (HR)</td><td>❌ Nije dostupan (za razliku od DMF-a)</td></tr>
+          <tr><td>Porezna olakšica (HR)</td><td>❌ Trenutno nije izjednačena s DMF-om</td></tr>
+          <tr><td>EU portabilnost</td><td>✅ Selišeš se — zadržavaš isti račun</td></tr>
+          <tr><td>Isplata</td><td>Od mirovinske dobi ili prijevremeno uz uvjete</td></tr>
+          <tr><td>Nasljeđivanje</td><td>✅ Prenosivo nasljednicima</td></tr>
+          <tr><td>Podkonti</td><td>Novi podkonto u svakoj novoj EU državi stanovanja</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <h3>PEPP vs DMF — brza usporedba</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Kriterij</th><th style="color:var(--pepp-l)">PEPP (Finax)</th><th style="color:var(--dmf-l)">DMF (3. stup)</th></tr></thead>
+        <tbody>
+          <tr><td>Naknada</td><td>~1.0%/god</td><td>0.5–1.5%/god</td></tr>
+          <tr><td>Državni poticaj</td><td>❌</td><td>✅ 15%, max 99.54€/god</td></tr>
+          <tr><td>Prinos (povijesni)</td><td>~7–9% (globalni ETF)</td><td>~3–5% (konzervativni)</td></tr>
+          <tr><td>EU prenosivost</td><td>✅</td><td>❌</td></tr>
+          <tr><td>Investicijska fleksibilnost</td><td>Srednja (indeksni)</td><td>Niska (konzervativni fond)</td></tr>
+          <tr><td>Porezna olakšica HR</td><td>❌</td><td>✅</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <h3>Za koga je PEPP idealan?</h3>
+    <div style="display:grid;gap:0.8rem;margin-top:0.5rem">
+      <div style="background:var(--surface2);border-radius:10px;padding:1rem;border-left:3px solid var(--pepp)">
+        <strong>🌍 EU mobilni radnici</strong>
+        <p style="margin:0.3rem 0 0;font-size:0.88rem;color:var(--muted)">Planiraš raditi u više EU država? PEPP ide s tobom — bez gubitka ulaganja pri selidbi.</p>
+      </div>
+      <div style="background:var(--surface2);border-radius:10px;padding:1rem;border-left:3px solid var(--pepp)">
+        <strong>📈 Investitori s dugim horizontom</strong>
+        <p style="margin:0.3rem 0 0;font-size:0.88rem;color:var(--muted)">10+ godina do mirovine? Viši potencijalni prinos ETF-ova može nadoknaditi izostanak državnog poticaja.</p>
+      </div>
+      <div style="background:var(--surface2);border-radius:10px;padding:1rem;border-left:3px solid var(--pepp)">
+        <strong>💼 Samozaposleni i freelanceri</strong>
+        <p style="margin:0.3rem 0 0;font-size:0.88rem;color:var(--muted)">Nemaš poslodavca koji bi uplaćivao u DMF? PEPP nudi alternativni put za mirovinski štednju.</p>
+      </div>
+      <div style="background:var(--surface2);border-radius:10px;padding:1rem;border-left:3px solid var(--surface3,#333)">
+        <strong style="color:var(--muted)">⚠️ Nije optimalno za…</strong>
+        <p style="margin:0.3rem 0 0;font-size:0.88rem;color:var(--muted)">Kratkoročnu štednju (&lt;5 god), ili ako je DMF s državnim poticajem i poslodavčevom uplatom dostupan i iskoristiv.</p>
+      </div>
+    </div>
+  </div>
+
+  <p class="disclaimer">⚠️ Informativni pregled. Finax je jedini PEPP ponuđač trenutno registriran u HR. Provjeri najnovije uvjete na finax.eu. Nije financijski savjet.</p>
+</div>
+
 <div class="page" id="p0b">
   <div class="page-header">
     <h2><span class="grad-cool">ETF Ulaganje — Platforme & Projekcija</span></h2>
@@ -1665,7 +1761,7 @@ tr:hover td { background:var(--surface2); }
 <!-- ========== PAGE 1 ========== -->
 <div class="page" id="p1">
   <div class="page-header">
-    <h2><span class="grad-warm">3. Mirovinski Stup vs PEPP</span></h2>
+    <h2><span class="grad-warm">HR DMF (3.stup) vs PEPP</span></h2>
     <p>Usporedi domaći dobrovoljni mirovinski fond s državnim poticajem nasuprot pan-europske osobne mirovine.</p>
   </div>
 
@@ -1752,7 +1848,7 @@ tr:hover td { background:var(--surface2); }
 <!-- ========== PAGE 2 ========== -->
 <div class="page" id="p2">
   <div class="page-header">
-    <h2><span class="grad-cool">Pension vs ETF</span></h2>
+    <h2><span class="grad-cool">DMF/PEPP vs ETF</span></h2>
     <p>Usporedi mirovinske fondove s globalnim ETF-ovima. Uključi/isključi fondove i vidi koja strategija donosi više.</p>
   </div>
 
@@ -3887,7 +3983,7 @@ function adminLogout() {
       <span onclick="document.querySelector('[data-page=p0a]').click()">Hrvatski DMF</span>
       <span onclick="document.querySelector('[data-page=p0b]').click()">ETF Platforme</span>
       <span onclick="document.querySelector('[data-page=p1]').click()">3. Stup vs PEPP</span>
-      <span onclick="document.querySelector('[data-page=p2]').click()">Pension vs ETF</span>
+      <span onclick="document.querySelector('[data-page=p2]').click()">DMF/PEPP vs ETF</span>
       <span onclick="document.querySelector('[data-page=p3]').click()">Pension + ETF</span>
     </div>
     <div class="footer-col">
