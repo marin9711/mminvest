@@ -801,9 +801,9 @@ tr:hover td { background:var(--surface2); }
 }
 .quiz-result-emoji { font-size:3rem; margin-bottom:0.5rem; }
 .quiz-result-title {
-  font-family:'DM Serif Display',serif; font-size:1.5rem; margin-bottom:0.4rem;
+  font-family:'DM Serif Display',serif; font-size:1.5rem; margin-bottom:0.4rem; color:var(--bg);
 }
-.quiz-result-subtitle { font-size:0.85rem; color:var(--muted2); line-height:1.5; max-width:480px; margin:0 auto; }
+.quiz-result-subtitle { font-size:0.85rem; color:#4a5580; line-height:1.5; max-width:480px; margin:0 auto; }
 
 .quiz-result-cards { display:grid; gap:0.85rem; margin:1.25rem 0; }
 @media(min-width:640px){ .quiz-result-cards { grid-template-columns:1fr 1fr; } }
@@ -2175,7 +2175,7 @@ tr:hover td { background:var(--surface2); }
   </div>
 </div>
 
-<script type="text/x-legacy-inline">
+<script>
 var $ = id => document.getElementById(id);
 const fmt = n => new Intl.NumberFormat('hr-HR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n);
 const fmtX = (n,d=1) => n.toFixed(d)+'x';
@@ -3606,7 +3606,7 @@ SLIDER_PAIRS.forEach(([,numId]) => {
 <p class="disclaimer">⚠️ AI asistent pruža općenite informacije u edukativne svrhe. Nije zamjena za profesionalni financijski savjet.</p>
 </div>
 
-<script type="text/x-legacy-inline">
+<script>
 // ============ FEEDBACK & AI CHAT ============
 
 // Star rating

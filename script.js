@@ -1280,32 +1280,42 @@ function quizShowResult() {
   const exp = quizAnswers[4];
 
   // Scoring logic
+  // Duljina horizonta: mladi = 20+ god, srednji = 10-20, senior = <10
+  const longHorizon = age === 'young';
+  const midHorizon  = age === 'mid';
+
   let score = { dmf: 0, pepp: 0, etf: 0, combo: 0 };
 
-  // Age
-  if (age === 'young') { score.etf += 3; score.combo += 2; }
-  if (age === 'mid')   { score.combo += 3; score.pepp += 2; score.dmf += 1; }
-  if (age === 'senior'){ score.dmf += 3; score.pepp += 2; }
+  // Age / horizont
+  // PEPP > DMF na dug horizont jer nema cap-a na prinos
+  if (age === 'young') { score.etf += 3; score.pepp += 3; score.combo += 2; }
+  if (age === 'mid')   { score.combo += 3; score.pepp += 2; score.dmf += 2; }
+  if (age === 'senior'){ score.dmf += 4; score.pepp += 1; }
 
   // Amount
-  if (amount === 'low')  { score.etf += 3; }
-  if (amount === 'mid')  { score.combo += 3; score.dmf += 2; score.pepp += 1; }
-  if (amount === 'high') { score.combo += 3; score.etf += 2; }
+  if (amount === 'low')  { score.etf += 3; score.pepp += 1; }
+  if (amount === 'mid')  { score.combo += 3; score.dmf += 2; score.pepp += 2; }
+  if (amount === 'high') { score.combo += 3; score.etf += 2; score.pepp += 1; }
 
   // Risk
   if (risk === 'low')  { score.dmf += 3; score.pepp += 1; }
   if (risk === 'mid')  { score.combo += 2; score.pepp += 2; score.dmf += 1; }
-  if (risk === 'high') { score.etf += 3; score.combo += 2; }
+  if (risk === 'high') { score.etf += 3; score.combo += 2; score.pepp += 1; }
 
   // Goal
   if (goal === 'pension') { score.dmf += 3; score.pepp += 2; }
-  if (goal === 'growth')  { score.etf += 3; }
-  if (goal === 'both')    { score.combo += 4; score.dmf += 1; }
+  if (goal === 'growth')  { score.etf += 3; score.pepp += 1; }
+  if (goal === 'both')    { score.combo += 4; score.pepp += 1; }
 
   // Experience
   if (exp === 'none')   { score.dmf += 2; score.pepp += 1; }
-  if (exp === 'some')   { score.combo += 2; score.etf += 1; }
+  if (exp === 'some')   { score.combo += 2; score.etf += 1; score.pepp += 1; }
   if (exp === 'expert') { score.etf += 2; score.combo += 2; }
+
+  // Dugoročni bonus za PEPP: mlad + rast/oba cilja = PEPP dobiva ekstra bod
+  // (reflektira matematičku prednost PEPP-a na 10+ god zbog višeg prinosa)
+  if (longHorizon && (goal === 'growth' || goal === 'both')) { score.pepp += 2; }
+  if (midHorizon  && (goal === 'growth' || goal === 'both')) { score.pepp += 1; }
 
   const sorted = Object.entries(score).sort((a,b) => b[1]-a[1]);
   const top = sorted[0][0];
