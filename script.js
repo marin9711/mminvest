@@ -914,11 +914,12 @@ document.querySelectorAll('.star-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     selectedRating = +btn.dataset.val;
     $('rating-label').textContent = '✅ Ocjena ' + selectedRating + '/5 zabilježena — ' + ratingLabels[selectedRating];
+    const prevRating = parseInt(localStorage.getItem('miv_rating')) || 0;
     try { localStorage.setItem('miv_rating', selectedRating); } catch(e){}
     fetch(AI_WORKER_URL + '/rating', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ rating: selectedRating })
+      body: JSON.stringify({ rating: selectedRating, prevRating })
     }).then(() => loadRatingStats()).catch(() => {});
   });
 });

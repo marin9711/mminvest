@@ -545,8 +545,14 @@ export default {
             status: 400, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
           });
         }
+        const prevRating = parseInt(body.prevRating) || 0;
         const raw = await env.AI_CONFIG.get('ratings');
         const ratings = raw ? JSON.parse(raw) : [];
+        // Ako korisnik mijenja ocjenu, ukloni prethodnu
+        if (prevRating >= 1 && prevRating <= 5) {
+          const idx = ratings.findLastIndex(r => r.rating === prevRating);
+          if (idx !== -1) ratings.splice(idx, 1);
+        }
         ratings.push({ rating, ts: new Date().toISOString() });
         if (ratings.length > 10000) ratings.splice(0, ratings.length - 10000);
         await env.AI_CONFIG.put('ratings', JSON.stringify(ratings));
