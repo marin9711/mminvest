@@ -490,6 +490,36 @@ export default {
         items.push(entry);
         if (items.length > 200) items.splice(0, items.length - 200);
         await env.AI_CONFIG.put('feedback_log', JSON.stringify(items));
+
+        // Pošalji notifikaciju adminu ako korisnik ostavio email
+        if (entry.email && env.RESEND_API_KEY) {
+          await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+            },
+            body: JSON.stringify({
+              from: 'MarsanInvest <onboarding@resend.dev>',
+              to: ['marin.marsan@gmail.com'],
+              subject: `📬 Novi feedback: ${entry.type} — MarsanInvest`,
+              html: `
+                <div style="font-family:sans-serif;max-width:520px;margin:0 auto;background:#181d28;color:#e2e5f0;padding:2rem;border-radius:12px;">
+                  <h2 style="color:#4a9fe8;margin-bottom:0.5rem">📬 Novi feedback</h2>
+                  <p style="color:#7d8aaa;font-size:0.85rem;margin-bottom:1.5rem">Korisnik je ostavio povratnu informaciju i čeka odgovor.</p>
+                  <div style="background:#1e2433;border-radius:8px;padding:1rem;margin-bottom:1rem;">
+                    <div style="font-size:0.75rem;color:#7d8aaa;margin-bottom:0.25rem">Tip: <strong style="color:#e2e5f0">${entry.type}</strong>${entry.rating ? ' · Ocjena: ' + '⭐'.repeat(entry.rating) : ''}</div>
+                    <div style="font-size:0.75rem;color:#4a9fe8;margin-bottom:0.5rem">📧 ${entry.email}</div>
+                    <div style="color:#e2e5f0;font-size:0.95rem">${entry.text.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+                  </div>
+                  <a href="https://mminvest.pages.dev" style="display:inline-block;padding:0.6rem 1.25rem;background:#4a9fe8;color:#0b0d12;border-radius:8px;text-decoration:none;font-weight:700;font-size:0.85rem;">Otvori Admin Panel →</a>
+                  <p style="margin-top:1.5rem;font-size:0.75rem;color:#5a6180;">MarsanInvest · mminvest.pages.dev</p>
+                </div>
+              `,
+            }),
+          });
+        }
+
         return new Response(JSON.stringify({ ok: true }), {
           headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
         });
