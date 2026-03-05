@@ -5,29 +5,102 @@
 
 /* Edukacija naslov i podnaslovi – ispravljeno: bili su gotovo nevidljivi (#23304f na tamnoj pozadini) */
 .edu-hero h1 {
-  color: var(--text, #e2e5f0);
+  color: #1a2035;
+}
+
+.edu-hero p {
+  color: #3a4a6b !important;
 }
 
 .edu-section-title {
-  color: var(--text, #e2e5f0);
+  color: #1a2035;
 }
 
-/* Naslovi u feedback / AI karticama – ispravljeno: bili su #e9ecff (presvjetlo, stapalo se s pozadinom) */
+/* Naslovi u feedback / AI karticama — tamna boja za light pozadinu */
 .feedback-form-card h3,
 .rating-section h3,
 .poll-section h3,
 .ai-chat-title {
-  color: var(--text, #e2e5f0);
+  color: #1a2035;
 }
 
 /* Feedback hero naslov */
 .feedback-hero h1 {
-  color: var(--text, #e2e5f0);
+  color: #1a2035;
+}
+
+/* Feedback hero podnaslov */
+.feedback-hero p {
+  color: #3a4a6b !important;
 }
 
 /* Quiz hero naslov */
 .quiz-hero h1 {
-  color: var(--text, #e2e5f0);
+  color: #1a2035;
+}
+
+/* Quiz hero podnaslov */
+.quiz-hero p {
+  color: #3a4a6b !important;
+}
+
+/* Quiz pitanje i podnaslov */
+.quiz-question {
+  color: #1a2035 !important;
+}
+.quiz-sub {
+  color: #3a4a6b !important;
+}
+
+/* Quiz opcije tekst */
+.quiz-option-text strong {
+  color: #1a2035 !important;
+}
+.quiz-option-text span {
+  color: #3a4a6b !important;
+}
+
+/* Quiz result kartice */
+.qrc-title {
+  color: #1a2035 !important;
+}
+.qrc-desc {
+  color: #3a4a6b !important;
+}
+.qrc-label {
+  color: #5a6a90 !important;
+}
+
+/* Quiz result restart gumb */
+.quiz-restart-btn {
+  color: #3a4a6b !important;
+  border-color: #b0bcd0 !important;
+}
+.quiz-restart-btn:hover {
+  color: #1a2035 !important;
+  border-color: #5a6a90 !important;
+}
+
+/* Poll tekst */
+.poll-label {
+  color: #1a2035 !important;
+}
+.poll-subtitle {
+  color: #3a4a6b !important;
+}
+.poll-total {
+  color: #3a4a6b !important;
+}
+
+/* Rating label */
+#rating-label {
+  color: #3a4a6b !important;
+}
+
+/* Disclaimer na quiz/feedback stranici */
+.quiz-result .disclaimer,
+#feedback .disclaimer {
+  color: #4a5a7a !important;
 }
 
 /* Napomena o neto stopi nakon naknade */

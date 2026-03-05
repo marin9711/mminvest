@@ -287,7 +287,8 @@ export default {
           });
         }
       }
-      if (!isLoggedIn) {
+      // API rute koriste Bearer token, ne cookie session — preskoči HTML redirect
+      if (!isLoggedIn && !path.includes('/api/')) {
         return new Response(loginPage(), {
           headers: { 'Content-Type': 'text/html;charset=UTF-8' },
         });
