@@ -1984,13 +1984,25 @@ tr:hover td { background:var(--surface2); }
       <div class="row"><input type="range" id="p1-god" min="5" max="60" step="1" value="30"><input type="number" class="ctrl-val-input" id="p1-god-v" value="30" min="5" max="60" step="1" placeholder="25"></div>
     </div>
     <div class="ctrl-group c-dmf">
-      <label>Prinos DMF (%/god)</label>
-      <div class="row"><input type="range" id="p1-dmfr" min="1" max="8" step="0.1" value="3.5"><input type="number" class="ctrl-val-input" id="p1-dmfr-v" value="3.5" min="1" max="8" step="0.1" placeholder="8"></div>
+      <label>Odaberi DMF fond</label>
+      <select id="p1-dmf-select" onchange="updateP1()" style="width:100%;padding:0.5rem 0.75rem;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.85rem;cursor:pointer">
+        <option value="Croatia 1000A">Croatia 1000A — VISOK rizik</option>
+        <option value="Erste Plavi Expert" selected>Erste Plavi Expert — VISOK rizik</option>
+        <option value="AZ Profit">AZ Profit — UMJEREN rizik</option>
+        <option value="Croatia DMF">Croatia DMF — UMJEREN rizik</option>
+        <option value="AZ Benefit">AZ Benefit — NIZAK rizik</option>
+        <option value="Raiffeisen DMF">Raiffeisen DMF — NIZAK rizik</option>
+        <option value="Erste Plavi Protect">Erste Plavi Protect — NIZAK rizik</option>
+        <option value="Croatia 1000C">Croatia 1000C — NIZAK rizik</option>
+      </select>
+      <div class="rate-note" id="p1-dmf-rate-note" style="margin-top:0.4rem">Prosječni prinos (10g): —</div>
     </div>
     <div class="ctrl-group c-pepp">
-      <label>Prinos PEPP (%/god)</label>
-      <div class="row"><input type="range" id="p1-peppr" min="3" max="14" step="0.1" value="8.0"><input type="number" class="ctrl-val-input" id="p1-peppr-v" value="8.0" min="3" max="14" step="0.1" placeholder="8"></div>
-      <div class="rate-note" id="p1-pepp-rate-note">Nakon 1% Finax naknade: —</div>
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <label>PEPP (Finax)</label>
+        <span class="liq-tag liq-mid" style="font-size:0.65rem">Automatski prinos</span>
+      </div>
+      <div class="rate-note" id="p1-pepp-rate-note" style="margin-top:0.25rem;font-size:0.82rem;color:var(--muted2)">Finax historijski: ~8%/god bruto → nakon 1% naknade: <strong id="p1-pepp-net" style="color:var(--pepp-l)">7.0%</strong>/god</div>
     </div>
   </div>
 

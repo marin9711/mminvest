@@ -49,14 +49,24 @@ function updatePoticajInfo(uplata, toggleId, lblId, infoId) {
 function updateP1() {
   const uplata = parseFloat($('p1-uplata').value) || 0;
   const god = parseInt($('p1-god-v').value) || parseInt($('p1-god').value) || 30;
-  const dmfR = parseFloat($('p1-dmfr-v').value) || parseFloat($('p1-dmfr').value) || 3.5;
-  const peppGrossR = parseFloat($('p1-peppr-v').value) || parseFloat($('p1-peppr').value) || 8.0;
-  const peppR = Math.max(peppGrossR - 1, 0); // 1% Finax naknada
+
+  // DMF: dohvati prinos iz odabranog fonda
+  const selectedFundName = $('p1-dmf-select') ? $('p1-dmf-select').value : 'Erste Plavi Expert';
+  const fund = DMF_FUNDS.find(f => f.name === selectedFundName) || DMF_FUNDS[1];
+  const dmfR = fund.r10y; // koristimo 10-godišnji prosjek
+
+  // PEPP: fiksni prinos (Finax ~8% bruto - 1% naknada)
+  const peppR = PEPP_RATE;
+
   const pot = calcPoticaj(uplata, 'p1-poticaj-toggle');
   updatePoticajInfo(uplata, 'p1-poticaj-toggle', 'p1-poticaj-lbl', 'p1-poticaj-info');
 
-  if ($('p1-pepp-rate-note')) {
-    $('p1-pepp-rate-note').textContent = `Nakon 1% Finax naknade: ${peppR.toFixed(2)}%/god`;
+  // Ažuriraj info o prinosima
+  if ($('p1-dmf-rate-note')) {
+    $('p1-dmf-rate-note').textContent = `Prosječni prinos (10g): ${dmfR.toFixed(2)}% | 5g: ${fund.r5y.toFixed(2)}% | HANFA 2024: ${fund.r2024.toFixed(2)}%`;
+  }
+  if ($('p1-pepp-net')) {
+    $('p1-pepp-net').textContent = `${peppR.toFixed(1)}%`;
   }
 
   const dmfFinal = compoundFV(uplata+pot, dmfR, god);
@@ -101,7 +111,7 @@ function updateP1() {
   if(!chart1){ chart1=makeChart('p1-chart',labels,ds); storeChartData('p1-chart', labels, ds); }
   else { chart1.data.labels=labels; chart1.data.datasets.forEach((d,i)=>{ d.data=ds[i].data; }); chart1.update(); }
 }
-['p1-uplata','p1-god','p1-dmfr','p1-peppr'].forEach(id => $(id).addEventListener('syncedInput', updateP1));
+['p1-uplata','p1-god'].forEach(id => $(id).addEventListener('syncedInput', updateP1));
 $('p1-poticaj-toggle').addEventListener('change', updateP1);
 
 // ============ PAGE 2 ============
@@ -407,15 +417,17 @@ function makeChart(canvasId, labels, datasets) {
 let chartP0aAll, chartP0a;
 
 const DMF_FUNDS = [
-  {name:'Croatia 1000A', r2024:11.5, r5y:5.35, rAll:5.77, risk:'VISOK', color:'#4ae8a0'},
-  {name:'Erste Plavi Expert', r2024:10.44, r5y:6.62, rAll:5.30, risk:'VISOK', color:'#4a9fe8'},
-  {name:'AZ Profit', r2024:8.89, r5y:4.51, rAll:5.10, risk:'UMJEREN', color:'#e8a44a'},
-  {name:'Croatia DMF', r2024:7.72, r5y:4.12, rAll:3.67, risk:'UMJEREN', color:'#f5c87a'},
-  {name:'AZ Benefit', r2024:4.14, r5y:3.20, rAll:3.00, risk:'NIZAK', color:'#7abff5'},
-  {name:'Raiffeisen DMF', r2024:3.36, r5y:3.00, rAll:2.80, risk:'NIZAK', color:'#8890b0'},
-  {name:'Erste Plavi Protect', r2024:3.32, r5y:2.80, rAll:2.60, risk:'NIZAK', color:'#6b7394'},
-  {name:'Croatia 1000C', r2024:3.13, r5y:2.50, rAll:2.50, risk:'NIZAK', color:'#5a6180'},
+  {name:'Croatia 1000A',      r2024:11.5,  r5y:5.35, r10y:5.60, rAll:5.77, risk:'VISOK',   color:'#4ae8a0'},
+  {name:'Erste Plavi Expert', r2024:10.44, r5y:6.62, r10y:5.95, rAll:5.30, risk:'VISOK',   color:'#4a9fe8'},
+  {name:'AZ Profit',          r2024:8.89,  r5y:4.51, r10y:4.80, rAll:5.10, risk:'UMJEREN', color:'#e8a44a'},
+  {name:'Croatia DMF',        r2024:7.72,  r5y:4.12, r10y:3.90, rAll:3.67, risk:'UMJEREN', color:'#f5c87a'},
+  {name:'AZ Benefit',         r2024:4.14,  r5y:3.20, r10y:3.10, rAll:3.00, risk:'NIZAK',   color:'#7abff5'},
+  {name:'Raiffeisen DMF',     r2024:3.36,  r5y:3.00, r10y:2.90, rAll:2.80, risk:'NIZAK',   color:'#8890b0'},
+  {name:'Erste Plavi Protect',r2024:3.32,  r5y:2.80, r10y:2.70, rAll:2.60, risk:'NIZAK',   color:'#6b7394'},
+  {name:'Croatia 1000C',      r2024:3.13,  r5y:2.50, r10y:2.50, rAll:2.50, risk:'NIZAK',   color:'#5a6180'},
 ];
+const PEPP_RATE = 7.0; // Finax historijski ~8% bruto - 1% naknada = ~7% neto
+const PEPP_RATE_GROSS = 8.0;
 
 function updateP0a() {
   const sel = $('p0a-fund-select');
