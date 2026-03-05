@@ -695,14 +695,35 @@ tr:hover td { background:var(--surface2); }
 }
 .footer-bottom span { font-size: 0.68rem; color: var(--muted); }
 .footer-version { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--etf-l); }
-/* DONATE BAR - samo desktop */
+/* DONATE BAR - floating, samo desktop */
 .donate-bar {
   display: none;
-  background: var(--surface); border-top: 1px solid var(--border);
-  padding: 0.65rem 2rem; text-align: center;
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 900;
+  background: rgba(15,17,26,0.95); backdrop-filter: blur(8px);
+  border-top: 1px solid var(--border);
+  padding: 0.55rem 2rem;
 }
 @media (min-width: 768px) { .donate-bar { display: flex; align-items: center; justify-content: center; gap: 0.75rem; } }
 .donate-bar-text { font-size: 0.72rem; color: var(--muted); }
+.donate-bar-close {
+  position: absolute; right: 1rem;
+  background: transparent; border: none; color: var(--muted); font-size: 1.1rem;
+  cursor: pointer; line-height: 1; padding: 0.2rem 0.4rem; border-radius: 4px;
+  transition: color 0.15s;
+}
+.donate-bar-close:hover { color: var(--text); }
+/* Padding na dnu za floating donate bar (samo desktop) */
+@media (min-width: 768px) { body { padding-bottom: 2.4rem; } }
+/* AI FAB sakrij gumb - samo mobitel */
+.ai-fab-hide {
+  display: none;
+  position: fixed; bottom: 5rem; right: 1rem; z-index: 9998;
+  background: rgba(15,17,26,0.85); border: 1px solid var(--border);
+  border-radius: 999px; padding: 0.25rem 0.65rem;
+  font-size: 0.65rem; color: var(--muted); cursor: pointer;
+  backdrop-filter: blur(4px);
+}
+@media (max-width: 767px) { .ai-fab-hide { display: block; } }
 .donate-btn {
   padding: 0.3rem 0.9rem; border-radius: 999px; font-size: 0.72rem; font-weight: 700;
   background: transparent; border: 1px dashed rgba(245,185,60,0.4); color: rgba(245,185,60,0.6);
@@ -2993,6 +3014,7 @@ tr:hover td { background:var(--surface2); }
   <span class="fab-icon-chat">🤖</span>
   <span class="fab-icon-close">✕</span>
 </button>
+<button class="ai-fab-hide" id="ai-fab-hide" onclick="hideFabToggle()">👁️ sakrij AI</button>
 
 <!-- SITE FOOTER -->
 <footer class="site-footer">
@@ -3039,10 +3061,11 @@ tr:hover td { background:var(--surface2); }
   </div>
 </footer>
 
-<!-- DONATE BAR - prikazuje se samo na desktopu putem CSS-a -->
-<div class="donate-bar">
+<!-- DONATE BAR - floating, samo desktop -->
+<div class="donate-bar" id="donate-bar">
   <span class="donate-bar-text">☕ MarsanInvest je besplatan i bez reklama. Ako ti je koristan, možeš podržati razvoj:</span>
   <button class="donate-btn" disabled title="Donate opcija dolazi uskoro">❤️ Podrži autora</button>
+  <button class="donate-bar-close" onclick="document.getElementById('donate-bar').style.display='none'" title="Zatvori">×</button>
 </div>
 
 <!-- ADMIN MODAL -->

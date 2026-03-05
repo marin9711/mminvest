@@ -1198,6 +1198,23 @@ function showPollResults(pollId) {
   } catch(e){}
 })();
 
+// === AI FAB SAKRIJ (mobitel) ===
+let fabHidden = false;
+function hideFabToggle() {
+  const fab = document.getElementById('ai-fab');
+  const hideBtn = document.getElementById('ai-fab-hide');
+  fabHidden = !fabHidden;
+  if (fabHidden) {
+    fab.style.display = 'none';
+    hideBtn.textContent = '🤖 prikaži AI';
+    hideBtn.style.bottom = '1rem';
+  } else {
+    fab.style.display = '';
+    hideBtn.textContent = '👁️ sakrij AI';
+    hideBtn.style.bottom = '5rem';
+  }
+}
+
 // === HOME ONBOARDING QUIZ ===
 const hqAnswers = {};
 
