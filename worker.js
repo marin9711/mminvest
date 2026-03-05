@@ -250,47 +250,6 @@ export default {
         }
       }
 
-    // API Polls GET (admin — agregat svih glasova)
-      if (path === '/admin/api/polls') {
-        if (!isApiAuthed) {
-          return new Response(JSON.stringify({ error: 'unauthorized' }), {
-            status: 401,
-            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-          });
-        }
-        try {
-          const raw = await env.AI_CONFIG.get('poll_votes');
-          const polls = raw ? JSON.parse(raw) : {};
-          return new Response(JSON.stringify({ polls }), {
-            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-          });
-        } catch(e) {
-          return new Response(JSON.stringify({ polls: {} }), {
-            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-          });
-        }
-      }
-
-    // API Feedback GET (čitanje loga)
-      if (path === '/admin/api/feedback') {
-        if (!isApiAuthed) {
-          return new Response(JSON.stringify({ error: 'unauthorized' }), {
-            status: 401,
-            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-          });
-        }
-        try {
-          const raw = await env.AI_CONFIG.get('feedback_log');
-          const items = raw ? JSON.parse(raw) : [];
-          return new Response(JSON.stringify({ items }), {
-            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-          });
-        } catch(e) {
-          return new Response(JSON.stringify({ items: [] }), {
-            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-          });
-        }
-      }
       // API rute koriste Bearer token, ne cookie session — preskoči HTML redirect
       if (!isLoggedIn && !path.includes('/api/')) {
         return new Response(loginPage(), {
@@ -316,6 +275,50 @@ export default {
       return new Response(adminPage(isOn), {
         headers: { 'Content-Type': 'text/html;charset=UTF-8' },
       });
+    }
+
+    // ── ADMIN API POLLS & FEEDBACK (Bearer auth, izvan admin HTML bloka) ──
+    if (path === '/admin/api/polls' || path === '/admin/api/feedback') {
+      const sessionSecret = env.ADMIN_USER + ':' + env.ADMIN_PASS + ':marsanai-session';
+      const validToken = await hashToken(sessionSecret);
+      const authHeader = request.headers.get('Authorization') || '';
+      const bearerToken = authHeader.replace('Bearer ', '');
+      const isApiAuthed = bearerToken === validToken;
+
+      if (!isApiAuthed) {
+        return new Response(JSON.stringify({ error: 'unauthorized' }), {
+          status: 401,
+          headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+        });
+      }
+
+      if (path === '/admin/api/polls') {
+        try {
+          const raw = await env.AI_CONFIG.get('poll_votes');
+          const polls = raw ? JSON.parse(raw) : {};
+          return new Response(JSON.stringify({ polls }), {
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        } catch(e) {
+          return new Response(JSON.stringify({ polls: {} }), {
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+      }
+
+      if (path === '/admin/api/feedback') {
+        try {
+          const raw = await env.AI_CONFIG.get('feedback_log');
+          const items = raw ? JSON.parse(raw) : [];
+          return new Response(JSON.stringify({ items }), {
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        } catch(e) {
+          return new Response(JSON.stringify({ items: [] }), {
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+      }
     }
 
     // ── POLLS ENDPOINT ──
