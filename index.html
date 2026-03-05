@@ -752,6 +752,52 @@ tr:hover td { background:var(--surface2); }
   color: var(--etf-l); font-size: 1rem; font-weight: 600;
 }
 
+/* ADMIN MODAL */
+.admin-overlay {
+  display:none; position:fixed; inset:0; z-index:9999;
+  background:rgba(0,0,0,0.7); backdrop-filter:blur(4px);
+  align-items:center; justify-content:center;
+}
+.admin-overlay.open { display:flex; }
+.admin-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:16px; padding:2rem; width:340px; text-align:center;
+  position:relative; animation:fadeInUp 0.2s ease;
+}
+.admin-close {
+  position:absolute; top:0.75rem; right:1rem;
+  font-size:1.2rem; cursor:pointer; color:var(--muted); background:none; border:none;
+}
+.admin-close:hover { color:var(--text); }
+.admin-card h2 { font-family:'DM Serif Display',serif; font-size:1.3rem; margin-bottom:0.3rem; }
+.admin-card .admin-sub { color:var(--muted2); font-size:0.8rem; margin-bottom:1.5rem; }
+.admin-card label { display:block; text-align:left; font-size:0.78rem; color:var(--muted2); margin-bottom:0.3rem; }
+.admin-card input[type=text], .admin-card input[type=password] {
+  width:100%; padding:0.55rem 0.85rem; background:var(--surface2); border:1px solid var(--border);
+  border-radius:8px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.85rem;
+  margin-bottom:0.85rem; outline:none; transition:border-color 0.15s;
+}
+.admin-card input:focus { border-color:var(--pepp); }
+.admin-login-btn {
+  width:100%; padding:0.65rem; background:linear-gradient(135deg,var(--pepp),var(--etf));
+  color:#0b0d12; font-weight:700; font-size:0.85rem; border:none; border-radius:999px; cursor:pointer;
+}
+.admin-login-btn:hover { opacity:0.85; }
+.admin-login-btn:disabled { opacity:0.4; cursor:not-allowed; }
+.admin-err { background:rgba(245,96,96,0.1); border:1px solid rgba(245,96,96,0.3); color:var(--red);
+  padding:0.5rem; border-radius:8px; font-size:0.78rem; margin-bottom:1rem; display:none; }
+.admin-status { font-size:1rem; margin-bottom:1.25rem; padding:0.85rem; border-radius:10px; }
+.admin-status.on { background:rgba(74,232,160,0.1); border:1px solid rgba(74,232,160,0.3); color:var(--etf); }
+.admin-status.off { background:rgba(245,96,96,0.1); border:1px solid rgba(245,96,96,0.3); color:var(--red); }
+.admin-toggle {
+  width:100%; padding:0.65rem; border:none; border-radius:999px; font-size:0.9rem;
+  font-weight:700; cursor:pointer; transition:opacity 0.2s;
+}
+.admin-toggle.turn-off { background:linear-gradient(135deg,#f56060,#d44); color:#fff; }
+.admin-toggle.turn-on { background:linear-gradient(135deg,var(--pepp),var(--etf)); color:#0b0d12; }
+.admin-toggle:hover { opacity:0.85; }
+.admin-logout-link { display:inline-block; margin-top:1rem; font-size:0.75rem; color:var(--muted); cursor:pointer; text-decoration:underline; }
+
 /* POLL SECTIONS */
 .poll-section {
   background: var(--surface); border: 1px solid var(--border);
@@ -3066,6 +3112,112 @@ function showPollResults(pollId) {
     if (saved.priority) { pollState.priority.votes = saved.priority.votes || {}; pollState.priority.voted = true; showPollResults('priority'); }
   } catch(e){}
 })();
+
+// === ADMIN PANEL ===
+const WORKER_URL = 'https://empty-pine-8e64.marin-marsan.workers.dev';
+let adminToken = sessionStorage.getItem('marsanai_admin') || null;
+let adminAiOn = true;
+
+function openAdminPanel() {
+  document.getElementById('admin-overlay').classList.add('open');
+  if (adminToken) {
+    showAdminDash();
+  } else {
+    document.getElementById('admin-login-view').style.display = '';
+    document.getElementById('admin-dash-view').style.display = 'none';
+  }
+}
+
+function closeAdminPanel() {
+  document.getElementById('admin-overlay').classList.remove('open');
+}
+
+async function adminLogin() {
+  const user = document.getElementById('admin-user').value.trim();
+  const pass = document.getElementById('admin-pass').value;
+  const errEl = document.getElementById('admin-err');
+  const btn = document.getElementById('admin-login-btn');
+  
+  if (!user || !pass) { errEl.textContent = 'Upiši korisničko ime i lozinku'; errEl.style.display = 'block'; return; }
+  
+  btn.disabled = true;
+  btn.textContent = 'Provjera...';
+  errEl.style.display = 'none';
+
+  try {
+    const resp = await fetch(WORKER_URL + '/admin/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: user, password: pass })
+    });
+    const data = await resp.json();
+    
+    if (data.success) {
+      adminToken = data.token;
+      sessionStorage.setItem('marsanai_admin', adminToken);
+      showAdminDash();
+    } else {
+      errEl.textContent = '❌ Pogrešno korisničko ime ili lozinka';
+      errEl.style.display = 'block';
+    }
+  } catch(e) {
+    errEl.textContent = '⚠️ Greška pri spajanju';
+    errEl.style.display = 'block';
+  }
+  
+  btn.disabled = false;
+  btn.textContent = 'Prijavi se';
+}
+
+async function showAdminDash() {
+  document.getElementById('admin-login-view').style.display = 'none';
+  document.getElementById('admin-dash-view').style.display = '';
+  
+  try {
+    const resp = await fetch(WORKER_URL + '/admin/api/status', {
+      headers: { 'Authorization': 'Bearer ' + adminToken }
+    });
+    const data = await resp.json();
+    if (data.error === 'unauthorized') { adminLogout(); return; }
+    adminAiOn = data.ai_enabled;
+    updateAdminUI();
+  } catch(e) {}
+}
+
+function updateAdminUI() {
+  const statusEl = document.getElementById('admin-status');
+  const toggleBtn = document.getElementById('admin-toggle-btn');
+  
+  statusEl.className = 'admin-status ' + (adminAiOn ? 'on' : 'off');
+  statusEl.innerHTML = 'AI Bot je trenutno: <strong>' + (adminAiOn ? '✅ UKLJUČEN' : '⛔ ISKLJUČEN') + '</strong>';
+  
+  toggleBtn.className = 'admin-toggle ' + (adminAiOn ? 'turn-off' : 'turn-on');
+  toggleBtn.textContent = adminAiOn ? '⏸️ Isključi AI bota' : '▶️ Uključi AI bota';
+}
+
+async function adminToggle() {
+  const newState = adminAiOn ? 'off' : 'on';
+  try {
+    const resp = await fetch(WORKER_URL + '/admin/api/toggle', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
+      body: JSON.stringify({ action: newState })
+    });
+    const data = await resp.json();
+    if (data.error === 'unauthorized') { adminLogout(); return; }
+    adminAiOn = data.ai_enabled;
+    updateAdminUI();
+  } catch(e) {}
+}
+
+function adminLogout() {
+  adminToken = null;
+  sessionStorage.removeItem('marsanai_admin');
+  document.getElementById('admin-login-view').style.display = '';
+  document.getElementById('admin-dash-view').style.display = 'none';
+  document.getElementById('admin-user').value = '';
+  document.getElementById('admin-pass').value = '';
+}
 </script>
 
 <!-- FLOATING AI CHAT -->
@@ -3129,6 +3281,7 @@ function showPollResults(pollId) {
       <span onclick="document.querySelector('[data-page=home]').click()">Početna</span>
       <span onclick="document.querySelector('[data-page=feedback]').click()">💬 Feedback</span>
       <span onclick="toggleAiChat()">🤖 AI Asistent</span>
+      <span onclick="openAdminPanel()" style="opacity:0.35;font-size:0.65rem;margin-top:0.5rem">🔐 Admin</span>
     </div>
   </div>
   <div class="footer-disclaimer">
@@ -3139,6 +3292,34 @@ function showPollResults(pollId) {
     <span class="footer-version">v0.9.1-beta</span>
     <span>Podaci: HANFA 2024 · ETF historijski prosjeci</span>
   </div>
+<!-- ADMIN MODAL -->
+<div class="admin-overlay" id="admin-overlay" onclick="if(event.target===this)closeAdminPanel()">
+  <div class="admin-card" id="admin-card">
+    <button class="admin-close" onclick="closeAdminPanel()">✕</button>
+    
+    <!-- Login view -->
+    <div id="admin-login-view">
+      <h2>🔐 Admin</h2>
+      <p class="admin-sub">MarsanAI upravljanje</p>
+      <div class="admin-err" id="admin-err"></div>
+      <label>Korisničko ime</label>
+      <input type="text" id="admin-user" autocomplete="username">
+      <label>Lozinka</label>
+      <input type="password" id="admin-pass" autocomplete="current-password" onkeydown="if(event.key==='Enter')adminLogin()">
+      <button class="admin-login-btn" onclick="adminLogin()" id="admin-login-btn">Prijavi se</button>
+    </div>
+    
+    <!-- Dashboard view -->
+    <div id="admin-dash-view" style="display:none">
+      <h2>🤖 MarsanAI Admin</h2>
+      <p class="admin-sub">Upravljanje AI asistentom</p>
+      <div class="admin-status" id="admin-status"></div>
+      <button class="admin-toggle" id="admin-toggle-btn" onclick="adminToggle()"></button>
+      <span class="admin-logout-link" onclick="adminLogout()">🔒 Odjavi se</span>
+    </div>
+  </div>
+</div>
+
 </footer>
 </body>
 </html>
