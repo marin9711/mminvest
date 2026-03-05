@@ -1210,6 +1210,121 @@ function showPollResults(pollId) {
   } catch(e){}
 })();
 
+// === HOME ONBOARDING QUIZ ===
+const hqAnswers = {};
+
+function startHomeQuiz() {
+  document.getElementById('home-quiz-wrap').style.display = 'block';
+  document.getElementById('home-quiz-wrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function skipHomeQuiz() {
+  document.getElementById('home-quiz-wrap').style.display = 'none';
+  document.querySelector('[data-page=p0a]').click();
+}
+
+function hqSelect(el) {
+  const q = el.dataset.hq;
+  document.querySelectorAll(`[data-hq="${q}"]`).forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  hqAnswers[q] = el.dataset.val;
+  const btn = document.getElementById(`hqn-${q}`);
+  if (btn) { btn.disabled = false; }
+}
+
+function hqNext(step) {
+  if (!hqAnswers[step]) return;
+  document.getElementById(`hq-${step}`).style.display = 'none';
+  document.getElementById(`hqs-${step}`).classList.remove('active');
+  document.getElementById(`hqs-${step}`).classList.add('done');
+  const next = step + 1;
+  if (next <= 4) {
+    document.getElementById(`hq-${next}`).style.display = 'block';
+    document.getElementById(`hqs-${next}`).classList.add('active');
+  }
+}
+
+function hqBack(step) {
+  document.getElementById(`hq-${step}`).style.display = 'none';
+  document.getElementById(`hqs-${step - 1}`).classList.remove('done');
+  document.getElementById(`hqs-${step - 1}`).classList.add('active');
+  document.getElementById(`hq-${step - 1}`).style.display = 'block';
+}
+
+function hqShowResult() {
+  document.getElementById('hq-4').style.display = 'none';
+  document.getElementById('hqs-4').classList.remove('active');
+  document.getElementById('hqs-4').classList.add('done');
+  document.getElementById('hq-progress').style.display = 'none';
+
+  const a = hqAnswers;
+  let emoji, title, sub, btns;
+
+  // Logika preporuke
+  if (a[2] === 'low' || a[0] === 'senior') {
+    // Niskorizičan / stariji → DMF
+    emoji = '🏦';
+    title = 'Hrvatski DMF (3. mirovinski stup)';
+    sub = 'Za tebe je idealan državno reguliran mirovinski fond s poreznim olakšicama. Sigurniji prinos, državni poticaj do 99€ godišnje.';
+    btns = [
+      { label: '▶ Usporedi DMF fondove', page: 'p0a', cls: 'primary' },
+      { label: 'DMF vs PEPP', page: 'p1', cls: 'secondary' },
+    ];
+  } else if (a[3] === 'growth' || (a[2] === 'high' && a[0] === 'young')) {
+    // Rast / visok rizik / mlad → ETF
+    emoji = '🚀';
+    title = 'ETF fondovi';
+    sub = 'Za tebe su idealni globalni ETF fondovi (VWCE, IWDA). Maksimalni dugoročni prinos, niske naknade, bez ograničenja isplate.';
+    btns = [
+      { label: '▶ Usporedi ETF platforme', page: 'p0b', cls: 'primary' },
+      { label: 'DMF/PEPP vs ETF', page: 'p2', cls: 'secondary' },
+    ];
+  } else if (a[3] === 'both' || a[1] === 'mid') {
+    // Kombinirano
+    emoji = '⚖️';
+    title = 'Kombinirana strategija';
+    sub = 'Idealno: 66€/mj u DMF za državni poticaj + ostatak u ETF. Dobivaš i sigurnost mirovinskog i rast ETF-a.';
+    btns = [
+      { label: '▶ Pension + ETF strategija', page: 'p3', cls: 'primary' },
+      { label: 'DMF/PEPP vs ETF', page: 'p2', cls: 'secondary' },
+      { label: 'Usporedi sve', page: 'p1', cls: 'secondary' },
+    ];
+  } else {
+    // Default → PEPP
+    emoji = '🌍';
+    title = 'PEPP (Europska mirovina)';
+    sub = 'Finax PEPP je odlična alternativa domaćem DMF-u — europski reguliran, diversificirani ETF portfelj s niskim naknadama.';
+    btns = [
+      { label: '▶ DMF vs PEPP usporedba', page: 'p1', cls: 'primary' },
+      { label: 'Pension + ETF', page: 'p3', cls: 'secondary' },
+    ];
+  }
+
+  document.getElementById('hqr-emoji').textContent = emoji;
+  document.getElementById('hqr-title').textContent = title;
+  document.getElementById('hqr-sub').textContent = sub;
+  document.getElementById('hqr-btns').innerHTML = btns.map(b =>
+    `<button class="hq-result-btn ${b.cls}" onclick="document.querySelector('[data-page=${b.page}]').click()">${b.label}</button>`
+  ).join('');
+
+  document.getElementById('hq-result').style.display = 'block';
+}
+
+function hqRestart() {
+  Object.keys(hqAnswers).forEach(k => delete hqAnswers[k]);
+  for (let i = 0; i <= 4; i++) {
+    const card = document.getElementById(`hq-${i}`);
+    const step = document.getElementById(`hqs-${i}`);
+    if (card) { card.style.display = i === 0 ? 'block' : 'none'; }
+    if (step) { step.classList.remove('done', 'active'); if (i === 0) step.classList.add('active'); }
+    document.querySelectorAll(`[data-hq="${i}"]`).forEach(o => o.classList.remove('selected'));
+    const btn = document.getElementById(`hqn-${i}`);
+    if (btn) btn.disabled = true;
+  }
+  document.getElementById('hq-result').style.display = 'none';
+  document.getElementById('hq-progress').style.display = 'flex';
+}
+
 // Otvori admin panel ako URL ima #admin hash
 if (window.location.hash === '#admin') {
   window.addEventListener('load', () => { setTimeout(openAdminPanel, 500); });
