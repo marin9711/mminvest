@@ -696,6 +696,33 @@ tr:hover td { background:var(--surface2); }
 }
 .footer-bottom span { font-size: 0.68rem; color: var(--muted); }
 .footer-version { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--etf-l); }
+/* DONATE BAR - samo desktop */
+.donate-bar {
+  display: none;
+  background: var(--surface); border-top: 1px solid var(--border);
+  padding: 0.65rem 2rem; text-align: center;
+}
+@media (min-width: 768px) { .donate-bar { display: flex; align-items: center; justify-content: center; gap: 0.75rem; } }
+.donate-bar-text { font-size: 0.72rem; color: var(--muted); }
+.donate-btn {
+  padding: 0.3rem 0.9rem; border-radius: 999px; font-size: 0.72rem; font-weight: 700;
+  background: transparent; border: 1px dashed rgba(245,185,60,0.4); color: rgba(245,185,60,0.6);
+  cursor: not-allowed; opacity: 0.7; position: relative;
+}
+.donate-btn::after { content: ' (uskoro)'; font-weight: 400; opacity: 0.7; }
+/* DONATE na feedback stranici */
+.donate-feedback {
+  margin-top: 1.5rem; padding: 0.9rem 1rem; background: var(--surface2);
+  border: 1px dashed var(--border); border-radius: 10px; text-align: center;
+  opacity: 0.6;
+}
+.donate-feedback p { font-size: 0.75rem; color: var(--muted); margin: 0 0 0.4rem; }
+.donate-feedback-btn {
+  padding: 0.3rem 0.9rem; border-radius: 999px; font-size: 0.72rem; font-weight: 700;
+  background: transparent; border: 1px dashed rgba(245,185,60,0.4); color: rgba(245,185,60,0.6);
+  cursor: not-allowed;
+}
+.donate-feedback-btn::after { content: ' — uskoro'; font-weight: 400; }
 
 /* EDUCATION PAGE */
 .edu-hero { text-align:center; padding:2rem 1rem 1.5rem; }
@@ -2932,6 +2959,12 @@ tr:hover td { background:var(--surface2); }
   </div>
 
 <p class="disclaimer">⚠️ AI asistent pruža općenite informacije u edukativne svrhe. Nije zamjena za profesionalni financijski savjet.</p>
+
+  <div class="donate-feedback">
+    <p>☕ MarsanInvest je besplatan i bez reklama. Ako ti je od pomoći, možeš podržati razvoj.</p>
+    <button class="donate-feedback-btn" disabled title="Dolazi uskoro">❤️ Podrži autora</button>
+  </div>
+
 </div>
 
 
@@ -3012,6 +3045,14 @@ tr:hover td { background:var(--surface2); }
     <span class="footer-version">v0.9.1-beta</span>
     <span>Podaci: HANFA 2024 · ETF historijski prosjeci</span>
   </div>
+</footer>
+
+<!-- DONATE BAR - prikazuje se samo na desktopu putem CSS-a -->
+<div class="donate-bar">
+  <span class="donate-bar-text">☕ MarsanInvest je besplatan i bez reklama. Ako ti je koristan, možeš podržati razvoj:</span>
+  <button class="donate-btn" disabled title="Donate opcija dolazi uskoro">❤️ Podrži autora</button>
+</div>
+
 <!-- ADMIN MODAL -->
 <div class="admin-overlay" id="admin-overlay" onclick="if(event.target===this)closeAdminPanel()">
   <div class="admin-card" id="admin-card">
