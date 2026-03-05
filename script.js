@@ -386,24 +386,7 @@ function makeChart(canvasId, labels, datasets) {
           titleColor:'#e2e5f0', bodyColor:'#8890b0', padding:12,
           callbacks:{ label: ctx=>' '+ctx.dataset.label+': '+fmt(ctx.raw) }
         },
-        zoom: (typeof ChartZoom !== 'undefined' || (Chart.registry && Chart.registry.plugins && Chart.registry.plugins.get && Chart.registry.plugins.get('zoom'))) ? {
-          pan:{ enabled:true, mode:'x', threshold:5,
-            onPan: ({chart}) => {
-              const wrap = chart.canvas.closest('.chart-card');
-              if(wrap){ const btn=wrap.querySelector('.zoom-reset-btn'); if(btn) btn.classList.add('visible'); }
-            }
-          },
-          zoom:{
-            wheel:{ enabled:true, speed:0.05 },
-            pinch:{ enabled:true },
-            drag:{ enabled:false },
-            mode:'x',
-            onZoom: ({chart}) => {
-              const wrap = chart.canvas.closest('.chart-card');
-              if(wrap){ const btn=wrap.querySelector('.zoom-reset-btn'); if(btn) btn.classList.add('visible'); }
-            }
-          }
-        } : {}
+        zoom: {}
       },
       scales:{
         x:{ ticks:{color:'#5a6180',font:{family:'DM Mono',size:10},maxTicksLimit:10}, grid:{color:'#1a1e2a'}, title:{display:true,text:'Godina',color:'#5a6180',font:{size:11}} },
@@ -758,19 +741,12 @@ function applyPeriod(chartId, years) {
     ch.data.labels = slice.map(i=>full.labels[i]);
     ch.data.datasets.forEach((d,i) => d.data = slice.map(j=>full.datasets[i].data[j]));
   }
-  ch.resetZoom && ch.resetZoom();
   ch.update();
   // update active button
   const btns = document.querySelectorAll(`.period-btn[data-chart="${chartId}"]`);
   btns.forEach(b => b.classList.toggle('active', b.dataset.years === String(years)));
 }
 
-function resetZoom(chartId) {
-  const ch = Chart.getChart($(chartId));
-  if (ch && ch.resetZoom) ch.resetZoom();
-  const wrap = $(chartId)?.closest('.chart-card');
-  if (wrap) { const btn = wrap.querySelector('.zoom-reset-btn'); if (btn) btn.classList.remove('visible'); }
-}
 
 document.addEventListener('click', e => {
   const btn = e.target.closest('.period-btn');

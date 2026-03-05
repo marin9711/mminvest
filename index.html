@@ -6,8 +6,7 @@
 <title>Kalkulator Ulaganja</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDMyIDMyIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0ibGluZSIgeDE9IjAlIiB5MT0iMTAwJSIgeDI9IjEwMCUiIHkyPSIwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMxYTdmZDQiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMTZjNDdmIi8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8IS0tIFB1cmUgd2hpdGUgYmFja2dyb3VuZCAtLT4KICA8cmVjdCB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHJ4PSI3IiBmaWxsPSIjZmZmZmZmIi8+CiAgPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZTBlOGYwIiBzdHJva2Utd2lkdGg9IjEiLz4KICA8IS0tIENoYXJ0IGJhcnMgLS0+CiAgPHJlY3QgeD0iNSIgIHk9IjIxIiB3aWR0aD0iNCIgaGVpZ2h0PSI2IiAgZmlsbD0iIzFhN2ZkNCIgb3BhY2l0eT0iMC4yNSIgcng9IjEiLz4KICA8cmVjdCB4PSIxMCIgeT0iMTciIHdpZHRoPSI0IiBoZWlnaHQ9IjEwIiBmaWxsPSIjMWE3ZmQ0IiBvcGFjaXR5PSIwLjMiICByeD0iMSIvPgogIDxyZWN0IHg9IjE1IiB5PSIxMyIgd2lkdGg9IjQiIGhlaWdodD0iMTQiIGZpbGw9IiMxNmM0N2YiIG9wYWNpdHk9IjAuMzUiIHJ4PSIxIi8+CiAgPHJlY3QgeD0iMjAiIHk9IjkiICB3aWR0aD0iNCIgaGVpZ2h0PSIxOCIgZmlsbD0iIzE2YzQ3ZiIgb3BhY2l0eT0iMC40NSIgcng9IjEiLz4KICA8IS0tIFRyZW5kIGxpbmUgLS0+CiAgPHBvbHlsaW5lIHBvaW50cz0iNywyMiAxMiwxNyAxNywxMyAyNCw4IiBzdHJva2U9InVybCgjbGluZSkiIHN0cm9rZS13aWR0aD0iMi4yIiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KICA8IS0tIEFycm93IC0tPgogIDxwb2x5bGluZSBwb2ludHM9IjIwLDcgMjUsNyAyNSwxMiIgc3Ryb2tlPSJ1cmwoI2xpbmUpIiBzdHJva2Utd2lkdGg9IjIuMiIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CiAgPGNpcmNsZSBjeD0iMjUiIGN5PSI3IiByPSIyIiBmaWxsPSIjMTZjNDdmIi8+Cjwvc3ZnPg==">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js" onerror="console.warn('Hammer.js not loaded')"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js" onerror="console.warn('Zoom plugin not loaded')"></script>
+
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <style>
@@ -1638,8 +1637,7 @@ tr:hover td { background:var(--surface2); }
         <button class="period-btn active" data-years="all" data-chart="p0a-chart-all">SVE</button>
       </div>
       <div style="display:flex;align-items:center;gap:0.5rem">
-        <span class="chart-zoom-hint">🔍 Scroll/pinch = zoom · povuci lijevo-desno = pomicanje</span>
-        <button class="zoom-reset-btn" data-chart="p0a-chart-all" onclick="resetZoom('p0a-chart-all')">↺ Reset zoom</button>
+
       </div>
     </div>
   </div>
@@ -1654,8 +1652,7 @@ tr:hover td { background:var(--surface2); }
         <button class="period-btn active" data-years="all" data-chart="p0a-chart">SVE</button>
       </div>
       <div style="display:flex;align-items:center;gap:0.5rem">
-        <span class="chart-zoom-hint">🔍 Scroll/pinch = zoom · povuci lijevo-desno = pomicanje</span>
-        <button class="zoom-reset-btn" data-chart="p0a-chart" onclick="resetZoom('p0a-chart')">↺ Reset zoom</button>
+
       </div>
     </div>
   </div>
@@ -1943,8 +1940,7 @@ tr:hover td { background:var(--surface2); }
         <button class="period-btn active" data-years="all" data-chart="p0b-chart-platforms">SVE</button>
       </div>
       <div style="display:flex;align-items:center;gap:0.5rem">
-        <span class="chart-zoom-hint">🔍 Scroll/pinch = zoom · povuci lijevo-desno = pomicanje</span>
-        <button class="zoom-reset-btn" data-chart="p0b-chart-platforms" onclick="resetZoom('p0b-chart-platforms')">↺ Reset zoom</button>
+
       </div>
     </div>
   </div>
@@ -1959,8 +1955,7 @@ tr:hover td { background:var(--surface2); }
         <button class="period-btn active" data-years="all" data-chart="p0b-chart">SVE</button>
       </div>
       <div style="display:flex;align-items:center;gap:0.5rem">
-        <span class="chart-zoom-hint">🔍 Scroll/pinch = zoom · povuci lijevo-desno = pomicanje</span>
-        <button class="zoom-reset-btn" data-chart="p0b-chart" onclick="resetZoom('p0b-chart')">↺ Reset zoom</button>
+
       </div>
     </div>
   </div>
@@ -2065,8 +2060,7 @@ tr:hover td { background:var(--surface2); }
         <button class="period-btn active" data-years="all" data-chart="p1-chart">SVE</button>
       </div>
       <div style="display:flex;align-items:center;gap:0.5rem">
-        <span class="chart-zoom-hint">🔍 Scroll/pinch = zoom · povuci lijevo-desno = pomicanje</span>
-        <button class="zoom-reset-btn" data-chart="p1-chart" onclick="resetZoom('p1-chart')">↺ Reset zoom</button>
+
       </div>
     </div>
   </div>
@@ -2186,8 +2180,7 @@ tr:hover td { background:var(--surface2); }
         <button class="period-btn active" data-years="all" data-chart="p2-chart">SVE</button>
       </div>
       <div style="display:flex;align-items:center;gap:0.5rem">
-        <span class="chart-zoom-hint">🔍 Scroll/pinch = zoom · povuci lijevo-desno = pomicanje</span>
-        <button class="zoom-reset-btn" data-chart="p2-chart" onclick="resetZoom('p2-chart')">↺ Reset zoom</button>
+
       </div>
     </div>
   </div>
@@ -2386,8 +2379,7 @@ tr:hover td { background:var(--surface2); }
         <button class="period-btn active" data-years="all" data-chart="p3-chart">SVE</button>
       </div>
       <div style="display:flex;align-items:center;gap:0.5rem">
-        <span class="chart-zoom-hint">🔍 Scroll/pinch = zoom · povuci lijevo-desno = pomicanje</span>
-        <button class="zoom-reset-btn" data-chart="p3-chart" onclick="resetZoom('p3-chart')">↺ Reset zoom</button>
+
       </div>
     </div>
   </div>
