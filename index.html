@@ -752,6 +752,59 @@ tr:hover td { background:var(--surface2); }
   color: var(--etf-l); font-size: 1rem; font-weight: 600;
 }
 
+/* POLL SECTIONS */
+.poll-section {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1.5rem; margin-bottom: 1.25rem;
+}
+.poll-section h3 {
+  font-family: 'DM Serif Display', serif; font-size: 1.1rem; margin-bottom: 0.35rem;
+}
+.poll-subtitle {
+  font-size: 0.78rem; color: var(--muted2); margin-bottom: 1rem; line-height: 1.4;
+}
+.poll-options { display: flex; flex-direction: column; gap: 0.5rem; }
+.poll-option {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.65rem 1rem; border-radius: 10px;
+  background: var(--surface2); border: 1px solid var(--border);
+  cursor: pointer; transition: all 0.15s; position: relative; overflow: hidden;
+}
+.poll-option:hover { border-color: var(--muted); background: var(--surface3); }
+.poll-option.selected { border-color: rgba(74,232,160,0.45); background: var(--surface3); }
+.poll-option .poll-icon { font-size: 1.1rem; flex-shrink: 0; }
+.poll-option .poll-label { font-size: 0.82rem; font-weight: 500; color: var(--text); flex: 1; }
+.poll-option .poll-check {
+  width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--border);
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s; font-size: 0.65rem; color: transparent;
+}
+.poll-option.selected .poll-check {
+  border-color: var(--etf); background: var(--etf); color: #0b0d12;
+}
+.poll-bar-bg {
+  position: absolute; left: 0; top: 0; height: 100%;
+  background: rgba(74,232,160,0.07); border-radius: 10px;
+  transition: width 0.5s ease; width: 0;
+}
+.poll-option.voted .poll-bar-bg { display: block; }
+.poll-option .poll-pct {
+  font-size: 0.72rem; font-weight: 700; color: var(--etf-l);
+  min-width: 36px; text-align: right; display: none;
+}
+.poll-option.voted .poll-pct { display: block; }
+.poll-vote-btn {
+  margin-top: 1rem; padding: 0.55rem 1.5rem;
+  background: linear-gradient(135deg, var(--pepp), var(--etf));
+  color: #0b0d12; font-weight: 700; font-size: 0.82rem;
+  border: none; border-radius: 999px; cursor: pointer; transition: opacity 0.2s;
+}
+.poll-vote-btn:hover { opacity: 0.85; }
+.poll-vote-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.poll-total {
+  font-size: 0.72rem; color: var(--muted); margin-top: 0.75rem; text-align: center;
+}
+
 /* AI CHAT WIDGET */
 .ai-chat-card {
   background: var(--surface); border: 1px solid var(--border);
@@ -1737,7 +1790,7 @@ tr:hover td { background:var(--surface2); }
 </div>
 
 <script>
-const $ = id => document.getElementById(id);
+var $ = id => document.getElementById(id);
 const fmt = n => new Intl.NumberFormat('hr-HR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n);
 const fmtX = (n,d=1) => n.toFixed(d)+'x';
 const fmtPct = n => (n>=0?'+':'')+n.toFixed(1)+'%';
@@ -2579,6 +2632,189 @@ CHART_META.forEach(([canvasId, title]) => {
 });
 
 
+// ============ INIT ============
+// Ensure DOM is fully ready before init
+function initApp() {
+  setupSyncPairs();
+  // Also restore from localStorage if available
+  const STORE_KEYS = Object.keys(localStorage).filter(k => k.startsWith('miv_'));
+  if (STORE_KEYS.length > 0) {
+    STORE_KEYS.forEach(k => {
+      const id = k.replace('miv_', '');
+      const el = $(id);
+      if (el && el.tagName === 'INPUT' && el.type === 'number') {
+        const saved = localStorage.getItem(k);
+        const num = parseFloat(saved);
+        if (!isNaN(num)) {
+          el.value = saved;
+          const pair = SLIDER_PAIRS.find(p => p[1] === id);
+          if (pair) { const sl = $(pair[0]); if (sl) sl.value = num; }
+        }
+      }
+    });
+  }
+  [updateP0a, updateP0b, updateP1, updateP2, updateP3].forEach(fn => {
+    try { fn(); } catch(e) { console.error('Update error:', fn.name, e); }
+  });
+}
+function safeInitApp() {
+  try { initApp(); } catch(e) { 
+    console.error('InitApp error:', e);
+    // Try individual updates as fallback
+    try { updateP0a(); } catch(e2) {}
+    try { updateP0b(); } catch(e2) {}
+    try { updateP1(); } catch(e2) {}
+    try { updateP2(); } catch(e2) {}
+    try { updateP3(); } catch(e2) {}
+  }
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', safeInitApp);
+} else {
+  safeInitApp();
+}
+
+// Save to localStorage on change
+SLIDER_PAIRS.forEach(([,numId]) => {
+  const el = $(numId);
+  if (el) el.addEventListener('change', () => {
+    localStorage.setItem('miv_' + numId, el.value);
+  });
+});
+</script>
+
+
+<!-- ========== FEEDBACK PAGE ========== -->
+<div class="page" id="feedback">
+  <div class="feedback-hero">
+    <h1>💬 Feedback & Prijedlozi</h1>
+    <p>Pomozi nam poboljšati MarsanInvest — ocijeni aplikaciju, pošalji prijedlog ili pitaj AI asistenta za pomoć.</p>
+  </div>
+
+  <!-- STAR RATING -->
+  <div class="rating-section">
+    <h3>Ocijeni MarsanInvest</h3>
+    <div class="stars-row" id="stars-row">
+      <button class="star-btn" data-val="1">⭐</button>
+      <button class="star-btn" data-val="2">⭐</button>
+      <button class="star-btn" data-val="3">⭐</button>
+      <button class="star-btn" data-val="4">⭐</button>
+      <button class="star-btn" data-val="5">⭐</button>
+    </div>
+    <div class="rating-label" id="rating-label">Klikni za ocjenu</div>
+  </div>
+
+  <!-- POLL 1: Nova funkcionalnost -->
+  <div class="poll-section" id="poll-feature">
+    <h3>📊 Koja nova funkcionalnost te zanima?</h3>
+    <p class="poll-subtitle">Odaberi jednu ili više opcija — rezultati se prikazuju odmah.</p>
+    <div class="poll-options" id="poll-feature-options">
+      <div class="poll-option" data-poll="feature" data-value="dijete" onclick="togglePollOption(this)">
+        <div class="poll-bar-bg"></div>
+        <span class="poll-icon">👶</span>
+        <span class="poll-label">Kalkulator za dijete / štednju</span>
+        <span class="poll-pct"></span>
+        <span class="poll-check">✓</span>
+      </div>
+      <div class="poll-option" data-poll="feature" data-value="inflacija" onclick="togglePollOption(this)">
+        <div class="poll-bar-bg"></div>
+        <span class="poll-icon">📉</span>
+        <span class="poll-label">Usporedba inflacije</span>
+        <span class="poll-pct"></span>
+        <span class="poll-check">✓</span>
+      </div>
+      <div class="poll-option" data-poll="feature" data-value="export" onclick="togglePollOption(this)">
+        <div class="poll-bar-bg"></div>
+        <span class="poll-icon">🖨️</span>
+        <span class="poll-label">Export / print izvještaja</span>
+        <span class="poll-pct"></span>
+        <span class="poll-check">✓</span>
+      </div>
+    </div>
+    <button class="poll-vote-btn" id="poll-feature-btn" onclick="submitPoll('feature')" disabled>Glasaj</button>
+    <div class="poll-total" id="poll-feature-total"></div>
+  </div>
+
+  <!-- POLL 2: Prioritet -->
+  <div class="poll-section" id="poll-priority">
+    <h3>🎯 Što je prioritet za nastavak?</h3>
+    <p class="poll-subtitle">Odaberi što ti je najvažnije — možeš odabrati jednu opciju.</p>
+    <div class="poll-options" id="poll-priority-options">
+      <div class="poll-option" data-poll="priority" data-value="bugovi" onclick="selectPollSingle(this)">
+        <div class="poll-bar-bg"></div>
+        <span class="poll-icon">🐛</span>
+        <span class="poll-label">Popraviti bugove (slideri / prazna polja)</span>
+        <span class="poll-pct"></span>
+        <span class="poll-check">✓</span>
+      </div>
+      <div class="poll-option" data-poll="priority" data-value="ai" onclick="selectPollSingle(this)">
+        <div class="poll-bar-bg"></div>
+        <span class="poll-icon">🤖</span>
+        <span class="poll-label">AI asistent u aplikaciji</span>
+        <span class="poll-pct"></span>
+        <span class="poll-check">✓</span>
+      </div>
+      <div class="poll-option" data-poll="priority" data-value="nova" onclick="selectPollSingle(this)">
+        <div class="poll-bar-bg"></div>
+        <span class="poll-icon">✨</span>
+        <span class="poll-label">Nova funkcionalnost</span>
+        <span class="poll-pct"></span>
+        <span class="poll-check">✓</span>
+      </div>
+    </div>
+    <button class="poll-vote-btn" id="poll-priority-btn" onclick="submitPoll('priority')" disabled>Glasaj</button>
+    <div class="poll-total" id="poll-priority-total"></div>
+  </div>
+
+  <!-- FEEDBACK FORM -->
+  <div class="feedback-form-card">
+    <h3>Pošalji povratnu informaciju</h3>
+    <div class="fb-type-row">
+      <button class="fb-type-btn active" data-type="prijedlog">💡 Prijedlog</button>
+      <button class="fb-type-btn" data-type="pohvala">👏 Pohvala</button>
+      <button class="fb-type-btn" data-type="greška">🐛 Greška</button>
+      <button class="fb-type-btn" data-type="pitanje">❓ Pitanje</button>
+    </div>
+    <textarea class="fb-textarea" id="fb-text" placeholder="Napiši svoju povratnu informaciju, prijedlog ili opis greške..."></textarea>
+    <br>
+    <button class="fb-submit-btn" id="fb-submit-btn" onclick="submitFeedback()">Pošalji feedback ✉️</button>
+    <div class="feedback-sent" id="feedback-sent">✅ Hvala! Tvoj feedback je zabilježen.</div>
+  </div>
+
+  <!-- AI CHAT ASISTENT -->
+  <div class="ai-chat-card">
+    <div class="ai-chat-header">
+      <div class="ai-chat-avatar">🤖</div>
+      <div>
+        <div class="ai-chat-title">MarsanAI Asistent</div>
+        <div class="ai-chat-sub">Postavi pitanje o ulaganju, fondovima ili korištenju aplikacije</div>
+      </div>
+      <div class="ai-online-dot"></div>
+    </div>
+    <div class="ai-messages" id="ai-messages">
+      <div class="ai-msg bot">
+        <div class="ai-msg-avatar">🤖</div>
+        <div class="ai-msg-bubble">Bok! Ja sam MarsanAI asistent. 👋 Mogu ti pomoći razumjeti razliku između DMF-a i PEPP-a, objasniti ETF fondove, ili te voditi kroz kalkulator. Što te zanima?</div>
+      </div>
+    </div>
+    <div class="ai-quick-btns">
+      <button class="ai-quick-btn" onclick="sendQuickMsg('Što je razlika između DMF i PEPP?')">DMF vs PEPP</button>
+      <button class="ai-quick-btn" onclick="sendQuickMsg('Koji ETF preporučuješ za početnike?')">ETF za početnike</button>
+      <button class="ai-quick-btn" onclick="sendQuickMsg('Kako koristiti kalkulator?')">Kako koristiti?</button>
+      <button class="ai-quick-btn" onclick="sendQuickMsg('Što je državni poticaj na 3. stup?')">Državni poticaj</button>
+      <button class="ai-quick-btn" onclick="sendQuickMsg('Koje su naknade na IBKR vs Trading 212?')">IBKR vs T212</button>
+    </div>
+    <div class="ai-input-row">
+      <input class="ai-input" id="ai-input" type="text" placeholder="Pitaj nešto o ulaganju..." 
+             onkeydown="if(event.key==='Enter') sendAiMsg()">
+      <button class="ai-send-btn" id="ai-send-btn" onclick="sendAiMsg()">➤</button>
+    </div>
+  </div>
+
+  <p class="disclaimer">⚠️ AI asistent pruža općenite informacije u edukativne svrhe. Nije zamjena za profesionalni financijski savjet.</p>
+</div>
+
+<script>
 // ============ FEEDBACK & AI CHAT ============
 
 // Star rating
@@ -2719,125 +2955,84 @@ try {
   }
 } catch(e){}
 
-// ============ INIT ============
-// Ensure DOM is fully ready before init
-function initApp() {
-  setupSyncPairs();
-  // Also restore from localStorage if available
-  const STORE_KEYS = Object.keys(localStorage).filter(k => k.startsWith('miv_'));
-  if (STORE_KEYS.length > 0) {
-    STORE_KEYS.forEach(k => {
-      const id = k.replace('miv_', '');
-      const el = $(id);
-      if (el && el.tagName === 'INPUT' && el.type === 'number') {
-        const saved = localStorage.getItem(k);
-        const num = parseFloat(saved);
-        if (!isNaN(num)) {
-          el.value = saved;
-          const pair = SLIDER_PAIRS.find(p => p[1] === id);
-          if (pair) { const sl = $(pair[0]); if (sl) sl.value = num; }
-        }
-      }
-    });
-  }
-  [updateP0a, updateP0b, updateP1, updateP2, updateP3].forEach(fn => {
-    try { fn(); } catch(e) { console.error('Update error:', fn.name, e); }
-  });
-}
-function safeInitApp() {
-  try { initApp(); } catch(e) { 
-    console.error('InitApp error:', e);
-    // Try individual updates as fallback
-    try { updateP0a(); } catch(e2) {}
-    try { updateP0b(); } catch(e2) {}
-    try { updateP1(); } catch(e2) {}
-    try { updateP2(); } catch(e2) {}
-    try { updateP3(); } catch(e2) {}
-  }
-}
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', safeInitApp);
-} else {
-  safeInitApp();
+// === POLL SYSTEM ===
+const pollState = {
+  feature: { votes: {}, selected: [], voted: false },
+  priority: { votes: {}, selected: [], voted: false }
+};
+
+function togglePollOption(el) {
+  if (pollState.feature.voted) return;
+  el.classList.toggle('selected');
+  const btn = document.getElementById('poll-feature-btn');
+  const anySelected = document.querySelectorAll('[data-poll="feature"].selected').length > 0;
+  btn.disabled = !anySelected;
 }
 
-// Save to localStorage on change
-SLIDER_PAIRS.forEach(([,numId]) => {
-  const el = $(numId);
-  if (el) el.addEventListener('change', () => {
-    localStorage.setItem('miv_' + numId, el.value);
+function selectPollSingle(el) {
+  if (pollState.priority.voted) return;
+  document.querySelectorAll('[data-poll="priority"]').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('poll-priority-btn').disabled = false;
+}
+
+function submitPoll(pollId) {
+  if (pollState[pollId].voted) return;
+  const selected = document.querySelectorAll(`[data-poll="${pollId}"].selected`);
+  if (!selected.length) return;
+
+  let votes = pollState[pollId].votes;
+  const allOptions = document.querySelectorAll(`[data-poll="${pollId}"]`);
+  allOptions.forEach(o => {
+    const v = o.dataset.value;
+    if (!votes[v]) votes[v] = 0;
   });
-});
+  selected.forEach(o => { votes[o.dataset.value]++; });
+
+  pollState[pollId].votes = votes;
+  pollState[pollId].voted = true;
+
+  try {
+    const saved = JSON.parse(localStorage.getItem('miv_polls') || '{}');
+    saved[pollId] = { votes, ts: new Date().toISOString() };
+    localStorage.setItem('miv_polls', JSON.stringify(saved));
+  } catch(e){}
+
+  showPollResults(pollId);
+}
+
+function showPollResults(pollId) {
+  const votes = pollState[pollId].votes;
+  const total = Object.values(votes).reduce((s, v) => s + v, 0);
+  const options = document.querySelectorAll(`[data-poll="${pollId}"]`);
+
+  options.forEach(o => {
+    o.classList.add('voted');
+    o.style.cursor = 'default';
+    const v = votes[o.dataset.value] || 0;
+    const pct = total > 0 ? Math.round((v / total) * 100) : 0;
+    o.querySelector('.poll-pct').textContent = pct + '%';
+    o.querySelector('.poll-bar-bg').style.width = pct + '%';
+    if (v === Math.max(...Object.values(votes)) && v > 0) {
+      o.querySelector('.poll-label').style.color = 'var(--etf-l)';
+    }
+  });
+
+  const btn = document.getElementById(`poll-${pollId}-btn`);
+  btn.textContent = '✅ Hvala na glasu!';
+  btn.disabled = true;
+  document.getElementById(`poll-${pollId}-total`).textContent = `Ukupno glasova: ${total}`;
+}
+
+// Init polls from localStorage
+(function initPolls() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('miv_polls') || '{}');
+    if (saved.feature) { pollState.feature.votes = saved.feature.votes || {}; pollState.feature.voted = true; showPollResults('feature'); }
+    if (saved.priority) { pollState.priority.votes = saved.priority.votes || {}; pollState.priority.voted = true; showPollResults('priority'); }
+  } catch(e){}
+})();
 </script>
-
-
-<!-- ========== FEEDBACK PAGE ========== -->
-<div class="page" id="feedback">
-  <div class="feedback-hero">
-    <h1>💬 Feedback & Prijedlozi</h1>
-    <p>Pomozi nam poboljšati MarsanInvest — ocijeni aplikaciju, pošalji prijedlog ili pitaj AI asistenta za pomoć.</p>
-  </div>
-
-  <!-- STAR RATING -->
-  <div class="rating-section">
-    <h3>Ocijeni MarsanInvest</h3>
-    <div class="stars-row" id="stars-row">
-      <button class="star-btn" data-val="1">⭐</button>
-      <button class="star-btn" data-val="2">⭐</button>
-      <button class="star-btn" data-val="3">⭐</button>
-      <button class="star-btn" data-val="4">⭐</button>
-      <button class="star-btn" data-val="5">⭐</button>
-    </div>
-    <div class="rating-label" id="rating-label">Klikni za ocjenu</div>
-  </div>
-
-  <!-- FEEDBACK FORM -->
-  <div class="feedback-form-card">
-    <h3>Pošalji povratnu informaciju</h3>
-    <div class="fb-type-row">
-      <button class="fb-type-btn active" data-type="prijedlog">💡 Prijedlog</button>
-      <button class="fb-type-btn" data-type="pohvala">👏 Pohvala</button>
-      <button class="fb-type-btn" data-type="greška">🐛 Greška</button>
-      <button class="fb-type-btn" data-type="pitanje">❓ Pitanje</button>
-    </div>
-    <textarea class="fb-textarea" id="fb-text" placeholder="Napiši svoju povratnu informaciju, prijedlog ili opis greške..."></textarea>
-    <br>
-    <button class="fb-submit-btn" id="fb-submit-btn" onclick="submitFeedback()">Pošalji feedback ✉️</button>
-    <div class="feedback-sent" id="feedback-sent">✅ Hvala! Tvoj feedback je zabilježen.</div>
-  </div>
-
-  <!-- AI CHAT ASISTENT -->
-  <div class="ai-chat-card">
-    <div class="ai-chat-header">
-      <div class="ai-chat-avatar">🤖</div>
-      <div>
-        <div class="ai-chat-title">MarsanAI Asistent</div>
-        <div class="ai-chat-sub">Postavi pitanje o ulaganju, fondovima ili korištenju aplikacije</div>
-      </div>
-      <div class="ai-online-dot"></div>
-    </div>
-    <div class="ai-messages" id="ai-messages">
-      <div class="ai-msg bot">
-        <div class="ai-msg-avatar">🤖</div>
-        <div class="ai-msg-bubble">Bok! Ja sam MarsanAI asistent. 👋 Mogu ti pomoći razumjeti razliku između DMF-a i PEPP-a, objasniti ETF fondove, ili te voditi kroz kalkulator. Što te zanima?</div>
-      </div>
-    </div>
-    <div class="ai-quick-btns">
-      <button class="ai-quick-btn" onclick="sendQuickMsg('Što je razlika između DMF i PEPP?')">DMF vs PEPP</button>
-      <button class="ai-quick-btn" onclick="sendQuickMsg('Koji ETF preporučuješ za početnike?')">ETF za početnike</button>
-      <button class="ai-quick-btn" onclick="sendQuickMsg('Kako koristiti kalkulator?')">Kako koristiti?</button>
-      <button class="ai-quick-btn" onclick="sendQuickMsg('Što je državni poticaj na 3. stup?')">Državni poticaj</button>
-      <button class="ai-quick-btn" onclick="sendQuickMsg('Koje su naknade na IBKR vs Trading 212?')">IBKR vs T212</button>
-    </div>
-    <div class="ai-input-row">
-      <input class="ai-input" id="ai-input" type="text" placeholder="Pitaj nešto o ulaganju..." 
-             onkeydown="if(event.key==='Enter') sendAiMsg()">
-      <button class="ai-send-btn" id="ai-send-btn" onclick="sendAiMsg()">➤</button>
-    </div>
-  </div>
-
-  <p class="disclaimer">⚠️ AI asistent pruža općenite informacije u edukativne svrhe. Nije zamjena za profesionalni financijski savjet.</p>
-</div>
 
 <!-- CHART FULLSCREEN MODAL -->
 <div class="chart-modal-overlay" id="chart-modal">
