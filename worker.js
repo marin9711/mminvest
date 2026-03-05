@@ -145,6 +145,10 @@ export default {
 
     // ── ADMIN ROUTES ──
     if (path.startsWith('/admin')) {
+      // CORS preflight za admin rute
+      if (request.method === 'OPTIONS') {
+        return new Response(null, { status: 204, headers: CORS_HEADERS });
+      }
       const sessionSecret = env.ADMIN_USER + ':' + env.ADMIN_PASS + ':marsanai-session';
       const validToken = await hashToken(sessionSecret);
       const cookies = parseCookies(request.headers.get('Cookie'));
@@ -290,7 +294,7 @@ export default {
       // API rute koriste Bearer token, ne cookie session — preskoči HTML redirect
       if (!isLoggedIn && !path.includes('/api/')) {
         return new Response(loginPage(), {
-          headers: { 'Content-Type': 'text/html;charset=UTF-8' },
+          headers: { ...CORS_HEADERS, 'Content-Type': 'text/html;charset=UTF-8' },
         });
       }
 
