@@ -1224,6 +1224,87 @@ function adminLogout() {
   document.getElementById('admin-pass').value = '';
 }
 
+function switchAdminTab(tab) {
+  ['ai','fb'].forEach(t => {
+    document.getElementById('admin-tab-' + t).classList.toggle('active', t === tab);
+    document.getElementById('admin-tab-content-' + t).classList.toggle('active', t === tab);
+  });
+  if (tab === 'fb') { loadFeedbackLog(); loadPollResults(); }
+}
+
+async function loadFeedbackLog() {
+  const logEl = document.getElementById('admin-feedback-log');
+  if (!adminToken || !logEl) return;
+  logEl.innerHTML = '<div class="fb-log-empty">Učitavanje...</div>';
+  try {
+    const resp = await fetch(WORKER_URL + '/admin/api/feedback', {
+      headers: { 'Authorization': 'Bearer ' + adminToken }
+    });
+    if (!resp.ok) { logEl.innerHTML = '<div class="fb-log-empty">⚠️ Greška pri dohvaćanju.</div>'; return; }
+    const data = await resp.json();
+    const items = data.items || [];
+    if (!items.length) { logEl.innerHTML = '<div class="fb-log-empty">Nema feedback unosa.</div>'; return; }
+    const typeIcon = { prijedlog:'💡', pohvala:'👏', greška:'🐛', pitanje:'❓' };
+    logEl.innerHTML = items.slice().reverse().map(it => {
+      const d = new Date(it.ts);
+      const ts = d.toLocaleDateString('hr-HR') + ' ' + d.toLocaleTimeString('hr-HR', {hour:'2-digit',minute:'2-digit'});
+      const rating = it.rating ? '⭐'.repeat(it.rating) : '';
+      return `<div class="fb-log-item">
+        <div class="fb-log-meta">
+          <span class="fb-log-type ${it.type}">${typeIcon[it.type]||''} ${it.type}</span>
+          <span class="fb-log-ts">${ts}</span>
+        </div>
+        <div class="fb-log-text">${it.text.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+        ${rating ? '<div class="fb-log-rating">' + rating + '</div>' : ''}
+      </div>`;
+    }).join('');
+  } catch(e) {
+    logEl.innerHTML = '<div class="fb-log-empty">⚠️ Greška pri dohvaćanju.</div>';
+  }
+}
+
+async function loadPollResults() {
+  const el = document.getElementById('admin-poll-results');
+  if (!adminToken || !el) return;
+  el.innerHTML = 'Učitavanje...';
+  try {
+    const resp = await fetch(WORKER_URL + '/admin/api/polls', {
+      headers: { 'Authorization': 'Bearer ' + adminToken }
+    });
+    if (!resp.ok) { el.innerHTML = '⚠️ Greška pri dohvaćanju.'; return; }
+    const data = await resp.json();
+    const polls = data.polls || {};
+    const pollLabels = {
+      feature: { title: '💡 Nova funkcionalnost', options: { dijete: '👶 Kalkulator za dijete', inflacija: '📉 Usporedba inflacije', export: '🖨️ Export izvještaja' } },
+      priority: { title: '🎯 Prioritet razvoja', options: { bugovi: '🐛 Popraviti bugove', ai: '🤖 AI asistent', nova: '✨ Nova funkcionalnost' } }
+    };
+    let html = '', hasAny = false;
+    for (const [pollId, meta] of Object.entries(pollLabels)) {
+      const votes = polls[pollId] || {};
+      const total = Object.values(votes).reduce((s, v) => s + v, 0);
+      if (total === 0) continue;
+      hasAny = true;
+      html += `<div style="margin-bottom:0.75rem;background:var(--surface3);border-radius:8px;padding:0.6rem 0.75rem;">`;
+      html += `<div style="font-weight:700;color:var(--text);margin-bottom:0.4rem;font-size:0.76rem;">${meta.title} <span style="color:var(--muted);font-weight:400;">(${total} glasova)</span></div>`;
+      const sorted = Object.entries(meta.options).sort((a,b) => (votes[b[0]]||0)-(votes[a[0]]||0));
+      for (const [val, label] of sorted) {
+        const cnt = votes[val] || 0;
+        const pct = total > 0 ? Math.round((cnt/total)*100) : 0;
+        const isTop = cnt === Math.max(...Object.values(votes)) && cnt > 0;
+        html += `<div style="display:flex;align-items:center;gap:0.4rem;margin-bottom:0.25rem;">`;
+        html += `<div style="flex:1;font-size:0.72rem;color:${isTop?'var(--etf-l)':'var(--muted2)'}">${label}</div>`;
+        html += `<div style="width:80px;height:5px;background:var(--surface2);border-radius:999px;overflow:hidden;"><div style="height:100%;width:${pct}%;background:${isTop?'var(--etf)':'var(--pepp)'};border-radius:999px;"></div></div>`;
+        html += `<div style="font-size:0.7rem;color:var(--muted2);min-width:28px;text-align:right;">${pct}%</div>`;
+        html += `</div>`;
+      }
+      html += `</div>`;
+    }
+    el.innerHTML = hasAny ? html : '<div style="text-align:center;padding:0.75rem 0;color:var(--muted);">Još nema glasova.</div>';
+  } catch(e) {
+    el.innerHTML = '⚠️ Greška.';
+  }
+}
+
 
 // ========== QUIZ LOGIC ==========
 const quizAnswers = {};
@@ -1419,4 +1500,10 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.quiz-option').forEach(opt => {
     opt.addEventListener('click', () => quizSelectOption(opt));
   });
+
+  // Admin tab buttons
+  const tabAi = document.getElementById('admin-tab-ai');
+  const tabFb = document.getElementById('admin-tab-fb');
+  if (tabAi) tabAi.addEventListener('click', () => switchAdminTab('ai'));
+  if (tabFb) tabFb.addEventListener('click', () => switchAdminTab('fb'));
 });
