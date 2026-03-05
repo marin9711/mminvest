@@ -805,35 +805,76 @@ tr:hover td { background:var(--surface2); }
   font-size: 0.72rem; color: var(--muted); margin-top: 0.75rem; text-align: center;
 }
 
-/* AI CHAT WIDGET */
-.ai-chat-card {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 14px; overflow: hidden; margin-bottom: 1.25rem;
+/* AI CHAT FLOATING BUBBLE */
+.ai-fab {
+  position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999;
+  width: 56px; height: 56px; border-radius: 50%;
+  background: linear-gradient(135deg, #c77af5, #4a9fe8);
+  border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem; color: #fff;
+  box-shadow: 0 4px 20px rgba(74,159,232,0.4), 0 0 0 0 rgba(74,159,232,0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+  animation: fabPulse 3s ease-in-out infinite;
 }
+.ai-fab:hover { transform: scale(1.08); box-shadow: 0 6px 28px rgba(74,159,232,0.5); }
+.ai-fab.open { animation: none; transform: rotate(0); }
+.ai-fab .fab-icon-chat, .ai-fab .fab-icon-close { position: absolute; transition: opacity 0.2s, transform 0.2s; }
+.ai-fab .fab-icon-close { opacity: 0; transform: rotate(-90deg); }
+.ai-fab.open .fab-icon-chat { opacity: 0; transform: rotate(90deg); }
+.ai-fab.open .fab-icon-close { opacity: 1; transform: rotate(0); }
+@keyframes fabPulse {
+  0%, 100% { box-shadow: 0 4px 20px rgba(74,159,232,0.4), 0 0 0 0 rgba(74,159,232,0.3); }
+  50% { box-shadow: 0 4px 20px rgba(74,159,232,0.4), 0 0 0 10px rgba(74,159,232,0); }
+}
+
+.ai-chat-float {
+  position: fixed; bottom: 5.5rem; right: 1.5rem; z-index: 9998;
+  width: 370px; max-height: 520px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; overflow: hidden;
+  box-shadow: 0 12px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05);
+  display: flex; flex-direction: column;
+  opacity: 0; transform: translateY(20px) scale(0.95);
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.ai-chat-float.open {
+  opacity: 1; transform: translateY(0) scale(1);
+  pointer-events: all;
+}
+@media (max-width: 480px) {
+  .ai-chat-float {
+    width: calc(100vw - 1.5rem); right: 0.75rem; bottom: 5rem;
+    max-height: calc(100vh - 7rem);
+  }
+  .ai-fab { bottom: 1rem; right: 1rem; width: 50px; height: 50px; font-size: 1.3rem; }
+}
+
 .ai-chat-header {
   display: flex; align-items: center; gap: 0.75rem;
-  padding: 1rem 1.25rem; border-bottom: 1px solid var(--border);
-  background: var(--surface2);
+  padding: 0.85rem 1.1rem; border-bottom: 1px solid var(--border);
+  background: var(--surface2); flex-shrink: 0;
 }
 .ai-chat-avatar {
-  width: 36px; height: 36px; border-radius: 50%;
+  width: 34px; height: 34px; border-radius: 50%;
   background: linear-gradient(135deg, #c77af5, #4a9fe8);
   display: flex; align-items: center; justify-content: center;
-  font-size: 1rem; flex-shrink: 0;
+  font-size: 0.95rem; flex-shrink: 0;
 }
-.ai-chat-title { font-weight: 700; font-size: 0.9rem; }
-.ai-chat-sub { font-size: 0.7rem; color: var(--muted); }
+.ai-chat-title { font-weight: 700; font-size: 0.85rem; }
+.ai-chat-sub { font-size: 0.68rem; color: var(--muted); }
 .ai-online-dot {
   width: 8px; height: 8px; border-radius: 50%;
   background: var(--etf); margin-left: auto; flex-shrink: 0;
   box-shadow: 0 0 6px var(--etf);
 }
 .ai-messages {
-  padding: 1rem 1.25rem; min-height: 180px; max-height: 340px;
-  overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem;
+  padding: 0.85rem 1rem; flex: 1; min-height: 0;
+  overflow-y: auto; display: flex; flex-direction: column; gap: 0.65rem;
 }
 .ai-msg {
-  display: flex; gap: 0.6rem; align-items: flex-start;
+  display: flex; gap: 0.5rem; align-items: flex-start;
   animation: fadeInUp 0.2s ease;
 }
 @keyframes fadeInUp {
@@ -842,52 +883,52 @@ tr:hover td { background:var(--surface2); }
 }
 .ai-msg.user { flex-direction: row-reverse; }
 .ai-msg-avatar {
-  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+  width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
-  font-size: 0.75rem; font-weight: 700;
+  font-size: 0.7rem; font-weight: 700;
 }
 .ai-msg.bot .ai-msg-avatar { background: linear-gradient(135deg, #c77af5, #4a9fe8); }
 .ai-msg.user .ai-msg-avatar { background: var(--surface3); color: var(--muted2); }
 .ai-msg-bubble {
-  max-width: 78%; padding: 0.6rem 0.9rem; border-radius: 12px;
-  font-size: 0.82rem; line-height: 1.55;
+  max-width: 80%; padding: 0.55rem 0.85rem; border-radius: 12px;
+  font-size: 0.8rem; line-height: 1.5;
 }
 .ai-msg.bot .ai-msg-bubble { background: var(--surface2); color: var(--text); border-radius: 4px 12px 12px 12px; }
 .ai-msg.user .ai-msg-bubble { background: linear-gradient(135deg, var(--pepp), #2d5fa0); color: #fff; border-radius: 12px 4px 12px 12px; }
-.ai-typing { display: flex; gap: 4px; align-items: center; padding: 0.5rem 0.2rem; }
-.ai-typing span { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); animation: typingDot 1.2s infinite; }
+.ai-typing { display: flex; gap: 4px; align-items: center; padding: 0.4rem 0.2rem; }
+.ai-typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); animation: typingDot 1.2s infinite; }
 .ai-typing span:nth-child(2) { animation-delay: 0.2s; }
 .ai-typing span:nth-child(3) { animation-delay: 0.4s; }
 @keyframes typingDot { 0%,60%,100%{opacity:0.2;transform:scale(0.8)} 30%{opacity:1;transform:scale(1)} }
-.ai-input-row {
-  display: flex; gap: 0.5rem; padding: 0.85rem 1.25rem;
-  border-top: 1px solid var(--border); background: var(--surface2);
-}
-.ai-input {
-  flex: 1; background: var(--surface3); border: 1px solid var(--border);
-  border-radius: 999px; color: var(--text);
-  font-family: 'DM Sans', sans-serif; font-size: 0.83rem;
-  padding: 0.5rem 1rem; outline: none; transition: border-color 0.15s;
-}
-.ai-input:focus { border-color: var(--etf); }
-.ai-send-btn {
-  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
-  background: linear-gradient(135deg, var(--pepp), var(--etf));
-  border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
-  font-size: 0.9rem; transition: opacity 0.15s;
-}
-.ai-send-btn:hover { opacity: 0.85; }
-.ai-send-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 .ai-quick-btns {
-  display: flex; gap: 0.4rem; flex-wrap: wrap;
-  padding: 0 1.25rem 0.75rem;
+  display: flex; gap: 0.35rem; flex-wrap: wrap;
+  padding: 0 1rem 0.6rem;
 }
 .ai-quick-btn {
-  font-size: 0.7rem; padding: 0.25rem 0.65rem; border-radius: 999px;
+  font-size: 0.68rem; padding: 0.22rem 0.6rem; border-radius: 999px;
   border: 1px solid var(--border); background: var(--surface2);
   color: var(--muted2); cursor: pointer; transition: all 0.15s; white-space: nowrap;
 }
 .ai-quick-btn:hover { color: var(--etf-l); border-color: rgba(74,232,160,0.4); background: var(--surface3); }
+.ai-input-row {
+  display: flex; gap: 0.5rem; padding: 0.7rem 1rem;
+  border-top: 1px solid var(--border); background: var(--surface2); flex-shrink: 0;
+}
+.ai-input {
+  flex: 1; background: var(--surface3); border: 1px solid var(--border);
+  border-radius: 999px; color: var(--text);
+  font-family: 'DM Sans', sans-serif; font-size: 0.8rem;
+  padding: 0.45rem 0.9rem; outline: none; transition: border-color 0.15s;
+}
+.ai-input:focus { border-color: var(--etf); }
+.ai-send-btn {
+  width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--pepp), var(--etf));
+  border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem; transition: opacity 0.15s;
+}
+.ai-send-btn:hover { opacity: 0.85; }
+.ai-send-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 </style>
 </head>
 <body>
@@ -2794,34 +2835,10 @@ SLIDER_PAIRS.forEach(([,numId]) => {
     <div class="feedback-sent" id="feedback-sent">✅ Hvala! Tvoj feedback je zabilježen.</div>
   </div>
 
-  <!-- AI CHAT ASISTENT -->
-  <div class="ai-chat-card">
-    <div class="ai-chat-header">
-      <div class="ai-chat-avatar">🤖</div>
-      <div>
-        <div class="ai-chat-title">MarsanAI Asistent</div>
-        <div class="ai-chat-sub">Postavi pitanje o ulaganju, fondovima ili korištenju aplikacije</div>
-      </div>
-      <div class="ai-online-dot"></div>
-    </div>
-    <div class="ai-messages" id="ai-messages">
-      <div class="ai-msg bot">
-        <div class="ai-msg-avatar">🤖</div>
-        <div class="ai-msg-bubble">Bok! Ja sam MarsanAI asistent. 👋 Mogu ti pomoći razumjeti razliku između DMF-a i PEPP-a, objasniti ETF fondove, ili te voditi kroz kalkulator. Što te zanima?</div>
-      </div>
-    </div>
-    <div class="ai-quick-btns">
-      <button class="ai-quick-btn" onclick="sendQuickMsg('Što je razlika između DMF i PEPP?')">DMF vs PEPP</button>
-      <button class="ai-quick-btn" onclick="sendQuickMsg('Koji ETF preporučuješ za početnike?')">ETF za početnike</button>
-      <button class="ai-quick-btn" onclick="sendQuickMsg('Kako koristiti kalkulator?')">Kako koristiti?</button>
-      <button class="ai-quick-btn" onclick="sendQuickMsg('Što je državni poticaj na 3. stup?')">Državni poticaj</button>
-      <button class="ai-quick-btn" onclick="sendQuickMsg('Koje su naknade na IBKR vs Trading 212?')">IBKR vs T212</button>
-    </div>
-    <div class="ai-input-row">
-      <input class="ai-input" id="ai-input" type="text" placeholder="Pitaj nešto o ulaganju..." 
-             onkeydown="if(event.key==='Enter') sendAiMsg()">
-      <button class="ai-send-btn" id="ai-send-btn" onclick="sendAiMsg()">➤</button>
-    </div>
+  <div class="feedback-form-card" style="text-align:center; padding: 1.25rem;">
+    <h3>🤖 AI Asistent</h3>
+    <p style="font-size:0.82rem; color:var(--muted2); margin-bottom:0.75rem;">Trebate pomoć? Kliknite na chat ikonu dolje desno — MarsanAI asistent dostupan je na svakoj stranici.</p>
+    <button class="fb-submit-btn" onclick="toggleAiChat()" style="margin-top:0;">Otvori AI chat 🤖</button>
   </div>
 
   <p class="disclaimer">⚠️ AI asistent pruža općenite informacije u edukativne svrhe. Nije zamjena za profesionalni financijski savjet.</p>
@@ -2954,8 +2971,25 @@ async function sendAiMsg() {
 }
 
 function sendQuickMsg(text) {
+  // Open chat if closed
+  const chatEl = document.getElementById('ai-chat-float');
+  const fabEl = document.getElementById('ai-fab');
+  if (!chatEl.classList.contains('open')) {
+    chatEl.classList.add('open');
+    fabEl.classList.add('open');
+  }
   $('ai-input').value = text;
   sendAiMsg();
+}
+
+function toggleAiChat() {
+  const chatEl = document.getElementById('ai-chat-float');
+  const fabEl = document.getElementById('ai-fab');
+  chatEl.classList.toggle('open');
+  fabEl.classList.toggle('open');
+  if (chatEl.classList.contains('open')) {
+    setTimeout(() => $('ai-input')?.focus(), 300);
+  }
 }
 
 // Restore saved rating
@@ -3047,6 +3081,40 @@ function showPollResults(pollId) {
 })();
 </script>
 
+<!-- FLOATING AI CHAT -->
+<div class="ai-chat-float" id="ai-chat-float">
+  <div class="ai-chat-header">
+    <div class="ai-chat-avatar">🤖</div>
+    <div>
+      <div class="ai-chat-title">MarsanAI Asistent</div>
+      <div class="ai-chat-sub">Pitaj me o fondovima, ETF-ovima ili kalkulatoru</div>
+    </div>
+    <div class="ai-online-dot"></div>
+  </div>
+  <div class="ai-messages" id="ai-messages">
+    <div class="ai-msg bot">
+      <div class="ai-msg-avatar">🤖</div>
+      <div class="ai-msg-bubble">Bok! Ja sam MarsanAI asistent. 👋 Mogu ti pomoći razumjeti razliku između DMF-a i PEPP-a, objasniti ETF fondove, ili te voditi kroz kalkulator. Što te zanima?</div>
+    </div>
+  </div>
+  <div class="ai-quick-btns">
+    <button class="ai-quick-btn" onclick="sendQuickMsg('Što je razlika između DMF i PEPP?')">DMF vs PEPP</button>
+    <button class="ai-quick-btn" onclick="sendQuickMsg('Koji ETF preporučuješ za početnike?')">ETF za početnike</button>
+    <button class="ai-quick-btn" onclick="sendQuickMsg('Kako koristiti kalkulator?')">Kako koristiti?</button>
+    <button class="ai-quick-btn" onclick="sendQuickMsg('Što je državni poticaj na 3. stup?')">Državni poticaj</button>
+    <button class="ai-quick-btn" onclick="sendQuickMsg('Koje su naknade na IBKR vs Trading 212?')">IBKR vs T212</button>
+  </div>
+  <div class="ai-input-row">
+    <input class="ai-input" id="ai-input" type="text" placeholder="Pitaj nešto o ulaganju..." 
+           onkeydown="if(event.key==='Enter') sendAiMsg()">
+    <button class="ai-send-btn" id="ai-send-btn" onclick="sendAiMsg()">➤</button>
+  </div>
+</div>
+<button class="ai-fab" id="ai-fab" onclick="toggleAiChat()">
+  <span class="fab-icon-chat">🤖</span>
+  <span class="fab-icon-close">✕</span>
+</button>
+
 <!-- SITE FOOTER -->
 <footer class="site-footer">
   <div class="footer-grid">
@@ -3073,7 +3141,7 @@ function showPollResults(pollId) {
       <h4>Aplikacija</h4>
       <span onclick="document.querySelector('[data-page=home]').click()">Početna</span>
       <span onclick="document.querySelector('[data-page=feedback]').click()">💬 Feedback</span>
-      <span onclick="document.querySelector('[data-page=feedback]').click()">🤖 AI Asistent</span>
+      <span onclick="toggleAiChat()">🤖 AI Asistent</span>
     </div>
   </div>
   <div class="footer-disclaimer">
