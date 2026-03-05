@@ -696,6 +696,46 @@ tr:hover td { background:var(--surface2); }
 .footer-bottom span { font-size: 0.68rem; color: var(--muted); }
 .footer-version { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--etf-l); }
 
+/* EDUCATION PAGE */
+.edu-hero { text-align:center; padding:2rem 1rem 1.5rem; }
+.edu-hero h1 { font-family:'DM Serif Display',serif; font-size:2rem; margin-bottom:0.5rem; }
+.edu-hero p { color:var(--muted2); font-size:0.9rem; max-width:560px; margin:0 auto; line-height:1.5; }
+.edu-section { margin-bottom:1.75rem; }
+.edu-section-title {
+  font-family:'DM Serif Display',serif; font-size:1.15rem;
+  margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:1px solid var(--border);
+}
+.edu-grid { display:grid; grid-template-columns:1fr; gap:0.85rem; }
+@media(min-width:640px){ .edu-grid { grid-template-columns:1fr 1fr; } }
+.edu-card {
+  background:var(--surface); border:1px solid var(--border); border-radius:12px;
+  padding:1.15rem; transition:all 0.15s; cursor:pointer; text-decoration:none; display:block; color:inherit;
+}
+.edu-card:hover { border-color:var(--muted); transform:translateY(-1px); }
+.edu-card-head { display:flex; align-items:center; gap:0.6rem; margin-bottom:0.5rem; }
+.edu-card-icon { font-size:1.3rem; flex-shrink:0; }
+.edu-card-title { font-size:0.88rem; font-weight:600; color:var(--text); line-height:1.3; }
+.edu-card-desc { font-size:0.78rem; color:var(--muted2); line-height:1.5; }
+.edu-card-tag {
+  display:inline-block; font-size:0.65rem; font-weight:600; padding:0.15rem 0.5rem;
+  border-radius:999px; margin-top:0.5rem; letter-spacing:0.03em;
+}
+.edu-tag-blog { background:rgba(232,164,74,0.15); color:var(--dmf-l); }
+.edu-tag-yt { background:rgba(245,96,96,0.15); color:var(--red); }
+.edu-tag-community { background:rgba(74,159,232,0.15); color:var(--pepp-l); }
+.edu-tag-book { background:rgba(199,122,245,0.15); color:var(--combo-l); }
+.edu-tag-beginner { background:rgba(74,232,160,0.15); color:var(--etf-l); }
+.edu-tag-hr { background:rgba(74,232,160,0.1); color:var(--etf); border:1px solid rgba(74,232,160,0.2); }
+.edu-tag-en { background:rgba(74,159,232,0.1); color:var(--pepp); border:1px solid rgba(74,159,232,0.2); }
+.edu-book-highlight {
+  background:var(--surface); border:1px solid var(--border); border-radius:14px;
+  padding:1.5rem; display:flex; gap:1.25rem; align-items:center; margin-bottom:1rem;
+}
+.edu-book-emoji { font-size:2.5rem; flex-shrink:0; }
+.edu-book-info h3 { font-family:'DM Serif Display',serif; font-size:1rem; margin-bottom:0.25rem; }
+.edu-book-info p { font-size:0.78rem; color:var(--muted2); line-height:1.5; }
+.edu-book-badge { font-size:0.68rem; font-weight:700; color:var(--dmf-l); margin-top:0.4rem; display:inline-block; }
+
 /* FEEDBACK PAGE */
 .feedback-hero {
   text-align: center; padding: 2rem 1rem 1.5rem;
@@ -988,6 +1028,7 @@ tr:hover td { background:var(--surface2); }
     <div class="nav-tab" data-page="p1">3. Stup vs PEPP</div>
     <div class="nav-tab" data-page="p2">Pension vs ETF</div>
     <div class="nav-tab" data-page="p3">Pension + ETF</div>
+    <div class="nav-tab" data-page="edukacija">📚 Edukacija</div>
     <div class="nav-tab" data-page="feedback">💬 Feedback</div>
   </div>
 </nav>
@@ -2789,6 +2830,230 @@ SLIDER_PAIRS.forEach(([,numId]) => {
 });
 </script>
 
+
+<!-- ========== EDUKACIJA PAGE ========== -->
+<div class="page" id="edukacija">
+  <div class="edu-hero">
+    <h1>📚 Edukacija</h1>
+    <p>Najbolji hrvatski i međunarodni resursi za financijsku pismenost, investiranje i mirovinsko planiranje.</p>
+  </div>
+
+  <!-- BOOK HIGHLIGHT -->
+  <div class="edu-book-highlight">
+    <div class="edu-book-emoji">📖</div>
+    <div class="edu-book-info">
+      <h3>Kako biti financijski fit</h3>
+      <p>Autorice: Tetka (mytetka.com) & Škrti Otočanin (Toni Vitali) — najprodavanija knjiga na Interliberu u Zagrebu. Obavezno štivo za svakog tko želi razumjeti osobne financije.</p>
+      <span class="edu-book-badge">🏆 #1 Bestseller — Interliber Zagreb</span>
+    </div>
+  </div>
+
+  <!-- BLOGOVI -->
+  <div class="edu-section">
+    <h2 class="edu-section-title">📝 Blogovi & Autori</h2>
+    <div class="edu-grid">
+      <a class="edu-card" href="https://mytetka.com/blog/" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">👩‍💼</span>
+          <span class="edu-card-title">Tetka — mytetka.com</span>
+        </div>
+        <p class="edu-card-desc">Najpopularniji HR blog o osobnim financijama. Detaljni članci o ETF-ovima, brokerima, III. stupu, PEPP-u i strategijama ulaganja.</p>
+        <span class="edu-card-tag edu-tag-blog">BLOG</span>
+        <span class="edu-card-tag edu-tag-hr">🇭🇷 HR</span>
+      </a>
+      <a class="edu-card" href="https://tonivitali.com/svi-postovi/" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">🧮</span>
+          <span class="edu-card-title">Škrti Otočanin — tonivitali.com</span>
+        </div>
+        <p class="edu-card-desc">Toni Vitali — matematičar i financijski edukator. Praktični savjeti o štednji, ulaganju i financijskoj pismenosti za "običnog čovjeka".</p>
+        <span class="edu-card-tag edu-tag-blog">BLOG</span>
+        <span class="edu-card-tag edu-tag-hr">🇭🇷 HR</span>
+      </a>
+      <a class="edu-card" href="https://mytetka.com/brokeri-kako-odabrati/" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">🏦</span>
+          <span class="edu-card-title">Brokeri — kako odabrati?</span>
+        </div>
+        <p class="edu-card-desc">Detaljna usporedba IBKR, Trading 212, Finax i drugih platformi — naknade, regulativa, raspoloživost ETF-ova.</p>
+        <span class="edu-card-tag edu-tag-blog">ČLANAK</span>
+        <span class="edu-card-tag edu-tag-beginner">POČETNICI</span>
+      </a>
+      <a class="edu-card" href="https://mytetka.com/paneuropska-mirovina-pepp/" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">🌍</span>
+          <span class="edu-card-title">Paneuropska mirovina (PEPP)</span>
+        </div>
+        <p class="edu-card-desc">Sve o PEPP-u — što je, kako funkcionira, usporedba s III. stupom, naknade i investicijska strategija Finaxa.</p>
+        <span class="edu-card-tag edu-tag-blog">ČLANAK</span>
+        <span class="edu-card-tag edu-tag-hr">🇭🇷 HR</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- YOUTUBE HR -->
+  <div class="edu-section">
+    <h2 class="edu-section-title">🎬 YouTube — Hrvatski sadržaj</h2>
+    <div class="edu-grid">
+      <a class="edu-card" href="https://www.youtube.com/live/2CBaocYyqh8" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">▶️</span>
+          <span class="edu-card-title">Tetka & Škrti Otočanin</span>
+        </div>
+        <p class="edu-card-desc">YouTube kanal s podcastima o financijama, ETF-ovima, mirovinskoj štednji i praktičnim savjetima za HR tržište.</p>
+        <span class="edu-card-tag edu-tag-yt">YOUTUBE</span>
+        <span class="edu-card-tag edu-tag-hr">🇭🇷 HR</span>
+      </a>
+      <a class="edu-card" href="https://youtu.be/OD-EHPvyRVA" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">▶️</span>
+          <span class="edu-card-title">Kenan Crnkić: Kako investirati</span>
+        </div>
+        <p class="edu-card-desc">Popularan video o osnovama investiranja — pristupačno objašnjeno za potpune početnike.</p>
+        <span class="edu-card-tag edu-tag-yt">YOUTUBE</span>
+        <span class="edu-card-tag edu-tag-hr">🇭🇷 HR</span>
+        <span class="edu-card-tag edu-tag-beginner">POČETNICI</span>
+      </a>
+      <a class="edu-card" href="https://www.youtube.com/watch?v=SeGUPT9mklk" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">▶️</span>
+          <span class="edu-card-title">Kako početi investirati — FIRE Podcast #41</span>
+        </div>
+        <p class="edu-card-desc">Podcast epizoda o prvim koracima u investiranju — od otvaranja računa do prvog ETF-a.</p>
+        <span class="edu-card-tag edu-tag-yt">PODCAST</span>
+        <span class="edu-card-tag edu-tag-hr">🇭🇷 HR</span>
+      </a>
+      <a class="edu-card" href="https://www.youtube.com/watch?v=OUuNLqSGUzc" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">▶️</span>
+          <span class="edu-card-title">Toni Milun: Pare nisu problem</span>
+        </div>
+        <p class="edu-card-desc">Ako znaš što radiš s njima — praktični pristup financijama i ulaganju.</p>
+        <span class="edu-card-tag edu-tag-yt">YOUTUBE</span>
+        <span class="edu-card-tag edu-tag-hr">🇭🇷 HR</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- YOUTUBE EN -->
+  <div class="edu-section">
+    <h2 class="edu-section-title">🌐 YouTube — Engleski sadržaj</h2>
+    <div class="edu-grid">
+      <a class="edu-card" href="https://www.youtube.com/watch?v=zDm8ZR8Wzjc" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">▶️</span>
+          <span class="edu-card-title">How To Invest For Beginners (European Investor)</span>
+        </div>
+        <p class="edu-card-desc">Vodič za europske investitore — kako početi ulagati u ETF-ove iz EU perspektive.</p>
+        <span class="edu-card-tag edu-tag-yt">YOUTUBE</span>
+        <span class="edu-card-tag edu-tag-en">🌐 EN</span>
+        <span class="edu-card-tag edu-tag-beginner">POČETNICI</span>
+      </a>
+      <a class="edu-card" href="https://www.youtube.com/watch?v=FFlreMF-w4Y" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">▶️</span>
+          <span class="edu-card-title">14 Years of Investing: Everything I Learned</span>
+        </div>
+        <p class="edu-card-desc">Iskustva i lekcije nakon 14 godina investiranja — što bi autor radio drugačije.</p>
+        <span class="edu-card-tag edu-tag-yt">YOUTUBE</span>
+        <span class="edu-card-tag edu-tag-en">🌐 EN</span>
+      </a>
+      <a class="edu-card" href="https://www.youtube.com/watch?v=c7JJGGDQmEQ" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">▶️</span>
+          <span class="edu-card-title">If I Started Investing In 2025, This Is What I Would Do</span>
+        </div>
+        <p class="edu-card-desc">Moderna strategija za početnike — što bi iskusan investitor napravio da kreće ispočetka.</p>
+        <span class="edu-card-tag edu-tag-yt">YOUTUBE</span>
+        <span class="edu-card-tag edu-tag-en">🌐 EN</span>
+        <span class="edu-card-tag edu-tag-beginner">POČETNICI</span>
+      </a>
+      <a class="edu-card" href="https://youtu.be/LtMsBYhVDys" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">▶️</span>
+          <span class="edu-card-title">Gold vs S&P 500 vs QQQ vs BTC — What Profits Most?</span>
+        </div>
+        <p class="edu-card-desc">Usporedba prinosa zlata, S&P 500, Nasdaq-a i Bitcoina u sljedećih 5 godina.</p>
+        <span class="edu-card-tag edu-tag-yt">YOUTUBE</span>
+        <span class="edu-card-tag edu-tag-en">🌐 EN</span>
+      </a>
+      <a class="edu-card" href="https://youtu.be/UolRIbwXf_E" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">▶️</span>
+          <span class="edu-card-title">Is Investing Just Gambling in Disguise?</span>
+        </div>
+        <p class="edu-card-desc">Razlika između investiranja i kockanja — zašto dugoročno ulaganje nije kocka.</p>
+        <span class="edu-card-tag edu-tag-yt">YOUTUBE</span>
+        <span class="edu-card-tag edu-tag-en">🌐 EN</span>
+      </a>
+      <a class="edu-card" href="https://www.youtube.com/watch?v=YilG6KzdlgQ" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">▶️</span>
+          <span class="edu-card-title">100 Years of Index Funds — What I Found</span>
+        </div>
+        <p class="edu-card-desc">Analiza 100 godina indeksnih fondova — dugoročni trendovi i što možemo očekivati.</p>
+        <span class="edu-card-tag edu-tag-yt">YOUTUBE</span>
+        <span class="edu-card-tag edu-tag-en">🌐 EN</span>
+      </a>
+      <a class="edu-card" href="https://youtu.be/1bu07Ed4_ig" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">▶️</span>
+          <span class="edu-card-title">19 Stock Market Terms Explained</span>
+        </div>
+        <p class="edu-card-desc">Jednostavan vodič kroz 19 najvažnijih pojmova na burzi — za potpune početnike.</p>
+        <span class="edu-card-tag edu-tag-yt">YOUTUBE</span>
+        <span class="edu-card-tag edu-tag-en">🌐 EN</span>
+        <span class="edu-card-tag edu-tag-beginner">POČETNICI</span>
+      </a>
+      <a class="edu-card" href="https://youtu.be/-kSrEC5Bqy0" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">▶️</span>
+          <span class="edu-card-title">I've Made Millions Rich — My Investment Playbook</span>
+        </div>
+        <p class="edu-card-desc">Investicijska strategija koja je pomogla milijunima — dugoročni pristup i disciplina.</p>
+        <span class="edu-card-tag edu-tag-yt">YOUTUBE</span>
+        <span class="edu-card-tag edu-tag-en">🌐 EN</span>
+      </a>
+      <a class="edu-card" href="https://youtu.be/tGdRpY1EkJw" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">▶️</span>
+          <span class="edu-card-title">Ultimate ETF Tutorial</span>
+        </div>
+        <p class="edu-card-desc">Sve što trebate znati o ETF-ovima — od osnova do naprednih strategija odabira.</p>
+        <span class="edu-card-tag edu-tag-yt">YOUTUBE</span>
+        <span class="edu-card-tag edu-tag-en">🌐 EN</span>
+        <span class="edu-card-tag edu-tag-beginner">POČETNICI</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ZAJEDNICA -->
+  <div class="edu-section">
+    <h2 class="edu-section-title">💬 Zajednica</h2>
+    <div class="edu-grid">
+      <a class="edu-card" href="https://www.reddit.com/r/financije/" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">🗣️</span>
+          <span class="edu-card-title">r/financije — Reddit zajednica</span>
+        </div>
+        <p class="edu-card-desc">Najveća hrvatska online zajednica za diskusije o investiranju, ETF-ovima, PEPP-u, III. stupu i osobnim financijama.</p>
+        <span class="edu-card-tag edu-tag-community">ZAJEDNICA</span>
+        <span class="edu-card-tag edu-tag-hr">🇭🇷 HR</span>
+      </a>
+      <a class="edu-card" href="https://www.europskamirovina.hr/" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">🌍</span>
+          <span class="edu-card-title">europskamirovina.hr — PEPP portal</span>
+        </div>
+        <p class="edu-card-desc">Službeni portal o Paneuropskoj mirovini — pravila, prednosti, kalkulatori i FAQ za hrvatsko tržište.</p>
+        <span class="edu-card-tag edu-tag-community">PORTAL</span>
+        <span class="edu-card-tag edu-tag-hr">🇭🇷 HR</span>
+      </a>
+    </div>
+  </div>
+
+  <p class="disclaimer">⚠️ Navedeni resursi su informativnog karaktera. MarsanInvest nije povezan s navedenim autorima i platformama. Uvijek konzultiraj licenciranog financijskog savjetnika prije donošenja investicijskih odluka.</p>
+</div>
 
 <!-- ========== FEEDBACK PAGE ========== -->
 <div class="page" id="feedback">
