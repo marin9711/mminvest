@@ -931,7 +931,8 @@ async function submitFeedback() {
   const text = $('fb-text').value.trim();
   if (!text) { $('fb-text').style.borderColor = 'var(--red)'; setTimeout(()=>$('fb-text').style.borderColor='',1500); return; }
   const type = document.querySelector('.fb-type-btn.active')?.dataset.type || 'prijedlog';
-  const entry = { type, text, rating: selectedRating, ts: new Date().toISOString() };
+  const email = $('fb-email') ? $('fb-email').value.trim() : '';
+  const entry = { type, text, rating: selectedRating, email, ts: new Date().toISOString() };
   
   $('fb-submit-btn').disabled = true;
   
@@ -944,7 +945,9 @@ async function submitFeedback() {
   } catch(e) { console.error('Feedback send error:', e); }
   
   $('fb-text').value = '';
+  if ($('fb-email')) $('fb-email').value = '';
   $('feedback-sent').style.display = 'block';
+  $('feedback-sent').textContent = email ? '✅ Hvala! Odgovor ćemo poslati na tvoj email.' : '✅ Hvala! Tvoj feedback je zabilježen.';
   setTimeout(() => { $('feedback-sent').style.display='none'; $('fb-submit-btn').disabled=false; }, 4000);
 }
 
@@ -1250,21 +1253,72 @@ async function loadFeedbackLog() {
     const items = data.items || [];
     if (!items.length) { logEl.innerHTML = '<div class="fb-log-empty">Nema feedback unosa.</div>'; return; }
     const typeIcon = { prijedlog:'💡', pohvala:'👏', greška:'🐛', pitanje:'❓' };
-    logEl.innerHTML = items.slice().reverse().map(it => {
+    logEl.innerHTML = items.slice().reverse().map((it, idx) => {
+      const realIdx = items.length - 1 - idx;
       const d = new Date(it.ts);
       const ts = d.toLocaleDateString('hr-HR') + ' ' + d.toLocaleTimeString('hr-HR', {hour:'2-digit',minute:'2-digit'});
       const rating = it.rating ? '⭐'.repeat(it.rating) : '';
-      return `<div class="fb-log-item">
+      const statusBadge = it.reply
+        ? '<span class="fb-log-status odgovoreno">✅ odgovoreno</span>'
+        : (it.email ? '<span class="fb-log-status novo">🔵 čeka odgovor</span>' : '');
+      const emailRow = it.email ? `<div class="fb-log-email">📧 ${it.email}</div>` : '';
+      const replyRow = it.reply
+        ? `<div class="fb-log-reply">💬 Odgovor: ${it.reply.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`
+        : (it.email ? `<div class="fb-reply-row">
+            <input class="fb-reply-input" id="reply-input-${realIdx}" placeholder="Upiši odgovor korisniku...">
+            <button class="fb-reply-btn" id="reply-btn-${realIdx}" onclick="sendReply(${realIdx})">📨 Pošalji</button>
+          </div>` : '');
+      return `<div class="fb-log-item" id="fb-item-${realIdx}">
         <div class="fb-log-meta">
           <span class="fb-log-type ${it.type}">${typeIcon[it.type]||''} ${it.type}</span>
           <span class="fb-log-ts">${ts}</span>
+          ${statusBadge}
         </div>
+        ${emailRow}
         <div class="fb-log-text">${it.text.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
         ${rating ? '<div class="fb-log-rating">' + rating + '</div>' : ''}
+        ${replyRow}
       </div>`;
     }).join('');
   } catch(e) {
     logEl.innerHTML = '<div class="fb-log-empty">⚠️ Greška pri dohvaćanju.</div>';
+  }
+}
+
+async function sendReply(idx) {
+  const input = $(`reply-input-${idx}`);
+  const btn = $(`reply-btn-${idx}`);
+  if (!input || !btn) return;
+  const replyText = input.value.trim();
+  if (!replyText) { input.style.borderColor = 'var(--red)'; setTimeout(()=>input.style.borderColor='',1500); return; }
+
+  btn.disabled = true;
+  btn.textContent = 'Šaljem...';
+
+  try {
+    const resp = await fetch(WORKER_URL + '/admin/api/feedback/reply', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
+      body: JSON.stringify({ idx, reply: replyText })
+    });
+    const data = await resp.json();
+    if (data.ok) {
+      const item = $(`fb-item-${idx}`);
+      if (item) {
+        const replyRow = item.querySelector('.fb-reply-row');
+        if (replyRow) replyRow.outerHTML = `<div class="fb-log-reply">💬 Odgovor: ${replyText.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`;
+        const badge = item.querySelector('.fb-log-status');
+        if (badge) { badge.className = 'fb-log-status odgovoreno'; badge.textContent = '✅ odgovoreno'; }
+      }
+    } else {
+      btn.disabled = false;
+      btn.textContent = '📨 Pošalji';
+      alert('Greška pri slanju: ' + (data.error || 'nepoznata'));
+    }
+  } catch(e) {
+    btn.disabled = false;
+    btn.textContent = '📨 Pošalji';
+    console.error('Reply error:', e);
   }
 }
 

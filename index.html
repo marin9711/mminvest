@@ -879,6 +879,24 @@ tr:hover td { background:var(--surface2); }
   transition: border-color 0.15s;
 }
 .fb-textarea:focus { border-color: var(--etf); }
+.fb-email {
+  width: 100%; padding: 0.6rem 0.9rem; background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--text); font-size: 0.85rem; margin-bottom: 0.75rem;
+  outline: none; font-family: inherit;
+}
+.fb-email:focus { border-color: var(--etf); }
+.fb-email::placeholder { color: var(--muted); }
+.fb-log-email { font-size: 0.7rem; color: var(--pepp-l); margin-top: 0.2rem; }
+.fb-log-status { display:inline-block; font-size:0.65rem; padding:0.15rem 0.5rem; border-radius:999px; margin-left:0.4rem; font-weight:700; }
+.fb-log-status.novo { background:rgba(74,159,232,0.15); color:var(--pepp-l); border:1px solid rgba(74,159,232,0.3); }
+.fb-log-status.odgovoreno { background:rgba(74,232,160,0.15); color:var(--etf-l); border:1px solid rgba(74,232,160,0.3); }
+.fb-reply-row { margin-top:0.5rem; display:flex; gap:0.4rem; }
+.fb-reply-input { flex:1; padding:0.4rem 0.6rem; background:var(--surface2); border:1px solid var(--border); border-radius:6px; color:var(--text); font-size:0.75rem; outline:none; font-family:inherit; }
+.fb-reply-input:focus { border-color:var(--etf); }
+.fb-reply-btn { padding:0.4rem 0.75rem; background:var(--etf); color:#0b0d12; border:none; border-radius:6px; font-size:0.72rem; font-weight:700; cursor:pointer; white-space:nowrap; }
+.fb-reply-btn:hover { opacity:0.85; }
+.fb-reply-btn:disabled { opacity:0.4; cursor:not-allowed; }
+.fb-log-reply { margin-top:0.4rem; padding:0.4rem 0.6rem; background:rgba(74,232,160,0.07); border-left:2px solid var(--etf); border-radius:4px; font-size:0.72rem; color:var(--etf-l); }
 .fb-submit-btn {
   margin-top: 0.85rem; padding: 0.65rem 1.75rem;
   background: linear-gradient(135deg, var(--pepp), var(--etf));
@@ -2693,7 +2711,7 @@ tr:hover td { background:var(--surface2); }
       <button class="fb-type-btn" data-type="pitanje">❓ Pitanje</button>
     </div>
     <textarea class="fb-textarea" id="fb-text" placeholder="Napiši svoju povratnu informaciju, prijedlog ili opis greške..."></textarea>
-    <br>
+    <input type="email" class="fb-email" id="fb-email" placeholder="📧 Tvoj email (opcionalno) — za odgovor admina">
     <button class="fb-submit-btn" id="fb-submit-btn" onclick="submitFeedback()">Pošalji feedback ✉️</button>
     <div class="feedback-sent" id="feedback-sent">✅ Hvala! Tvoj feedback je zabilježen.</div>
   </div>
