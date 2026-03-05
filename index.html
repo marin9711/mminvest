@@ -3807,6 +3807,15 @@ function submitPoll(pollId) {
     localStorage.setItem('miv_polls', JSON.stringify(saved));
   } catch(e){}
 
+  // Pošalji glasove na server
+  try {
+    fetch(WORKER_URL + '/polls', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pollId, votes })
+    }).catch(() => {});
+  } catch(e){}
+
   showPollResults(pollId);
 }
 
@@ -3955,7 +3964,63 @@ function switchAdminTab(tab) {
     document.getElementById('admin-tab-' + t).classList.toggle('active', t === tab);
     document.getElementById('admin-tab-content-' + t).classList.toggle('active', t === tab);
   });
-  if (tab === 'fb') loadFeedbackLog();
+  if (tab === 'fb') { loadFeedbackLog(); loadPollResults(); }
+}
+
+async function loadPollResults() {
+  const el = document.getElementById('admin-poll-results');
+  if (!adminToken || !el) return;
+  el.innerHTML = 'Učitavanje...';
+  try {
+    const resp = await fetch(WORKER_URL + '/admin/api/polls', {
+      headers: { 'Authorization': 'Bearer ' + adminToken }
+    });
+    if (!resp.ok) { el.innerHTML = '⚠️ Greška pri dohvaćanju.'; return; }
+    const data = await resp.json();
+    const polls = data.polls || {};
+
+    const pollLabels = {
+      feature: {
+        title: '💡 Nova funkcionalnost',
+        options: { dijete: '👶 Kalkulator za dijete', inflacija: '📉 Usporedba inflacije', export: '🖨️ Export izvještaja' }
+      },
+      priority: {
+        title: '🎯 Prioritet razvoja',
+        options: { bugovi: '🐛 Popraviti bugove', ai: '🤖 AI asistent', nova: '✨ Nova funkcionalnost' }
+      }
+    };
+
+    let html = '';
+    let hasAny = false;
+
+    for (const [pollId, meta] of Object.entries(pollLabels)) {
+      const votes = polls[pollId] || {};
+      const total = Object.values(votes).reduce((s, v) => s + v, 0);
+      if (total === 0) continue;
+      hasAny = true;
+
+      html += `<div style="margin-bottom:0.75rem; background:var(--surface3); border-radius:8px; padding:0.6rem 0.75rem;">`;
+      html += `<div style="font-weight:700; color:var(--text); margin-bottom:0.4rem; font-size:0.76rem;">${meta.title} <span style="color:var(--muted); font-weight:400;">(${total} glasova)</span></div>`;
+
+      // Sort by votes desc
+      const sorted = Object.entries(meta.options).sort((a, b) => (votes[b[0]] || 0) - (votes[a[0]] || 0));
+      for (const [val, label] of sorted) {
+        const cnt = votes[val] || 0;
+        const pct = total > 0 ? Math.round((cnt / total) * 100) : 0;
+        const isTop = cnt === Math.max(...Object.values(votes)) && cnt > 0;
+        html += `<div style="display:flex; align-items:center; gap:0.4rem; margin-bottom:0.25rem;">`;
+        html += `<div style="flex:1; font-size:0.72rem; color:${isTop ? 'var(--etf-l)' : 'var(--muted2)'}">${label}</div>`;
+        html += `<div style="width:80px; height:5px; background:var(--surface2); border-radius:999px; overflow:hidden;"><div style="height:100%; width:${pct}%; background:${isTop ? 'var(--etf)' : 'var(--pepp)'}; border-radius:999px;"></div></div>`;
+        html += `<div style="font-size:0.7rem; color:var(--muted2); min-width:28px; text-align:right;">${pct}%</div>`;
+        html += `</div>`;
+      }
+      html += `</div>`;
+    }
+
+    el.innerHTML = hasAny ? html : '<div style="text-align:center; padding:0.75rem 0; color:var(--muted);">Još nema glasova.</div>';
+  } catch(e) {
+    el.innerHTML = '⚠️ Greška.';
+  }
 }
 
 async function loadFeedbackLog() {
@@ -4103,10 +4168,21 @@ async function loadFeedbackLog() {
 
       <!-- Tab: Feedback log -->
       <div class="admin-tab-content" id="admin-tab-content-fb">
+
+        <!-- Poll rezultati -->
+        <div style="margin-bottom:1rem;">
+          <div style="font-size:0.78rem; font-weight:700; color:var(--muted2); margin-bottom:0.5rem;">📊 Poll rezultati (svi korisnici)</div>
+          <div id="admin-poll-results" style="font-size:0.75rem; color:var(--muted2); text-align:center; padding:0.75rem 0;">Učitavanje...</div>
+        </div>
+
+        <div style="border-top:1px solid var(--border); margin-bottom:0.75rem;"></div>
+
+        <!-- Feedback log -->
+        <div style="font-size:0.78rem; font-weight:700; color:var(--muted2); margin-bottom:0.5rem;">💬 Feedback unosi</div>
         <div id="admin-feedback-log" class="admin-feedback-log">
           <div class="fb-log-empty">Učitavanje...</div>
         </div>
-        <button class="admin-toggle" style="margin-top:0.75rem; background:var(--surface2); color:var(--muted2); font-size:0.75rem; padding:0.5rem 1rem;" onclick="loadFeedbackLog()">🔄 Osvježi</button>
+        <button class="admin-toggle" style="margin-top:0.75rem; background:var(--surface2); color:var(--muted2); font-size:0.75rem; padding:0.5rem 1rem;" onclick="loadFeedbackLog(); loadPollResults();">🔄 Osvježi</button>
       </div>
 
       <span class="admin-logout-link" onclick="adminLogout()">🔒 Odjavi se</span>

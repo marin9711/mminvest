@@ -246,6 +246,27 @@ export default {
         }
       }
 
+    // API Polls GET (admin — agregat svih glasova)
+      if (path === '/admin/api/polls') {
+        if (!isApiAuthed) {
+          return new Response(JSON.stringify({ error: 'unauthorized' }), {
+            status: 401,
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+        try {
+          const raw = await env.AI_CONFIG.get('poll_votes');
+          const polls = raw ? JSON.parse(raw) : {};
+          return new Response(JSON.stringify({ polls }), {
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        } catch(e) {
+          return new Response(JSON.stringify({ polls: {} }), {
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+      }
+
     // API Feedback GET (čitanje loga)
       if (path === '/admin/api/feedback') {
         if (!isApiAuthed) {
@@ -290,6 +311,38 @@ export default {
       return new Response(adminPage(isOn), {
         headers: { 'Content-Type': 'text/html;charset=UTF-8' },
       });
+    }
+
+    // ── POLLS ENDPOINT ──
+    if (path === '/polls' && request.method === 'POST') {
+      try {
+        const body = await request.json();
+        const pollId = String(body.pollId || '').slice(0, 50);
+        const votes = body.votes; // { value: count, ... }
+        if (!pollId || typeof votes !== 'object') {
+          return new Response(JSON.stringify({ error: 'Bad data' }), {
+            status: 400,
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+        // Dohvati postojeće glasove i agregiraj
+        const raw = await env.AI_CONFIG.get('poll_votes');
+        const allPolls = raw ? JSON.parse(raw) : {};
+        if (!allPolls[pollId]) allPolls[pollId] = {};
+        for (const [val, cnt] of Object.entries(votes)) {
+          const key = String(val).slice(0, 50);
+          allPolls[pollId][key] = (allPolls[pollId][key] || 0) + Number(cnt);
+        }
+        await env.AI_CONFIG.put('poll_votes', JSON.stringify(allPolls));
+        return new Response(JSON.stringify({ ok: true, polls: allPolls[pollId] }), {
+          headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+        });
+      } catch(e) {
+        return new Response(JSON.stringify({ error: 'Bad request' }), {
+          status: 400,
+          headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+        });
+      }
     }
 
     // ── FEEDBACK ENDPOINT ──
