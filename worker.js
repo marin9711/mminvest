@@ -535,6 +535,52 @@ export default {
       }
     }
 
+    // ── RATING ENDPOINT ──
+    if (path === '/rating' && request.method === 'POST') {
+      try {
+        const body = await request.json();
+        const rating = parseInt(body.rating);
+        if (!rating || rating < 1 || rating > 5) {
+          return new Response(JSON.stringify({ error: 'Bad rating' }), {
+            status: 400, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+        const raw = await env.AI_CONFIG.get('ratings');
+        const ratings = raw ? JSON.parse(raw) : [];
+        ratings.push({ rating, ts: new Date().toISOString() });
+        if (ratings.length > 10000) ratings.splice(0, ratings.length - 10000);
+        await env.AI_CONFIG.put('ratings', JSON.stringify(ratings));
+        return new Response(JSON.stringify({ ok: true }), {
+          headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+        });
+      } catch(e) {
+        return new Response(JSON.stringify({ error: 'Bad request' }), {
+          status: 400, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+        });
+      }
+    }
+
+    // ── RATING STATS ENDPOINT ──
+    if (path === '/rating-stats') {
+      try {
+        const raw = await env.AI_CONFIG.get('ratings');
+        const ratings = raw ? JSON.parse(raw) : [];
+        if (!ratings.length) {
+          return new Response(JSON.stringify({ count: 0, avg: 0 }), {
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+        const avg = ratings.reduce((s, r) => s + r.rating, 0) / ratings.length;
+        return new Response(JSON.stringify({ count: ratings.length, avg }), {
+          headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+        });
+      } catch(e) {
+        return new Response(JSON.stringify({ count: 0, avg: 0 }), {
+          headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+        });
+      }
+    }
+
     // ── STATUS ENDPOINT (za frontend) ──
     if (path === '/status') {
       const state = await env.AI_CONFIG.get('ai_enabled');

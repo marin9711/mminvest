@@ -857,6 +857,10 @@ tr:hover td { background:var(--surface2); }
 }
 .star-btn.active, .star-btn:hover { opacity: 1; transform: scale(1.15); }
 .rating-label { font-size: 0.8rem; color: var(--muted2); min-height: 1.2rem; }
+.rating-stats { margin-top: 0.6rem; font-size: 0.8rem; color: var(--muted2); display: flex; align-items: center; justify-content: center; gap: 0.75rem; flex-wrap: wrap; }
+.rating-stats .rs-avg { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+.rating-stats .rs-stars { color: #f5c842; letter-spacing: 1px; }
+.rating-stats .rs-count { color: var(--muted); font-size: 0.75rem; }
 
 .feedback-form-card {
   background: var(--surface); border: 1px solid var(--border);
@@ -2643,6 +2647,7 @@ tr:hover td { background:var(--surface2); }
       <button class="star-btn" data-val="5">⭐</button>
     </div>
     <div class="rating-label" id="rating-label">Klikni za ocjenu</div>
+    <div class="rating-stats" id="rating-stats"></div>
   </div>
 
   <!-- POLL 1: Nova funkcionalnost -->

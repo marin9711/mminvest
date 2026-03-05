@@ -915,6 +915,11 @@ document.querySelectorAll('.star-btn').forEach(btn => {
     selectedRating = +btn.dataset.val;
     $('rating-label').textContent = '✅ Ocjena ' + selectedRating + '/5 zabilježena — ' + ratingLabels[selectedRating];
     try { localStorage.setItem('miv_rating', selectedRating); } catch(e){}
+    fetch(AI_WORKER_URL + '/rating', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ rating: selectedRating })
+    }).then(() => loadRatingStats()).catch(() => {});
   });
 });
 
@@ -1037,6 +1042,27 @@ function toggleAiChat() {
     setTimeout(() => $('ai-input')?.focus(), 300);
   }
 }
+
+// Dohvati statistiku ocjena sa servera
+async function loadRatingStats() {
+  const el = document.getElementById('rating-stats');
+  if (!el) return;
+  try {
+    const resp = await fetch(AI_WORKER_URL + '/rating-stats');
+    const data = await resp.json();
+    if (data.count && data.count > 0) {
+      const avg = data.avg.toFixed(1);
+      const fullStars = Math.round(data.avg);
+      const starsHtml = '★'.repeat(fullStars) + '☆'.repeat(5 - fullStars);
+      el.innerHTML = `
+        <span class="rs-avg">${avg}</span>
+        <span class="rs-stars">${starsHtml}</span>
+        <span class="rs-count">${data.count} ${data.count === 1 ? 'ocjena' : data.count < 5 ? 'ocjene' : 'ocjena'}</span>
+      `;
+    }
+  } catch(e) {}
+}
+loadRatingStats();
 
 // Restore saved rating
 try {
