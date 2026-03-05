@@ -11,7 +11,7 @@
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 };
 
@@ -246,7 +246,26 @@ export default {
         }
       }
 
-      // Zaštićene admin stranice
+    // API Feedback GET (čitanje loga)
+      if (path === '/admin/api/feedback') {
+        if (!isApiAuthed) {
+          return new Response(JSON.stringify({ error: 'unauthorized' }), {
+            status: 401,
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+        try {
+          const raw = await env.AI_CONFIG.get('feedback_log');
+          const items = raw ? JSON.parse(raw) : [];
+          return new Response(JSON.stringify({ items }), {
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        } catch(e) {
+          return new Response(JSON.stringify({ items: [] }), {
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+      }
       if (!isLoggedIn) {
         return new Response(loginPage(), {
           headers: { 'Content-Type': 'text/html;charset=UTF-8' },
@@ -271,6 +290,33 @@ export default {
       return new Response(adminPage(isOn), {
         headers: { 'Content-Type': 'text/html;charset=UTF-8' },
       });
+    }
+
+    // ── FEEDBACK ENDPOINT ──
+    if (path === '/feedback' && request.method === 'POST') {
+      try {
+        const body = await request.json();
+        const entry = {
+          type: String(body.type || 'prijedlog').slice(0, 30),
+          text: String(body.text || '').slice(0, 1000),
+          rating: Number(body.rating) || 0,
+          ts: new Date().toISOString(),
+        };
+        // Dohvati postojeći log, dodaj novi unos, spremi (max 200 unosa)
+        const raw = await env.AI_CONFIG.get('feedback_log');
+        const items = raw ? JSON.parse(raw) : [];
+        items.push(entry);
+        if (items.length > 200) items.splice(0, items.length - 200);
+        await env.AI_CONFIG.put('feedback_log', JSON.stringify(items));
+        return new Response(JSON.stringify({ ok: true }), {
+          headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+        });
+      } catch(e) {
+        return new Response(JSON.stringify({ error: 'Bad request' }), {
+          status: 400,
+          headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+        });
+      }
     }
 
     // ── STATUS ENDPOINT (za frontend) ──

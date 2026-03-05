@@ -3,19 +3,31 @@
   --muted2: #c5cfe9;
 }
 
-/* Edukacija naslov i podnaslovi – jači kontrast */
+/* Edukacija naslov i podnaslovi – ispravljeno: bili su gotovo nevidljivi (#23304f na tamnoj pozadini) */
 .edu-hero h1 {
-  color: #23304f;
+  color: var(--text, #e2e5f0);
 }
 
 .edu-section-title {
-  color: #27324d;
+  color: var(--text, #e2e5f0);
 }
 
-/* Naslovi u feedback / AI karticama */
+/* Naslovi u feedback / AI karticama – ispravljeno: bili su #e9ecff (presvjetlo, stapalo se s pozadinom) */
 .feedback-form-card h3,
+.rating-section h3,
+.poll-section h3,
 .ai-chat-title {
-  color: #e9ecff;
+  color: var(--text, #e2e5f0);
+}
+
+/* Feedback hero naslov */
+.feedback-hero h1 {
+  color: var(--text, #e2e5f0);
+}
+
+/* Quiz hero naslov */
+.quiz-hero h1 {
+  color: var(--text, #e2e5f0);
 }
 
 /* Napomena o neto stopi nakon naknade */
@@ -30,3 +42,103 @@
   color: #e5e9ff;
 }
 
+/* ── Feedback Log u admin panelu ── */
+.admin-feedback-log {
+  max-height: 320px;
+  overflow-y: auto;
+  text-align: left;
+  margin-top: 1rem;
+}
+
+.admin-feedback-log::-webkit-scrollbar { width: 4px; }
+.admin-feedback-log::-webkit-scrollbar-track { background: transparent; }
+.admin-feedback-log::-webkit-scrollbar-thumb { background: #2e3850; border-radius: 4px; }
+
+.fb-log-item {
+  background: #242b3d;
+  border: 1px solid #2e3850;
+  border-radius: 8px;
+  padding: 0.6rem 0.8rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.75rem;
+}
+
+.fb-log-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.3rem;
+}
+
+.fb-log-type {
+  font-weight: 700;
+  font-size: 0.7rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(74,159,232,0.15);
+  color: #7abff5;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.fb-log-type.prijedlog { background: rgba(74,232,160,0.12); color: #4ae8a0; }
+.fb-log-type.pohvala   { background: rgba(245,208,96,0.12); color: #f5d060; }
+.fb-log-type.greška    { background: rgba(245,96,96,0.12);  color: #f56060; }
+.fb-log-type.pitanje   { background: rgba(74,159,232,0.12); color: #7abff5; }
+
+.fb-log-ts {
+  font-size: 0.65rem;
+  color: #5a6180;
+}
+
+.fb-log-text {
+  color: #c5cfe9;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.fb-log-rating {
+  font-size: 0.65rem;
+  color: #f5d060;
+  margin-top: 0.2rem;
+}
+
+.fb-log-empty {
+  text-align: center;
+  color: #5a6180;
+  font-size: 0.8rem;
+  padding: 1.5rem 0;
+}
+
+.admin-tab-row {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.admin-tab-btn {
+  flex: 1;
+  padding: 0.4rem;
+  border: 1px solid #2e3850;
+  border-radius: 8px;
+  background: transparent;
+  color: #7d8aaa;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.admin-tab-btn.active {
+  background: #2a3248;
+  color: #e2e5f0;
+  border-color: #4a9fe8;
+}
+
+.admin-tab-btn:hover:not(.active) {
+  border-color: #4a6080;
+  color: #9aa2c0;
+}
+
+.admin-tab-content { display: none; }
+.admin-tab-content.active { display: block; }

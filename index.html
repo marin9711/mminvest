@@ -3638,17 +3638,30 @@ document.querySelectorAll('.fb-type-btn').forEach(btn => {
 });
 
 // Submit feedback
-function submitFeedback() {
+async function submitFeedback() {
   const text = $('fb-text').value.trim();
   if (!text) { $('fb-text').style.borderColor = 'var(--red)'; setTimeout(()=>$('fb-text').style.borderColor='',1500); return; }
   const type = document.querySelector('.fb-type-btn.active')?.dataset.type || 'prijedlog';
   const entry = { type, text, rating: selectedRating, ts: new Date().toISOString() };
+
+  $('fb-submit-btn').disabled = true;
+
+  // Spremi lokalno kao backup
   try {
     const prev = JSON.parse(localStorage.getItem('miv_feedback') || '[]');
     prev.push(entry);
     localStorage.setItem('miv_feedback', JSON.stringify(prev));
   } catch(e){}
-  $('fb-submit-btn').disabled = true;
+
+  // Pošalji na worker (log u KV)
+  try {
+    await fetch(WORKER_URL + '/feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(entry)
+    });
+  } catch(e) { /* tišo fallback — lokalna kopija već postoji */ }
+
   $('fb-text').value = '';
   $('feedback-sent').style.display = 'block';
   setTimeout(() => { $('feedback-sent').style.display='none'; $('fb-submit-btn').disabled=false; }, 4000);
@@ -3888,6 +3901,8 @@ async function adminLogin() {
 async function showAdminDash() {
   document.getElementById('admin-login-view').style.display = 'none';
   document.getElementById('admin-dash-view').style.display = '';
+  // Reset na AI tab
+  switchAdminTab('ai');
   
   try {
     const resp = await fetch(WORKER_URL + '/admin/api/status', {
@@ -3933,6 +3948,45 @@ function adminLogout() {
   document.getElementById('admin-dash-view').style.display = 'none';
   document.getElementById('admin-user').value = '';
   document.getElementById('admin-pass').value = '';
+}
+
+function switchAdminTab(tab) {
+  ['ai','fb'].forEach(t => {
+    document.getElementById('admin-tab-' + t).classList.toggle('active', t === tab);
+    document.getElementById('admin-tab-content-' + t).classList.toggle('active', t === tab);
+  });
+  if (tab === 'fb') loadFeedbackLog();
+}
+
+async function loadFeedbackLog() {
+  const logEl = document.getElementById('admin-feedback-log');
+  if (!adminToken) return;
+  logEl.innerHTML = '<div class="fb-log-empty">Učitavanje...</div>';
+  try {
+    const resp = await fetch(WORKER_URL + '/admin/api/feedback', {
+      headers: { 'Authorization': 'Bearer ' + adminToken }
+    });
+    if (!resp.ok) { logEl.innerHTML = '<div class="fb-log-empty">⚠️ Greška pri dohvaćanju.</div>'; return; }
+    const data = await resp.json();
+    const items = data.items || [];
+    if (!items.length) { logEl.innerHTML = '<div class="fb-log-empty">Nema feedback unosa.</div>'; return; }
+    const typeIcon = { prijedlog:'💡', pohvala:'👏', greška:'🐛', pitanje:'❓' };
+    logEl.innerHTML = items.slice().reverse().map(it => {
+      const d = new Date(it.ts);
+      const ts = d.toLocaleDateString('hr-HR') + ' ' + d.toLocaleTimeString('hr-HR', {hour:'2-digit',minute:'2-digit'});
+      const rating = it.rating ? '⭐'.repeat(it.rating) : '';
+      return `<div class="fb-log-item">
+        <div class="fb-log-meta">
+          <span class="fb-log-type ${it.type}">${typeIcon[it.type]||''} ${it.type}</span>
+          <span class="fb-log-ts">${ts}</span>
+        </div>
+        <div class="fb-log-text">${it.text.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+        ${rating ? '<div class="fb-log-rating">' + rating + '</div>' : ''}
+      </div>`;
+    }).join('');
+  } catch(e) {
+    logEl.innerHTML = '<div class="fb-log-empty">⚠️ Greška pri dohvaćanju.</div>';
+  }
 }
 </script>
 
@@ -4034,8 +4088,27 @@ function adminLogout() {
     <div id="admin-dash-view" style="display:none">
       <h2>🤖 MarsanAI Admin</h2>
       <p class="admin-sub">Upravljanje AI asistentom</p>
-      <div class="admin-status" id="admin-status"></div>
-      <button class="admin-toggle" id="admin-toggle-btn" onclick="adminToggle()"></button>
+
+      <!-- Tab navigacija -->
+      <div class="admin-tab-row">
+        <button class="admin-tab-btn active" id="admin-tab-ai" onclick="switchAdminTab('ai')">🤖 AI Bot</button>
+        <button class="admin-tab-btn" id="admin-tab-fb" onclick="switchAdminTab('fb')">💬 Feedback</button>
+      </div>
+
+      <!-- Tab: AI toggle -->
+      <div class="admin-tab-content active" id="admin-tab-content-ai">
+        <div class="admin-status" id="admin-status"></div>
+        <button class="admin-toggle" id="admin-toggle-btn" onclick="adminToggle()"></button>
+      </div>
+
+      <!-- Tab: Feedback log -->
+      <div class="admin-tab-content" id="admin-tab-content-fb">
+        <div id="admin-feedback-log" class="admin-feedback-log">
+          <div class="fb-log-empty">Učitavanje...</div>
+        </div>
+        <button class="admin-toggle" style="margin-top:0.75rem; background:var(--surface2); color:var(--muted2); font-size:0.75rem; padding:0.5rem 1rem;" onclick="loadFeedbackLog()">🔄 Osvježi</button>
+      </div>
+
       <span class="admin-logout-link" onclick="adminLogout()">🔒 Odjavi se</span>
     </div>
   </div>
