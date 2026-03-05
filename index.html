@@ -1789,6 +1789,19 @@ tr:hover td { background:var(--surface2); }
   </p>
 </div>
 
+<!-- CHART FULLSCREEN MODAL -->
+<div class="chart-modal-overlay" id="chart-modal">
+  <div class="chart-modal-inner">
+    <div class="chart-modal-header">
+      <div class="chart-modal-title" id="chart-modal-title">Graf</div>
+      <div class="chart-modal-close" id="chart-modal-close">✕</div>
+    </div>
+    <div class="chart-modal-canvas-wrap">
+      <canvas id="chart-modal-canvas"></canvas>
+    </div>
+  </div>
+</div>
+
 <script>
 var $ = id => document.getElementById(id);
 const fmt = n => new Intl.NumberFormat('hr-HR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n);
@@ -3033,19 +3046,6 @@ function showPollResults(pollId) {
   } catch(e){}
 })();
 </script>
-
-<!-- CHART FULLSCREEN MODAL -->
-<div class="chart-modal-overlay" id="chart-modal">
-  <div class="chart-modal-inner">
-    <div class="chart-modal-header">
-      <div class="chart-modal-title" id="chart-modal-title">Graf</div>
-      <div class="chart-modal-close" id="chart-modal-close">✕</div>
-    </div>
-    <div class="chart-modal-canvas-wrap">
-      <canvas id="chart-modal-canvas"></canvas>
-    </div>
-  </div>
-</div>
 
 <!-- SITE FOOTER -->
 <footer class="site-footer">
