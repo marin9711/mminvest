@@ -50,9 +50,14 @@ function updateP1() {
   const uplata = parseFloat($('p1-uplata').value) || 0;
   const god = parseInt($('p1-god-v').value) || parseInt($('p1-god').value) || 30;
   const dmfR = parseFloat($('p1-dmfr-v').value) || parseFloat($('p1-dmfr').value) || 3.5;
-  const peppR = parseFloat($('p1-peppr-v').value) || parseFloat($('p1-peppr').value) || 8.0;
+  const peppGrossR = parseFloat($('p1-peppr-v').value) || parseFloat($('p1-peppr').value) || 8.0;
+  const peppR = Math.max(peppGrossR - 1, 0); // 1% Finax naknada
   const pot = calcPoticaj(uplata, 'p1-poticaj-toggle');
   updatePoticajInfo(uplata, 'p1-poticaj-toggle', 'p1-poticaj-lbl', 'p1-poticaj-info');
+
+  if ($('p1-pepp-rate-note')) {
+    $('p1-pepp-rate-note').textContent = `Nakon 1% Finax naknade: ${peppR.toFixed(2)}%/god`;
+  }
 
   const dmfFinal = compoundFV(uplata+pot, dmfR, god);
   const peppFinal = compoundFV(uplata, peppR, god);
@@ -135,7 +140,10 @@ function getP2EtfName() {
 
 function updateP2() {
   const uplata=+$('p2-uplata').value, god=+$('p2-god').value;
-  const dmfR=+$('p2-dmfr').value, peppR=+$('p2-peppr').value, etfR=getP2EtfRate();
+  const dmfR=+$('p2-dmfr').value;
+  const peppGrossR=+$('p2-peppr').value;
+  const peppR=Math.max(peppGrossR-1,0); // 1% Finax naknada
+  const etfR=getP2EtfRate();
 
 
 
@@ -151,6 +159,10 @@ function updateP2() {
   const inp=uplata*god;
   const etfName=getP2EtfName();
   $('p2-etf-name').textContent=etfName;
+
+  if ($('p2-pepp-rate-note')) {
+    $('p2-pepp-rate-note').textContent = `Nakon 1% Finax naknade: ${peppR.toFixed(2)}%/god`;
+  }
 
   $('p2-dmf-total').textContent=fmt(dmfFinal);
   $('p2-dmf-earn').textContent=fmt(dmfFinal-inp);

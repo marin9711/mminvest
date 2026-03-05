@@ -18,6 +18,13 @@
   color: #e9ecff;
 }
 
+/* Napomena o neto stopi nakon naknade */
+.rate-note {
+  font-size: 0.7rem;
+  color: var(--muted2);
+  margin-top: 0.2rem;
+}
+
 /* Dodatno podešavanje za disclaimer tekst da bude čitljiviji */
 .disclaimer {
   color: #e5e9ff;
