@@ -493,7 +493,7 @@ export default {
 
         // Pošalji notifikaciju adminu ako korisnik ostavio email
         if (entry.email && env.RESEND_API_KEY) {
-          await fetch('https://api.resend.com/emails', {
+          const resendResp = await fetch('https://api.resend.com/emails', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -518,13 +518,15 @@ export default {
               `,
             }),
           });
+          const resendData = await resendResp.json();
+          console.log('Resend response:', JSON.stringify(resendData));
         }
 
         return new Response(JSON.stringify({ ok: true }), {
           headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
         });
       } catch(e) {
-        return new Response(JSON.stringify({ error: 'Bad request' }), {
+        return new Response(JSON.stringify({ error: 'Bad request', detail: e.message }), {
           status: 400,
           headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
         });
