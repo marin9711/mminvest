@@ -500,6 +500,150 @@ tr:hover td { background:var(--surface2); }
   width: 100% !important;
   height: 100% !important;
 }
+
+/* HOME PAGE */
+.home-hero {
+  text-align: center;
+  padding: 3rem 1rem 2rem;
+}
+.home-hero .brand-big {
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(3rem, 10vw, 5.5rem);
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--pepp-l) 0%, var(--etf-l) 60%, var(--dmf-l) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  line-height: 1.1; margin-bottom: 0.75rem;
+}
+.home-hero .tagline {
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  color: var(--muted2); max-width: 560px; margin: 0 auto 2rem; line-height: 1.6;
+}
+.home-hero .hero-badges {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; margin-bottom: 2.5rem;
+}
+.hero-badge {
+  padding: 0.35rem 0.9rem; border-radius: 999px;
+  font-size: 0.75rem; font-weight: 600; letter-spacing: 0.04em;
+  border: 1px solid var(--border);
+}
+.hero-badge.b-green { color: var(--etf-l); border-color: rgba(74,232,160,0.3); background: rgba(74,232,160,0.07); }
+.hero-badge.b-blue  { color: var(--pepp-l); border-color: rgba(74,159,232,0.3); background: rgba(74,159,232,0.07); }
+.hero-badge.b-gold  { color: var(--dmf-l); border-color: rgba(232,164,74,0.3); background: rgba(232,164,74,0.07); }
+.hero-badge.b-purple{ color: var(--combo-l); border-color: rgba(199,122,245,0.3); background: rgba(199,122,245,0.07); }
+
+.home-cta {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: linear-gradient(135deg, var(--pepp), var(--etf));
+  color: #0b0d12; font-weight: 700; font-size: 0.9rem;
+  padding: 0.75rem 1.75rem; border-radius: 999px;
+  cursor: pointer; border: none; transition: opacity 0.2s;
+  letter-spacing: 0.02em;
+}
+.home-cta:hover { opacity: 0.88; }
+
+/* FEATURE CARDS */
+.features-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem; margin-bottom: 2rem;
+}
+.feature-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1.4rem; position: relative; overflow: hidden;
+  transition: transform 0.15s, border-color 0.15s;
+  cursor: pointer;
+}
+.feature-card:hover { transform: translateY(-2px); border-color: var(--muted); }
+.feature-card .fc-icon {
+  font-size: 1.8rem; margin-bottom: 0.75rem; display: block;
+}
+.feature-card .fc-title {
+  font-family: 'DM Serif Display', serif; font-size: 1.05rem;
+  margin-bottom: 0.4rem; color: var(--text);
+}
+.feature-card .fc-desc {
+  font-size: 0.8rem; color: var(--muted2); line-height: 1.55;
+}
+.feature-card .fc-tag {
+  display: inline-block; margin-top: 0.75rem;
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; padding: 0.2rem 0.6rem;
+  border-radius: 999px; border: 1px solid currentColor;
+}
+.feature-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+}
+.fc-dmf::before  { background: linear-gradient(90deg, var(--dmf), var(--dmf-l)); }
+.fc-pepp::before { background: linear-gradient(90deg, var(--pepp), var(--pepp-l)); }
+.fc-etf::before  { background: linear-gradient(90deg, var(--etf), var(--etf-l)); }
+.fc-combo::before{ background: linear-gradient(90deg, var(--combo), var(--combo-l)); }
+.fc-ai::before   { background: linear-gradient(90deg, #ff6b9d, #c77af5); }
+
+/* HOW IT WORKS */
+.how-section { margin-bottom: 2rem; }
+.how-section h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.5rem; margin-bottom: 1.25rem;
+}
+.steps-row {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+}
+.step-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 1.1rem;
+}
+.step-num {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--pepp), var(--etf));
+  color: #0b0d12; font-weight: 700; font-size: 0.8rem;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 0.6rem;
+}
+.step-title { font-size: 0.85rem; font-weight: 600; margin-bottom: 0.3rem; }
+.step-desc  { font-size: 0.75rem; color: var(--muted2); line-height: 1.5; }
+
+/* AI SECTION */
+.ai-section {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1.75rem; margin-bottom: 2rem;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;
+}
+@media (max-width: 640px) { .ai-section { grid-template-columns: 1fr; } }
+.ai-section h2 {
+  font-family: 'DM Serif Display', serif; font-size: 1.3rem; margin-bottom: 0.5rem;
+}
+.ai-section p { font-size: 0.83rem; color: var(--muted2); line-height: 1.65; margin-bottom: 0.75rem; }
+.ai-roadmap { list-style: none; }
+.ai-roadmap li {
+  display: flex; align-items: flex-start; gap: 0.6rem;
+  font-size: 0.8rem; color: var(--muted2); padding: 0.45rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.ai-roadmap li:last-child { border-bottom: none; }
+.ai-roadmap .ri { font-size: 0.75rem; flex-shrink: 0; margin-top: 0.05rem; }
+.ai-roadmap .done { color: var(--etf-l); }
+.ai-roadmap .soon { color: var(--yellow); }
+.ai-roadmap .plan { color: var(--muted); }
+
+/* VERSION BADGE */
+.version-row {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 0.75rem;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 12px; padding: 0.9rem 1.2rem; margin-bottom: 2rem;
+}
+.version-badge {
+  font-family: 'DM Mono', monospace; font-size: 0.75rem; color: var(--etf-l);
+}
+.version-desc { font-size: 0.78rem; color: var(--muted2); }
+.version-links { display: flex; gap: 0.75rem; }
+.vlink {
+  font-size: 0.75rem; font-weight: 600; color: var(--pepp-l);
+  text-decoration: none; padding: 0.25rem 0.6rem;
+  border: 1px solid rgba(74,159,232,0.3); border-radius: 6px;
+  cursor: pointer; transition: background 0.15s;
+}
+.vlink:hover { background: rgba(74,159,232,0.1); }
 </style>
 </head>
 <body>
@@ -507,7 +651,8 @@ tr:hover td { background:var(--surface2); }
 <nav>
   <div class="nav-brand">Marsan<span>Invest</span></div>
   <div class="nav-tabs">
-    <div class="nav-tab active" data-page="p0a">Hrvatski DMF</div>
+    <div class="nav-tab active" data-page="home">Početna</div>
+    <div class="nav-tab" data-page="p0a">Hrvatski DMF</div>
     <div class="nav-tab" data-page="p0b">ETF Platforme</div>
     <div class="nav-tab" data-page="p1">3. Stup vs PEPP</div>
     <div class="nav-tab" data-page="p2">Pension vs ETF</div>
@@ -515,8 +660,119 @@ tr:hover td { background:var(--surface2); }
   </div>
 </nav>
 
+<!-- ========== HOME PAGE ========== -->
+<div class="page active" id="home">
+  <div class="home-hero">
+    <div class="brand-big">MarsanInvest</div>
+    <p class="tagline">Tvoj osobni kalkulator mirovinskog i investicijskog planiranja — usporedi fondove, ETF-ove i strategije na jednom mjestu.</p>
+    <div class="hero-badges">
+      <span class="hero-badge b-gold">🏦 3. Mirovinski stup</span>
+      <span class="hero-badge b-blue">🌍 PEPP mirovina</span>
+      <span class="hero-badge b-green">📈 ETF fondovi</span>
+      <span class="hero-badge b-purple">⚖️ Kombinirane strategije</span>
+      <span class="hero-badge b-green">🇭🇷 Prilagođeno HR tržištu</span>
+    </div>
+    <button class="home-cta" onclick="document.querySelector('[data-page=p0a]').click()">
+      ▶ Pokreni kalkulator
+    </button>
+  </div>
+
+  <!-- Version / status row -->
+  <div class="version-row">
+    <span class="version-badge">v0.9.1 — beta</span>
+    <span class="version-desc">Podaci DMF fondova: HANFA 2024. | ETF prinosi: historijski prosjek 10–15g</span>
+    <div class="version-links">
+      <span class="vlink" onclick="document.querySelector('[data-page=p0a]').click()">DMF →</span>
+      <span class="vlink" onclick="document.querySelector('[data-page=p0b]').click()">ETF →</span>
+      <span class="vlink" onclick="document.querySelector('[data-page=p3]').click()">Strategija →</span>
+    </div>
+  </div>
+
+  <!-- Feature cards -->
+  <div class="features-grid">
+    <div class="feature-card fc-dmf" onclick="document.querySelector('[data-page=p0a]').click()">
+      <span class="fc-icon">🏛️</span>
+      <div class="fc-title">Hrvatski DMF fondovi</div>
+      <div class="fc-desc">Usporedi svih 8 dostupnih dobrovoljnih mirovinskih fondova u RH — prinosi, naknade, rizik. Kalkulator s državnim poticajem (15% godišnje).</div>
+      <span class="fc-tag" style="color:var(--dmf-l)">Mjesečno & godišnje</span>
+    </div>
+    <div class="feature-card fc-pepp" onclick="document.querySelector('[data-page=p1]').click()">
+      <span class="fc-icon">🌍</span>
+      <div class="fc-title">3. Stup vs PEPP</div>
+      <div class="fc-desc">Direktna usporedba domaćeg DMF-a s Finaxovim PEPP-om. Je li europska mirovina bolja od državnog poticaja? Odgovor je ovdje.</div>
+      <span class="fc-tag" style="color:var(--pepp-l)">Projekcija 5–60 god</span>
+    </div>
+    <div class="feature-card fc-etf" onclick="document.querySelector('[data-page=p0b]').click()">
+      <span class="fc-icon">📊</span>
+      <div class="fc-title">ETF Platforme</div>
+      <div class="fc-desc">VWCE, IWDA, S&P 500, Nasdaq i više — usporedi ETF fondove po riziku i prinosu. IBKR vs Trading 212 vs Finax — sve naknade uračunate.</div>
+      <span class="fc-tag" style="color:var(--etf-l)">11 ETF fondova · 4 platforme</span>
+    </div>
+    <div class="feature-card fc-combo" onclick="document.querySelector('[data-page=p2]').click()">
+      <span class="fc-icon">⚖️</span>
+      <div class="fc-title">Pension vs ETF</div>
+      <div class="fc-desc">Što donosi više novca dugoročno — mirovinski fond ili ETF? Usporedi sve tri opcije paralelno s uključivanjem/isključivanjem pojedinih linija.</div>
+      <span class="fc-tag" style="color:var(--combo-l)">Interaktivni grafovi</span>
+    </div>
+    <div class="feature-card fc-combo" onclick="document.querySelector('[data-page=p3]').click()">
+      <span class="fc-icon">🧩</span>
+      <div class="fc-title">Pension + ETF strategija</div>
+      <div class="fc-desc">Kombiniraj mirovinski fond i ETF u jedan portfelj. Podesi alokaciju, vidi realnu vrijednost s inflacijom i izračunaj mjesečnu isplatu po 4% pravilu.</div>
+      <span class="fc-tag" style="color:var(--combo-l)">4% pravilo · Inflacija</span>
+    </div>
+    <div class="feature-card fc-ai" style="cursor:default">
+      <span class="fc-icon">🤖</span>
+      <div class="fc-title">AI Asistent <span style="font-size:0.65rem;color:var(--yellow);font-family:'DM Sans';font-weight:700;margin-left:0.4rem">USKORO</span></div>
+      <div class="fc-desc">Postavi pitanje o ulaganju, fondovima ili strategiji — AI asistent će objasniti opcije i pomoći ti koristiti kalkulator. Dostupno uskoro.</div>
+      <span class="fc-tag" style="color:#c77af5;border-color:#c77af5">U razvoju</span>
+    </div>
+  </div>
+
+  <!-- How it works -->
+  <div class="how-section">
+    <h2>Kako koristiti MarsanInvest?</h2>
+    <div class="steps-row">
+      <div class="step-card"><div class="step-num">1</div><div class="step-title">Odaberi strategiju</div><div class="step-desc">Klikni na željeni tab — DMF, ETF, PEPP ili kombinirano ulaganje.</div></div>
+      <div class="step-card"><div class="step-num">2</div><div class="step-title">Postavi parametre</div><div class="step-desc">Upiši iznos uplate, broj godina i odaberi fond. Sve možeš ručno upisati ili koristiti slider.</div></div>
+      <div class="step-card"><div class="step-num">3</div><div class="step-title">Usporedi rezultate</div><div class="step-desc">Grafovi i tablice se ažuriraju trenutno. Uključuj/isključuj fondove i vidi razlike.</div></div>
+      <div class="step-card"><div class="step-num">4</div><div class="step-title">Provjeri isplatu</div><div class="step-desc">Na stranici "Pension + ETF" vidi koliko možeš isplaćivati mjesečno po završetku ulaganja.</div></div>
+      <div class="step-card"><div class="step-num">5</div><div class="step-title">Mobitel?</div><div class="step-desc">Tapni na graf za prošireni prikaz u landscape modu — za bolju preglednost na malim ekranima.</div></div>
+    </div>
+  </div>
+
+  <!-- AI section -->
+  <div class="ai-section">
+    <div>
+      <h2>🤖 AI Asistent — planovi</h2>
+      <p>Integracija AI chat asistenta koji će odgovarati na pitanja o ulaganju, objašnjavati koncepte i pomagati korisnicima snalaziti se u kalkulatoru — nije komplicirana, ali ima nekoliko razina.</p>
+      <p style="color:var(--text);font-weight:600;font-size:0.85rem">Web aplikacija (ova stranica):</p>
+      <p>Najjednostavnija integracija — Anthropic Claude API ili OpenAI, chatbot widget ugrađen direktno u stranicu. Može biti spreman <strong style="color:var(--etf-l)">u par dana</strong>.</p>
+      <p style="color:var(--text);font-weight:600;font-size:0.85rem">Android / iOS aplikacija:</p>
+      <p>WebView wrapper (npr. Capacitor ili React Native) koji pakira ovu web app u nativnu aplikaciju — AI asistent funkcionira isto. <strong style="color:var(--yellow)">Tjedni do mjesec dana</strong> rada ovisno o zahtjevima.</p>
+    </div>
+    <div>
+      <p style="font-size:0.8rem;font-weight:600;color:var(--muted2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.75rem">Roadmap</p>
+      <ul class="ai-roadmap">
+        <li><span class="ri done">✓</span><span>5 kalkulatora s interaktivnim grafovima</span></li>
+        <li><span class="ri done">✓</span><span>8 hrvatskih DMF fondova s HANFA podacima</span></li>
+        <li><span class="ri done">✓</span><span>IBKR / Trading 212 / Finax naknade i osiguranje</span></li>
+        <li><span class="ri done">✓</span><span>Državni poticaj toggle s dinamičnim izračunom</span></li>
+        <li><span class="ri done">✓</span><span>Mobile tap-to-expand grafovi (landscape)</span></li>
+        <li><span class="ri soon">◎</span><span>AI chat asistent (Claude API) — <em>uskoro</em></span></li>
+        <li><span class="ri soon">◎</span><span>Spremanje scenarija u browser / export PDF</span></li>
+        <li><span class="ri soon">◎</span><span>Usporedba s realnim tržišnim podacima (live)</span></li>
+        <li><span class="ri plan">○</span><span>Android / iOS app (Capacitor wrapper)</span></li>
+        <li><span class="ri plan">○</span><span>Korisnički računi i portfelj praćenje</span></li>
+        <li><span class="ri plan">○</span><span>Push notifikacije — promjene prinosa fondova</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <p class="disclaimer">MarsanInvest je informativni alat za edukacijske svrhe. Nije financijski savjet. Uvijek konzultiraj licenciranog financijskog savjetnika prije donošenja investicijskih odluka. Podaci su temeljeni na javno dostupnim historijskim prinosima.</p>
+</div>
+
 <!-- ========== PAGE 0A: HRVATSKI DMF ========== -->
-<div class="page active" id="p0a">
+<div class="page" id="p0a">
   <div class="page-header">
     <h2><span class="grad-warm">Hrvatski Dobrovoljni Mirovinski Fondovi</span></h2>
     <p>Usporedi sve dostupne otvorene DMF fondove u Hrvatskoj prema prosječnim prinosima, razini rizika i projekciji rasta. Podaci HANFA 2024.</p>
