@@ -108,7 +108,8 @@ function updateP1() {
     {label:'3. Stup (DMF)',data:dmfArr,borderColor:'#e8a44a',backgroundColor:'rgba(232,164,74,0.07)',fill:true,borderWidth:2.5,pointRadius:0,tension:0.4},
     {label:'PEPP',data:peppArr,borderColor:'#4a9fe8',backgroundColor:'rgba(74,159,232,0.07)',fill:true,borderWidth:2.5,pointRadius:0,tension:0.4},
   ];
-  if(!chart1){ chart1=makeChart('p1-chart',labels,ds); storeChartData('p1-chart', labels, ds); }
+  storeChartData('p1-chart', labels, ds);
+  if(!chart1){ chart1=makeChart('p1-chart',labels,ds); }
   else { chart1.data.labels=labels; chart1.data.datasets.forEach((d,i)=>{ d.data=ds[i].data; }); chart1.update(); }
 }
 ['p1-uplata','p1-god'].forEach(id => $(id).addEventListener('syncedInput', updateP1));
@@ -225,7 +226,8 @@ function updateP2() {
     {label:'PEPP',data:peppArr,borderColor:'#4a9fe8',backgroundColor:'rgba(74,159,232,0.06)',fill:true,borderWidth:p2vis.pepp?2.5:0,pointRadius:0,tension:0.4,hidden:!p2vis.pepp},
     {label:getP2EtfName(),data:etfArr,borderColor:'#4ae8a0',backgroundColor:'rgba(74,232,160,0.06)',fill:true,borderWidth:p2vis.etf?2.5:0,pointRadius:0,tension:0.4,hidden:!p2vis.etf},
   ];
-  if(!chart2){ chart2=makeChart('p2-chart',labels,ds); storeChartData('p2-chart', labels, ds); }
+  storeChartData('p2-chart', labels, ds);
+  if(!chart2){ chart2=makeChart('p2-chart',labels,ds); }
   else {
     chart2.data.labels=labels;
     chart2.data.datasets.forEach((d,i)=>{ d.data=ds[i].data; d.label=ds[i].label; d.hidden=ds[i].hidden; d.borderWidth=ds[i].borderWidth; });
@@ -362,7 +364,8 @@ function updateP3() {
     {label:'Kombinirano',data:comboArr,borderColor:'#c77af5',backgroundColor:'rgba(199,122,245,0.08)',fill:true,borderWidth:2.5,pointRadius:0,tension:0.4},
     {label:'Realna vrijednost',data:realArr,borderColor:'#5a6180',backgroundColor:'transparent',fill:false,borderWidth:1.5,pointRadius:0,tension:0.4,borderDash:[5,4]},
   ];
-  if(!chart3){ chart3=makeChart('p3-chart',labels,ds); storeChartData('p3-chart', labels, ds); }
+  storeChartData('p3-chart', labels, ds);
+  if(!chart3){ chart3=makeChart('p3-chart',labels,ds); }
   else{
     chart3.data.labels=labels;
     chart3.data.datasets.forEach((d,i)=>{ d.data=ds[i].data; d.label=ds[i].label; d.borderColor=ds[i].borderColor; d.backgroundColor=ds[i].backgroundColor; if(ds[i].borderDash) d.borderDash=ds[i].borderDash; });
@@ -597,7 +600,8 @@ function updateP0b() {
     {label:'Neto (naknade)',data:netoArr,borderColor:'#4a9fe8',backgroundColor:'rgba(74,159,232,0.06)',fill:true,borderWidth:2,pointRadius:0,tension:0.4},
     {label:'Neto (porez)',data:afterArr,borderColor:'#e8a44a',backgroundColor:'transparent',fill:false,borderWidth:1.5,pointRadius:0,tension:0.4,borderDash:[4,3]},
   ];
-  if(!chartP0b){ chartP0b=makeChart('p0b-chart',labels,ds); storeChartData('p0b-chart', labels, ds); }
+  storeChartData('p0b-chart', labels, ds);
+  if(!chartP0b){ chartP0b=makeChart('p0b-chart',labels,ds); }
   else{ chartP0b.data.labels=labels; chartP0b.data.datasets.forEach((d,i)=>{d.data=ds[i].data;}); chartP0b.update(); }
 
   // Platform comparison chart
