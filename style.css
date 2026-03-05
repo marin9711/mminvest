@@ -16,12 +16,12 @@
   color: #1a2035;
 }
 
-/* Naslovi u feedback / AI karticama — tamna boja za light pozadinu */
+/* Naslovi u feedback / AI karticama — ove kartice imaju tamnu pozadinu, trebaju svijetli tekst */
 .feedback-form-card h3,
 .rating-section h3,
 .poll-section h3,
 .ai-chat-title {
-  color: #1a2035;
+  color: var(--text);
 }
 
 /* Feedback hero naslov */
@@ -81,20 +81,20 @@
   border-color: #5a6a90 !important;
 }
 
-/* Poll tekst */
+/* Poll tekst — samo izvan tamnih kartica (light pozadina) */
 .poll-label {
-  color: #1a2035 !important;
+  color: var(--text);
 }
 .poll-subtitle {
-  color: #3a4a6b !important;
+  color: var(--muted2);
 }
 .poll-total {
-  color: #3a4a6b !important;
+  color: var(--muted2);
 }
 
 /* Rating label */
 #rating-label {
-  color: #3a4a6b !important;
+  color: var(--muted2);
 }
 
 /* Disclaimer na quiz/feedback stranici */
