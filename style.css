@@ -1,6 +1,21 @@
 :root {
   /* Pojačana vidljivost "muted" teksta na tamnijoj pozadini */
-  --muted2: #b9c3e6;
+  --muted2: #c5cfe9;
+}
+
+/* Edukacija naslov i podnaslovi – jači kontrast */
+.edu-hero h1 {
+  color: #23304f;
+}
+
+.edu-section-title {
+  color: #27324d;
+}
+
+/* Naslovi u feedback / AI karticama */
+.feedback-form-card h3,
+.ai-chat-title {
+  color: #e9ecff;
 }
 
 /* Dodatno podešavanje za disclaimer tekst da bude čitljiviji */
