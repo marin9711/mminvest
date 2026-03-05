@@ -478,10 +478,12 @@ export default {
     if (path === '/feedback' && request.method === 'POST') {
       try {
         const body = await request.json();
+        console.log('Feedback body:', JSON.stringify({ type: body.type, email: body.email, hasText: !!body.text }));
         const entry = {
           type: String(body.type || 'prijedlog').slice(0, 30),
           text: String(body.text || '').slice(0, 1000),
           rating: Number(body.rating) || 0,
+          email: String(body.email || '').slice(0, 200),
           ts: new Date().toISOString(),
         };
         // Dohvati postojeći log, dodaj novi unos, spremi (max 200 unosa)
