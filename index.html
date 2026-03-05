@@ -1563,6 +1563,58 @@ tr:hover td { background:var(--surface2); }
     </div>
   </div>
 
+  <!-- Ključne karakteristike DMF -->
+  <div class="table-card" style="margin-bottom:1.5rem">
+    <h3>Ključne karakteristike DMF fondova u HR</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Karakteristika</th><th>Detalji</th></tr></thead>
+        <tbody>
+          <tr><td>Puni naziv</td><td>Dobrovoljni mirovinski fond (3. mirovinski stup)</td></tr>
+          <tr><td>Regulativa</td><td>Zakon o dobrovoljnim mirovinskim fondovima (HR), nadzire HANFA</td></tr>
+          <tr><td>Ponuđači</td><td>Croatia Osiguranje, Erste, AZ (Allianz), Raiffeisen</td></tr>
+          <tr><td>Državni poticaj</td><td style="color:var(--etf-l)">✅ 15% od tvoje uplate, max <strong>99.54€/god</strong> (uz min. 663.61€/god vlastite uplate)</td></tr>
+          <tr><td>Poslodavčeva uplata</td><td style="color:var(--etf-l)">✅ Do <strong>804€/god</strong> neoporezivo — efektivno besplatan bonus ako ti ga poslodavac plaća</td></tr>
+          <tr><td>Naknada upravljanja</td><td>Zakonski max <strong>3%/god</strong>; Erste faktično ~1.87%, ostali blizu 3%</td></tr>
+          <tr><td>Ulazna naknada</td><td>Max 3% pri uplati (mnogi fondovi ne naplaćuju)</td></tr>
+          <tr><td>Minimalna uplata</td><td>Nema zakonskog minimuma; praktično od ~20€/mj</td></tr>
+          <tr><td>Investicijska strategija</td><td>Konzervativna do umjerena (pretežno obveznice + dionice); viši rizik = više dionica</td></tr>
+          <tr>
+            <td>🔒 Likvidnost</td>
+            <td style="color:var(--red)"><strong>Niska</strong> — isplata najranije od <strong>55. god.</strong><br>
+            Max <strong>30%</strong> jednokratno, ostatak u mirovinskim obrocima<br>
+            <span style="color:var(--muted2);font-size:0.78rem">❌ Prijevremena isplata nije moguća (osim iznimaka poput trajne radne nesposobnosti)</span></td>
+          </tr>
+          <tr><td>Porezne pogodnosti</td><td>✅ Uplata iz bruto plaće (smanjuje poreznu osnovicu); poticaj dolazi direktno od države</td></tr>
+          <tr><td>Nasljeđivanje</td><td>✅ Sredstva se naslijeđuju — ne gubiš u slučaju smrti</td></tr>
+          <tr><td>Promjena fonda</td><td>✅ Moguće promijeniti fond ili društvo (uz povratak poticaja ako premlađo)</td></tr>
+          <tr><td>Valuta</td><td>EUR (od uvoda eura 2023.)</td></tr>
+          <tr><td>Regulatorni nadzor</td><td>HANFA (Hrvatska agencija za nadzor financijskih usluga)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:0.85rem;display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+      <div style="padding:0.75rem 1rem;background:var(--surface2);border-radius:8px;border-left:3px solid var(--etf-l);font-size:0.8rem">
+        <strong style="color:var(--etf-l)">✅ Idealno ako...</strong>
+        <ul style="margin:0.4rem 0 0;padding-left:1.2rem;color:var(--muted2);line-height:1.8">
+          <li>Imaš redovnu plaću i možeš iskoristiti poticaj</li>
+          <li>Poslodavac ti uplate u DMF</li>
+          <li>Plan ti je ostati u HR do mirovine</li>
+          <li>Niska tolerancija na rizik</li>
+        </ul>
+      </div>
+      <div style="padding:0.75rem 1rem;background:var(--surface2);border-radius:8px;border-left:3px solid var(--red);font-size:0.8rem">
+        <strong style="color:var(--red)">⚠️ Pazi na...</strong>
+        <ul style="margin:0.4rem 0 0;padding-left:1.2rem;color:var(--muted2);line-height:1.8">
+          <li>Visoke naknade (do 3%/god) pojednih fondova</li>
+          <li>Novac zaključan do 55. god.</li>
+          <li>Max 30% jednokratne isplate</li>
+          <li>Konzervativni prinosi vs. ETF alternativa</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
   <!-- Risk legend -->
   <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem;padding:1rem 1.25rem;background:var(--surface);border:1px solid var(--border);border-radius:14px;align-items:center;">
     <span style="font-size:0.7rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted)">Razine rizika:</span>
@@ -1739,6 +1791,8 @@ tr:hover td { background:var(--surface2); }
           <tr><td>Porezna olakšica (HR)</td><td>❌ Trenutno nije izjednačena s DMF-om</td></tr>
           <tr><td>EU portabilnost</td><td>✅ Selišeš se — zadržavaš isti račun</td></tr>
           <tr><td>Isplata</td><td>Od mirovinske dobi ili prijevremeno uz uvjete</td></tr>
+          <tr><td>Likvidnost</td><td>🟡 <strong>Srednja</strong> — isplata od 55. god. ili ranije kod invalidnosti/terminalne bolesti; 100% jednokratno (za razliku od DMF-a)</td></tr>
+          <tr><td>Prijevremena isplata</td><td>Moguća uz penalizaciju (uvjeti variraju po ponuđaču)</td></tr>
           <tr><td>Nasljeđivanje</td><td>✅ Prenosivo nasljednicima</td></tr>
           <tr><td>Podkonti</td><td>Novi podkonto u svakoj novoj EU državi stanovanja</td></tr>
         </tbody>
@@ -1750,16 +1804,27 @@ tr:hover td { background:var(--surface2); }
     <h3>PEPP vs DMF — brza usporedba</h3>
     <div class="tbl-wrap">
       <table>
-        <thead><tr><th>Kriterij</th><th style="color:var(--pepp-l)">PEPP (Finax)</th><th style="color:var(--dmf-l)">DMF (3. stup)</th></tr></thead>
+        <thead><tr><th>Kriterij</th><th style="color:var(--pepp-l)">🌍 PEPP (Finax)</th><th style="color:var(--dmf-l)">🏦 DMF (3. stup)</th></tr></thead>
         <tbody>
-          <tr><td>Naknada</td><td>~1.0%/god</td><td>0.5–1.5%/god</td></tr>
-          <tr><td>Državni poticaj</td><td>❌</td><td>✅ 15%, max 99.54€/god</td></tr>
-          <tr><td>Prinos (povijesni)</td><td>~7–9% (globalni ETF)</td><td>~3–5% (konzervativni)</td></tr>
-          <tr><td>EU prenosivost</td><td>✅</td><td>❌</td></tr>
-          <tr><td>Investicijska fleksibilnost</td><td>Srednja (indeksni)</td><td>Niska (konzervativni fond)</td></tr>
-          <tr><td>Porezna olakšica HR</td><td>❌</td><td>✅</td></tr>
+          <tr><td>Naknada</td><td>~1.0%/god</td><td>0.5–1.87%/god</td></tr>
+          <tr><td>Državni poticaj</td><td style="color:var(--red)">❌ Nema</td><td style="color:var(--etf-l)">✅ 15%, max 99.54€/god</td></tr>
+          <tr><td>Porezna olakšica HR</td><td style="color:var(--red)">❌ Nema</td><td style="color:var(--etf-l)">✅ Uplata poslodavca do 804€/god neoporezivo</td></tr>
+          <tr><td>Prinos (povijesni ~5g)</td><td style="color:var(--etf-l)">~7–9%/god (globalni ETF)</td><td style="color:var(--muted2)">~3–6%/god (ovisi o fondu)</td></tr>
+          <tr><td>Investicijska strategija</td><td>Pasivni globalni ETF indeks</td><td>Konzervativni / mješoviti fond</td></tr>
+          <tr>
+            <td>🔐 Likvidnost</td>
+            <td style="color:var(--yellow)">🟡 Srednja — od 55. god., <strong>100%</strong> jednokratno</td>
+            <td style="color:var(--red)">🔒 Niska — od 55. god., max <strong>30%</strong> jednokratno</td>
+          </tr>
+          <tr><td>Prijevremena isplata</td><td style="color:var(--yellow)">⚠️ Moguća uz penalizaciju</td><td style="color:var(--red)">❌ Nije moguća (bez iznimke)</td></tr>
+          <tr><td>EU portabilnost</td><td style="color:var(--etf-l)">✅ Zadržavaš račun pri selidbi</td><td style="color:var(--red)">❌ Vezano uz HR</td></tr>
+          <tr><td>Valuta</td><td>EUR</td><td>HRK/EUR (fond u EUR)</td></tr>
+          <tr><td>Nasljeđivanje</td><td style="color:var(--etf-l)">✅ Da</td><td style="color:var(--etf-l)">✅ Da</td></tr>
         </tbody>
       </table>
+    </div>
+    <div style="margin-top:0.85rem;padding:0.75rem 1rem;background:var(--surface2);border-radius:8px;font-size:0.8rem;color:var(--muted2);border-left:3px solid var(--pepp)">
+      💡 <strong style="color:var(--text)">Ključna razlika:</strong> DMF nudi državni poticaj (+99.54€/god besplatno), ali PEPP nudi viši potencijalni prinos i više fleksibilnosti pri isplati. Koristi <a href="#" onclick="document.querySelector('[data-page=p1]').click();return false;" style="color:var(--pepp-l)">kalkulator DMF vs PEPP</a> za personaliziranu usporedbu.
     </div>
   </div>
 
