@@ -737,13 +737,15 @@ function applyPeriod(chartId, years) {
   if (!ch || !chartFullData[chartId]) return;
   const full = chartFullData[chartId];
   if (years === 'all') {
-    ch.data.labels = full.labels;
-    ch.data.datasets.forEach((d,i) => d.data = full.datasets[i].data);
+    ch.data.labels = [...full.labels];
+    ch.data.datasets.forEach((d,i) => d.data = [...full.datasets[i].data]);
   } else {
     const maxY = parseInt(years);
-    const slice = full.labels.map((l,i)=>i).filter(i => full.labels[i] <= maxY);
-    ch.data.labels = slice.map(i=>full.labels[i]);
-    ch.data.datasets.forEach((d,i) => d.data = slice.map(j=>full.datasets[i].data[j]));
+    // Uzmi prvih maxY točaka (podaci su godišnji, 1Y = 1 točka je premalo za graf)
+    // Minimum 2 točke da se linija vidi
+    const count = Math.max(2, Math.min(maxY, full.labels.length));
+    ch.data.labels = full.labels.slice(0, count);
+    ch.data.datasets.forEach((d,i) => d.data = full.datasets[i].data.slice(0, count));
   }
   ch.update();
   // update active button
