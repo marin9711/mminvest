@@ -1592,6 +1592,7 @@ tr:hover td { background:var(--surface2); }
     <div class="ctrl-group c-pepp">
       <label>Prinos PEPP (%/god)</label>
       <div class="row"><input type="range" id="p1-peppr" min="3" max="14" step="0.1" value="8.0"><input type="number" class="ctrl-val-input" id="p1-peppr-v" value="8.0" min="3" max="14" step="0.1" placeholder="8"></div>
+      <div class="rate-note" id="p1-pepp-rate-note">Nakon 1% Finax naknade: —</div>
     </div>
   </div>
 
@@ -1678,6 +1679,7 @@ tr:hover td { background:var(--surface2); }
     <div class="ctrl-group c-pepp">
       <label>Prinos PEPP (%/god)</label>
       <div class="row"><input type="range" id="p2-peppr" min="3" max="14" step="0.1" value="8.0"><input type="number" class="ctrl-val-input" id="p2-peppr-v" value="8.0" min="3" max="14" step="0.1" placeholder="8"></div>
+      <div class="rate-note" id="p2-pepp-rate-note">Nakon 1% Finax naknade: —</div>
     </div>
     <div class="ctrl-group c-etf">
       <label>Odaberi ETF</label>
@@ -1759,6 +1761,51 @@ tr:hover td { background:var(--surface2); }
       </tr></thead>
       <tbody id="p2-tbody"></tbody>
     </table></div>
+  </div>
+  <div class="table-card fee-compare-card">
+    <h3>Usporedba naknada (okvirno)</h3>
+    <div class="tbl-wrap"><table>
+      <thead>
+        <tr>
+          <th>Opcija</th>
+          <th>Godišnja naknada</th>
+          <th>Transakcije</th>
+          <th>Državni poticaj</th>
+          <th>Porez na isplatu</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>3. Stup (DMF)</td>
+          <td>~1.5–2.0% / god</td>
+          <td>0 €</td>
+          <td>✅ 15% do 99.54 €/god</td>
+          <td>Ne oporezuje se</td>
+        </tr>
+        <tr>
+          <td>PEPP (Finax)</td>
+          <td>1.0% upravljanje + TER ETF-a</td>
+          <td>0 €</td>
+          <td>✅ 15% do 99.54 €/god</td>
+          <td>Ne oporezuje se</td>
+        </tr>
+        <tr>
+          <td>ETF preko IBKR</td>
+          <td>TER ETF-a (~0.20–0.25%)</td>
+          <td>~1–2 € po kupnji</td>
+          <td>❌ Nema</td>
+          <td>12% kapitalna dobit</td>
+        </tr>
+        <tr>
+          <td>ETF preko T212</td>
+          <td>TER ETF-a (~0.20–0.25%)</td>
+          <td>0 € (bez provizije)</td>
+          <td>❌ Nema</td>
+          <td>12% kapitalna dobit</td>
+        </tr>
+      </tbody>
+    </table></div>
+    <p class="fee-note">Stope su okvirne i pojednostavljene. Prije ulaganja provjeri aktualne cjenike fondova, brokera i porezna pravila.</p>
   </div>
   <p class="disclaimer">⚠️ ETF prinosi su historijski prosjeci zadnjih 10–15 godina i ne uključuju poreze na kapitalnu dobit (25% + prirez u HR). Investiranje u ETF nosi rizik gubitka. Nije financijski savjet.</p>
 </div>
@@ -3543,6 +3590,10 @@ function adminLogout() {
     </div>
     <div class="footer-col">
       <h4>Resursi</h4>
+      <a href="https://mytetka.com/blog/" target="_blank">Tetka — mytetka.com</a>
+      <a href="https://tonivitali.com/svi-postovi/" target="_blank">Škrti Otočanin — tonivitali.com</a>
+      <a href="https://www.reddit.com/r/financije/" target="_blank">Reddit r/financije</a>
+      <a href="https://www.europskamirovina.hr/" target="_blank">europskamirovina.hr</a>
       <a href="https://www.hanfa.hr" target="_blank">HANFA</a>
       <a href="https://www.regos.hr" target="_blank">REGOS</a>
       <a href="https://www.mirovinsko.hr" target="_blank">HZMO</a>
