@@ -1183,6 +1183,11 @@ function showPollResults(pollId) {
   } catch(e){}
 })();
 
+// Otvori admin panel ako URL ima #admin hash
+if (window.location.hash === '#admin') {
+  window.addEventListener('load', () => { setTimeout(openAdminPanel, 500); });
+}
+
 // === ADMIN PANEL ===
 const WORKER_URL = 'https://empty-pine-8e64.marin-marsan.workers.dev';
 let adminToken = sessionStorage.getItem('marsanai_admin') || null;

@@ -514,7 +514,7 @@ export default {
                     <div style="font-size:0.75rem;color:#4a9fe8;margin-bottom:0.5rem">📧 ${entry.email}</div>
                     <div style="color:#e2e5f0;font-size:0.95rem">${entry.text.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
                   </div>
-                  <a href="https://mminvest.pages.dev" style="display:inline-block;padding:0.6rem 1.25rem;background:#4a9fe8;color:#0b0d12;border-radius:8px;text-decoration:none;font-weight:700;font-size:0.85rem;">Otvori Admin Panel →</a>
+                  <a href="https://mminvest.pages.dev/#admin" style="display:inline-block;padding:0.6rem 1.25rem;background:#4a9fe8;color:#0b0d12;border-radius:8px;text-decoration:none;font-weight:700;font-size:0.85rem;">Otvori Admin Panel →</a>
                   <p style="margin-top:1.5rem;font-size:0.75rem;color:#5a6180;">MarsanInvest · mminvest.pages.dev</p>
                 </div>
               `,
