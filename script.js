@@ -1050,8 +1050,8 @@ try {
 
 // === POLL SYSTEM ===
 const pollState = {
-  feature: { votes: {}, selected: [], voted: false },
-  priority: { votes: {}, selected: [], voted: false }
+  feature: { votes: {}, selected: [], voted: false, prevSelected: [] },
+  priority: { votes: {}, selected: [], voted: false, prevSelected: [] }
 };
 
 function togglePollOption(el) {
@@ -1069,27 +1069,63 @@ function selectPollSingle(el) {
   document.getElementById('poll-priority-btn').disabled = false;
 }
 
-function submitPoll(pollId) {
+function changePollVote(pollId) {
+  const state = pollState[pollId];
+  state.voted = false;
+  const options = document.querySelectorAll(`[data-poll="${pollId}"]`);
+  options.forEach(o => {
+    o.classList.remove('voted');
+    o.style.cursor = '';
+    // Označi prethodno odabrane
+    if (state.prevSelected.includes(o.dataset.value)) o.classList.add('selected');
+    else o.classList.remove('selected');
+    o.querySelector('.poll-pct').textContent = '';
+    o.querySelector('.poll-bar-bg').style.width = '0%';
+    o.querySelector('.poll-label').style.color = '';
+  });
+  const btn = document.getElementById(`poll-${pollId}-btn`);
+  btn.textContent = pollId === 'feature' ? 'Glasaj 🗳️' : 'Odaberi prioritet 🗳️';
+  btn.disabled = state.prevSelected.length === 0;
+  // Sakrij "Promijeni glas" gumb
+  const changeBtn = document.getElementById(`poll-${pollId}-change`);
+  if (changeBtn) changeBtn.style.display = 'none';
+  document.getElementById(`poll-${pollId}-total`).textContent = '';
+}
+
+async function submitPoll(pollId) {
   if (pollState[pollId].voted) return;
   const selected = document.querySelectorAll(`[data-poll="${pollId}"].selected`);
   if (!selected.length) return;
 
-  let votes = pollState[pollId].votes;
+  const state = pollState[pollId];
+  let votes = state.votes;
   const allOptions = document.querySelectorAll(`[data-poll="${pollId}"]`);
-  allOptions.forEach(o => {
-    const v = o.dataset.value;
-    if (!votes[v]) votes[v] = 0;
-  });
-  selected.forEach(o => { votes[o.dataset.value]++; });
+  allOptions.forEach(o => { if (!votes[o.dataset.value]) votes[o.dataset.value] = 0; });
 
-  pollState[pollId].votes = votes;
-  pollState[pollId].voted = true;
+  // Oduzmi prethodni glas
+  state.prevSelected.forEach(v => { if (votes[v] > 0) votes[v]--; });
+  // Dodaj novi glas
+  const newSelected = [];
+  selected.forEach(o => { votes[o.dataset.value]++; newSelected.push(o.dataset.value); });
+
+  state.votes = votes;
+  state.voted = true;
+  state.prevSelected = newSelected;
 
   try {
     const saved = JSON.parse(localStorage.getItem('miv_polls') || '{}');
-    saved[pollId] = { votes, ts: new Date().toISOString() };
+    saved[pollId] = { votes, prevSelected: newSelected, ts: new Date().toISOString() };
     localStorage.setItem('miv_polls', JSON.stringify(saved));
   } catch(e){}
+
+  // Pošalji na server
+  try {
+    await fetch(AI_WORKER_URL + '/polls', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pollId, votes })
+    });
+  } catch(e) { console.error('Poll send error:', e); }
 
   showPollResults(pollId);
 }
@@ -1106,23 +1142,44 @@ function showPollResults(pollId) {
     const pct = total > 0 ? Math.round((v / total) * 100) : 0;
     o.querySelector('.poll-pct').textContent = pct + '%';
     o.querySelector('.poll-bar-bg').style.width = pct + '%';
-    if (v === Math.max(...Object.values(votes)) && v > 0) {
+    if (v === Math.max(...Object.values(votes)) && v > 0)
       o.querySelector('.poll-label').style.color = 'var(--etf-l)';
-    }
   });
 
   const btn = document.getElementById(`poll-${pollId}-btn`);
   btn.textContent = '✅ Hvala na glasu!';
   btn.disabled = true;
   document.getElementById(`poll-${pollId}-total`).textContent = `Ukupno glasova: ${total}`;
+
+  // Prikaži "Promijeni glas" gumb
+  let changeBtn = document.getElementById(`poll-${pollId}-change`);
+  if (!changeBtn) {
+    changeBtn = document.createElement('button');
+    changeBtn.id = `poll-${pollId}-change`;
+    changeBtn.className = 'poll-change-btn';
+    changeBtn.textContent = '✏️ Promijeni glas';
+    changeBtn.onclick = () => changePollVote(pollId);
+    btn.parentNode.insertBefore(changeBtn, btn.nextSibling);
+  }
+  changeBtn.style.display = 'inline-block';
 }
 
 // Init polls from localStorage
 (function initPolls() {
   try {
     const saved = JSON.parse(localStorage.getItem('miv_polls') || '{}');
-    if (saved.feature) { pollState.feature.votes = saved.feature.votes || {}; pollState.feature.voted = true; showPollResults('feature'); }
-    if (saved.priority) { pollState.priority.votes = saved.priority.votes || {}; pollState.priority.voted = true; showPollResults('priority'); }
+    if (saved.feature) {
+      pollState.feature.votes = saved.feature.votes || {};
+      pollState.feature.voted = true;
+      pollState.feature.prevSelected = saved.feature.prevSelected || [];
+      showPollResults('feature');
+    }
+    if (saved.priority) {
+      pollState.priority.votes = saved.priority.votes || {};
+      pollState.priority.voted = true;
+      pollState.priority.prevSelected = saved.priority.prevSelected || [];
+      showPollResults('priority');
+    }
   } catch(e){}
 })();
 
