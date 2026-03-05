@@ -1277,6 +1277,9 @@ tr:hover td { background:var(--surface2); }
     <div class="nav-tab" data-page="p2">DMF/PEPP vs ETF</div>
     <div class="nav-tab" data-page="p3">Pension + ETF</div>
     <div class="nav-tab" data-page="kviz">🧭 Koji put?</div>
+    <div class="nav-tab" data-page="stednja-dijete">👶 Štednja za dijete</div>
+    <div class="nav-tab" data-page="kripto">₿ Kriptovalute</div>
+    <div class="nav-tab" data-page="trading">📈 Trading</div>
     <div class="nav-tab" data-page="edukacija">📚 Edukacija</div>
     <div class="nav-tab" data-page="feedback">💬 Feedback</div>
   </div>
@@ -2931,6 +2934,364 @@ tr:hover td { background:var(--surface2); }
 
 </div>
 <!-- ========== END QUIZ PAGE ========== -->
+
+<!-- ========== ŠTEDNJA ZA DIJETE PAGE ========== -->
+<div class="page" id="stednja-dijete">
+  <div class="page-header">
+    <h2><span class="grad-warm">👶 Štednja za dijete</span></h2>
+    <p>Kako mudro početi štedjeti i ulagati za djetetovu budućnost — i zašto većina popularnih metoda zapravo gubi novac.</p>
+  </div>
+
+  <!-- Uvod -->
+  <div style="background:var(--surface2);border-radius:14px;padding:1.25rem 1.5rem;margin-bottom:1.5rem;border-left:4px solid var(--pepp)">
+    <p style="margin:0;font-size:0.9rem;line-height:1.7;color:var(--muted2)">
+      Roditelji prirodno žele osigurati djetetovu budućnost. Problem je što najraspravljeniji načini — štedna knjižica, zlato, gotovina ispod jastuka, životno osiguranje — u stvarnosti <strong style="color:var(--text)">neče koršću djetetovom bogatstvu, već inflaciji</strong>. Pogledajmo konkretne brojke.
+    </p>
+  </div>
+
+  <!-- METODE - kartice -->
+  <h3 style="margin-bottom:1rem">Popularne metode štednje — i zašto vas koštaju</h3>
+
+  <div style="display:grid;gap:1rem;margin-bottom:1.5rem">
+
+    <!-- Gotovina -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.25rem 1.5rem">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem">
+        <span style="font-size:1.5rem">💶</span>
+        <div>
+          <div style="font-weight:700;font-size:1rem">Gotovina „ispod jastuka“</div>
+          <span class="liq-tag liq-high" style="font-size:0.65rem">⚠️ Najgora opcija</span>
+        </div>
+      </div>
+      <p style="font-size:0.85rem;color:var(--muted2);margin:0 0 0.75rem">Mnogi roditelji svake godine odvoje 100€ u koverti. Za 18 godina = 1.800€ u koverti. Zvuk dobro? Nije.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;font-size:0.82rem">
+        <div style="background:var(--surface2);border-radius:8px;padding:0.75rem">
+          <div style="color:var(--muted);font-size:0.7rem;margin-bottom:0.25rem">Uplatili ste</div>
+          <div style="font-weight:700;color:var(--text)">1.800 €</div>
+          <div style="color:var(--muted);font-size:0.7rem;margin-top:0.25rem">18 god × 100€</div>
+        </div>
+        <div style="background:var(--surface2);border-radius:8px;padding:0.75rem">
+          <div style="color:var(--muted);font-size:0.7rem;margin-bottom:0.25rem">Realna vrijednost (inflacija ~3%/god)</div>
+          <div style="font-weight:700;color:var(--red)">~1.060 €</div>
+          <div style="color:var(--muted);font-size:0.7rem;margin-top:0.25rem">≈ -740€ kupovne moći</div>
+        </div>
+      </div>
+      <div style="margin-top:0.75rem;padding:0.6rem 0.9rem;background:rgba(220,60,60,0.08);border-radius:8px;font-size:0.78rem;color:var(--red)">
+        🔴 Gotovina ne zarađuje ništa, a inflacija svake godine tiše „jede“ njenu vrijednost. 18 godina inflacije po 3% znači da je 1.800€ u budućnosti vrijedno tek ~1.060€ u današnjim eurima.
+      </div>
+    </div>
+
+    <!-- Štedna knjižica -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.25rem 1.5rem">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem">
+        <span style="font-size:1.5rem">🏦</span>
+        <div>
+          <div style="font-weight:700;font-size:1rem">Štedna knjižica / orocena štednja</div>
+          <span class="liq-tag liq-mid" style="font-size:0.65rem">⚠️ Jedva prati inflaciju</span>
+        </div>
+      </div>
+      <p style="font-size:0.85rem;color:var(--muted2);margin:0 0 0.75rem">Banka nudi ~2–2.5% godišnje na orocenu štednju. Zvui sigurno. Ali inflacija je 3–4%.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.6rem;font-size:0.82rem">
+        <div style="background:var(--surface2);border-radius:8px;padding:0.75rem">
+          <div style="color:var(--muted);font-size:0.7rem;margin-bottom:0.25rem">Uplatili ste</div>
+          <div style="font-weight:700">1.800 €</div>
+        </div>
+        <div style="background:var(--surface2);border-radius:8px;padding:0.75rem">
+          <div style="color:var(--muted);font-size:0.7rem;margin-bottom:0.25rem">Nakon 18g (2.2%)</div>
+          <div style="font-weight:700;color:var(--yellow)">~2.480 €</div>
+        </div>
+        <div style="background:var(--surface2);border-radius:8px;padding:0.75rem">
+          <div style="color:var(--muted);font-size:0.7rem;margin-bottom:0.25rem">Realno (uz 3% inflaciju)</div>
+          <div style="font-weight:700;color:var(--red)">~1.460 €</div>
+        </div>
+      </div>
+      <div style="margin-top:0.75rem;padding:0.6rem 0.9rem;background:rgba(220,60,60,0.08);border-radius:8px;font-size:0.78rem;color:var(--red)">
+        🔴 Nominalno imaš više novca, ali kupovna moć je niža. Realni prinos štedneko knjižice je negativan ili nulti — praktički održavaš vrijednost, ne povećavaš je.
+      </div>
+    </div>
+
+    <!-- Zlato -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.25rem 1.5rem">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem">
+        <span style="font-size:1.5rem">🪩</span>
+        <div>
+          <div style="font-weight:700;font-size:1rem">Zlato (zlatnici, nakit, poluge)</div>
+          <span class="liq-tag liq-mid" style="font-size:0.65rem">⚠️ Precijenjeno u popularnoj kulturi</span>
+        </div>
+      </div>
+      <p style="font-size:0.85rem;color:var(--muted2);margin:0 0 0.75rem">„Zlato uvijek vrijedi!“ — čujemš stalno. Istina je kompliciranija. Zlato ne plaća dividendu, ima visoke spreadove pri kupnji/prodaji, a realni prinos na 20-30 godina je ~1–2%/god.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.6rem;font-size:0.82rem">
+        <div style="background:var(--surface2);border-radius:8px;padding:0.75rem">
+          <div style="color:var(--muted);font-size:0.7rem;margin-bottom:0.25rem">Uplatili ste</div>
+          <div style="font-weight:700">1.800 €</div>
+        </div>
+        <div style="background:var(--surface2);border-radius:8px;padding:0.75rem">
+          <div style="color:var(--muted);font-size:0.7rem;margin-bottom:0.25rem">Nakon 18g (~1.5%/god realno)</div>
+          <div style="font-weight:700;color:var(--yellow)">~2.360 €</div>
+        </div>
+        <div style="background:var(--surface2);border-radius:8px;padding:0.75rem">
+          <div style="color:var(--muted);font-size:0.7rem;margin-bottom:0.25rem">vs. ETF (7% realno)</div>
+          <div style="font-weight:700;color:var(--etf-l)">~6.080 €</div>
+        </div>
+      </div>
+      <div style="margin-top:0.75rem;padding:0.6rem 0.9rem;background:rgba(220,60,60,0.08);border-radius:8px;font-size:0.78rem;color:var(--red)">
+        🔴 Zlato je dobra zaštita od hiperinflacije i geopolitičkih kriza — ali loš alat za dugoročno povećanje bogatstva. Nakit uz to ima i visoke premije (izrada) — platiš zlato + radnu snagu, a prodaješ samo zlato.
+      </div>
+    </div>
+
+    <!-- Životno osiguranje -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.25rem 1.5rem">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem">
+        <span style="font-size:1.5rem">🛡️</span>
+        <div>
+          <div style="font-weight:700;font-size:1rem">Životno osiguranje s štednjom (mješovito)</div>
+          <span class="liq-tag liq-low" style="font-size:0.65rem">🔴 Marketinški proizvod</span>
+        </div>
+      </div>
+      <p style="font-size:0.85rem;color:var(--muted2);margin:0 0 0.75rem">Agenti ga prodaju kao „štediš i osiguraš dijete odjednom“. U praksi: visoke provizije, niske garancije, lokovani novac i prinosi ispod inflacije.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.6rem;font-size:0.82rem">
+        <div style="background:var(--surface2);border-radius:8px;padding:0.75rem">
+          <div style="color:var(--muted);font-size:0.7rem;margin-bottom:0.25rem">Uplata 18g × 100€/mj</div>
+          <div style="font-weight:700">21.600 €</div>
+        </div>
+        <div style="background:var(--surface2);border-radius:8px;padding:0.75rem">
+          <div style="color:var(--muted);font-size:0.7rem;margin-bottom:0.25rem">Tipична isplata (~2%)</div>
+          <div style="font-weight:700;color:var(--yellow)">~28.000 €</div>
+        </div>
+        <div style="background:var(--surface2);border-radius:8px;padding:0.75rem">
+          <div style="color:var(--muted);font-size:0.7rem;margin-bottom:0.25rem">ETF ista uplata (~8%)</div>
+          <div style="font-weight:700;color:var(--etf-l)">~57.000 €</div>
+        </div>
+      </div>
+      <div style="margin-top:0.75rem;padding:0.6rem 0.9rem;background:rgba(220,60,60,0.08);border-radius:8px;font-size:0.78rem;color:var(--red)">
+        🔴 Veliki dio prvih godišnjih uplata ide na agentovu proviziju i troškove police. Garantirani prinos je 1–2%, a novac je zaključan. Ako izlaziš ranije, gubiš značajan dio. Usporedi sam: ista uplata u ETF = duplo više novca za dijete.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Usporedna tablica -->
+  <div class="table-card" style="margin-bottom:1.5rem">
+    <h3>📊 Usporedba metoda — 100€/mj kroz 18 godina</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Metoda</th>
+          <th>Nominalni iznos</th>
+          <th>Realna vrijednost</th>
+          <th>Prinos/god</th>
+          <th>Ocjena</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td>💶 Gotovina</td>
+            <td>21.600 €</td>
+            <td style="color:var(--red)">~12.700 €</td>
+            <td style="color:var(--red)">0%</td>
+            <td><span style="color:var(--red);font-weight:700">❌ Izbjegavaj</span></td>
+          </tr>
+          <tr>
+            <td>🏦 Štedna knjižica</td>
+            <td>~28.500 €</td>
+            <td style="color:var(--yellow)">~16.800 €</td>
+            <td style="color:var(--yellow)">~2.2%</td>
+            <td><span style="color:var(--yellow);font-weight:700">⚠️ Slabo</span></td>
+          </tr>
+          <tr>
+            <td>🪩 Zlato</td>
+            <td>~30.000 €</td>
+            <td style="color:var(--yellow)">~17.700 €</td>
+            <td style="color:var(--yellow)">~1.5% realno</td>
+            <td><span style="color:var(--yellow);font-weight:700">⚠️ Osrednje</span></td>
+          </tr>
+          <tr>
+            <td>🛡️ Životno osiguranje</td>
+            <td>~28.000 €</td>
+            <td style="color:var(--red)">~16.500 €</td>
+            <td style="color:var(--red)">~2% (zaključano)</td>
+            <td><span style="color:var(--red);font-weight:700">❌ Izbjegavaj</span></td>
+          </tr>
+          <tr style="background:rgba(74,232,160,0.05)">
+            <td><strong>📈 ETF (VWCE/IWDA)</strong></td>
+            <td style="color:var(--etf-l)"><strong>~57.000 €</strong></td>
+            <td style="color:var(--etf-l)"><strong>~33.600 €</strong></td>
+            <td style="color:var(--etf-l)"><strong>~8% bruto</strong></td>
+            <td><span style="color:var(--etf-l);font-weight:700">✅ Preporučeno</span></td>
+          </tr>
+          <tr style="background:rgba(74,159,232,0.05)">
+            <td>🌍 PEPP (Finax)</td>
+            <td style="color:var(--pepp-l)">~48.000 €</td>
+            <td style="color:var(--pepp-l)">~28.300 €</td>
+            <td style="color:var(--pepp-l)">~7% (uz naknadu)</td>
+            <td><span style="color:var(--pepp-l);font-weight:700">✅ Dobra opcija</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:0.75rem;font-size:0.73rem;color:var(--muted);padding:0 0.25rem">
+      * Projekcija pri uplati 100€/mj kroz 18 godina. Realna vrijednost izračunata uz inflaciju 3%/god. ETF prinos ~8% je dugoročni povijesni prosjek globalnih indeksa — nije garancija budućeg prinosa.
+    </div>
+  </div>
+
+  <!-- Što napraviti -->
+  <div class="table-card">
+    <h3>✅ Što stvarno napraviti za djetetovu budućnost</h3>
+    <div style="display:grid;gap:0.75rem;margin-top:0.5rem">
+      <div style="background:var(--surface2);border-radius:10px;padding:1rem;border-left:3px solid var(--etf-l)">
+        <strong>📈 1. Globalni ETF — najjednostavnija i najefikasnija opcija</strong>
+        <p style="margin:0.4rem 0 0;font-size:0.85rem;color:var(--muted2)">Otvori račun na IBKR ili Trading 212, postavi automatsku mjesečnu uplatu na VWCE ili IWDA ETF. Zaboravi na 18 godina. Niske naknade, globalna diverzifikacija, porezna sloboda u HR nakon 2 godine držanja.</p>
+      </div>
+      <div style="background:var(--surface2);border-radius:10px;padding:1rem;border-left:3px solid var(--pepp)">
+        <strong>🌍 2. PEPP (Finax) — ako želiš „auto-pilot“</strong>
+        <p style="margin:0.4rem 0 0;font-size:0.85rem;color:var(--muted2)">Finax automatski rebalancira portfelj i ulaže u globalne ETF-ove. Naknada je 1%/god, ali bez potrebe da išta radiš. Dobra opcija za roditelje koji ne žele pratiti tržište.</p>
+      </div>
+      <div style="background:var(--surface2);border-radius:10px;padding:1rem;border-left:3px solid var(--dmf)">
+        <strong>🏦 3. DMF (3. stup) — samo ako poslodavac doprinosi</strong>
+        <p style="margin:0.4rem 0 0;font-size:0.85rem;color:var(--muted2)">Kao osobna mirovina, ne direktno za dijete. Ali ako ti poslodavac uplaćuje do 804€/god neoporezivo — to je praktički besplatan prinos koji vrijedi iskoristiti.</p>
+      </div>
+      <div style="background:var(--surface2);border-radius:10px;padding:1rem;border-left:3px solid var(--border)">
+        <strong style="color:var(--muted2)">⚠️ Bonus savjet: Račun na djetetovo ime</strong>
+        <p style="margin:0.4rem 0 0;font-size:0.85rem;color:var(--muted2)">Neke platforme (ovisno o zakonodavstvu) omogućavaju otvaranje računa za maloljetnike uz pomoć roditelja kao skrbnika. Provjeri aktualnu mogućnost na odabranoj platformi.</p>
+      </div>
+    </div>
+  </div>
+
+  <p class="disclaimer">⚠️ Sve projekcije su ilustrativne i temeljene na povijesnim prosjecima. Inflacija, prinos i porezni propisi mogu se mijenjati. Nije financijski savjet.</p>
+</div>
+
+<!-- ========== KRIPTOVALUTE PAGE ========== -->
+<div class="page" id="kripto">
+  <div class="page-header">
+    <h2><span class="grad-cool">₿ Ulaganja u kriptovalute</span></h2>
+    <p>Osnove kriptovaluta kao klase imovine — mogućnosti, rizici i što treba znati prije nego uložiš.</p>
+  </div>
+
+  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1.5rem;text-align:center">
+    <div style="font-size:2.5rem;margin-bottom:0.5rem">₿</div>
+    <h3 style="margin:0 0 0.5rem">Sadržaj uskoro</h3>
+    <p style="font-size:0.85rem;color:var(--muted2);margin:0">Ova sekcija je u pripremi. Naš kolega specijalist za kriptovalute uskoro će dopuniti ovaj dio s detaljnim vodičem, strategijama i usporedbama.</p>
+  </div>
+
+  <!-- Placeholder osnovnih info -->
+  <div class="table-card" style="margin-bottom:1rem">
+    <h3>📌 Osnove — što je kriptovaluta?</h3>
+    <p style="font-size:0.87rem;color:var(--muted2);line-height:1.7">Kriptovaluta je digitalna imovina koja koristi kriptografiju za sigurnost transakcija i kontrolu stvaranja novih jedinica, a funkcioniše na decentraliziranoj blockchain mreži bez posrednika poput banaka.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.75rem;margin-top:1rem">
+      <div style="background:var(--surface2);border-radius:10px;padding:0.9rem;text-align:center">
+        <div style="font-size:1.4rem">₿</div>
+        <div style="font-weight:700;margin:0.3rem 0 0.2rem">Bitcoin (BTC)</div>
+        <div style="font-size:0.75rem;color:var(--muted2)">Prva i najveća kripto</div>
+      </div>
+      <div style="background:var(--surface2);border-radius:10px;padding:0.9rem;text-align:center">
+        <div style="font-size:1.4rem">🔷</div>
+        <div style="font-weight:700;margin:0.3rem 0 0.2rem">Ethereum (ETH)</div>
+        <div style="font-size:0.75rem;color:var(--muted2)">Pametni ugovori, DeFi</div>
+      </div>
+      <div style="background:var(--surface2);border-radius:10px;padding:0.9rem;text-align:center">
+        <div style="font-size:1.4rem">💵</div>
+        <div style="font-weight:700;margin:0.3rem 0 0.2rem">Stablecoini</div>
+        <div style="font-size:0.75rem;color:var(--muted2)">USDC, USDT — 1:1 s USD</div>
+      </div>
+      <div style="background:var(--surface2);border-radius:10px;padding:0.9rem;text-align:center">
+        <div style="font-size:1.4rem">🎲</div>
+        <div style="font-weight:700;margin:0.3rem 0 0.2rem">Altcoini</div>
+        <div style="font-size:0.75rem;color:var(--muted2)">Tisuće ostalih projekata</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:rgba(220,60,60,0.07);border:1px solid rgba(220,60,60,0.2);border-radius:10px;padding:1rem 1.25rem;margin-bottom:1rem">
+    <strong style="color:var(--red)">⚠️ Važno upozorenje</strong>
+    <p style="margin:0.4rem 0 0;font-size:0.83rem;color:var(--muted2)">Kriptovalute su <strong>visokorizična</strong> klasa imovine s ekstremalnom volatilnošću. Vrijednost može pasti 80–90% u kratkom roku. Nikada ne ulaži više nego što možeš priustiti izgubiti. Detalji i strategije dolaze uskoro.</p>
+  </div>
+
+  <p class="disclaimer">⚠️ Informativni pregled. Kriptovalute nisu regulirane u istoj mjeri kao tradicionalne investicije. Nije financijski savjet.</p>
+</div>
+
+<!-- ========== TRADING PAGE ========== -->
+<div class="page" id="trading">
+  <div class="page-header">
+    <h2><span class="grad-warm">📈 Trading — aktivno tržanje</span></h2>
+    <p>Razumijevanje osnova tradinga — strategije, pojmovi i razlika od dugoročnog ulaganja.</p>
+  </div>
+
+  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1.5rem;text-align:center">
+    <div style="font-size:2.5rem;margin-bottom:0.5rem">📈</div>
+    <h3 style="margin:0 0 0.5rem">Detaljan sadržaj uskoro</h3>
+    <p style="font-size:0.85rem;color:var(--muted2);margin:0">Naš kolega trader dopunit će ovu sekciju s naprednim strategijama, primjerima i setupovima. Ispod su osnove da se snađeš u terminologiji.</p>
+  </div>
+
+  <!-- Osnovna terminologija -->
+  <div class="table-card" style="margin-bottom:1rem">
+    <h3>📖 Osnovna terminologija</h3>
+    <div style="display:grid;gap:0.65rem;margin-top:0.75rem">
+
+      <div style="display:grid;grid-template-columns:140px 1fr;gap:0.75rem;align-items:start;padding:0.75rem;background:var(--surface2);border-radius:8px">
+        <div style="font-weight:700;color:var(--etf-l)">🐂 Long (duga pozicija)</div>
+        <div style="font-size:0.85rem;color:var(--muted2)">Kupujem s očekivanjem da će cijena <strong style="color:var(--etf-l)">rasti</strong>. Zarađujem ako cijena poraste, gubim ako padne. Klasični način ulaganja.</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:140px 1fr;gap:0.75rem;align-items:start;padding:0.75rem;background:var(--surface2);border-radius:8px">
+        <div style="font-weight:700;color:var(--red)">🦅 Short (kratka pozicija)</div>
+        <div style="font-size:0.85rem;color:var(--muted2)">Posuđujem dionice i <strong style="color:var(--red)">prodajem ih sad</strong>, s planom da ih kupim jeftinije kad cijena padne i tako zaradim razliku. Riskično — gubitak je teorijski neograničen.</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:140px 1fr;gap:0.75rem;align-items:start;padding:0.75rem;background:var(--surface2);border-radius:8px">
+        <div style="font-weight:700;color:var(--etf-l)">🐂 Bull market</div>
+        <div style="font-size:0.85rem;color:var(--muted2)">Tržište u <strong style="color:var(--etf-l)">usponu</strong>. Bik bode rogovima <em>gore</em>. Optimizam, rast cijena, lako je zaraditi — teško je znati kad stati.</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:140px 1fr;gap:0.75rem;align-items:start;padding:0.75rem;background:var(--surface2);border-radius:8px">
+        <div style="font-weight:700;color:var(--red)">🐻 Bear market</div>
+        <div style="font-size:0.85rem;color:var(--muted2)">Tržište u <strong style="color:var(--red)">padu</strong>. Medvjed čapne šapom <em>prema dolje</em>. Pesimizam, pad cijena 20%+. Dugorocni ulagači kupuju, traderi shortaju.</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:140px 1fr;gap:0.75rem;align-items:start;padding:0.75rem;background:var(--surface2);border-radius:8px">
+        <div style="font-weight:700;color:var(--yellow)">⚡ Leverage (poluga)</div>
+        <div style="font-size:0.85rem;color:var(--muted2)">Trgujem s više novca nego što imam — npr. 10x leverage znači da kontroliram 10.000€ s 1.000€. Dobit se množi, ali i gubici. 10x leverage + 10% pad = <strong style="color:var(--red)">-100% kapitala.</strong></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:140px 1fr;gap:0.75rem;align-items:start;padding:0.75rem;background:var(--surface2);border-radius:8px">
+        <div style="font-weight:700;color:var(--muted2)">📊 Stop-loss</div>
+        <div style="font-size:0.85rem;color:var(--muted2)">Automatski nalog koji <strong>zatvara poziciju</strong> ako cijena padne do zadane razine. Osnovna zaštita od velikih gubitaka. Svaki ozbiljni trader ga koristi.</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:140px 1fr;gap:0.75rem;align-items:start;padding:0.75rem;background:var(--surface2);border-radius:8px">
+        <div style="font-weight:700;color:var(--muted2)">🎯 Take-profit</div>
+        <div style="font-size:0.85rem;color:var(--muted2)">Automatski nalog koji zatvara poziciju kad cijena dosegne <strong>ciljanu dobit</strong>. Discipline — nećeš biti pohlepan i držati predugo.</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:140px 1fr;gap:0.75rem;align-items:start;padding:0.75rem;background:var(--surface2);border-radius:8px">
+        <div style="font-weight:700;color:var(--pepp-l)">📉 Margin call</div>
+        <div style="font-size:0.85rem;color:var(--muted2)">Broker te obavještava da ti je <strong style="color:var(--red)">nestalo pokrića</strong> za leveraged poziciju. Moraš dodati novac ili se pozicija automatski zatvara — obično s velikim gubitkom.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Trading vs ulaganje -->
+  <div class="table-card">
+    <h3>⚖️ Trading vs. dugoročno ulaganje</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Kriterij</th><th style="color:var(--yellow)">📈 Trading</th><th style="color:var(--etf-l)">🌱 Dugoročno ulaganje</th></tr></thead>
+        <tbody>
+          <tr><td>Horizont</td><td>Sekunde do tjedana</td><td>Godine do desetljeća</td></tr>
+          <tr><td>Aktivnost</td><td>Svakodnevno praćenje</td><td>Postavi i zaboravi</td></tr>
+          <tr><td>Rizik</td><td style="color:var(--red)">Visok do ekstreman</td><td style="color:var(--etf-l)">Umjeren (diverzificirano)</td></tr>
+          <tr><td>Prosječna uspješnost</td><td style="color:var(--red)">&lt;20% tradera profitabilno dugoročno</td><td style="color:var(--etf-l)">&gt;90% pozitivnih ishoda na 15g+</td></tr>
+          <tr><td>Potrebno znanje</td><td>Tehnička analiza, psihologija, risk mgmt</td><td>Osnove diverzifikacije</td></tr>
+          <tr><td>Porez (HR)</td><td style="color:var(--red)">12% na svaku realiziranu dobit</td><td style="color:var(--etf-l)">0% ako držiš 2+ godine</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:0.85rem;padding:0.75rem 1rem;background:rgba(220,60,60,0.07);border-radius:8px;font-size:0.8rem;color:var(--muted2);border-left:3px solid var(--red)">
+      📚 <strong style="color:var(--text)">Istraživanja pokazuju</strong> da više od 80% retail tradera gubi novac na duge staze. Profesionalni trading zahtijeva godine učenja, disciplinu i značajan kapital za upravljanje rizikom.
+    </div>
+  </div>
+
+  <p class="disclaimer">⚠️ Edukativni pregled osnova. Detaljni vodiči, strategije i primjeri dolaze uskoro. Nije financijski savjet.</p>
+</div>
 
 <!-- ========== FEEDBACK PAGE ========== -->
 <div class="page" id="feedback">
