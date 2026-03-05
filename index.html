@@ -104,6 +104,7 @@ nav {
 /* GRADIENT TEXTS */
 .grad-warm { background: linear-gradient(135deg, var(--dmf-l), var(--pepp-l)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
 .grad-cool { background: linear-gradient(135deg, var(--pepp-l), var(--etf-l)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.grad-pepp { background: linear-gradient(135deg, #9a75ea, #c084fc); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
 .grad-combo { background: linear-gradient(135deg, var(--etf-l), var(--combo-l)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
 
 /* CONTROLS PANEL */
@@ -737,105 +738,14 @@ tr:hover td { background:var(--surface2); }
 .edu-book-info p { font-size:0.78rem; color:var(--muted2); line-height:1.5; }
 .edu-book-badge { font-size:0.68rem; font-weight:700; color:var(--dmf-l); margin-top:0.4rem; display:inline-block; }
 
-/* QUIZ PAGE */
-.quiz-hero { text-align:center; padding:2rem 1rem 1.5rem; }
-.quiz-hero h1 { font-family:'DM Serif Display',serif; font-size:2rem; margin-bottom:0.5rem; }
-.quiz-hero p { color:var(--muted2); font-size:0.9rem; max-width:560px; margin:0 auto; line-height:1.5; }
-
-.quiz-progress {
-  display:flex; gap:0.35rem; justify-content:center; margin-bottom:1.75rem;
-}
-.quiz-step {
-  width:32px; height:4px; border-radius:999px;
-  background:var(--border); transition:all 0.3s;
-}
-.quiz-step.done { background:var(--etf); }
-.quiz-step.active { background:var(--pepp); width:48px; }
-
-.quiz-card {
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:16px; padding:1.75rem; margin-bottom:1.25rem;
-  animation:fadeInUp 0.3s ease;
-}
-@keyframes fadeInUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
-
-.quiz-question {
-  font-family:'DM Serif Display',serif; font-size:1.2rem;
-  margin-bottom:0.35rem; line-height:1.4;
-}
-.quiz-sub { font-size:0.8rem; color:var(--muted2); margin-bottom:1.25rem; }
-
-.quiz-options { display:grid; gap:0.65rem; }
-.quiz-option {
-  display:flex; align-items:center; gap:0.85rem;
-  background:var(--bg); border:1.5px solid var(--border);
-  border-radius:12px; padding:0.9rem 1.1rem;
-  cursor:pointer; transition:all 0.15s; font-size:0.88rem;
-}
-.quiz-option:hover { border-color:var(--muted); transform:translateX(2px); }
-.quiz-option.selected { border-color:var(--pepp); background:rgba(74,159,232,0.06); }
-.quiz-option-icon { font-size:1.4rem; flex-shrink:0; }
-.quiz-option-text strong { display:block; font-size:0.88rem; margin-bottom:0.1rem; color:var(--text); }
-.quiz-option-text span { font-size:0.75rem; color:var(--muted2); line-height:1.4; }
-
-.quiz-nav { display:flex; gap:0.75rem; margin-top:1rem; }
-.quiz-btn-back {
-  padding:0.65rem 1.2rem; border-radius:9px; border:1px solid var(--border);
-  background:transparent; color:var(--muted2); font-size:0.82rem; cursor:pointer;
-  transition:all 0.15s;
-}
-.quiz-btn-back:hover { border-color:var(--muted); color:var(--text); }
-.quiz-btn-next {
-  flex:1; padding:0.7rem; border-radius:9px; border:none;
-  background:linear-gradient(135deg,var(--pepp),var(--etf));
-  color:#0b0d12; font-size:0.88rem; font-weight:700; cursor:pointer;
-  transition:opacity 0.15s; opacity:0.4; pointer-events:none;
-}
-.quiz-btn-next.ready { opacity:1; pointer-events:auto; }
-
-/* Quiz result */
-.quiz-result { display:none; }
-.quiz-result.show { display:block; animation:fadeInUp 0.4s ease; }
-.quiz-result-hero {
-  text-align:center; padding:1.5rem 1rem 1rem;
-}
-.quiz-result-emoji { font-size:3rem; margin-bottom:0.5rem; }
-.quiz-result-title {
-  font-family:'DM Serif Display',serif; font-size:1.5rem; margin-bottom:0.4rem;
-}
-.quiz-result-subtitle { font-size:0.85rem; color:var(--muted2); line-height:1.5; max-width:480px; margin:0 auto; }
-
-.quiz-result-cards { display:grid; gap:0.85rem; margin:1.25rem 0; }
-@media(min-width:640px){ .quiz-result-cards { grid-template-columns:1fr 1fr; } }
-
-.quiz-result-card {
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:14px; padding:1.25rem; transition:all 0.15s;
-}
-.quiz-result-card.primary { border-color:var(--pepp); background:rgba(74,159,232,0.04); }
-.qrc-head { display:flex; align-items:center; gap:0.65rem; margin-bottom:0.65rem; }
-.qrc-icon { font-size:1.5rem; }
-.qrc-label { font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); }
-.qrc-title { font-size:0.9rem; font-weight:700; color:var(--text); }
-.qrc-desc { font-size:0.78rem; color:var(--muted2); line-height:1.5; margin-bottom:0.85rem; }
-.qrc-pros { list-style:none; margin:0 0 0.85rem; padding:0; }
-.qrc-pros li { font-size:0.76rem; color:var(--muted2); padding:0.2rem 0; }
-.qrc-pros li::before { content:'✓ '; color:var(--etf); font-weight:700; }
-.qrc-cta {
-  display:inline-block; padding:0.5rem 1rem; border-radius:8px;
-  border:none; cursor:pointer; font-size:0.8rem; font-weight:700;
-  background:linear-gradient(135deg,var(--pepp),var(--etf));
-  color:#0b0d12; transition:opacity 0.15s; text-decoration:none;
-}
-.qrc-cta:hover { opacity:0.85; }
-
-.quiz-restart-btn {
-  display:block; width:100%; padding:0.7rem; border-radius:9px;
-  border:1px solid var(--border); background:transparent;
-  color:var(--muted2); font-size:0.82rem; cursor:pointer;
-  transition:all 0.15s; margin-top:0.5rem;
-}
-.quiz-restart-btn:hover { border-color:var(--muted); color:var(--text); }
+/* KOJI PUT PAGE */
+.kojput-options { display:flex; flex-direction:column; gap:0.6rem; margin-top:0.8rem; }
+.kojput-btn { background:var(--surface2); border:2px solid transparent; border-radius:10px; color:var(--text); cursor:pointer; font-size:0.95rem; padding:0.8rem 1.2rem; text-align:left; transition:all 0.15s; }
+.kojput-btn:hover { border-color:var(--etf); color:var(--etf); }
+.kojput-btn.selected { border-color:var(--etf); background:rgba(99,179,237,0.12); }
+.kp-navbtn { background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text); cursor:pointer; font-size:0.85rem; margin-top:0.8rem; padding:0.5rem 1rem; }
+.kp-tag { background:var(--surface2); border:1px solid var(--etf); border-radius:20px; color:var(--etf); cursor:pointer; font-size:0.85rem; padding:0.4rem 0.9rem; }
+.kp-tag:hover { background:var(--etf); color:#000; }
 
 /* FEEDBACK PAGE */
 .feedback-hero {
@@ -1125,11 +1035,12 @@ tr:hover td { background:var(--surface2); }
   <div class="nav-tabs">
     <div class="nav-tab active" data-page="home">Početna</div>
     <div class="nav-tab" data-page="p0a">Hrvatski DMF</div>
+    <div class="nav-tab" data-page="pepp">PEPP</div>
     <div class="nav-tab" data-page="p0b">ETF Platforme</div>
-    <div class="nav-tab" data-page="p1">3. Stup vs PEPP</div>
-    <div class="nav-tab" data-page="p2">Pension vs ETF</div>
+    <div class="nav-tab" data-page="p1">HR DMF (3.stup) vs PEPP</div>
+    <div class="nav-tab" data-page="p2">DMF/PEPP vs ETF</div>
     <div class="nav-tab" data-page="p3">Pension + ETF</div>
-    <div class="nav-tab" data-page="kviz">🧭 Koji put?</div>
+    <div class="nav-tab" data-page="kojput">Koji put?</div>
     <div class="nav-tab" data-page="edukacija">📚 Edukacija</div>
     <div class="nav-tab" data-page="feedback">💬 Feedback</div>
   </div>
@@ -1171,7 +1082,7 @@ tr:hover td { background:var(--surface2); }
       <div class="fc-desc">Usporedi svih 8 dostupnih dobrovoljnih mirovinskih fondova u RH — prinosi, naknade, rizik. Kalkulator s državnim poticajem (15% godišnje).</div>
       <span class="fc-tag" style="color:var(--dmf-l)">Mjesečno & godišnje</span>
     </div>
-    <div class="feature-card fc-pepp" onclick="document.querySelector('[data-page=p1]').click()">
+    <div class="feature-card fc-pepp" onclick="document.querySelector('[data-page=pepp]').click()">
       <span class="fc-icon">🌍</span>
       <div class="fc-title">3. Stup vs PEPP</div>
       <div class="fc-desc">Direktna usporedba domaćeg DMF-a s Finaxovim PEPP-om. Je li europska mirovina bolja od državnog poticaja? Odgovor je ovdje.</div>
@@ -1195,11 +1106,11 @@ tr:hover td { background:var(--surface2); }
       <div class="fc-desc">Kombiniraj mirovinski fond i ETF u jedan portfelj. Podesi alokaciju, vidi realnu vrijednost s inflacijom i izračunaj mjesečnu isplatu po 4% pravilu.</div>
       <span class="fc-tag" style="color:var(--combo-l)">4% pravilo · Inflacija</span>
     </div>
-    <div class="feature-card fc-ai" style="cursor:pointer" onclick="document.querySelector('[data-page=kviz]').click()">
-      <span class="fc-icon">🧭</span>
-      <div class="fc-title">Koji put je za mene?</div>
-      <div class="fc-desc">Nisi siguran gdje početi? Odgovori na 5 pitanja i dobij preporuku — DMF, PEPP, ETF ili kombinacija — prilagođenu tvojoj situaciji.</div>
-      <span class="fc-tag" style="color:var(--pepp-l)">Interaktivni kviz · 2 min</span>
+    <div class="feature-card fc-ai" style="cursor:default">
+      <span class="fc-icon">🤖</span>
+      <div class="fc-title">AI Asistent <span style="font-size:0.65rem;color:var(--yellow);font-family:'DM Sans';font-weight:700;margin-left:0.4rem">USKORO</span></div>
+      <div class="fc-desc">Postavi pitanje o ulaganju, fondovima ili strategiji — AI asistent će objasniti opcije i pomoći ti koristiti kalkulator. Dostupno uskoro.</div>
+      <span class="fc-tag" style="color:#c77af5;border-color:#c77af5">U razvoju</span>
     </div>
   </div>
 
@@ -1451,6 +1362,81 @@ tr:hover td { background:var(--surface2); }
     </table></div>
   </div>
   <p class="disclaimer">⚠️ Prinosi su historijski podaci HANFA 2024. i ne garantiraju buduće rezultate. Državni poticaj 15% na max 663.61€/god = 99.54€. Isplata najranije s 55 god. Nije financijski savjet.</p>
+</div>
+
+<!-- ========== PAGE PEPP ========== -->
+<div class="page" id="pepp">
+  <div class="page-header">
+    <h2><span class="grad-pepp">Pan-europska osobna mirovina (PEPP)</span></h2>
+    <p>PEPP je novi tip osobne mirovine dostupan u cijeloj EU. U Hrvatskoj nudi Finax uz naknadu od 1%/god i prinos vezan uz globalne ETF-ove.</p>
+  </div>
+
+  <div class="controls">
+    <div class="ctrl-group c-pepp">
+      <label>Mjesečna uplata (€)</label>
+      <div class="row"><input type="range" id="pepp-uplata" min="20" max="1000" step="10" value="100"><input type="number" class="ctrl-val-input" id="pepp-uplata-v" value="100.00" data-decimals="2" min="20" max="1000" step="any" placeholder="100"></div>
+    </div>
+    <div class="ctrl-group c-pepp">
+      <label>Početni iznos (€)</label>
+      <div class="row"><input type="range" id="pepp-initial" min="0" max="10000" step="100" value="0"><input type="number" class="ctrl-val-input" id="pepp-initial-v" value="0.00" data-decimals="2" min="0" max="10000" step="any" placeholder="0"></div>
+    </div>
+    <div class="ctrl-group c-pepp">
+      <label>Broj godina</label>
+      <div class="row"><input type="range" id="pepp-god" min="5" max="40" step="1" value="20"><input type="number" class="ctrl-val-input" id="pepp-god-v" value="20" min="5" max="40" step="1" placeholder="20"></div>
+    </div>
+    <div class="ctrl-group c-pepp">
+      <label>Bruto prinos ETF (%/god)</label>
+      <div class="row"><input type="range" id="pepp-rate" min="4" max="14" step="0.1" value="9.0"><input type="number" class="ctrl-val-input" id="pepp-rate-v" value="9.0" min="4" max="14" step="0.1" placeholder="9"></div>
+      <div class="rate-note" id="pepp-rate-note">Neto (nakon 1% Finax naknade): 8.0%</div>
+    </div>
+  </div>
+
+  <div class="stat-cards">
+    <div class="stat-card sc-pepp">
+      <div class="sc-label">PEPP — Finax</div>
+      <div class="sc-name">Pan-europska mirovina</div>
+      <div class="sc-row"><div class="sr-lbl">Krajnja vrijednost</div><div class="sr-val" id="pepp-total">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Neto zarada</div><div class="sr-val" id="pepp-earn" style="font-size:.9rem">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Multiplikator</div><div class="sr-val" id="pepp-multi" style="font-size:.9rem">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Ukupno uplaćeno</div><div class="sr-val" id="pepp-in" style="font-size:.85rem">—</div></div>
+    </div>
+  </div>
+
+  <div class="winner-banner" style="margin-top:1rem">
+    <div><div class="wb-label">Godišnja naknada Finax (1%)</div><div class="wb-val" id="pepp-fee-total">—</div></div>
+    <div class="wb-desc" id="pepp-desc">PEPP nema državnog poticaja, ali pruža EU mobilnost i prinos vezan uz globalne dionice.</div>
+  </div>
+
+  <div class="chart-card">
+    <h3>Rast PEPP štednje kroz godine</h3>
+    <canvas id="pepp-chart"></canvas>
+    <div class="chart-controls">
+      <div class="period-btns" id="pepp-chart-periods">
+        <span style="font-size:0.62rem;color:var(--muted);margin-right:0.2rem">Period:</span>
+        <button class="period-btn" data-years="5" data-chart="pepp-chart">5Y</button><button class="period-btn" data-years="10" data-chart="pepp-chart">10Y</button><button class="period-btn" data-years="15" data-chart="pepp-chart">15Y</button><button class="period-btn" data-years="20" data-chart="pepp-chart">20Y</button><button class="period-btn" data-years="25" data-chart="pepp-chart">25Y</button><button class="period-btn" data-years="30" data-chart="pepp-chart">30Y</button>
+        <button class="period-btn active" data-years="all" data-chart="pepp-chart">SVE</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-card" style="margin-top:1.5rem">
+    <h3>Što je PEPP? — Ključne činjenice</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Karakteristika</th><th>PEPP (Finax HR)</th></tr></thead>
+      <tbody>
+        <tr><td>Pružatelj</td><td>Finax (licenciran u EU)</td></tr>
+        <tr><td>Naknada upravljanja</td><td>1%/god na AUM</td></tr>
+        <tr><td>Strategija</td><td>Globalni ETF portfelj (dionice + obveznice)</td></tr>
+        <tr><td>Državni poticaj (HR)</td><td>❌ Nema</td></tr>
+        <tr><td>EU mobilnost</td><td>✅ Prenosi se unutar EU pri seljenju</td></tr>
+        <tr><td>Isplata</td><td>S navršenih 60 god. (ili 10g od otvaranja)</td></tr>
+        <tr><td>Min. uplata</td><td>~20€/mj</td></tr>
+        <tr><td>Porezna olakšica (HR)</td><td>U tijeku zakonodavnog procesa</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <p class="disclaimer">⚠️ PEPP je reguliran EU Uredbom 2019/1238. Naknada 1%/god je Finax tarifa za HR tržište. Prinos nije garantiran. Nije financijski savjet.</p>
 </div>
 
 <!-- ========== PAGE 0B: ETF PLATFORME ========== -->
@@ -2979,6 +2965,258 @@ SLIDER_PAIRS.forEach(([,numId]) => {
 });
 </script>
 
+<script>
+// ===== PEPP CALCULATOR =====
+(function() {
+  function calcPepp() {
+    const uplata = parseFloat($('pepp-uplata-v').value) || 100;
+    const initial = parseFloat($('pepp-initial-v').value) || 0;
+    const god = parseInt($('pepp-god-v').value) || 20;
+    const grossRate = parseFloat($('pepp-rate-v').value) || 9;
+    const netRate = Math.max(0, grossRate - 1);
+
+    $('pepp-rate-note').textContent = `Neto (nakon 1% Finax naknade): ${netRate.toFixed(1)}%`;
+
+    const r = netRate / 100 / 12;
+    const n = god * 12;
+    let fv = initial * Math.pow(1 + r, n);
+    if (r > 0) fv += uplata * (Math.pow(1 + r, n) - 1) / r;
+    else fv += uplata * n;
+
+    const totalIn = initial + uplata * n;
+    const earn = fv - totalIn;
+    const multi = totalIn > 0 ? (fv / totalIn) : 1;
+
+    // Approx total fees: 1% per year on average balance ~= totalIn/2 * years * 0.01
+    const approxFee = (fv - totalIn) * 0.1; // rough
+
+    $('pepp-total').textContent = fmt(fv);
+    $('pepp-earn').textContent = fmt(earn);
+    $('pepp-multi').textContent = multi.toFixed(2) + 'x';
+    $('pepp-in').textContent = fmt(totalIn);
+    $('pepp-fee-total').textContent = `Ukupne naknade Finax ≈ procijenjeno ${fmt(fv * 0.08)}`;
+
+    // Draw chart
+    const labels = [], gross = [], net = [];
+    for (let y = 0; y <= god; y++) {
+      labels.push(y === 0 ? 'Danas' : `${y}g`);
+      const rG = (grossRate / 100) / 12, rN = (netRate / 100) / 12;
+      const nM = y * 12;
+      let fvG = initial * Math.pow(1 + rG, nM);
+      let fvN = initial * Math.pow(1 + rN, nM);
+      if (rG > 0) fvG += uplata * (Math.pow(1 + rG, nM) - 1) / rG;
+      else fvG += uplata * nM;
+      if (rN > 0) fvN += uplata * (Math.pow(1 + rN, nM) - 1) / rN;
+      else fvN += uplata * nM;
+      gross.push(fvG);
+      net.push(fvN);
+    }
+
+    const ctx = document.getElementById('pepp-chart');
+    if (window._peppChart) window._peppChart.destroy();
+    window._peppChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          { label: `Bruto (${grossRate.toFixed(1)}%)`, data: gross, borderColor: '#a0aec0', borderDash: [5,3], borderWidth: 1.5, pointRadius: 0, fill: false },
+          { label: `Neto (${netRate.toFixed(1)}%)`, data: net, borderColor: 'var(--pepp)', borderWidth: 2.5, pointRadius: 0, fill: true, backgroundColor: 'rgba(154,117,234,0.1)' }
+        ]
+      },
+      options: { responsive: true, plugins: { legend: { labels: { color: '#ccc' } } }, scales: { x: { ticks: { color: '#999', maxTicksLimit: 10 } }, y: { ticks: { color: '#999', callback: v => v >= 1000 ? (v/1000).toFixed(0)+'k€' : v+'€' } } } }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    ['pepp-uplata','pepp-initial','pepp-god','pepp-rate'].forEach(id => {
+      const r = $(id), v = $(id + '-v');
+      if (r && v) {
+        r.addEventListener('input', () => { v.value = parseFloat(r.value).toFixed(id === 'pepp-god' ? 0 : 2); calcPepp(); });
+        v.addEventListener('input', () => { r.value = v.value; calcPepp(); });
+      }
+    });
+    calcPepp();
+  });
+})();
+
+// ===== KOJI PUT QUIZ =====
+const kpAnswers = {};
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.kojput-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const q = btn.dataset.q;
+      const val = btn.dataset.val;
+      kpAnswers[q] = val;
+
+      // Highlight selected
+      document.querySelectorAll(`.kojput-btn[data-q="${q}"]`).forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+
+      // Move to next question after short delay
+      setTimeout(() => {
+        const nextQ = parseInt(q) + 1;
+        const nextStep = document.getElementById(`kp-q${nextQ}`);
+        if (nextStep) {
+          document.getElementById(`kp-q${q}`).style.display = 'none';
+          nextStep.style.display = 'block';
+        } else {
+          // Show result
+          document.getElementById(`kp-q${q}`).style.display = 'none';
+          showKojputResult();
+        }
+      }, 300);
+    });
+  });
+});
+
+function showKojputResult() {
+  const a = kpAnswers;
+  let title, desc, tabs;
+
+  const riskHigh = a['3'] === 'high';
+  const riskLow = a['3'] === 'low';
+  const young = a['1'] === 'young';
+  const senior = a['1'] === 'senior';
+  const movingEU = a['4'] === 'yes';
+  const goalPension = a['5'] === 'pension';
+  const goalGrowth = a['5'] === 'growth';
+  const budgetHigh = a['2'] === 'high';
+
+  if (riskLow || (senior && goalPension)) {
+    title = '🏦 Hrvatski DMF (3. stup)';
+    desc = 'Temeljem tvojih odgovora, konzervativniji pristup s državnim poticajem (do 99.54€/god) i zaštitom HANFA-e je pravi za tebe. DMF fondovi nude stabilnost uz solidne prinose za mirovinski cilj.';
+    tabs = ['p0a', 'p1'];
+  } else if (movingEU) {
+    title = '🌍 PEPP — Pan-europska mirovina';
+    desc = 'Planiraš se seliti unutar EU? PEPP je jedini mirovinski instrument koji ide s tobom! Nema državnog poticaja, ali je portabilnost ključna prednost. Finax nudi pristup globalnim ETF-ovima.';
+    tabs = ['pepp', 'p1'];
+  } else if (riskHigh && young && goalGrowth) {
+    title = '📈 ETF + Kombinirano ulaganje';
+    desc = 'Mlad si, spreaman/a na rizik i ciljaš maksimalni rast. Globalni ETF-ovi (VWCE, IWDA) kroz platforme poput IBKR ili Trade Republic su tvoja opcija. Razmotri i kombiniranu strategiju DMF + ETF za diverzifikaciju.';
+    tabs = ['p0b', 'p2', 'p3'];
+  } else if (budgetHigh) {
+    title = '⚖️ Kombinirani pristup: DMF + ETF';
+    desc = 'S višim budžetom, optimalna strategija je kombinacija — iskoristi max DMF poticaj (663.61€/god), a ostatak ulažes u ETF-ove. Dvostruki motor rasta s poreznim benefitima.';
+    tabs = ['p0a', 'p0b', 'p3'];
+  } else {
+    title = '📊 DMF/PEPP vs ETF — usporedi sam/a';
+    desc = 'Nema jednoznačnog odgovora za tvoju situaciju — preporučujemo da sam/a usporediš opcije koristeći naše kalkulatore. Većina stručnjaka za HR market preporučuje kombinaciju DMF poticaja + ETF ulaganje.';
+    tabs = ['p1', 'p2', 'p3'];
+  }
+
+  $('kp-strategy-title').textContent = title;
+  $('kp-strategy-desc').textContent = desc;
+
+  const tabLabels = { 'p0a': '🏦 Hrvatski DMF', 'pepp': '🌍 PEPP', 'p0b': '📈 ETF Platforme', 'p1': '⚖️ HR DMF vs PEPP', 'p2': '📊 DMF/PEPP vs ETF', 'p3': '🔀 Pension + ETF' };
+  const linksEl = $('kp-links');
+  linksEl.innerHTML = '';
+  tabs.forEach(tab => {
+    const btn = document.createElement('button');
+    btn.className = 'kp-tag';
+    btn.textContent = tabLabels[tab] || tab;
+    btn.onclick = () => { document.querySelector(`[data-page="${tab}"]`).click(); };
+    linksEl.appendChild(btn);
+  });
+
+  $('kp-result').style.display = 'block';
+}
+
+function resetKojput() {
+  Object.keys(kpAnswers).forEach(k => delete kpAnswers[k]);
+  document.querySelectorAll('.kojput-btn').forEach(b => b.classList.remove('selected'));
+  $('kp-result').style.display = 'none';
+  for (let i = 2; i <= 5; i++) {
+    const el = document.getElementById(`kp-q${i}`);
+    if (el) el.style.display = 'none';
+  }
+  const q1 = document.getElementById('kp-q1');
+  if (q1) q1.style.display = 'block';
+}
+</script>
+
+<!-- ========== KOJI PUT PAGE ========== -->
+<div class="page" id="kojput">
+  <div class="page-header">
+    <h2><span class="grad-cool">🧭 Koji put je pravi za mene?</span></h2>
+    <p>Odgovori na nekoliko pitanja i saznaj koja investicijska strategija odgovara tvojoj situaciji.</p>
+  </div>
+
+  <div id="kojput-quiz" style="max-width:600px;margin:0 auto">
+    <!-- Q1 -->
+    <div class="kojput-step" id="kp-q1">
+      <div class="table-card">
+        <h3>1. Koliko imaš godina?</h3>
+        <div class="kojput-options">
+          <button class="kojput-btn" data-q="1" data-val="young">20–35 godina</button>
+          <button class="kojput-btn" data-q="1" data-val="mid">36–50 godina</button>
+          <button class="kojput-btn" data-q="1" data-val="senior">51+ godina</button>
+        </div>
+      </div>
+    </div>
+    <!-- Q2 -->
+    <div class="kojput-step" id="kp-q2" style="display:none">
+      <div class="table-card">
+        <h3>2. Koliko možeš ulagati mjesečno?</h3>
+        <div class="kojput-options">
+          <button class="kojput-btn" data-q="2" data-val="low">Do 50€</button>
+          <button class="kojput-btn" data-q="2" data-val="mid">50€ – 200€</button>
+          <button class="kojput-btn" data-q="2" data-val="high">Više od 200€</button>
+        </div>
+      </div>
+    </div>
+    <!-- Q3 -->
+    <div class="kojput-step" id="kp-q3" style="display:none">
+      <div class="table-card">
+        <h3>3. Kako reagiraš na pad tržišta od 30%?</h3>
+        <div class="kojput-options">
+          <button class="kojput-btn" data-q="3" data-val="low">Panika — prodajem sve</button>
+          <button class="kojput-btn" data-q="3" data-val="mid">Čekam, ne diram</button>
+          <button class="kojput-btn" data-q="3" data-val="high">Prilike! Dokupljujem</button>
+        </div>
+      </div>
+    </div>
+    <!-- Q4 -->
+    <div class="kojput-step" id="kp-q4" style="display:none">
+      <div class="table-card">
+        <h3>4. Planiraš li se seliti unutar EU?</h3>
+        <div class="kojput-options">
+          <button class="kojput-btn" data-q="4" data-val="no">Ne, ostaju u HR</button>
+          <button class="kojput-btn" data-q="4" data-val="maybe">Možda, nisam siguran/a</button>
+          <button class="kojput-btn" data-q="4" data-val="yes">Da, vjerojatno da</button>
+        </div>
+      </div>
+    </div>
+    <!-- Q5 -->
+    <div class="kojput-step" id="kp-q5" style="display:none">
+      <div class="table-card">
+        <h3>5. Što ti je primarni cilj?</h3>
+        <div class="kojput-options">
+          <button class="kojput-btn" data-q="5" data-val="pension">Mirovina — sigurna luka</button>
+          <button class="kojput-btn" data-q="5" data-val="growth">Rast imovine — maksimalni prinos</button>
+          <button class="kojput-btn" data-q="5" data-val="both">Oboje — balans sigurnosti i rasta</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Result -->
+    <div id="kp-result" style="display:none">
+      <div class="winner-banner" style="flex-direction:column;align-items:flex-start;gap:1rem">
+        <div style="width:100%">
+          <div class="wb-label">🎯 Preporučena strategija</div>
+          <div class="wb-val" id="kp-strategy-title" style="font-size:1.3rem;margin-top:0.3rem">—</div>
+        </div>
+        <div class="wb-desc" id="kp-strategy-desc" style="font-size:0.9rem;line-height:1.6">—</div>
+      </div>
+      <div class="table-card" style="margin-top:1rem">
+        <h3>Preporučeni tabovi za tebe</h3>
+        <div id="kp-links" style="display:flex;flex-wrap:wrap;gap:0.6rem;padding:0.5rem 0"></div>
+      </div>
+      <button onclick="resetKojput()" style="margin-top:1rem;padding:0.6rem 1.4rem;background:var(--surface2);border:none;border-radius:8px;color:var(--text);cursor:pointer;font-size:0.9rem">↺ Počni ispočetka</button>
+    </div>
+  </div>
+</div>
+
 
 <!-- ========== EDUKACIJA PAGE ========== -->
 <div class="page" id="edukacija">
@@ -3203,206 +3441,6 @@ SLIDER_PAIRS.forEach(([,numId]) => {
 
   <p class="disclaimer">⚠️ Navedeni resursi su informativnog karaktera. MarsanInvest nije povezan s navedenim autorima i platformama. Uvijek konzultiraj licenciranog financijskog savjetnika prije donošenja investicijskih odluka.</p>
 </div>
-
-<!-- ========== QUIZ PAGE ========== -->
-<div class="page" id="kviz">
-  <div class="quiz-hero">
-    <h1>🧭 Koji put je za mene?</h1>
-    <p>Odgovori na 5 pitanja i dobit ćeš preporuku investicijske strategije prilagođene tvojoj situaciji.</p>
-  </div>
-
-  <!-- Progress bar -->
-  <div class="quiz-progress" id="quizProgress">
-    <div class="quiz-step active" id="qstep-0"></div>
-    <div class="quiz-step" id="qstep-1"></div>
-    <div class="quiz-step" id="qstep-2"></div>
-    <div class="quiz-step" id="qstep-3"></div>
-    <div class="quiz-step" id="qstep-4"></div>
-  </div>
-
-  <!-- Questions container -->
-  <div id="quizQuestions">
-
-    <!-- Q1: Dob -->
-    <div class="quiz-card" id="qq-0">
-      <div class="quiz-question">Koliko imaš godina?</div>
-      <div class="quiz-sub">Dob utječe na vremenski horizont ulaganja i preporučenu razinu rizika.</div>
-      <div class="quiz-options">
-        <div class="quiz-option" data-q="0" data-val="young">
-          <span class="quiz-option-icon">🌱</span>
-          <div class="quiz-option-text">
-            <strong>18–35 godina</strong>
-            <span>Dugi horizont, možeš preuzeti više rizika</span>
-          </div>
-        </div>
-        <div class="quiz-option" data-q="0" data-val="mid">
-          <span class="quiz-option-icon">📈</span>
-          <div class="quiz-option-text">
-            <strong>36–50 godina</strong>
-            <span>Srednji horizont, balans između rasta i sigurnosti</span>
-          </div>
-        </div>
-        <div class="quiz-option" data-q="0" data-val="senior">
-          <span class="quiz-option-icon">🏁</span>
-          <div class="quiz-option-text">
-            <strong>51+ godina</strong>
-            <span>Kraći horizont, prioritet stabilnost</span>
-          </div>
-        </div>
-      </div>
-      <div class="quiz-nav">
-        <button class="quiz-btn-next" id="qnext-0" onclick="quizNext(0)">Dalje →</button>
-      </div>
-    </div>
-
-    <!-- Q2: Miesečni iznos -->
-    <div class="quiz-card" id="qq-1" style="display:none">
-      <div class="quiz-question">Koliko možeš odvajati miesečno?</div>
-      <div class="quiz-sub">Minimalni iznosi variraju po platformama. Državni poticaj vrijedi do 66.36€/mj.</div>
-      <div class="quiz-options">
-        <div class="quiz-option" data-q="1" data-val="low">
-          <span class="quiz-option-icon">💶</span>
-          <div class="quiz-option-text">
-            <strong>Do 50€ miesečno</strong>
-            <span>Mali iznosi — ETF platforme imaju najmanji minimum</span>
-          </div>
-        </div>
-        <div class="quiz-option" data-q="1" data-val="mid">
-          <span class="quiz-option-icon">💰</span>
-          <div class="quiz-option-text">
-            <strong>50€ – 150€ miesečno</strong>
-            <span>Idealan raspon za iskorištavanje državnog poticaja + ETF</span>
-          </div>
-        </div>
-        <div class="quiz-option" data-q="1" data-val="high">
-          <span class="quiz-option-icon">🏦</span>
-          <div class="quiz-option-text">
-            <strong>150€+ miesečno</strong>
-            <span>Kombinirani pristupi s diverzifikacijom</span>
-          </div>
-        </div>
-      </div>
-      <div class="quiz-nav">
-        <button class="quiz-btn-back" onclick="quizBack(1)">← Natrag</button>
-        <button class="quiz-btn-next" id="qnext-1" onclick="quizNext(1)">Dalje →</button>
-      </div>
-    </div>
-
-    <!-- Q3: Rizik -->
-    <div class="quiz-card" id="qq-2" style="display:none">
-      <div class="quiz-question">Koliko rizika možeš podnijeti?</div>
-      <div class="quiz-sub">Što bi napravio/la da tvoje ulaganje padne 30% u jednoj godini?</div>
-      <div class="quiz-options">
-        <div class="quiz-option" data-q="2" data-val="low">
-          <span class="quiz-option-icon">😰</span>
-          <div class="quiz-option-text">
-            <strong>Nisam za rizik</strong>
-            <span>Prodao/la bih ili bih bio/la jako zabrinut/a. Preferiram sigurnost.</span>
-          </div>
-        </div>
-        <div class="quiz-option" data-q="2" data-val="mid">
-          <span class="quiz-option-icon">😌</span>
-          <div class="quiz-option-text">
-            <strong>Prihvaćam umjeren rizik</strong>
-            <span>Ostao/la bih miran/a, ali ne bih dodavao/la još. Dugoročni sam.</span>
-          </div>
-        </div>
-        <div class="quiz-option" data-q="2" data-val="high">
-          <span class="quiz-option-icon">😎</span>
-          <div class="quiz-option-text">
-            <strong>Visok rizik, visok prinos</strong>
-            <span>Kupio/la bih još — pad je prilika. Razumijem volatilnost.</span>
-          </div>
-        </div>
-      </div>
-      <div class="quiz-nav">
-        <button class="quiz-btn-back" onclick="quizBack(2)">← Natrag</button>
-        <button class="quiz-btn-next" id="qnext-2" onclick="quizNext(2)">Dalje →</button>
-      </div>
-    </div>
-
-    <!-- Q4: Cilj -->
-    <div class="quiz-card" id="qq-3" style="display:none">
-      <div class="quiz-question">Koji ti je primarni cilj ulaganja?</div>
-      <div class="quiz-sub">To određuje optimalan omjer između mirovinskih fondova i ETF-ova.</div>
-      <div class="quiz-options">
-        <div class="quiz-option" data-q="3" data-val="pension">
-          <span class="quiz-option-icon">🏖️</span>
-          <div class="quiz-option-text">
-            <strong>Mirovina i financijska sloboda</strong>
-            <span>Ulagam za dugi rok — 20+ godina do isplate</span>
-          </div>
-        </div>
-        <div class="quiz-option" data-q="3" data-val="growth">
-          <span class="quiz-option-icon">🚀</span>
-          <div class="quiz-option-text">
-            <strong>Rast imovine (FIRE / dugoročno)</strong>
-            <span>Maksimizirati prinos kroz ETF-ove, neovisno o mirovini</span>
-          </div>
-        </div>
-        <div class="quiz-option" data-q="3" data-val="both">
-          <span class="quiz-option-icon">⚖️</span>
-          <div class="quiz-option-text">
-            <strong>Oboje — iskoristiti poticaje I rasti</strong>
-            <span>Kombinirani pristup s državnim poticajem + slobodni ETF</span>
-          </div>
-        </div>
-      </div>
-      <div class="quiz-nav">
-        <button class="quiz-btn-back" onclick="quizBack(3)">← Natrag</button>
-        <button class="quiz-btn-next" id="qnext-3" onclick="quizNext(3)">Dalje →</button>
-      </div>
-    </div>
-
-    <!-- Q5: Iskustvo -->
-    <div class="quiz-card" id="qq-4" style="display:none">
-      <div class="quiz-question">Kakvo je tvoje iskustvo s ulaganjem?</div>
-      <div class="quiz-sub">Ovo nam pomaže preporučiti pravu razinu složenosti.</div>
-      <div class="quiz-options">
-        <div class="quiz-option" data-q="4" data-val="none">
-          <span class="quiz-option-icon">🐣</span>
-          <div class="quiz-option-text">
-            <strong>Početnik — nikad nisam ulagao/la</strong>
-            <span>Trebam jednostavno rješenje s minimalnim odlukama</span>
-          </div>
-        </div>
-        <div class="quiz-option" data-q="4" data-val="some">
-          <span class="quiz-option-icon">📚</span>
-          <div class="quiz-option-text">
-            <strong>Malo iskustva — čitam, učim</strong>
-            <span>Razumijem osnove ETF-ova, tražim potvrdu</span>
-          </div>
-        </div>
-        <div class="quiz-option" data-q="4" data-val="expert">
-          <span class="quiz-option-icon">🧠</span>
-          <div class="quiz-option-text">
-            <strong>Iskusan — imam portfelj</strong>
-            <span>Tražim usporedbu i optimizaciju naknade</span>
-          </div>
-        </div>
-      </div>
-      <div class="quiz-nav">
-        <button class="quiz-btn-back" onclick="quizBack(4)">← Natrag</button>
-        <button class="quiz-btn-next" id="qnext-4" onclick="quizShowResult()">Vidi preporuku ✓</button>
-      </div>
-    </div>
-
-  </div><!-- /quizQuestions -->
-
-  <!-- Result (hidden until quiz done) -->
-  <div class="quiz-result" id="quizResult">
-    <div class="quiz-result-hero">
-      <div class="quiz-result-emoji" id="qr-emoji">🎯</div>
-      <div class="quiz-result-title" id="qr-title">Tvoja strategija</div>
-      <div class="quiz-result-subtitle" id="qr-subtitle"></div>
-    </div>
-    <div class="quiz-result-cards" id="qr-cards"></div>
-    <button class="quiz-restart-btn" onclick="quizRestart()">↩ Počni iznova</button>
-    <p class="disclaimer" style="margin-top:1rem">⚠️ Preporuka je informativnog karaktera i ne predstavlja financijski savjet. Konzultiraj licenciranog savjetnika.</p>
-  </div>
-
-</div>
-<!-- ========== END QUIZ PAGE ========== -->
 
 <!-- ========== FEEDBACK PAGE ========== -->
 <div class="page" id="feedback">
@@ -3883,7 +3921,6 @@ function adminLogout() {
     </div>
     <div class="footer-col">
       <h4>Kalkulatori</h4>
-      <span onclick="document.querySelector('[data-page=kviz]').click()">🧭 Koji put?</span>
       <span onclick="document.querySelector('[data-page=p0a]').click()">Hrvatski DMF</span>
       <span onclick="document.querySelector('[data-page=p0b]').click()">ETF Platforme</span>
       <span onclick="document.querySelector('[data-page=p1]').click()">3. Stup vs PEPP</span>
