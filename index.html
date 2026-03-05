@@ -623,7 +623,7 @@ tr:hover td { background:var(--surface2); }
     </div>
     <div class="ctrl-group c-neutral">
       <label>Iznos uplate</label>
-      <div class="row"><input type="range" id="p0a-uplata" min="0" max="5000" step="50" value="55"><input type="number" class="ctrl-val-input" id="p0a-uplata-v" data-decimals="2" min="10" max="5000" step="any" placeholder="1000"></div>
+      <div class="row"><input type="range" id="p0a-uplata" min="0" max="5000" step="50" value="663"><input type="number" class="ctrl-val-input" id="p0a-uplata-v" data-decimals="2" min="10" max="5000" step="any" placeholder="1000"></div>
     </div>
     <div class="ctrl-group c-neutral">
       <label>Početna uplata (€)</label>
@@ -1262,9 +1262,9 @@ function updatePoticajInfo(uplata, toggleId, lblId, infoId) {
 
 function updateP1() {
   const uplata = parseFloat($('p1-uplata').value) || 0;
-  const god = +$('p1-god').value;
-  const dmfR = +$('p1-dmfr').value;
-  const peppR = +$('p1-peppr').value;
+  const god = parseInt($('p1-god-v').value) || parseInt($('p1-god').value) || 30;
+  const dmfR = parseFloat($('p1-dmfr-v').value) || parseFloat($('p1-dmfr').value) || 3.5;
+  const peppR = parseFloat($('p1-peppr-v').value) || parseFloat($('p1-peppr').value) || 8.0;
   const pot = calcPoticaj(uplata, 'p1-poticaj-toggle');
   updatePoticajInfo(uplata, 'p1-poticaj-toggle', 'p1-poticaj-lbl', 'p1-poticaj-info');
 
@@ -1332,7 +1332,8 @@ $('p2-etf-select').addEventListener('change', ()=>{
   updateP2();
 });
 $('p2-etfr-custom').addEventListener('syncedInput',()=>{
-  $('p2-etfr-custom-v').textContent = $('p2-etfr-custom').value+'%';
+
+
   updateP2();
 });
 
@@ -1349,10 +1350,14 @@ function getP2EtfName() {
 function updateP2() {
   const uplata=+$('p2-uplata').value, god=+$('p2-god').value;
   const dmfR=+$('p2-dmfr').value, peppR=+$('p2-peppr').value, etfR=getP2EtfRate();
-  $('p2-uplata-v').textContent=fmt(uplata);
-  $('p2-god-v').textContent=god+' god';
-  $('p2-dmfr-v').textContent=dmfR.toFixed(1)+'%';
-  $('p2-peppr-v').textContent=peppR.toFixed(1)+'%';
+
+
+
+
+
+
+
+
 
   const pot2=calcPoticaj(uplata,'p2-poticaj-toggle'); updatePoticajInfo(uplata,'p2-poticaj-toggle','p2-poticaj-lbl','p2-poticaj-info');
   const dmfFinal=compoundFV(uplata+pot2,dmfR,god);
@@ -1431,7 +1436,8 @@ $('p3-etf-select').addEventListener('change',()=>{
   $('p3-etf-custom-wrap').style.display=sel.value==='custom'?'flex':'none';
   updateP3();
 });
-$('p3-etfr-custom').addEventListener('syncedInput',()=>{ $('p3-etfr-custom-v').textContent=$('p3-etfr-custom').value+'%'; updateP3(); });
+$('p3-etfr-custom').addEventListener('syncedInput',()=>{
+ updateP3(); });
 $('p3-pension-type').addEventListener('change',updateP3);
 
 function getP3EtfRate(){ const sel=$('p3-etf-select'); return sel.value==='custom'?+$('p3-etfr-custom').value:+sel.value; }
@@ -1439,19 +1445,24 @@ function getP3EtfName(){ const sel=$('p3-etf-select'); return sel.options[sel.se
 
 function updateP3() {
   const uplata=+$('p3-uplata').value, god=+$('p3-god').value;
-  const etfShare=+$('p3-etf-share').value/100;
+  const etfShare=(parseFloat($('p3-etf-share-v').value)||parseFloat($('p3-etf-share').value)||60)/100;
   const penShare=1-etfShare;
   const penType=$('p3-pension-type').value;
-  const penR=+$('p3-penr').value;
+  const penR=parseFloat($('p3-penr-v').value)||parseFloat($('p3-penr').value)||8.0;
   const etfR=getP3EtfRate();
-  const inf=+$('p3-inf').value;
+  const inf=parseFloat($('p3-inf-v').value)||parseFloat($('p3-inf').value)||2.5;
   const etfName=getP3EtfName();
 
-  $('p3-uplata-v').textContent=fmt(uplata);
-  $('p3-god-v').textContent=god+' god';
-  $('p3-etf-share-v').textContent=Math.round(etfShare*100)+'%';
-  $('p3-penr-v').textContent=penR.toFixed(1)+'%';
-  $('p3-inf-v').textContent=inf.toFixed(1)+'%';
+
+
+
+
+
+
+
+
+
+
 
   const penUplata=uplata*penShare;
   const etfUplata=uplata*etfShare;
@@ -1598,17 +1609,20 @@ function updateP0a() {
   const [r2024, r5y] = sel.value.split(',').map(Number);
   const fundName = sel.options[sel.selectedIndex].text.split(' (')[0];
   const period = $('p0a-period').value;
-  const inputAmt = +$('p0a-uplata').value;
-  const initial = +$('p0a-initial').value;
-  const god = +$('p0a-god').value;
+  const inputAmt = parseFloat(($('p0a-uplata-v').value+'').replace(',','.')) || parseFloat($('p0a-uplata').value) || 663;
+  const initial = parseFloat($('p0a-initial-v').value) || parseFloat($('p0a-initial').value) || 0;
+  const god = parseInt($('p0a-god-v').value) || parseInt($('p0a-god').value) || 25;
   const usePoticaj = $('p0a-poticaj').value === 'yes';
 
   // Annual amount
   const annualUplata = period === 'mjesecno' ? inputAmt * 12 : inputAmt;
   const label = period === 'mjesecno' ? inputAmt+'€/mj' : inputAmt+'€/god';
-  $('p0a-uplata-v').textContent = label;
-  $('p0a-god-v').textContent = god+' god';
-  $('p0a-initial-v').textContent = fmt(initial);
+
+
+
+
+
+
   $('p0a-fund-name').textContent = fundName;
 
   const poticajGod = usePoticaj && annualUplata >= 663.61 ? 99.54 : (usePoticaj ? annualUplata*0.15 : 0);
@@ -1705,15 +1719,19 @@ function updateP0b() {
   const etf=getP0bEtfData();
   const plKey=$('p0b-platform').value;
   const pl=PLATFORMS[plKey];
-  const uplata=+$('p0b-uplata').value;
-  const initial=+$('p0b-initial').value;
-  const god=+$('p0b-god').value;
+  const uplata=parseFloat($('p0b-uplata-v').value)||parseFloat($('p0b-uplata').value)||1200;
+  const initial=parseFloat($('p0b-initial-v').value)||parseFloat($('p0b-initial').value)||1000;
+  const god=parseInt($('p0b-god-v').value)||parseInt($('p0b-god').value)||20;
   const taxRate=+$('p0b-tax').value/100;
 
-  $('p0b-uplata-v').textContent=new Intl.NumberFormat('hr-HR').format(uplata)+' €';
-  $('p0b-initial-v').textContent=fmt(initial);
-  $('p0b-god-v').textContent=god+' god';
-  $('p0b-custom-r-v').textContent=$('p0b-custom-r').value+'%';
+
+
+
+
+
+
+
+
   const sel=$('p0b-etf-select');
   $('p0b-etf-custom-wrap').style.display=sel.value.startsWith('custom')?'flex':'none';
 
