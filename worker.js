@@ -143,6 +143,50 @@ export default {
       return new Response(null, { status: 204, headers: CORS_HEADERS });
     }
 
+    // ── ADMIN API POLLS & FEEDBACK (mora biti PRIJE admin bloka!) ──
+    if (path === '/admin/api/polls' || path === '/admin/api/feedback') {
+      const sessionSecret = env.ADMIN_USER + ':' + env.ADMIN_PASS + ':marsanai-session';
+      const validToken = await hashToken(sessionSecret);
+      const authHeader = request.headers.get('Authorization') || '';
+      const bearerToken = authHeader.replace('Bearer ', '');
+      const isApiAuthed = bearerToken === validToken;
+
+      if (!isApiAuthed) {
+        return new Response(JSON.stringify({ error: 'unauthorized' }), {
+          status: 401,
+          headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+        });
+      }
+
+      if (path === '/admin/api/polls') {
+        try {
+          const raw = await env.AI_CONFIG.get('poll_votes');
+          const polls = raw ? JSON.parse(raw) : {};
+          return new Response(JSON.stringify({ polls }), {
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        } catch(e) {
+          return new Response(JSON.stringify({ polls: {} }), {
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+      }
+
+      if (path === '/admin/api/feedback') {
+        try {
+          const raw = await env.AI_CONFIG.get('feedback_log');
+          const items = raw ? JSON.parse(raw) : [];
+          return new Response(JSON.stringify({ items }), {
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        } catch(e) {
+          return new Response(JSON.stringify({ items: [] }), {
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+      }
+    }
+
     // ── ADMIN ROUTES ──
     if (path.startsWith('/admin')) {
       // CORS preflight za admin rute
