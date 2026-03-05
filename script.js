@@ -927,17 +927,22 @@ document.querySelectorAll('.fb-type-btn').forEach(btn => {
 });
 
 // Submit feedback
-function submitFeedback() {
+async function submitFeedback() {
   const text = $('fb-text').value.trim();
   if (!text) { $('fb-text').style.borderColor = 'var(--red)'; setTimeout(()=>$('fb-text').style.borderColor='',1500); return; }
   const type = document.querySelector('.fb-type-btn.active')?.dataset.type || 'prijedlog';
   const entry = { type, text, rating: selectedRating, ts: new Date().toISOString() };
-  try {
-    const prev = JSON.parse(localStorage.getItem('miv_feedback') || '[]');
-    prev.push(entry);
-    localStorage.setItem('miv_feedback', JSON.stringify(prev));
-  } catch(e){}
+  
   $('fb-submit-btn').disabled = true;
+  
+  try {
+    await fetch(AI_WORKER_URL + '/feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(entry)
+    });
+  } catch(e) { console.error('Feedback send error:', e); }
+  
   $('fb-text').value = '';
   $('feedback-sent').style.display = 'block';
   setTimeout(() => { $('feedback-sent').style.display='none'; $('fb-submit-btn').disabled=false; }, 4000);
