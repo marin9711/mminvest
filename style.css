@@ -597,6 +597,22 @@ th, td, .tbl-wrap small, .tbl-wrap span, .liq-info-box span, .rate-note, .sc-row
   border: 1px solid var(--border);
   border-radius: 12px;
   background: rgba(30, 41, 59, 0.55);
+  position: relative;
+}
+
+.strategy-toggle-row:hover::after {
+  content: attr(data-strategy-tip);
+  position: absolute;
+  left: 0.75rem;
+  right: 0.75rem;
+  bottom: -2.1rem;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(74, 158, 232, 0.35);
+  color: #cbd5e1;
+  font-size: 0.72rem;
+  border-radius: 8px;
+  padding: 0.35rem 0.5rem;
+  z-index: 20;
 }
 
 .strategy-toggle {
@@ -759,5 +775,52 @@ th, td, .tbl-wrap small, .tbl-wrap span, .liq-info-box span, .rate-note, .sc-row
   color: #cbd5e1;
   font-size: 0.75rem;
   line-height: 1.55;
+}
+
+.strategy-guide-card {
+  margin-bottom: 1rem;
+}
+
+.strategy-guide-text {
+  color: var(--muted2);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.strategy-shortcuts {
+  margin-top: 0.7rem;
+  display: flex;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.strategy-shortcut-btn {
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.strategy-shortcut-btn:hover {
+  border-color: #4a9fe8;
+  color: #ffffff;
+}
+
+.strategy-export-btn {
+  padding: 0.52rem 0.85rem;
+  border: 1px solid rgba(74, 232, 160, 0.45);
+  border-radius: 9px;
+  background: rgba(74, 232, 160, 0.15);
+  color: #bbf7d0;
+  font-weight: 700;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.strategy-export-btn:hover {
+  background: rgba(74, 232, 160, 0.22);
 }
 

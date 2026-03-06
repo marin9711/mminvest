@@ -8,6 +8,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <!-- DOMPurify — sanitizacija HTML-a prije upisivanja u DOM (zaštita od XSS) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
@@ -1910,7 +1911,7 @@ tr:hover td { background: var(--surface2) !important; }
       </select>
     </div>
   </div>
-  <div class="strategy-toggle-row">
+  <div class="strategy-toggle-row" title="Uključi i rezultat ovog kalkulatora prikazat će se na tabu 'Moja ulaganja'." data-strategy-tip="Rezultat ovog kalkulatora prikazat će se na tabu 'Moja ulaganja'.">
     <label class="strategy-toggle">
       <input type="checkbox" id="p0a-strategy-toggle">
       <span class="strategy-toggle-slider"></span>
@@ -2026,7 +2027,7 @@ tr:hover td { background: var(--surface2) !important; }
       <div><div class="wb-label">Projekcija PEPP</div><div class="wb-val" id="pepp-strategy-final" style="color:var(--pepp-l)">—</div></div>
       <div class="wb-desc" id="pepp-strategy-info">Unesi iznos i broj godina da vidiš projekciju.</div>
     </div>
-    <div class="strategy-toggle-row">
+    <div class="strategy-toggle-row" title="Uključi i rezultat ovog kalkulatora prikazat će se na tabu 'Moja ulaganja'." data-strategy-tip="Rezultat ovog kalkulatora prikazat će se na tabu 'Moja ulaganja'.">
       <label class="strategy-toggle">
         <input type="checkbox" id="pepp-strategy-toggle">
         <span class="strategy-toggle-slider"></span>
@@ -2263,7 +2264,7 @@ tr:hover td { background: var(--surface2) !important; }
       </select>
     </div>
   </div>
-  <div class="strategy-toggle-row">
+  <div class="strategy-toggle-row" title="Uključi i rezultat ovog kalkulatora prikazat će se na tabu 'Moja ulaganja'." data-strategy-tip="Rezultat ovog kalkulatora prikazat će se na tabu 'Moja ulaganja'.">
     <label class="strategy-toggle">
       <input type="checkbox" id="p0b-strategy-toggle">
       <span class="strategy-toggle-slider"></span>
@@ -3043,6 +3044,16 @@ tr:hover td { background: var(--surface2) !important; }
     <p>Na jednom mjestu vidi sve odabrane scenarije, zajednički graf rasta i pametni prijedlog optimizacije.</p>
   </div>
 
+  <div class="table-card strategy-guide-card">
+    <h3>Kako koristiti “Moja ulaganja”</h3>
+    <p class="strategy-guide-text">Na tabovima <strong>Hrvatski DMF</strong>, <strong>PEPP</strong> i <strong>ETF Platforme</strong> uključi toggle “Dodaj u moje ulaganje”. Aktivni scenariji se automatski prikazuju ovdje i osvježavaju čim promijeniš ulazne vrijednosti.</p>
+    <div class="strategy-shortcuts">
+      <button type="button" class="strategy-shortcut-btn" onclick="document.querySelector('[data-page=p0a]').click()">↗ Otvori DMF</button>
+      <button type="button" class="strategy-shortcut-btn" onclick="document.querySelector('[data-page=pepp]').click()">↗ Otvori PEPP</button>
+      <button type="button" class="strategy-shortcut-btn" onclick="document.querySelector('[data-page=p0b]').click()">↗ Otvori ETF</button>
+    </div>
+  </div>
+
   <div class="strategy-placeholder" id="strategy-placeholder">
     Aktiviraj toggle na bilo kojem kalkulatoru da vidiš analizu ovdje.
   </div>
@@ -3053,6 +3064,9 @@ tr:hover td { background: var(--surface2) !important; }
     <div class="chart-card">
       <h3>Unified rast portfelja</h3>
       <canvas id="strategy-chart"></canvas>
+      <div style="margin-top:0.75rem;">
+        <button type="button" class="strategy-export-btn" id="strategy-export-pdf">⬇ Export usporedbe u PDF</button>
+      </div>
     </div>
 
     <div class="table-card" id="strategy-smart-box">

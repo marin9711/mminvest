@@ -73,6 +73,7 @@ window.myStrategy = window.myStrategy || {
 };
 
 let strategyChart;
+const MY_STRATEGY_STORAGE_KEY = 'miv_myStrategy_v1';
 
 const STRATEGY_META = {
   p0a: {
@@ -105,9 +106,70 @@ function computeCompoundCurve(initial, annualContribution, years, ratePct) {
   return arr;
 }
 
+function getSelectedStrategyData() {
+  return Object.entries(window.myStrategy)
+    .filter(([k, v]) => ['p0a', 'pepp', 'p0b'].includes(k) && v.enabled && v.data)
+    .map(([, v]) => v.data);
+}
+
+function saveMyStrategyState() {
+  try {
+    const peppInputs = {
+      fund: $('pepp-strategy-fund')?.value || '',
+      monthly: $('pepp-strategy-monthly')?.value || '',
+      years: $('pepp-strategy-years')?.value || '',
+      rate: $('pepp-strategy-rate')?.value || '',
+    };
+    const payload = {
+      enabled: {
+        p0a: !!window.myStrategy.p0a?.enabled,
+        pepp: !!window.myStrategy.pepp?.enabled,
+        p0b: !!window.myStrategy.p0b?.enabled,
+      },
+      showSuggestedOnChart: !!window.myStrategy.showSuggestedOnChart,
+      peppInputs,
+      savedAt: Date.now(),
+    };
+    localStorage.setItem(MY_STRATEGY_STORAGE_KEY, JSON.stringify(payload));
+  } catch (_) {}
+}
+
+function restoreMyStrategyState() {
+  try {
+    const raw = localStorage.getItem(MY_STRATEGY_STORAGE_KEY);
+    if (!raw) return;
+    const payload = JSON.parse(raw);
+    if (!payload || typeof payload !== 'object') return;
+
+    if (payload.enabled) {
+      window.myStrategy.p0a.enabled = !!payload.enabled.p0a;
+      window.myStrategy.pepp.enabled = !!payload.enabled.pepp;
+      window.myStrategy.p0b.enabled = !!payload.enabled.p0b;
+    }
+    window.myStrategy.showSuggestedOnChart = !!payload.showSuggestedOnChart;
+
+    const p0aToggle = $('p0a-strategy-toggle');
+    const peppToggle = $('pepp-strategy-toggle');
+    const p0bToggle = $('p0b-strategy-toggle');
+    const showSug = $('strategy-show-suggestion');
+    if (p0aToggle) p0aToggle.checked = !!window.myStrategy.p0a.enabled;
+    if (peppToggle) peppToggle.checked = !!window.myStrategy.pepp.enabled;
+    if (p0bToggle) p0bToggle.checked = !!window.myStrategy.p0b.enabled;
+    if (showSug) showSug.checked = !!window.myStrategy.showSuggestedOnChart;
+
+    if (payload.peppInputs) {
+      if ($('pepp-strategy-fund') && payload.peppInputs.fund) $('pepp-strategy-fund').value = payload.peppInputs.fund;
+      if ($('pepp-strategy-monthly') && payload.peppInputs.monthly !== '') $('pepp-strategy-monthly').value = payload.peppInputs.monthly;
+      if ($('pepp-strategy-years') && payload.peppInputs.years !== '') $('pepp-strategy-years').value = payload.peppInputs.years;
+      if ($('pepp-strategy-rate') && payload.peppInputs.rate !== '') $('pepp-strategy-rate').value = payload.peppInputs.rate;
+    }
+  } catch (_) {}
+}
+
 function buildStrategyRecommendation(selectedMap) {
   const dmf = selectedMap.p0a;
   const pepp = selectedMap.pepp;
+  const etf = selectedMap.p0b;
   if (dmf && !pepp && dmf.years >= 15) {
     const peppCurve = computeCompoundCurve(dmf.initial, dmf.annualContribution, dmf.years, PEPP_RATE);
     const peppFinal = peppCurve[peppCurve.length - 1] || 0;
@@ -120,6 +182,30 @@ function buildStrategyRecommendation(selectedMap) {
       text: txt,
       curve: peppCurve,
       label: `Pametni prijedlog: PEPP (${PEPP_RATE.toFixed(1)}%)`,
+    };
+  }
+  if (etf && !dmf) {
+    const dmfFundSel = $('p0a-fund-select');
+    let dmfRate = 5.0;
+    let dmfFundName = 'DMF scenarij';
+    if (dmfFundSel && dmfFundSel.value) {
+      const parts = dmfFundSel.value.split(',');
+      if (parts[1]) dmfRate = Number(parts[1]) || dmfRate;
+      dmfFundName = dmfFundSel.options[dmfFundSel.selectedIndex]?.text?.split(' (')[0] || dmfFundName;
+    }
+    const annual = etf.annualContribution;
+    const yearlyPoticaj = annual >= 663.61 ? 99.54 : annual * 0.15;
+    const dmfCurve = computeCompoundCurve(etf.initial || 0, annual + yearlyPoticaj, etf.years, dmfRate);
+    const dmfFinal = dmfCurve[dmfCurve.length - 1] || 0;
+    const diff = dmfFinal - etf.finalAmount;
+    const absDiff = Math.abs(diff);
+    const txt = diff >= 0
+      ? `Primijetili smo ETF-only strategiju. Za isti horizont (${etf.years} god.) DMF scenarij s poticajem bi mogao završiti oko ${fmt(absDiff)} bolje (ovisno o odabranom fondu i povijesnom prosjeku).`
+      : `Primijetili smo ETF-only strategiju. U ovom scenariju ETF i dalje vodi za oko ${fmt(absDiff)}, ali DMF može imati smisla za dio portfelja zbog državnog poticaja i nižeg rizika.`;
+    return {
+      text: txt,
+      curve: dmfCurve,
+      label: `Pametni prijedlog: ${dmfFundName} + poticaj`,
     };
   }
   return {
@@ -139,9 +225,7 @@ function renderMyStrategyDashboard() {
   const proConWrap = $('strategy-procon');
   if (!placeholder || !dashboard || !cardsWrap || !smartText || !smartToggleWrap || !smartToggle || !proConWrap) return;
 
-  const selected = Object.entries(window.myStrategy)
-    .filter(([k, v]) => ['p0a', 'pepp', 'p0b'].includes(k) && v.enabled && v.data)
-    .map(([, v]) => v.data);
+  const selected = getSelectedStrategyData();
 
   if (!selected.length) {
     placeholder.style.display = 'block';
@@ -227,13 +311,75 @@ function renderMyStrategyDashboard() {
 function setStrategyEnabled(key, enabled) {
   if (!window.myStrategy[key]) return;
   window.myStrategy[key].enabled = !!enabled;
+  saveMyStrategyState();
   renderMyStrategyDashboard();
 }
 
 function syncStrategyData(key, data) {
   if (!window.myStrategy[key]) return;
   window.myStrategy[key].data = data;
+  saveMyStrategyState();
   if (window.myStrategy[key].enabled) renderMyStrategyDashboard();
+}
+
+function exportMyStrategyPdf() {
+  const selected = getSelectedStrategyData();
+  if (!selected.length) {
+    alert('Nema aktivnih scenarija za export. Uključi barem jedan toggle.');
+    return;
+  }
+  const jsPDFCtor = window.jspdf && window.jspdf.jsPDF;
+  if (!jsPDFCtor) {
+    alert('PDF library nije učitan. Osvježi stranicu i pokušaj ponovo.');
+    return;
+  }
+
+  const selectedMap = selected.reduce((acc, item) => { acc[item.key] = item; return acc; }, {});
+  const recommendation = buildStrategyRecommendation(selectedMap);
+
+  const doc = new jsPDFCtor({ orientation: 'p', unit: 'mm', format: 'a4' });
+  let y = 14;
+  doc.setFontSize(16);
+  doc.text('MM Invest - Moje ulaganje', 12, y);
+  y += 7;
+  doc.setFontSize(10);
+  doc.text(`Datum: ${new Date().toLocaleString('hr-HR')}`, 12, y);
+  y += 8;
+
+  doc.setFontSize(12);
+  doc.text('Odabrani scenariji', 12, y);
+  y += 5;
+
+  selected.forEach((s) => {
+    const line = `${s.instrument} | ${s.fundType} | ${s.monthlyPayment.toFixed(2)} EUR/mj | ${s.years} god | ${s.expectedReturn.toFixed(2)}% | Final: ${fmt(s.finalAmount)}`;
+    const wrapped = doc.splitTextToSize(line, 185);
+    doc.setFontSize(9.5);
+    doc.text(wrapped, 12, y);
+    y += wrapped.length * 4.2 + 1.5;
+  });
+
+  const chartCanvas = $('strategy-chart');
+  if (chartCanvas && strategyChart) {
+    if (y > 155) { doc.addPage(); y = 14; }
+    doc.setFontSize(12);
+    doc.text('Graf usporedbe', 12, y);
+    y += 4;
+    const chartImg = chartCanvas.toDataURL('image/png', 1.0);
+    doc.addImage(chartImg, 'PNG', 12, y, 186, 82);
+    y += 88;
+  }
+
+  if (recommendation && recommendation.text) {
+    if (y > 250) { doc.addPage(); y = 14; }
+    doc.setFontSize(12);
+    doc.text('Pametan prijedlog', 12, y);
+    y += 5;
+    doc.setFontSize(9.5);
+    const recWrapped = doc.splitTextToSize(recommendation.text, 185);
+    doc.text(recWrapped, 12, y);
+  }
+
+  doc.save(`moje-ulaganje-${new Date().toISOString().slice(0, 10)}.pdf`);
 }
 
 // HELPERS
@@ -1171,6 +1317,9 @@ function initMyStrategyFeature() {
   const peppToggle = $('pepp-strategy-toggle');
   const p0bToggle = $('p0b-strategy-toggle');
   const showSug = $('strategy-show-suggestion');
+  const exportBtn = $('strategy-export-pdf');
+
+  restoreMyStrategyState();
 
   if (p0aToggle) {
     p0aToggle.addEventListener('change', () => {
@@ -1193,8 +1342,12 @@ function initMyStrategyFeature() {
   if (showSug) {
     showSug.addEventListener('change', () => {
       window.myStrategy.showSuggestedOnChart = showSug.checked;
+      saveMyStrategyState();
       renderMyStrategyDashboard();
     });
+  }
+  if (exportBtn) {
+    exportBtn.addEventListener('click', exportMyStrategyPdf);
   }
 
   const peppFund = $('pepp-strategy-fund');
