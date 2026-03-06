@@ -1,4 +1,4 @@
-// MarsanInvest AI Chat — Cloudflare Worker proxy
+// MM Invest AI Chat — Cloudflare Worker proxy
 // S admin panelom za paljenje/gašenje AI bota
 //
 // SECRETS potrebni u Cloudflare dashboardu:
@@ -42,7 +42,7 @@ function adminPage(isOn, msg = '') {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MarsanAI Admin</title>
+<title>MM Invest Admin</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   body { background:#181d28; color:#e2e5f0; font-family:'Segoe UI',system-ui,sans-serif; min-height:100vh; display:flex; align-items:center; justify-content:center; }
@@ -62,7 +62,7 @@ function adminPage(isOn, msg = '') {
 </head>
 <body>
 <div class="card">
-  <h1>🤖 MarsanAI Admin</h1>
+  <h1>🤖 MM Invest Admin</h1>
   <p class="sub">Upravljanje AI asistentom</p>
   
   <div class="status ${isOn ? 'on' : 'off'}">
@@ -91,7 +91,7 @@ function loginPage(error = '') {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MarsanAI Admin — Login</title>
+<title>MM Invest Admin — Login</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   body { background:#181d28; color:#e2e5f0; font-family:'Segoe UI',system-ui,sans-serif; min-height:100vh; display:flex; align-items:center; justify-content:center; }
@@ -114,7 +114,7 @@ function loginPage(error = '') {
 <body>
 <div class="card">
   <h1>🔐 Admin Login</h1>
-  <p class="sub">MarsanAI upravljanje</p>
+  <p class="sub">MM Invest upravljanje</p>
   ${error ? '<div class="err">' + error + '</div>' : ''}
   <form method="POST" action="/admin/login">
     <label>Korisničko ime</label>
@@ -657,9 +657,9 @@ async function handleRequest(request, env) {
                 'Authorization': `Bearer ${env.RESEND_API_KEY}`,
               },
               body: JSON.stringify({
-                from: 'MarsanInvest <onboarding@resend.dev>',
+                from: 'MM Invest <onboarding@resend.dev>',
                 to: [userEmail],
-                subject: 'Odgovor na tvoj feedback — MarsanInvest',
+                subject: 'Odgovor na tvoj feedback — MM Invest',
                 html: `
                   <div style="font-family:sans-serif;max-width:520px;margin:0 auto;background:#181d28;color:#e2e5f0;padding:2rem;border-radius:12px;">
                     <h2 style="color:#4ae8a0;margin-bottom:0.5rem">💬 Odgovor na tvoj feedback</h2>
@@ -672,7 +672,7 @@ async function handleRequest(request, env) {
                       <div style="font-size:0.75rem;color:#4ae8a0;margin-bottom:0.4rem">💬 Odgovor admina:</div>
                       <div style="color:#e2e5f0;font-size:0.95rem">${escapeHtml(replyText)}</div>
                     </div>
-                    <p style="margin-top:1.5rem;font-size:0.75rem;color:#5a6180;">MarsanInvest &middot; <a href="https://mminvest.pages.dev" style="color:#4a9fe8">mminvest.pages.dev</a></p>
+                    <p style="margin-top:1.5rem;font-size:0.75rem;color:#5a6180;">MM Invest &middot; <a href="https://mminvest.pages.dev" style="color:#4a9fe8">mminvest.pages.dev</a></p>
                   </div>
                 `,
               }),
@@ -769,9 +769,9 @@ async function handleRequest(request, env) {
               'Authorization': `Bearer ${env.RESEND_API_KEY}`,
             },
             body: JSON.stringify({
-              from: 'MarsanInvest <onboarding@resend.dev>',
+              from: 'MM Invest <onboarding@resend.dev>',
               to: ['marin.marsan@gmail.com'],
-              subject: `📬 Novi feedback: ${escapeHtml(entry.type)} — MarsanInvest`,
+              subject: `📬 Novi feedback: ${escapeHtml(entry.type)} — MM Invest`,
               html: `
                 <div style="font-family:sans-serif;max-width:520px;margin:0 auto;background:#181d28;color:#e2e5f0;padding:2rem;border-radius:12px;">
                   <h2 style="color:#4a9fe8;margin-bottom:0.5rem">📬 Novi feedback</h2>
@@ -782,7 +782,7 @@ async function handleRequest(request, env) {
                     <div style="color:#e2e5f0;font-size:0.95rem">${entry.text.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
                   </div>
                   <a href="https://mminvest.pages.dev/#admin" style="display:inline-block;padding:0.6rem 1.25rem;background:#4a9fe8;color:#0b0d12;border-radius:8px;text-decoration:none;font-weight:700;font-size:0.85rem;">Otvori Admin Panel →</a>
-                  <p style="margin-top:1.5rem;font-size:0.75rem;color:#5a6180;">MarsanInvest · mminvest.pages.dev</p>
+                  <p style="margin-top:1.5rem;font-size:0.75rem;color:#5a6180;">MM Invest · mminvest.pages.dev</p>
                 </div>
               `,
             }),
@@ -1053,13 +1053,13 @@ async function handleRequest(request, env) {
 
       const messages = body.messages.slice(-10);
 
-      const systemPrompt = `Ti si MarsanAI, prijateljski financijski asistent unutar MarsanInvest web aplikacije za hrvatsko tržište.
+      const systemPrompt = `Ti si MM Invest, prijateljski financijski asistent unutar MM Invest web aplikacije za hrvatsko tržište.
 Pomažeš korisnicima razumjeti:
 - Hrvatski 3. mirovinski stup (DMF fondovi) i državni poticaj (15% do 99.54€/god za uplate ≥663.61€)
 - PEPP (Pan-European Personal Pension Product) - npr. Finax PEPP
 - ETF fondove (VWCE, IWDA, CSPX, QQQ i dr.) i platforme (IBKR, Trading 212, Finax)
 - Razliku između mirovinskih fondova i ETF-a
-- Kako koristiti MarsanInvest kalkulator
+- Kako koristiti MM Invest kalkulator
 - Osnove ulaganja prilagođene HR tržištu
 
 Uvijek naglasi da nisu financijski savjet i predloži konzultaciju s licenciranim savjetnikom za konkretne odluke.

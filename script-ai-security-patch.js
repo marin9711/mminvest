@@ -1,5 +1,5 @@
 /**
- * MarsanInvest AI Chat — Security Patch
+ * MM Invest AI Chat — Security Patch
  * ─────────────────────────────────────
  * Ovaj fajl patch-ira fetch() da:
  *   1. Šalje Cloudflare Turnstile token u zaglavlju X-Turnstile-Token
@@ -106,5 +106,5 @@
     return response;
   };
 
-  console.log('[MarsanAI] Security patch ucitan — Turnstile + rate limit aktivan.');
+  console.log('[MM Invest] Security patch ucitan — Turnstile + rate limit aktivan.');
 })();
