@@ -53,7 +53,7 @@ function adminDashboardPage(isOn, systemPromptOverride = '', appStatus = '', msg
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   body { background: linear-gradient(135deg, #0f1219 0%, #181d28 50%, #1a1f2e 100%); color:#e2e5f0; font-family:'Segoe UI',system-ui,sans-serif; min-height:100vh; padding:1rem; }
-  .wrap { max-width:900px; margin:0 auto; }
+  .wrap { max-width:1280px; margin:0 auto; width:100%; padding:0 1rem; }
   .header { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem; }
   .header h1 { font-size:1.5rem; }
   .header .sub { color:#7d8aaa; font-size:0.85rem; }
@@ -90,6 +90,7 @@ function adminDashboardPage(isOn, systemPromptOverride = '', appStatus = '', msg
 </style>
 </head>
 <body>
+<!-- MM Invest Admin Dashboard (glassmorphism, tabovi) -->
 <div class="wrap">
   <header class="glass header">
     <div>
@@ -1076,20 +1077,30 @@ async function handleRequest(request, env) {
           env.AI_CONFIG.get('system_prompt_override'),
           env.AI_CONFIG.get('app_status'),
         ]);
-        return new Response(adminDashboardPage(newState === 'on', systemPromptOverride || '', appStatus || '', msg), {
-          headers: { 'Content-Type': 'text/html;charset=UTF-8' },
+        const html = adminDashboardPage(newState === 'on', systemPromptOverride || '', appStatus || '', msg);
+        return new Response(html, {
+          headers: {
+            'Content-Type': 'text/html;charset=UTF-8',
+            'Cache-Control': 'no-store, no-cache, must-revalidate',
+            'Pragma': 'no-cache',
+          },
         });
       }
 
-      // Admin dashboard GET
+      // Admin dashboard GET — dohvat iz KV i serviranje dashboarda (bez cachea)
       const [state, systemPromptOverride, appStatus] = await Promise.all([
         env.AI_CONFIG.get('ai_enabled'),
         env.AI_CONFIG.get('system_prompt_override'),
         env.AI_CONFIG.get('app_status'),
       ]);
       const isOn = state !== 'off';
-      return new Response(adminDashboardPage(isOn, systemPromptOverride || '', appStatus || '', ''), {
-        headers: { 'Content-Type': 'text/html;charset=UTF-8' },
+      const html = adminDashboardPage(isOn, systemPromptOverride || '', appStatus || '', '');
+      return new Response(html, {
+        headers: {
+          'Content-Type': 'text/html;charset=UTF-8',
+          'Cache-Control': 'no-store, no-cache, must-revalidate',
+          'Pragma': 'no-cache',
+        },
       });
     }
 
