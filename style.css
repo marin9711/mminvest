@@ -171,7 +171,6 @@
 }
 /* Disclaimers inside dark containers: lighter tone, no SVG glow */
 .quiz-result .disclaimer,
-#feedback .disclaimer,
 .glass-card .disclaimer,
 .table-card .disclaimer,
 .chart-card .disclaimer,
@@ -182,6 +181,21 @@
 .ai-section .disclaimer {
   color: var(--muted-card) !important;
   text-shadow: none !important;
+}
+
+/* SVG/open-surface context fixes (targeted, no global h3 override) */
+#stednja-dijete > h3 {
+  color: #0f172a !important;
+  font-weight: 800 !important;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.78) !important;
+  opacity: 1 !important;
+}
+
+#feedback > .disclaimer {
+  color: #1e293b !important;
+  font-weight: 500 !important;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8) !important;
+  opacity: 1 !important;
 }
 
 /* Version row is a dark container; keep text high contrast */
