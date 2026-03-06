@@ -1174,16 +1174,31 @@ function sendQuickMsg(text) {
   sendAiMsg();
 }
 
-// Dohvati status AI bota s Workera; ažurira aiBotEnabled i UI (FAQ vs input)
+// Dohvati status AI bota s Workera; ažurira aiBotEnabled i UI (FAQ vs input); prikaže app_status notification bar
 async function checkAiStatus() {
   try {
     const resp = await fetch(AI_WORKER_URL + '/status');
     const data = await resp.json();
     aiBotEnabled = data.ai_enabled === true;
+    showAppNotificationBar(data.app_status);
   } catch (e) {
     aiBotEnabled = false;
   }
   updateChatUI();
+}
+
+// Notification bar: prikaži samo ako app_status nije prazan
+function showAppNotificationBar(appStatus) {
+  const msg = appStatus && String(appStatus).trim();
+  const bar = document.getElementById('app-notification-bar');
+  const txt = document.getElementById('app-notification-text');
+  if (!bar || !txt) return;
+  if (msg) {
+    txt.textContent = msg;
+    bar.style.display = 'flex';
+  } else {
+    bar.style.display = 'none';
+  }
 }
 
 // Prikaži FAQ sučelje kad je AI isključen, inače normalan input
@@ -2556,4 +2571,19 @@ document.addEventListener('DOMContentLoaded', () => {
   if (tabAi) tabAi.addEventListener('click', () => switchAdminTab('ai'));
   if (tabFb) tabFb.addEventListener('click', () => switchAdminTab('fb'));
   if (tabMgmt) tabMgmt.addEventListener('click', () => switchAdminTab('mgmt'));
+
+  // Notification bar: dohvati app_status pri učitavanju stranice
+  fetch(AI_WORKER_URL + '/status')
+    .then((r) => r.json())
+    .then((d) => {
+      if (d.app_status && String(d.app_status).trim()) {
+        const bar = document.getElementById('app-notification-bar');
+        const txt = document.getElementById('app-notification-text');
+        if (bar && txt) {
+          txt.textContent = d.app_status.trim();
+          bar.style.display = 'flex';
+        }
+      }
+    })
+    .catch(() => {});
 });

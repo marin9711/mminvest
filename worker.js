@@ -1355,9 +1355,15 @@ async function handleRequest(request, env) {
 
     // ── STATUS ENDPOINT (za frontend) ──
     if (path === '/status') {
-      const state = await env.AI_CONFIG.get('ai_enabled');
+      const [state, appStatus] = await Promise.all([
+        env.AI_CONFIG.get('ai_enabled'),
+        env.AI_CONFIG.get('app_status'),
+      ]);
       const isOn = state !== 'off';
-      return new Response(JSON.stringify({ ai_enabled: isOn }), {
+      return new Response(JSON.stringify({
+        ai_enabled: isOn,
+        app_status: appStatus || '',
+      }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
       });
     }
