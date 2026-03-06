@@ -18,9 +18,8 @@ const CORS_HEADERS = {
 // ── Sigurnosna zaglavlja — dodaju se na svaki odgovor ──
 const SEC_HEADERS = {
   'Cache-Control': 'no-store, no-cache, must-revalidate',
-  'Strict-Transport-Security': 'max-age=63072000; includeSubDomains; preload',
+  'Strict-Transport-Security': 'max-age=63072000; includeSubDomains',
   'X-Content-Type-Options': 'nosniff',
-  'Content-Security-Policy': "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://api.anthropic.com",
 };
 
 // Middleware: dodaje SEC_HEADERS na svaki Response
