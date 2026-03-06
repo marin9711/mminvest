@@ -3743,14 +3743,14 @@ tr:hover td { background: var(--surface2) !important; }
            onkeydown="if(event.key==='Enter') sendAiMsg()">
     <button class="ai-send-btn" id="ai-send-btn" onclick="sendAiMsg()">➤</button>
   </div>
-  <!-- Cloudflare Turnstile — invisible widget, token se šalje s API pozivom -->
+  <!-- Cloudflare Turnstile — visible widget (managed mode) -->
   <!-- ZAMIJENI data-sitekey s tvojim Turnstile Site Key-em iz Cloudflare dashboarda -->
-  <div id="ai-turnstile-container" style="display:none">
+  <div id="ai-turnstile-container" style="display:flex;justify-content:center;padding:0.35rem 0.75rem 0.55rem;">
     <div class="cf-turnstile"
          id="ai-turnstile-widget"
          data-sitekey="0x4AAAAAACnRnEJwxvINVx6G"
          data-theme="dark"
-         data-size="invisible"
+         data-size="normal"
          data-callback="onTurnstileSuccess"
          data-expired-callback="onTurnstileExpired"
          data-error-callback="onTurnstileError">
@@ -4058,7 +4058,7 @@ function setLang(lang) {
 
 // ── Turnstile token management ──
 // Token se osvježava automatski. Kada sendAiMsg() zatraži token,
-// čeka da Turnstile izvrši challenge (obično nevidljivo <1s).
+// čeka da korisnik riješi Turnstile challenge u vidljivom widgetu.
 let _turnstileToken = null;
 let _turnstilePending = null; // resolve callback dok čekamo token
 
