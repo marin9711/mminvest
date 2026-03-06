@@ -162,6 +162,14 @@
 .version-row .vlink { color: var(--text-card) !important; border-color: rgba(148, 163, 184, 0.45); }
 .version-row .vlink:hover { background: rgba(148, 163, 184, 0.12); }
 
+/* Ensure readable text in dark "How to" cards and version panel */
+.how-section .step-title,
+.how-section .step-desc,
+.version-row .vlink,
+.version-row span {
+  opacity: 1 !important;
+}
+
 /* ── Feedback Log u admin panelu ── */
 .admin-feedback-log {
   max-height: 320px;
@@ -388,5 +396,111 @@
 
 .table-focus-content table {
   min-width: 760px;
+}
+
+/* ===== Global Contrast Override (hard fix) ===== */
+/* Light/SVG background context (hero/open surface only) */
+header,
+.hero,
+.hero-content,
+.home-hero,
+.home-hero h1,
+.home-hero .brand-big,
+.home-hero .tagline,
+.home-hero p,
+.home-hero span,
+.how-section h2 {
+  color: #0f172a !important;
+  opacity: 1 !important;
+}
+
+/* Dark cards / dark containers */
+.dark-card,
+.dark-box,
+.card-content {
+  color: #ffffff !important;
+}
+
+.dark-card h2,
+.dark-card p,
+.dark-card span {
+  color: #ffffff !important;
+}
+
+/* Real project dark containers */
+.glass-card,
+.table-card,
+.chart-card,
+.stat-card,
+.feature-card,
+.quiz-card,
+.plan-card,
+.split-scenario,
+.payout-card,
+.rating-section,
+.feedback-form-card,
+.controls,
+.winner-banner,
+.ai-section,
+.home-quiz-inner,
+.step-card,
+.edu-card,
+.edu-book-highlight,
+.version-row,
+.site-footer,
+.admin-card,
+.ai-chat-float,
+.table-focus-panel,
+.chart-modal-inner,
+.poll-section,
+.fb-log-item,
+.plan-result {
+  color: #ffffff !important;
+}
+
+.glass-card h1, .glass-card h2, .glass-card h3, .glass-card p, .glass-card span,
+.table-card h1, .table-card h2, .table-card h3, .table-card p, .table-card span,
+.chart-card h1, .chart-card h2, .chart-card h3, .chart-card p, .chart-card span,
+.stat-card h1, .stat-card h2, .stat-card h3, .stat-card p, .stat-card span,
+.feature-card h1, .feature-card h2, .feature-card h3, .feature-card p, .feature-card span,
+.quiz-card h1, .quiz-card h2, .quiz-card h3, .quiz-card p, .quiz-card span,
+.plan-card h1, .plan-card h2, .plan-card h3, .plan-card p, .plan-card span,
+.split-scenario h1, .split-scenario h2, .split-scenario h3, .split-scenario p, .split-scenario span,
+.payout-card h1, .payout-card h2, .payout-card h3, .payout-card p, .payout-card span,
+.rating-section h1, .rating-section h2, .rating-section h3, .rating-section p, .rating-section span,
+.feedback-form-card h1, .feedback-form-card h2, .feedback-form-card h3, .feedback-form-card p, .feedback-form-card span,
+.controls h1, .controls h2, .controls h3, .controls p, .controls span,
+.winner-banner h1, .winner-banner h2, .winner-banner h3, .winner-banner p, .winner-banner span,
+.ai-section h1, .ai-section h2, .ai-section h3, .ai-section p, .ai-section span,
+.home-quiz-inner h1, .home-quiz-inner h2, .home-quiz-inner h3, .home-quiz-inner p, .home-quiz-inner span,
+.step-card h1, .step-card h2, .step-card h3, .step-card p, .step-card span,
+.edu-card h1, .edu-card h2, .edu-card h3, .edu-card p, .edu-card span,
+.edu-book-highlight h1, .edu-book-highlight h2, .edu-book-highlight h3, .edu-book-highlight p, .edu-book-highlight span,
+.version-row h1, .version-row h2, .version-row h3, .version-row p, .version-row span,
+.site-footer h1, .site-footer h2, .site-footer h3, .site-footer p, .site-footer span,
+.admin-card h1, .admin-card h2, .admin-card h3, .admin-card p, .admin-card span,
+.ai-chat-float h1, .ai-chat-float h2, .ai-chat-float h3, .ai-chat-float p, .ai-chat-float span,
+.table-focus-panel h1, .table-focus-panel h2, .table-focus-panel h3, .table-focus-panel p, .table-focus-panel span,
+.chart-modal-inner h1, .chart-modal-inner h2, .chart-modal-inner h3, .chart-modal-inner p, .chart-modal-inner span,
+.poll-section h1, .poll-section h2, .poll-section h3, .poll-section p, .poll-section span,
+.fb-log-item h1, .fb-log-item h2, .fb-log-item h3, .fb-log-item p, .fb-log-item span,
+.plan-result h1, .plan-result h2, .plan-result h3, .plan-result p, .plan-result span {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+
+/* Edge cases: tiny text, table legends, helper text */
+th, td, .tbl-wrap small, .tbl-wrap span, .liq-info-box span, .rate-note, .sc-row .sr-sub {
+  opacity: 1 !important;
+}
+
+.home-hero .home-cta,
+.home-hero .home-cta-skip,
+.qrc-cta,
+.fb-submit-btn,
+.plan-btn-submit,
+.quiz-btn-next,
+.hq-result-btn.primary {
+  font-weight: 700 !important;
 }
 

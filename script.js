@@ -15,7 +15,7 @@ const fmtPct = n => (n>=0?'+':'')+n.toFixed(1)+'%';
 
 // Chart.js global config (design system: grid, fonts, line thickness)
 if (typeof Chart !== 'undefined') {
-  Chart.defaults.color = '#94a3b8';
+  Chart.defaults.color = '#ffffff';
   Chart.defaults.font.family = "'DM Sans', sans-serif";
   Chart.defaults.font.size = 11;
   Chart.defaults.borderColor = '#334155';
@@ -404,7 +404,7 @@ function makeChart(canvasId, labels, datasets) {
       responsive: true,
       interaction: { mode: 'index', intersect: false },
       plugins: {
-        legend: { labels: { color: '#94a3b8', font: { family: 'DM Sans', size: 11 }, padding: 16, boxWidth: 12 } },
+        legend: { labels: { color: '#ffffff', font: { family: 'DM Sans', size: 11 }, padding: 16, boxWidth: 12 } },
         tooltip: {
           backgroundColor: '#1e293b',
           borderColor: '#334155',
@@ -418,13 +418,13 @@ function makeChart(canvasId, labels, datasets) {
       },
       scales: {
         x: {
-          ticks: { color: '#94a3b8', font: { family: 'DM Mono', size: 10 }, maxTicksLimit: 10 },
+          ticks: { color: '#ffffff', font: { family: 'DM Mono', size: 10 }, maxTicksLimit: 10 },
           grid: { color: '#334155' },
-          title: { display: true, text: 'Godina', color: '#94a3b8', font: { size: 11 } }
+          title: { display: true, text: 'Godina', color: '#ffffff', font: { size: 11 } }
         },
         y: {
           ticks: {
-            color: '#94a3b8',
+            color: '#ffffff',
             font: { family: 'DM Mono', size: 10 },
             callback: v => v >= 1000000 ? (v / 1000000).toFixed(1) + 'M €' : v >= 1000 ? (v / 1000).toFixed(0) + 'k €' : v + '€'
           },
@@ -2728,7 +2728,6 @@ function resetPlanResult() {
 
 // Attach click listeners to quiz options (run on DOM ready)
 document.addEventListener('DOMContentLoaded', () => {
-  applyGlobalContrastClasses();
   initTableFocusMode();
 
   document.querySelectorAll('.quiz-option').forEach(opt => {
