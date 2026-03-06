@@ -709,13 +709,6 @@ tr:hover td { background:var(--surface2); }
 }
 @media (min-width: 768px) { .donate-bar { display: flex; align-items: center; justify-content: center; gap: 0.75rem; } }
 .donate-bar-text { font-size: 0.72rem; color: var(--muted); }
-.donate-bar-close {
-  position: absolute; right: 1rem;
-  background: transparent; border: none; color: var(--muted); font-size: 1.1rem;
-  cursor: pointer; line-height: 1; padding: 0.2rem 0.4rem; border-radius: 4px;
-  transition: color 0.15s;
-}
-.donate-bar-close:hover { color: var(--text); }
 /* Padding na dnu za floating donate bar (samo desktop) */
 @media (min-width: 768px) { body { padding-bottom: 2.4rem; } }
 /* AI FAB sakrij gumb - samo mobitel */
@@ -1181,6 +1174,16 @@ tr:hover td { background:var(--surface2); }
   opacity: 1; transform: translateY(0) scale(1);
   pointer-events: all;
 }
+/* AI FAB na mobilnim: unlocked float, lagano proziran */
+@media (max-width: 767px) {
+  .ai-fab {
+    opacity: 0.7;
+    position: fixed;
+    bottom: 1rem; right: 1rem;
+    transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+  }
+  .ai-fab:hover, .ai-fab:focus, .ai-fab.open { opacity: 1; }
+}
 @media (max-width: 480px) {
   .ai-chat-float {
     width: calc(100vw - 1.5rem); right: 0.75rem; bottom: 5rem;
@@ -1300,7 +1303,7 @@ tr:hover td { background:var(--surface2); }
 <body>
 
 <nav>
-  <div class="nav-brand">Marsan<span>Invest</span></div>
+  <div class="nav-brand">MM <span>Invest</span></div>
   <div class="nav-tabs">
     <div class="nav-tab active" data-page="home">Početna</div>
     <div class="nav-tab" data-page="p0a">Hrvatski DMF</div>
@@ -3538,11 +3541,10 @@ tr:hover td { background:var(--surface2); }
   </div>
 </footer>
 
-<!-- DONATE BAR - floating, samo desktop -->
+<!-- DONATE BAR - floating, fiksna (bez gumba za zatvaranje) -->
 <div class="donate-bar" id="donate-bar">
   <span class="donate-bar-text">☕ MM Invest je besplatan i bez reklama. Ako ti je koristan, možeš podržati razvoj:</span>
   <button class="donate-btn" disabled title="Donate opcija dolazi uskoro">❤️ Podrži autora</button>
-  <button class="donate-bar-close" onclick="document.getElementById('donate-bar').style.display='none'" title="Zatvori">×</button>
 </div>
 
 <!-- ADMIN MODAL -->
