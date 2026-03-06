@@ -1305,6 +1305,58 @@ tr:hover td { background: var(--surface2) !important; }
 .admin-toggle.turn-on { background:linear-gradient(135deg,var(--pepp),var(--etf)); color:#0b0d12; }
 .admin-toggle:hover { opacity:0.85; }
 .admin-logout-link { display:inline-block; margin-top:1rem; font-size:0.75rem; color:var(--muted); cursor:pointer; text-decoration:underline; }
+.admin-live-stats {
+  margin-bottom: 1rem;
+  text-align: left;
+}
+.admin-live-stats-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.55rem;
+}
+.admin-live-stats-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--muted2);
+}
+.admin-stats-reset-btn {
+  padding: 0.36rem 0.68rem;
+  border-radius: 8px;
+  border: 1px solid rgba(245,96,96,0.35);
+  background: rgba(245,96,96,0.12);
+  color: #f56060;
+  font-size: 0.7rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.admin-stats-reset-btn:hover { opacity: 0.85; }
+.admin-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+.admin-stat-card {
+  background: var(--surface2);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  padding: 0.55rem 0.65rem;
+  min-height: 70px;
+}
+.admin-stat-value {
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--text);
+  margin-bottom: 0.22rem;
+  letter-spacing: 0.2px;
+}
+.admin-stat-label {
+  font-size: 0.68rem;
+  color: var(--muted2);
+  line-height: 1.35;
+}
 
 /* POLL SECTIONS */
 .poll-section {
@@ -4151,6 +4203,33 @@ tr:hover td { background: var(--surface2) !important; }
 
       <!-- Tab: Upravljanje -->
       <div class="admin-tab-content" id="admin-tab-content-mgmt">
+
+        <div class="admin-live-stats">
+          <div class="admin-live-stats-head">
+            <div class="admin-live-stats-title">📈 Live Stats Overview</div>
+            <button id="admin-reset-stats-btn" class="admin-stats-reset-btn" onclick="adminResetLiveStats()">Reset Stats</button>
+          </div>
+          <div class="admin-stats-grid">
+            <div class="admin-stat-card">
+              <div class="admin-stat-value" id="admin-stat-izracunaj">0</div>
+              <div class="admin-stat-label">Ukupno "Izračunaj" klikova</div>
+            </div>
+            <div class="admin-stat-card">
+              <div class="admin-stat-value" id="admin-stat-most-visited">—</div>
+              <div class="admin-stat-label">Najposjećeniji kalkulator</div>
+            </div>
+            <div class="admin-stat-card">
+              <div class="admin-stat-value" id="admin-stat-copy-btc">0</div>
+              <div class="admin-stat-label">"Copy BTC" klikovi</div>
+            </div>
+            <div class="admin-stat-card">
+              <div class="admin-stat-value" id="admin-stat-ai-messages">0</div>
+              <div class="admin-stat-label">AI poruke (trenutna sesija)</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="border-top:1px solid var(--border); margin-bottom:0.75rem;"></div>
 
         <!-- Masovne operacije -->
         <div style="margin-bottom:1rem;">

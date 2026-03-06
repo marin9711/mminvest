@@ -23,6 +23,196 @@ function sanitizeTbody(html) {
 const fmtX = (n,d=1) => n.toFixed(d)+'x';
 const fmtPct = n => (n>=0?'+':'')+n.toFixed(1)+'%';
 const DEFAULT_INFLATION_RATE = 3;
+const ADMIN_LIVE_STATS_KEY = 'miv_admin_live_stats_v1';
+const ADMIN_AI_SESSION_KEY = 'miv_admin_ai_msgs_session_v1';
+const ADMIN_LIVE_STATS_REMOTE_KEY = 'live_stats_overview_v1';
+const CALCULATOR_PAGE_LABELS = {
+  p0a: 'DMF',
+  pepp: 'PEPP',
+  p0b: 'ETF',
+};
+
+function getDefaultLiveStats() {
+  return {
+    izracunajClicks: 0,
+    copyBtcClicks: 0,
+    calculatorVisits: { p0a: 0, pepp: 0, p0b: 0 },
+  };
+}
+
+function loadLiveStats() {
+  const defaults = getDefaultLiveStats();
+  try {
+    const parsed = JSON.parse(localStorage.getItem(ADMIN_LIVE_STATS_KEY) || '{}');
+    return {
+      izracunajClicks: Number(parsed.izracunajClicks) || 0,
+      copyBtcClicks: Number(parsed.copyBtcClicks) || 0,
+      calculatorVisits: {
+        p0a: Number(parsed.calculatorVisits?.p0a) || 0,
+        pepp: Number(parsed.calculatorVisits?.pepp) || 0,
+        p0b: Number(parsed.calculatorVisits?.p0b) || 0,
+      },
+    };
+  } catch (_) {
+    return defaults;
+  }
+}
+
+let liveStats = loadLiveStats();
+let liveStatsSyncTimer = null;
+let liveStatsSyncInFlight = false;
+let liveStatsRemoteLoaded = false;
+
+function saveLiveStats() {
+  try { localStorage.setItem(ADMIN_LIVE_STATS_KEY, JSON.stringify(liveStats)); } catch (_) {}
+}
+
+function getAiSessionMessagesCount() {
+  try { return Number(sessionStorage.getItem(ADMIN_AI_SESSION_KEY)) || 0; } catch (_) { return 0; }
+}
+
+function setAiSessionMessagesCount(value) {
+  try { sessionStorage.setItem(ADMIN_AI_SESSION_KEY, String(Math.max(0, Number(value) || 0))); } catch (_) {}
+}
+
+function normalizeLiveStats(raw) {
+  return {
+    izracunajClicks: Math.max(0, Number(raw?.izracunajClicks) || 0),
+    copyBtcClicks: Math.max(0, Number(raw?.copyBtcClicks) || 0),
+    calculatorVisits: {
+      p0a: Math.max(0, Number(raw?.calculatorVisits?.p0a) || 0),
+      pepp: Math.max(0, Number(raw?.calculatorVisits?.pepp) || 0),
+      p0b: Math.max(0, Number(raw?.calculatorVisits?.p0b) || 0),
+    },
+  };
+}
+
+function mergeLiveStats(localStats, remoteStats) {
+  const local = normalizeLiveStats(localStats);
+  const remote = normalizeLiveStats(remoteStats);
+  return {
+    izracunajClicks: Math.max(local.izracunajClicks, remote.izracunajClicks),
+    copyBtcClicks: Math.max(local.copyBtcClicks, remote.copyBtcClicks),
+    calculatorVisits: {
+      p0a: Math.max(local.calculatorVisits.p0a, remote.calculatorVisits.p0a),
+      pepp: Math.max(local.calculatorVisits.pepp, remote.calculatorVisits.pepp),
+      p0b: Math.max(local.calculatorVisits.p0b, remote.calculatorVisits.p0b),
+    },
+  };
+}
+
+async function fetchLiveStatsFromWorker() {
+  if (!adminToken) return null;
+  try {
+    const resp = await fetch(WORKER_URL + '/admin/api/live-stats', {
+      headers: { 'Authorization': 'Bearer ' + adminToken }
+    });
+    if (!resp.ok) return null;
+    const data = await resp.json();
+    const payload = data?.stats || data?.live_stats || data?.value || data?.item || null;
+    return payload ? normalizeLiveStats(payload) : null;
+  } catch (_) {
+    return null;
+  }
+}
+
+async function pushLiveStatsToWorker() {
+  if (!adminToken) return;
+  if (liveStatsSyncInFlight) return;
+  liveStatsSyncInFlight = true;
+  try {
+    const payload = normalizeLiveStats(liveStats);
+    await fetch(WORKER_URL + '/admin/api/live-stats', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + adminToken
+      },
+      body: JSON.stringify({ key: ADMIN_LIVE_STATS_REMOTE_KEY, stats: payload })
+    });
+  } catch (_) {
+    // Best effort only; localStorage remains source of truth fallback.
+  } finally {
+    liveStatsSyncInFlight = false;
+  }
+}
+
+function scheduleLiveStatsWorkerSync() {
+  if (!adminToken) return;
+  clearTimeout(liveStatsSyncTimer);
+  liveStatsSyncTimer = setTimeout(() => { pushLiveStatsToWorker(); }, 900);
+}
+
+async function hydrateLiveStatsFromWorker() {
+  if (!adminToken || liveStatsRemoteLoaded) return;
+  const remoteStats = await fetchLiveStatsFromWorker();
+  if (!remoteStats) return;
+  liveStats = mergeLiveStats(liveStats, remoteStats);
+  saveLiveStats();
+  renderAdminLiveStats();
+  liveStatsRemoteLoaded = true;
+  scheduleLiveStatsWorkerSync();
+}
+
+function getMostVisitedCalculatorLabel() {
+  const visits = liveStats.calculatorVisits || {};
+  const sorted = Object.entries(visits).sort((a, b) => (b[1] || 0) - (a[1] || 0));
+  if (!sorted.length || (sorted[0][1] || 0) <= 0) return '—';
+  return CALCULATOR_PAGE_LABELS[sorted[0][0]] || '—';
+}
+
+function renderAdminLiveStats() {
+  const izracunajEl = $('admin-stat-izracunaj');
+  const mostVisitedEl = $('admin-stat-most-visited');
+  const copyEl = $('admin-stat-copy-btc');
+  const aiEl = $('admin-stat-ai-messages');
+  if (!izracunajEl || !mostVisitedEl || !copyEl || !aiEl) return;
+
+  izracunajEl.textContent = String(Number(liveStats.izracunajClicks) || 0);
+  mostVisitedEl.textContent = getMostVisitedCalculatorLabel();
+  copyEl.textContent = String(Number(liveStats.copyBtcClicks) || 0);
+  aiEl.textContent = String(getAiSessionMessagesCount());
+}
+
+function trackCalculatorVisit(page, isTrustedClick) {
+  if (!isTrustedClick || !CALCULATOR_PAGE_LABELS[page]) return;
+  liveStats.calculatorVisits[page] = (Number(liveStats.calculatorVisits[page]) || 0) + 1;
+  saveLiveStats();
+  renderAdminLiveStats();
+  scheduleLiveStatsWorkerSync();
+}
+
+function trackIzracunajClick(isTrustedClick) {
+  if (!isTrustedClick) return;
+  liveStats.izracunajClicks = (Number(liveStats.izracunajClicks) || 0) + 1;
+  saveLiveStats();
+  renderAdminLiveStats();
+  scheduleLiveStatsWorkerSync();
+}
+
+function trackCopyBtcClick() {
+  liveStats.copyBtcClicks = (Number(liveStats.copyBtcClicks) || 0) + 1;
+  saveLiveStats();
+  renderAdminLiveStats();
+  scheduleLiveStatsWorkerSync();
+}
+
+function trackAiSessionMessage() {
+  setAiSessionMessagesCount(getAiSessionMessagesCount() + 1);
+  renderAdminLiveStats();
+}
+
+function adminResetLiveStats() {
+  if (!confirm('Resetirati Live Stats brojače?')) return;
+  liveStats = getDefaultLiveStats();
+  saveLiveStats();
+  setAiSessionMessagesCount(0);
+  renderAdminLiveStats();
+  scheduleLiveStatsWorkerSync();
+  if (typeof showMgmtMsg === 'function') showMgmtMsg('✅ Live Stats su resetirani.', 'success');
+}
+
+window.adminResetLiveStats = adminResetLiveStats;
 
 function getRealRatePct(nominalPct, inflationPct = DEFAULT_INFLATION_RATE) {
   const nominal = (Number(nominalPct) || 0) / 100;
@@ -86,11 +276,12 @@ function preventFocusJumpOnPageChange() {
 }
 
 document.querySelectorAll('.nav-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
+  tab.addEventListener('click', (e) => {
     document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     tab.classList.add('active');
     $(tab.dataset.page).classList.add('active');
+    trackCalculatorVisit(tab.dataset.page, e.isTrusted);
     preventFocusJumpOnPageChange();
     scrollToTopInstant();
   });
@@ -1809,6 +2000,7 @@ async function copyDonationAddress() {
   const addressEl = $('donation-btc-address');
   const btn = $('donation-copy-btn');
   if (!addressEl || !btn) return;
+  trackCopyBtcClick();
   const address = (addressEl.textContent || '').trim();
   if (!address) return;
 
@@ -2188,6 +2380,7 @@ async function sendAiMsg() {
   $('ai-send-btn').disabled = true;
   addAiMsg('user', text);
   aiHistory.push({ role: 'user', content: text });
+  trackAiSessionMessage();
   aiTyping = true;
   showTyping();
 
@@ -3092,6 +3285,8 @@ async function adminLogin() {
 async function showAdminDash() {
   document.getElementById('admin-login-view').style.display = 'none';
   document.getElementById('admin-dash-view').style.display = '';
+  await hydrateLiveStatsFromWorker();
+  renderAdminLiveStats();
   
   try {
     const resp = await fetch(WORKER_URL + '/admin/api/status', {
@@ -3132,6 +3327,7 @@ async function adminToggle() {
 
 function adminLogout() {
   adminToken = null;
+  liveStatsRemoteLoaded = false;
   sessionStorage.removeItem('marsanai_admin');
   document.getElementById('admin-login-view').style.display = '';
   document.getElementById('admin-dash-view').style.display = 'none';
@@ -3147,7 +3343,7 @@ function switchAdminTab(tab) {
     if (tabContent) tabContent.classList.toggle('active', t === tab);
   });
   if (tab === 'fb') { loadFeedbackLog(); loadPollResults(); }
-  if (tab === 'mgmt') { loadKvItems(); }
+  if (tab === 'mgmt') { loadKvItems(); renderAdminLiveStats(); }
 }
 
 async function loadFeedbackLog() {
@@ -3910,6 +4106,16 @@ function resetPlanResult() {
 // Attach click listeners to quiz options (run on DOM ready)
 document.addEventListener('DOMContentLoaded', () => {
   initTableFocusMode();
+  renderAdminLiveStats();
+
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    const label = String(btn.textContent || '').toLowerCase();
+    if (label.includes('izračunaj') || label.includes('izracunaj')) {
+      trackIzracunajClick(e.isTrusted);
+    }
+  });
 
   document.querySelectorAll('.quiz-option').forEach(opt => {
     opt.addEventListener('click', () => quizSelectOption(opt));
