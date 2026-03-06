@@ -13,6 +13,17 @@ function sanitizeTbody(html) {
 const fmtX = (n,d=1) => n.toFixed(d)+'x';
 const fmtPct = n => (n>=0?'+':'')+n.toFixed(1)+'%';
 
+// Chart.js global config (design system: grid, fonts, line thickness)
+if (typeof Chart !== 'undefined') {
+  Chart.defaults.color = '#94a3b8';
+  Chart.defaults.font.family = "'DM Sans', sans-serif";
+  Chart.defaults.font.size = 11;
+  Chart.defaults.borderColor = '#334155';
+  Chart.defaults.scale.grid.color = '#334155';
+  Chart.defaults.datasets.line.borderWidth = 2.5;
+  Chart.defaults.datasets.line.tension = 0.4;
+}
+
 // NAV
 document.querySelectorAll('.nav-tab').forEach(tab => {
   tab.addEventListener('click', () => {
@@ -387,23 +398,38 @@ function updateP3() {
 // ============ CHART FACTORY ============
 function makeChart(canvasId, labels, datasets) {
   return new Chart($(canvasId), {
-    type:'line',
-    data:{ labels, datasets },
-    options:{
-      responsive:true,
-      interaction:{mode:'index',intersect:false},
-      plugins:{
-        legend:{ labels:{ color:'#5a6180', font:{ family:'DM Sans', size:11 }, padding:16, boxWidth:12 } },
-        tooltip:{
-          backgroundColor:'#1a1e2a', borderColor:'#242a3d', borderWidth:1,
-          titleColor:'#e2e5f0', bodyColor:'#8890b0', padding:12,
-          callbacks:{ label: ctx=>' '+ctx.dataset.label+': '+fmt(ctx.raw) }
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      responsive: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { labels: { color: '#94a3b8', font: { family: 'DM Sans', size: 11 }, padding: 16, boxWidth: 12 } },
+        tooltip: {
+          backgroundColor: '#1e293b',
+          borderColor: '#334155',
+          borderWidth: 1,
+          titleColor: '#f1f5f9',
+          bodyColor: '#cbd5e1',
+          padding: 12,
+          callbacks: { label: ctx => ' ' + ctx.dataset.label + ': ' + fmt(ctx.raw) }
         },
         zoom: {}
       },
-      scales:{
-        x:{ ticks:{color:'#5a6180',font:{family:'DM Mono',size:10},maxTicksLimit:10}, grid:{color:'#1a1e2a'}, title:{display:true,text:'Godina',color:'#5a6180',font:{size:11}} },
-        y:{ ticks:{ color:'#5a6180', font:{family:'DM Mono',size:10}, callback: v=>v>=1000000?(v/1000000).toFixed(1)+'M €':v>=1000?(v/1000).toFixed(0)+'k €':v+'€' }, grid:{color:'#1a1e2a'} }
+      scales: {
+        x: {
+          ticks: { color: '#94a3b8', font: { family: 'DM Mono', size: 10 }, maxTicksLimit: 10 },
+          grid: { color: '#334155' },
+          title: { display: true, text: 'Godina', color: '#94a3b8', font: { size: 11 } }
+        },
+        y: {
+          ticks: {
+            color: '#94a3b8',
+            font: { family: 'DM Mono', size: 10 },
+            callback: v => v >= 1000000 ? (v / 1000000).toFixed(1) + 'M €' : v >= 1000 ? (v / 1000).toFixed(0) + 'k €' : v + '€'
+          },
+          grid: { color: '#334155' }
+        }
       }
     }
   });
