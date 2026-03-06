@@ -87,7 +87,7 @@ function updateP1() {
   $('p1-diff').textContent = fmt(diff);
   $('p1-diff').style.color = winnerColor;
   const potTxt = pot>0 ? ` Godišnji poticaj: <strong>${fmt(pot)}</strong> (ukupno ${fmt(pot*god)}).` : ' Poticaj isključen.';
-  $('p1-desc').innerHTML = `<strong style="color:${winnerColor}">${winner}</strong> završava s više novca — ${((diff/Math.min(peppFinal,dmfFinal))*100).toFixed(1)}% razlika.${potTxt}`;
+  $('p1-desc').innerHTML = DOMPurify.sanitize(`<strong style="color:${winnerColor}">${winner}</strong> završava s više novca — ${((diff/Math.min(peppFinal,dmfFinal))*100).toFixed(1)}% razlika.${potTxt}`, { ALLOWED_TAGS: ['strong'], ALLOWED_ATTR: ['style'] });
 
   const milestones = [5,10,15,20,25,30,35,40,50,60].filter(y=>y<=god);
   if(!milestones.includes(god)) milestones.push(god);
@@ -198,7 +198,7 @@ function updateP2() {
     const [lk,lv]=visVals.reduce((a,b)=>b[1]<a[1]?b:a);
     $('p2-winner').textContent=names[wk];
     $('p2-winner').style.color=cols[wk];
-    $('p2-desc').innerHTML=`<strong style="color:${cols[wk]}">${names[wk]}</strong> vodi za <strong>${fmt(wv-lv)}</strong> ispred <strong style="color:${cols[lk]}">${names[lk]}</strong>. To je ${((wv/lv-1)*100).toFixed(1)}% razlike.`;
+    $('p2-desc').innerHTML=DOMPurify.sanitize(`<strong style="color:${cols[wk]}">${names[wk]}</strong> vodi za <strong>${fmt(wv-lv)}</strong> ispred <strong style="color:${cols[lk]}">${names[lk]}</strong>. To je ${((wv/lv-1)*100).toFixed(1)}% razlike.`, { ALLOWED_TAGS: ['strong'], ALLOWED_ATTR: ['style'] });
   }
 
   const milestones=[5,10,15,20,25,30,35,40].filter(y=>y<=god);
@@ -465,7 +465,7 @@ function updateP0a() {
   $('p0a-lump').textContent = fmt(val);
   $('p0a-monthly').textContent = fmt(val*0.04/12)+'/mj';
   $('p0a-rate-used').textContent = rate.toFixed(2)+'%/god';
-  $('p0a-info').innerHTML = `Korišten <strong>5-godišnji prosjek</strong> fonda (${r5y}%). Prinos 2024: <strong>${r2024}%</strong>. ${usePoticaj?`Godišnji poticaj: <strong>${fmt(poticajGod)}</strong>.`:''}`;
+  $('p0a-info').innerHTML = DOMPurify.sanitize(`Korišten <strong>5-godišnji prosjek</strong> fonda (${r5y}%). Prinos 2024: <strong>${r2024}%</strong>. ${usePoticaj?`Godišnji poticaj: <strong>${fmt(poticajGod)}</strong>.`:''}`, { ALLOWED_TAGS: ['strong'], ALLOWED_ATTR: [] });
   $('p0a-tbody').innerHTML = tbody.join('');
 
   // Chart single fund
@@ -1003,11 +1003,30 @@ function addAiMsg(role, text) {
   const isBot = role === 'bot';
   const div = document.createElement('div');
   div.className = 'ai-msg ' + role;
-  // Sanitiziraj tekst prije upisivanja u DOM (sprječava XSS)
-  let safe = sanitizeText(text);
-  safe = safe.split('\n').join('<br>');
-  safe = safe.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-  div.innerHTML = `<div class="ai-msg-avatar">${isBot ? '\u{1F916}' : '\u{1F464}'}</div><div class="ai-msg-bubble">${safe}</div>`;
+
+  // Avatar (statički tekst — bez korisničkog unosa, sigurno)
+  const avatar = document.createElement('div');
+  avatar.className = 'ai-msg-avatar';
+  avatar.textContent = isBot ? '🤖' : '👤';
+
+  // Bubble
+  const bubble = document.createElement('div');
+  bubble.className = 'ai-msg-bubble';
+
+  if (isBot) {
+    // AI odgovor može sadržavati markdown (**bold**, \n→<br>).
+    // Koristimo DOMPurify kako bismo dozvolili samo sigurne tagove.
+    let html = sanitizeText(text)
+      .split('\n').join('<br>')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    bubble.innerHTML = DOMPurify.sanitize(html, { ALLOWED_TAGS: ['strong','em','br'], ALLOWED_ATTR: [] });
+  } else {
+    // Korisnički unos: NIKAD HTML — samo čisti tekst
+    bubble.textContent = text;
+  }
+
+  div.appendChild(avatar);
+  div.appendChild(bubble);
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
 }
@@ -1016,7 +1035,18 @@ function showTyping() {
   const msgs = $('ai-messages');
   const div = document.createElement('div');
   div.className = 'ai-msg bot'; div.id = 'ai-typing-indicator';
-  div.innerHTML = '<div class="ai-msg-avatar">🤖</div><div class="ai-msg-bubble"><div class="ai-typing"><span></span><span></span><span></span></div></div>';
+  // Statički sadržaj — gradimo DOM-om umjesto innerHTML
+  const avatar = document.createElement('div');
+  avatar.className = 'ai-msg-avatar';
+  avatar.textContent = '🤖';
+  const bubble = document.createElement('div');
+  bubble.className = 'ai-msg-bubble';
+  const typing = document.createElement('div');
+  typing.className = 'ai-typing';
+  for (let i = 0; i < 3; i++) typing.appendChild(document.createElement('span'));
+  bubble.appendChild(typing);
+  div.appendChild(avatar);
+  div.appendChild(bubble);
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
 }
@@ -1091,11 +1121,11 @@ async function loadRatingStats() {
       const avg = data.avg.toFixed(1);
       const fullStars = Math.round(data.avg);
       const starsHtml = '★'.repeat(fullStars) + '☆'.repeat(5 - fullStars);
-      el.innerHTML = `
+      el.innerHTML = DOMPurify.sanitize(`
         <span class="rs-avg">${avg}</span>
         <span class="rs-stars">${starsHtml}</span>
         <span class="rs-count">${data.count} ${data.count === 1 ? 'ocjena' : data.count < 5 ? 'ocjene' : 'ocjena'}</span>
-      `;
+      `, { ALLOWED_TAGS: ['span'], ALLOWED_ATTR: ['class'] });
     }
   } catch(e) {}
 }
@@ -1377,9 +1407,9 @@ function hqShowResult() {
   document.getElementById('hqr-emoji').textContent = emoji;
   document.getElementById('hqr-title').textContent = title;
   document.getElementById('hqr-sub').textContent = sub;
-  document.getElementById('hqr-btns').innerHTML = btns.map(b =>
+  document.getElementById('hqr-btns').innerHTML = DOMPurify.sanitize(btns.map(b =>
     `<button class="hq-result-btn ${b.cls}" onclick="document.querySelector('[data-page=${b.page}]').click()">${b.label}</button>`
-  ).join('');
+  ).join(''), { ALLOWED_TAGS: ['button'], ALLOWED_ATTR: ['class','onclick'] });
 
   document.getElementById('hq-result').style.display = 'block';
 }
@@ -1480,7 +1510,7 @@ function updateAdminUI() {
   const toggleBtn = document.getElementById('admin-toggle-btn');
   
   statusEl.className = 'admin-status ' + (adminAiOn ? 'on' : 'off');
-  statusEl.innerHTML = 'AI Bot je trenutno: <strong>' + (adminAiOn ? '✅ UKLJUČEN' : '⛔ ISKLJUČEN') + '</strong>';
+  statusEl.innerHTML = DOMPurify.sanitize('AI Bot je trenutno: <strong>' + (adminAiOn ? '✅ UKLJUČEN' : '⛔ ISKLJUČEN') + '</strong>', { ALLOWED_TAGS: ['strong'], ALLOWED_ATTR: [] });
   
   toggleBtn.className = 'admin-toggle ' + (adminAiOn ? 'turn-off' : 'turn-on');
   toggleBtn.textContent = adminAiOn ? '⏸️ Isključi AI bota' : '▶️ Uključi AI bota';
@@ -1531,7 +1561,7 @@ async function loadFeedbackLog() {
     const items = data.items || [];
     if (!items.length) { logEl.innerHTML = '<div class="fb-log-empty">Nema feedback unosa.</div>'; return; }
     const typeIcon = { prijedlog:'💡', pohvala:'👏', greška:'🐛', pitanje:'❓' };
-    logEl.innerHTML = items.slice().reverse().map((it, idx) => {
+    logEl.innerHTML = DOMPurify.sanitize(items.slice().reverse().map((it, idx) => {
       const realIdx = items.length - 1 - idx;
       const d = new Date(it.ts);
       const ts = d.toLocaleDateString('hr-HR') + ' ' + d.toLocaleTimeString('hr-HR', {hour:'2-digit',minute:'2-digit'});
@@ -1539,7 +1569,7 @@ async function loadFeedbackLog() {
       const statusBadge = it.reply
         ? '<span class="fb-log-status odgovoreno">✅ odgovoreno</span>'
         : (it.email ? '<span class="fb-log-status novo">🔵 čeka odgovor</span>' : '');
-      const emailRow = it.email ? `<div class="fb-log-email">📧 ${it.email}</div>` : '';
+      const emailRow = it.email ? `<div class="fb-log-email">📧 ${it.email.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>` : '';
       const replyRow = it.reply
         ? `<div class="fb-log-reply">💬 Odgovor: ${it.reply.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`
         : (it.email ? `<div class="fb-reply-row">
@@ -1557,7 +1587,7 @@ async function loadFeedbackLog() {
         ${rating ? '<div class="fb-log-rating">' + rating + '</div>' : ''}
         ${replyRow}
       </div>`;
-    }).join('');
+    }).join(''));
   } catch(e) {
     logEl.innerHTML = '<div class="fb-log-empty">⚠️ Greška pri dohvaćanju.</div>';
   }
@@ -1807,7 +1837,10 @@ function quizShowResult() {
       <button class="qrc-cta" onclick="document.querySelector('[data-page=${secondary.page}]').click()">${secondary.cta}</button>
     </div>
   `;
-  document.getElementById('qr-cards').innerHTML = cardsHtml;
+  document.getElementById('qr-cards').innerHTML = DOMPurify.sanitize(cardsHtml, {
+    ALLOWED_TAGS: ['div','ul','li','button','span','strong'],
+    ALLOWED_ATTR: ['class','style','onclick']
+  });
 
   const result = document.getElementById('quizResult');
   result.classList.add('show');
