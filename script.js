@@ -1,6 +1,16 @@
 var $ = id => document.getElementById(id);
 const fmt = n => new Intl.NumberFormat('hr-HR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n);
 
+function calcCroatiaCapitalTax(profit, years) {
+  const taxableProfit = Math.max(0, Number(profit) || 0);
+  const taxRate = (Number(years) || 0) < 2 ? 0.12 : 0;
+  return {
+    taxRate,
+    taxAmount: taxableProfit * taxRate,
+    isExempt: taxRate === 0,
+  };
+}
+
 // DOMPurify helper za tbody fragmente — wrappa u <table> kontekst da se <tr>/<td> ne stripaju
 function sanitizeTbody(html) {
   const table = document.createElement('table');
@@ -832,6 +842,7 @@ function updateP0a() {
   const inputAmt = parseFloat(($('p0a-uplata-v').value+'').replace(',','.')) || parseFloat($('p0a-uplata').value) || 663;
   const initial = parseFloat($('p0a-initial-v').value) || parseFloat($('p0a-initial').value) || 0;
   const god = parseInt($('p0a-god-v').value) || parseInt($('p0a-god').value) || 25;
+  const showTaxNet = $('p0a-net-toggle') ? $('p0a-net-toggle').checked : false;
   const usePoticaj = $('p0a-poticaj').value === 'yes';
 
   // Annual amount
@@ -865,29 +876,51 @@ function updateP0a() {
     }
   }
 
-  $('p0a-total').textContent = fmt(val);
-  $('p0a-earn').textContent = fmt(val - totalIn);
-  $('p0a-multi').textContent = (val/totalIn).toFixed(2)+'x';
+  const profit = val - totalIn;
+  const taxMeta = calcCroatiaCapitalTax(profit, god);
+  const afterTaxVal = val - taxMeta.taxAmount;
+  const afterTaxProfit = afterTaxVal - totalIn;
+
+  $('p0a-total').textContent = fmt(afterTaxVal);
+  $('p0a-earn').textContent = fmt(afterTaxProfit);
+  $('p0a-multi').textContent = (afterTaxVal/totalIn).toFixed(2)+'x';
   $('p0a-in').textContent = fmt(totalIn);
   $('p0a-poticaj-val').textContent = fmt(totalPoticaj);
   $('p0a-total-in').textContent = fmt(totalIn + totalPoticaj);
-  $('p0a-lump').textContent = fmt(val);
-  $('p0a-monthly').textContent = fmt(val*0.04/12)+'/mj';
+  $('p0a-lump').textContent = fmt(afterTaxVal);
+  $('p0a-monthly').textContent = fmt(afterTaxVal*0.04/12)+'/mj';
   $('p0a-rate-used').textContent = rate.toFixed(2)+'%/god';
   $('p0a-info').innerHTML = DOMPurify.sanitize(`Korišten <strong>5-godišnji prosjek</strong> fonda (${r5y}%). Prinos 2024: <strong>${r2024}%</strong>. ${usePoticaj?`Godišnji poticaj: <strong>${fmt(poticajGod)}</strong>.`:''}`, { ALLOWED_TAGS: ['strong'], ALLOWED_ATTR: [] });
+  if (taxMeta.isExempt) {
+    $('p0a-tax-main').textContent = 'Porez: 0€ (Oslobođeno nakon 2 god.)';
+    $('p0a-tax-sub').textContent = 'Horizon ulaganja je 2+ godine, pa se kapitalna dobit ne oporezuje.';
+  } else {
+    $('p0a-tax-main').textContent = `Porez: -${fmt(Math.round(taxMeta.taxAmount))} (12% na dobit)`;
+    $('p0a-tax-sub').textContent = `Procijenjena dobit: ${fmt(Math.round(profit))}. Oduzeto poreza: ${fmt(Math.round(taxMeta.taxAmount))}.`;
+  }
   $('p0a-tbody').innerHTML = sanitizeTbody(tbody.join(''));
 
   // Chart single fund
   // Spremi full podatke za period filter (1Y,3Y,5Y,...,SVE)
-  storeChartData('p0a-chart', labels, [
-    {label:fundName,data:vals,borderColor:'#e8a44a',backgroundColor:'rgba(232,164,74,0.08)',fill:true,borderWidth:2.5,pointRadius:0,tension:0.4}
-  ]);
+  const valsAfterTax = vals.map((v, idx) => {
+    const yearsAtPoint = idx + 1;
+    const investedAtPoint = initial + annualUplata * yearsAtPoint;
+    const pointProfit = Math.max(0, v - investedAtPoint);
+    const pointTax = yearsAtPoint < 2 ? pointProfit * 0.12 : 0;
+    return Math.round(v - pointTax);
+  });
+  const p0aDs = [
+    {label:fundName,data:vals,borderColor:'#e8a44a',backgroundColor:'rgba(232,164,74,0.08)',fill:true,borderWidth:2.5,pointRadius:0,tension:0.4},
+  ];
+  if (showTaxNet) {
+    p0aDs.push({label:'Neto (nakon poreza)',data:valsAfterTax,borderColor:'#4ae8a0',backgroundColor:'transparent',fill:false,borderWidth:1.6,pointRadius:0,tension:0.4,borderDash:[4,3]});
+  }
+  storeChartData('p0a-chart', labels, p0aDs);
   if(!chartP0a){
-    chartP0a=makeChart('p0a-chart',labels,[{label:fundName,data:vals,borderColor:'#e8a44a',backgroundColor:'rgba(232,164,74,0.08)',fill:true,borderWidth:2.5,pointRadius:0,tension:0.4}]);
+    chartP0a=makeChart('p0a-chart',labels,p0aDs);
   } else {
     chartP0a.data.labels=labels;
-    chartP0a.data.datasets[0].data=vals;
-    chartP0a.data.datasets[0].label=fundName;
+    chartP0a.data.datasets = p0aDs;
     chartP0a.update();
   }
 
@@ -915,13 +948,20 @@ function updateP0a() {
     years: god,
     expectedReturn: rate,
     initial,
-    finalAmount: Math.round(val),
-    curve: [...vals],
+    finalAmount: Math.round(afterTaxVal),
+    curve: showTaxNet ? [...valsAfterTax] : [...vals],
   });
 }
 
 ['p0a-uplata','p0a-initial','p0a-god'].forEach(id => $(id).addEventListener('syncedInput', updateP0a));
 ['p0a-fund-select','p0a-period','p0a-poticaj'].forEach(id=>$(id).addEventListener('change',updateP0a));
+if ($('p0a-net-toggle')) {
+  $('p0a-net-toggle').addEventListener('change', () => {
+    const lbl = $('p0a-net-toggle-lbl');
+    if (lbl) lbl.classList.toggle('active', $('p0a-net-toggle').checked);
+    updateP0a();
+  });
+}
 
 // ============ PAGE 0B: ETF PLATFORME ============
 let chartP0b, chartP0bPlatforms;
@@ -964,7 +1004,7 @@ function updateP0b() {
   const uplata=parseFloat($('p0b-uplata-v').value)||parseFloat($('p0b-uplata').value)||1200;
   const initial=parseFloat($('p0b-initial-v').value)||parseFloat($('p0b-initial').value)||1000;
   const god=parseInt($('p0b-god-v').value)||parseInt($('p0b-god').value)||20;
-  const taxRate=+$('p0b-tax').value/100;
+  const showTaxNet = $('p0b-net-toggle') ? $('p0b-net-toggle').checked : false;
 
 
 
@@ -994,7 +1034,8 @@ function updateP0b() {
   const totalFees=arr[arr.length-1].fees;
   const totalIn=initial+uplata*god;
   const gain=netoVal-totalIn;
-  const afterTax=totalIn+gain*(1-taxRate);
+  const taxMeta = calcCroatiaCapitalTax(gain, god);
+  const afterTax=netoVal-taxMeta.taxAmount;
 
   $('p0b-gross').textContent=fmt(Math.round(brutoVal));
   $('p0b-net').textContent=fmt(netoVal);
@@ -1005,6 +1046,13 @@ function updateP0b() {
   $('p0b-fees-total').textContent=fmt(totalFees);
   $('p0b-fees-pct').textContent=((totalFees/(netoVal-totalIn+totalFees))*100).toFixed(1)+'% zarade';
   $('p0b-monthly').textContent=fmt(afterTax*0.04/12)+'/mj';
+  if (taxMeta.isExempt) {
+    $('p0b-tax-main').textContent = 'Porez: 0€ (Oslobođeno nakon 2 god.)';
+    $('p0b-tax-sub').textContent = 'Horizon ulaganja je 2+ godine, pa se kapitalna dobit ne oporezuje.';
+  } else {
+    $('p0b-tax-main').textContent = `Porez: -${fmt(Math.round(taxMeta.taxAmount))} (12% na dobit)`;
+    $('p0b-tax-sub').textContent = `Procijenjena dobit: ${fmt(Math.round(gain))}. Oduzeto poreza: ${fmt(Math.round(taxMeta.taxAmount))}.`;
+  }
 
   // Table
   const mils=[2,5,10,15,20,25,30,35,40].filter(y=>y<=god);
@@ -1014,7 +1062,8 @@ function updateP0b() {
     let b=initial; for(let i=0;i<y;i++) b=(b+uplata)*(1+etf.rate/100);
     const inp2=initial+uplata*y;
     const g2=a.val-inp2;
-    return `<tr><td>${y}.</td><td style="color:var(--muted2)">${fmt(inp2)}</td><td style="color:var(--etf-l)">${fmt(Math.round(b))}</td><td style="color:var(--pepp-l)">${fmt(a.val)}</td><td style="color:var(--red)">${fmt(a.fees)}</td><td style="color:var(--etf-l)">${fmt(inp2+g2*(1-taxRate))}</td></tr>`;
+    const rowTax = y < 2 ? Math.max(0, g2) * 0.12 : 0;
+    return `<tr><td>${y}.</td><td style="color:var(--muted2)">${fmt(inp2)}</td><td style="color:var(--etf-l)">${fmt(Math.round(b))}</td><td style="color:var(--pepp-l)">${fmt(a.val)}</td><td style="color:var(--red)">${fmt(a.fees)}</td><td style="color:var(--etf-l)">${fmt(a.val-rowTax)}</td></tr>`;
   }).join(''));
 
   // Chart single
@@ -1026,17 +1075,21 @@ function updateP0b() {
     bv=(bv+uplata)*(1+etf.rate/100);
     brutoArr.push(Math.round(bv));
     netoArr.push(arr[i-1].val);
-    const ii=initial+uplata*i; const gg=arr[i-1].val-ii;
-    afterArr.push(Math.round(ii+gg*(1-taxRate)));
+    const ii=initial+uplata*i;
+    const gg=arr[i-1].val-ii;
+    const taxAtPoint=i<2?Math.max(0,gg)*0.12:0;
+    afterArr.push(Math.round(arr[i-1].val-taxAtPoint));
   }
   const ds=[
     {label:'Bruto',data:brutoArr,borderColor:'#4ae8a0',backgroundColor:'rgba(74,232,160,0.06)',fill:true,borderWidth:2,pointRadius:0,tension:0.4},
     {label:'Neto (naknade)',data:netoArr,borderColor:'#4a9fe8',backgroundColor:'rgba(74,159,232,0.06)',fill:true,borderWidth:2,pointRadius:0,tension:0.4},
-    {label:'Neto (porez)',data:afterArr,borderColor:'#e8a44a',backgroundColor:'transparent',fill:false,borderWidth:1.5,pointRadius:0,tension:0.4,borderDash:[4,3]},
   ];
+  if (showTaxNet) {
+    ds.push({label:'Neto (nakon poreza)',data:afterArr,borderColor:'#e8a44a',backgroundColor:'transparent',fill:false,borderWidth:1.5,pointRadius:0,tension:0.4,borderDash:[4,3]});
+  }
   storeChartData('p0b-chart', labels, ds);
   if(!chartP0b){ chartP0b=makeChart('p0b-chart',labels,ds); }
-  else{ chartP0b.data.labels=labels; chartP0b.data.datasets.forEach((d,i)=>{d.data=ds[i].data;}); chartP0b.update(); }
+  else{ chartP0b.data.labels=labels; chartP0b.data.datasets=ds; chartP0b.update(); }
 
   // Platform comparison chart
   const plKeys=['ibkr','t212','t212card','finax'];
@@ -1085,7 +1138,14 @@ function updateP0b() {
 }
 
 ['p0b-uplata','p0b-initial','p0b-god','p0b-custom-r'].forEach(id => $(id).addEventListener('syncedInput', updateP0b));
-['p0b-etf-select','p0b-platform','p0b-tax'].forEach(id=>$(id).addEventListener('change',updateP0b));
+['p0b-etf-select','p0b-platform'].forEach(id=>$(id).addEventListener('change',updateP0b));
+if ($('p0b-net-toggle')) {
+  $('p0b-net-toggle').addEventListener('change', () => {
+    const lbl = $('p0b-net-toggle-lbl');
+    if (lbl) lbl.classList.toggle('active', $('p0b-net-toggle').checked);
+    updateP0b();
+  });
+}
 
 function updatePeppStrategyModel() {
   const fundSel = $('pepp-strategy-fund');
@@ -1127,10 +1187,10 @@ function updatePeppStrategyModel() {
 const SLIDER_PAIRS = [
   ['p0a-uplata','p0a-uplata-v',10,5000,0.01],
   ['p0a-initial','p0a-initial-v',0,20000,0.01],
-  ['p0a-god','p0a-god-v',5,60,1],
+  ['p0a-god','p0a-god-v',1,60,1],
   ['p0b-uplata','p0b-uplata-v',100,5000,0.01],
   ['p0b-initial','p0b-initial-v',0,20000,0.01],
-  ['p0b-god','p0b-god-v',2,60,1],
+  ['p0b-god','p0b-god-v',1,60,1],
   ['p0b-custom-r','p0b-custom-r-v',2,18,0.1],
   ['p1-uplata','p1-uplata-v',200,5000,0.01],
   ['p1-god','p1-god-v',5,60,1],
