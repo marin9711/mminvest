@@ -1,115 +1,113 @@
 :root {
-  /* Pojačana vidljivost "muted" teksta na tamnijoj pozadini */
-  --muted2: #c5cfe9;
+  --text-open: #1f2937;
+  --muted-open: #334155;
+  --muted-open-soft: #475569;
+  --text-card: #f1f5f9;
+  --muted-card: #cbd5e1;
 }
 
-/* Edukacija — tamna pozadina: svijetli tekst za čitljivost */
-.edu-hero h1 {
-  color: var(--text);
+/* ── Global contrast system ── */
+/* Context A: tekst na otvorenim/svjetlijim podlogama */
+#home .home-hero .brand-big {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 55%, #334155 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-.edu-hero p {
-  color: var(--muted2) !important;
+#home .home-hero .tagline,
+.page-header p,
+.quiz-hero p,
+.feedback-hero p,
+.edu-hero p,
+.plan-advisor-sub,
+.version-desc {
+  color: var(--muted-open) !important;
 }
 
-.edu-section-title {
-  color: var(--text);
+.quiz-hero h1,
+.feedback-hero h1,
+.edu-hero h1,
+.edu-section-title,
+.plan-advisor-title {
+  color: var(--text-open) !important;
 }
 
-/* Naslovi u feedback / AI karticama — ove kartice imaju tamnu pozadinu, trebaju svijetli tekst */
+#home .home-hero .home-cta-skip {
+  color: var(--text-open);
+  border-color: rgba(51, 65, 85, 0.35);
+  background: rgba(255, 255, 255, 0.55);
+}
+
+#home .home-hero .home-cta-skip:hover {
+  color: #0f172a;
+  border-color: #334155;
+  background: rgba(255, 255, 255, 0.75);
+}
+
+/* Context B: tekst unutar tamnih kartica/elemenata ostaje svijetao */
+.glass-card,
+.feature-card,
+.quiz-card,
+.plan-card,
+.table-card,
+.chart-card,
+.controls,
+.step-card,
+.ai-section,
+.home-quiz-inner,
+.plan-result,
+.quiz-result-card,
+.edu-card,
+.edu-book-highlight,
+.rating-section,
+.feedback-form-card,
+.winner-banner,
+.split-scenario,
+.payout-card {
+  color: var(--text-card);
+}
+
+.feature-card .fc-title,
 .feedback-form-card h3,
 .rating-section h3,
 .poll-section h3,
-.ai-chat-title {
-  color: var(--text);
-}
-
-/* Feedback hero — tamna pozadina: svijetli tekst */
-.feedback-hero h1 {
-  color: var(--text);
-}
-
-.feedback-hero p {
-  color: var(--muted2) !important;
-}
-
-/* Quiz (Koji put?) hero i pitanja — tamna pozadina: svijetli tekst */
-.quiz-hero h1 {
-  color: var(--text);
-}
-
-.quiz-hero p {
-  color: var(--muted2) !important;
-}
-
-.quiz-question {
-  color: var(--text) !important;
-}
-.quiz-sub {
-  color: var(--muted2) !important;
-}
-
-/* Quiz opcije tekst */
-.quiz-option-text strong {
-  color: var(--text) !important;
-}
-.quiz-option-text span {
-  color: var(--muted2) !important;
-}
-
-/* Quiz result kartice — tamna pozadina: svijetli tekst */
+.ai-chat-title,
+.quiz-question,
 .qrc-title {
-  color: var(--text) !important;
-}
-.qrc-desc {
-  color: var(--muted2) !important;
-}
-.qrc-label {
-  color: var(--muted) !important;
+  color: var(--text-card) !important;
 }
 
-/* Quiz result restart gumb */
+.feature-card .fc-desc,
+.quiz-sub,
+.quiz-option-text span,
+.qrc-desc,
+.qrc-label,
+.poll-subtitle,
+.poll-total,
+#rating-label,
+.rate-note {
+  color: var(--muted-card) !important;
+}
+
+.quiz-option-text strong {
+  color: var(--text-card) !important;
+}
+
 .quiz-restart-btn {
-  color: var(--muted2) !important;
+  color: var(--muted-card) !important;
   border-color: var(--border) !important;
 }
+
 .quiz-restart-btn:hover {
-  color: var(--text) !important;
+  color: var(--text-card) !important;
   border-color: var(--muted) !important;
 }
 
-/* Poll tekst — samo izvan tamnih kartica (light pozadina) */
-.poll-label {
-  color: var(--text);
-}
-.poll-subtitle {
-  color: var(--muted2);
-}
-.poll-total {
-  color: var(--muted2);
-}
-
-/* Rating label */
-#rating-label {
-  color: var(--muted2);
-}
-
-/* Disclaimer na quiz/feedback stranici — čitljiv na tamnoj pozadini */
 .quiz-result .disclaimer,
-#feedback .disclaimer {
-  color: var(--muted2) !important;
-}
-
-/* Napomena o neto stopi nakon naknade */
-.rate-note {
-  font-size: 0.7rem;
-  color: var(--muted2);
-  margin-top: 0.2rem;
-}
-
-/* Dodatno podešavanje za disclaimer tekst da bude čitljiviji */
+#feedback .disclaimer,
 .disclaimer {
-  color: #e5e9ff;
+  color: var(--muted-card) !important;
 }
 
 /* ── Feedback Log u admin panelu ── */
@@ -235,28 +233,3 @@
 #admin-kv-list::-webkit-scrollbar-track { background: transparent; }
 #admin-kv-list::-webkit-scrollbar-thumb { background: #2e3850; border-radius: 4px; }
 
-/* ── Landing contrast contexts ── */
-/* Context A: hero tekst na svjetlijoj SVG/gradient pozadini */
-#home .home-hero .brand-big {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 55%, #334155 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-#home .home-hero .tagline {
-  color: #334155 !important;
-}
-#home .home-hero .home-cta-skip {
-  color: #334155;
-  border-color: rgba(51, 65, 85, 0.35);
-  background: rgba(255, 255, 255, 0.55);
-}
-#home .home-hero .home-cta-skip:hover {
-  color: #0f172a;
-  border-color: #334155;
-  background: rgba(255, 255, 255, 0.75);
-}
-
-/* Context B: tekst unutar tamnih kartica ostaje svijetao */
-#home .feature-card .fc-title { color: var(--text) !important; }
-#home .feature-card .fc-desc { color: var(--muted2) !important; }
