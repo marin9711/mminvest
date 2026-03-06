@@ -1554,45 +1554,110 @@ function switchAdminTab(tab) {
 async function loadFeedbackLog() {
   const logEl = document.getElementById('admin-feedback-log');
   if (!adminToken || !logEl) return;
-  logEl.innerHTML = '<div class="fb-log-empty">Učitavanje...</div>';
+  logEl.textContent = 'Učitavanje...';
   try {
     const resp = await fetch(WORKER_URL + '/admin/api/feedback', {
       headers: { 'Authorization': 'Bearer ' + adminToken }
     });
-    if (!resp.ok) { logEl.innerHTML = '<div class="fb-log-empty">⚠️ Greška pri dohvaćanju.</div>'; return; }
+    if (!resp.ok) {
+      logEl.textContent = '⚠️ Greška pri dohvaćanju.';
+      logEl.className = 'fb-log-empty';
+      return;
+    }
     const data = await resp.json();
     const items = data.items || [];
-    if (!items.length) { logEl.innerHTML = '<div class="fb-log-empty">Nema feedback unosa.</div>'; return; }
+    if (!items.length) {
+      logEl.textContent = 'Nema feedback unosa.';
+      logEl.className = 'fb-log-empty';
+      return;
+    }
     const typeIcon = { prijedlog:'💡', pohvala:'👏', greška:'🐛', pitanje:'❓' };
-    logEl.innerHTML = DOMPurify.sanitize(items.slice().reverse().map((it, idx) => {
+    logEl.innerHTML = '';
+
+    // Renderaj DOM imperativno kako bismo koristili textContent za user podatke
+    items.slice().reverse().forEach((it, idx) => {
       const realIdx = items.length - 1 - idx;
       const d = new Date(it.ts);
       const ts = d.toLocaleDateString('hr-HR') + ' ' + d.toLocaleTimeString('hr-HR', {hour:'2-digit',minute:'2-digit'});
-      const rating = it.rating ? '⭐'.repeat(it.rating) : '';
-      const statusBadge = it.reply
-        ? '<span class="fb-log-status odgovoreno">✅ odgovoreno</span>'
-        : (it.email ? '<span class="fb-log-status novo">🔵 čeka odgovor</span>' : '');
-      const emailRow = it.email ? `<div class="fb-log-email">📧 ${it.email.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>` : '';
-      const replyRow = it.reply
-        ? `<div class="fb-log-reply">💬 Odgovor: ${it.reply.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`
-        : (it.email ? `<div class="fb-reply-row">
-            <input class="fb-reply-input" id="reply-input-${realIdx}" placeholder="Upiši odgovor korisniku...">
-            <button class="fb-reply-btn" id="reply-btn-${realIdx}" onclick="sendReply(${realIdx})">📨 Pošalji</button>
-          </div>` : '');
-      return `<div class="fb-log-item" id="fb-item-${realIdx}">
-        <div class="fb-log-meta">
-          <span class="fb-log-type ${it.type}">${typeIcon[it.type]||''} ${it.type}</span>
-          <span class="fb-log-ts">${ts}</span>
-          ${statusBadge}
-        </div>
-        ${emailRow}
-        <div class="fb-log-text">${it.text.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
-        ${rating ? '<div class="fb-log-rating">' + rating + '</div>' : ''}
-        ${replyRow}
-      </div>`;
-    }).join(''));
+      const ratingStars = it.rating && it.rating > 0 ? '⭐'.repeat(Math.min(5, it.rating)) : '';
+
+      const itemDiv = document.createElement('div');
+      itemDiv.className = 'fb-log-item';
+      itemDiv.id = 'fb-item-' + realIdx;
+
+      const metaDiv = document.createElement('div');
+      metaDiv.className = 'fb-log-meta';
+
+      const typeSpan = document.createElement('span');
+      const safeType = ['prijedlog','pohvala','greška','pitanje'].includes(it.type) ? it.type : 'drugo';
+      typeSpan.className = 'fb-log-type ' + safeType;
+      typeSpan.textContent = (typeIcon[safeType] || '') + ' ' + safeType;
+
+      const tsSpan = document.createElement('span');
+      tsSpan.className = 'fb-log-ts';
+      tsSpan.textContent = ts;
+
+      metaDiv.appendChild(typeSpan);
+      metaDiv.appendChild(tsSpan);
+
+      if (it.email) {
+        const statusSpan = document.createElement('span');
+        statusSpan.className = 'fb-log-status ' + (it.reply ? 'odgovoreno' : 'novo');
+        statusSpan.textContent = it.reply ? '✅ odgovoreno' : '🔵 čeka odgovor';
+        metaDiv.appendChild(statusSpan);
+      }
+
+      itemDiv.appendChild(metaDiv);
+
+      if (it.email) {
+        const emailDiv = document.createElement('div');
+        emailDiv.className = 'fb-log-email';
+        emailDiv.textContent = '📧 ' + it.email;
+        itemDiv.appendChild(emailDiv);
+      }
+
+      const textDiv = document.createElement('div');
+      textDiv.className = 'fb-log-text';
+      textDiv.textContent = it.text || '';
+      itemDiv.appendChild(textDiv);
+
+      if (ratingStars) {
+        const ratingDiv = document.createElement('div');
+        ratingDiv.className = 'fb-log-rating';
+        ratingDiv.textContent = ratingStars;
+        itemDiv.appendChild(ratingDiv);
+      }
+
+      if (it.reply) {
+        const replyDiv = document.createElement('div');
+        replyDiv.className = 'fb-log-reply';
+        replyDiv.textContent = '💬 Odgovor: ' + it.reply;
+        itemDiv.appendChild(replyDiv);
+      } else if (it.email) {
+        const replyRow = document.createElement('div');
+        replyRow.className = 'fb-reply-row';
+
+        const input = document.createElement('input');
+        input.className = 'fb-reply-input';
+        input.id = 'reply-input-' + realIdx;
+        input.placeholder = 'Upiši odgovor korisniku...';
+
+        const btn = document.createElement('button');
+        btn.className = 'fb-reply-btn';
+        btn.id = 'reply-btn-' + realIdx;
+        btn.textContent = '📨 Pošalji';
+        btn.onclick = () => sendReply(realIdx);
+
+        replyRow.appendChild(input);
+        replyRow.appendChild(btn);
+        itemDiv.appendChild(replyRow);
+      }
+
+      logEl.appendChild(itemDiv);
+    });
   } catch(e) {
-    logEl.innerHTML = '<div class="fb-log-empty">⚠️ Greška pri dohvaćanju.</div>';
+    logEl.textContent = '⚠️ Greška pri dohvaćanju.';
+    logEl.className = 'fb-log-empty';
   }
 }
 
