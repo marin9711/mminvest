@@ -4252,6 +4252,35 @@ tr:hover td { background: var(--surface2) !important; }
 
         <div style="border-top:1px solid var(--border); margin-bottom:0.75rem;"></div>
 
+        <!-- Fund data editor -->
+        <div id="admin-funds-editor" class="admin-funds-editor">
+          <div class="admin-funds-head">
+            <div class="admin-funds-title">🧾 Fund Data Editor (DMF + PEPP)</div>
+            <div class="admin-funds-sub">Promjene vrijede za trenutnu sesiju i odmah utjecu na kalkulatore.</div>
+          </div>
+          <div class="admin-funds-table-wrap">
+            <table class="admin-funds-table">
+              <thead>
+                <tr>
+                  <th>Tip</th>
+                  <th>Naziv fonda</th>
+                  <th>Naknada (%/god)</th>
+                  <th>Prinos (%/god)</th>
+                </tr>
+              </thead>
+              <tbody id="admin-funds-tbody"></tbody>
+            </table>
+          </div>
+          <div class="admin-funds-actions">
+            <button type="button" id="admin-funds-generate-btn" class="admin-funds-btn generate">Generate JSON</button>
+            <button type="button" id="admin-funds-copy-btn" class="admin-funds-btn copy">Copy Snippet</button>
+          </div>
+          <textarea id="admin-funds-json-output" class="admin-funds-json-output" rows="8" readonly placeholder="Klikni 'Generate JSON' za snippet koji mozes copy-paste u script.js"></textarea>
+          <div id="admin-funds-editor-msg" class="admin-funds-editor-msg"></div>
+        </div>
+
+        <div style="border-top:1px solid var(--border); margin-bottom:0.75rem;"></div>
+
         <!-- Masovne operacije -->
         <div style="margin-bottom:1rem;">
           <div style="font-size:0.78rem; font-weight:700; color:var(--muted2); margin-bottom:0.5rem;">🗂️ Masovne operacije</div>

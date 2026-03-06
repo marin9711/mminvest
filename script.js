@@ -1287,18 +1287,153 @@ function ensureP0aFireUi() {
 // ============ PAGE 0A: HRVATSKI DMF ============
 let chartP0aAll, chartP0a;
 
-const DMF_FUNDS = [
-  {name:'Croatia 1000A',      r2024:11.5,  r5y:5.35, r10y:5.60, rAll:5.77, risk:'VISOK',   color:'#4ae8a0'},
-  {name:'Erste Plavi Expert', r2024:10.44, r5y:6.62, r10y:5.95, rAll:5.30, risk:'VISOK',   color:'#4a9fe8'},
-  {name:'AZ Profit',          r2024:8.89,  r5y:4.51, r10y:4.80, rAll:5.10, risk:'UMJEREN', color:'#e8a44a'},
-  {name:'Croatia DMF',        r2024:7.72,  r5y:4.12, r10y:3.90, rAll:3.67, risk:'UMJEREN', color:'#f5c87a'},
-  {name:'AZ Benefit',         r2024:4.14,  r5y:3.20, r10y:3.10, rAll:3.00, risk:'NIZAK',   color:'#7abff5'},
-  {name:'Raiffeisen DMF',     r2024:3.36,  r5y:3.00, r10y:2.90, rAll:2.80, risk:'NIZAK',   color:'#8890b0'},
-  {name:'Erste Plavi Protect',r2024:3.32,  r5y:2.80, r10y:2.70, rAll:2.60, risk:'NIZAK',   color:'#6b7394'},
-  {name:'Croatia 1000C',      r2024:3.13,  r5y:2.50, r10y:2.50, rAll:2.50, risk:'NIZAK',   color:'#5a6180'},
+let DMF_FUNDS = [
+  {name:'Croatia 1000A',      fee:1.80, r2024:11.5,  r5y:5.35, r10y:5.60, rAll:5.77, risk:'VISOK',   color:'#4ae8a0'},
+  {name:'Erste Plavi Expert', fee:1.65, r2024:10.44, r5y:6.62, r10y:5.95, rAll:5.30, risk:'VISOK',   color:'#4a9fe8'},
+  {name:'AZ Profit',          fee:1.55, r2024:8.89,  r5y:4.51, r10y:4.80, rAll:5.10, risk:'UMJEREN', color:'#e8a44a'},
+  {name:'Croatia DMF',        fee:1.45, r2024:7.72,  r5y:4.12, r10y:3.90, rAll:3.67, risk:'UMJEREN', color:'#f5c87a'},
+  {name:'AZ Benefit',         fee:1.20, r2024:4.14,  r5y:3.20, r10y:3.10, rAll:3.00, risk:'NIZAK',   color:'#7abff5'},
+  {name:'Raiffeisen DMF',     fee:1.15, r2024:3.36,  r5y:3.00, r10y:2.90, rAll:2.80, risk:'NIZAK',   color:'#8890b0'},
+  {name:'Erste Plavi Protect',fee:1.05, r2024:3.32,  r5y:2.80, r10y:2.70, rAll:2.60, risk:'NIZAK',   color:'#6b7394'},
+  {name:'Croatia 1000C',      fee:1.00, r2024:3.13,  r5y:2.50, r10y:2.50, rAll:2.50, risk:'NIZAK',   color:'#5a6180'},
 ];
-const PEPP_RATE = 7.0; // Finax historijski ~8% bruto - 1% naknada = ~7% neto
-const PEPP_RATE_GROSS = 8.0;
+let PEPP_RATE = 7.0; // Finax historijski ~8% bruto - 1% naknada = ~7% neto
+let PEPP_RATE_GROSS = 8.0;
+const PEPP_PORTFOLIOS = [
+  { name: 'Finax 100/0 (globalni dionicki ETF)', fee: 1.0, return: 7.0 },
+  { name: 'Finax 80/20 (umjereni portfelj)', fee: 1.0, return: 6.0 },
+  { name: 'Finax 60/40 (konzervativni portfelj)', fee: 1.0, return: 4.5 },
+];
+
+let funds = {
+  dmf: DMF_FUNDS.map((f) => ({ name: f.name, fee: Number(f.fee) || 0, return: Number(f.r5y) || 0 })),
+  pepp: PEPP_PORTFOLIOS.map((p) => ({ name: p.name, fee: Number(p.fee) || 0, return: Number(p.return) || 0 })),
+};
+
+function normalizeFundValue(value, fallback, min = 0, max = 100) {
+  const parsed = Number(String(value ?? '').replace(',', '.'));
+  if (!Number.isFinite(parsed)) return fallback;
+  return Math.max(min, Math.min(max, parsed));
+}
+
+function normalizeFundsForSession(inputFunds) {
+  const src = inputFunds || {};
+  const srcDmf = Array.isArray(src.dmf) ? src.dmf : [];
+  const srcPepp = Array.isArray(src.pepp) ? src.pepp : [];
+
+  const normalizedDmf = DMF_FUNDS.map((baseFund, idx) => {
+    const row = srcDmf[idx] || {};
+    return {
+      name: String(row.name || baseFund.name || `DMF fond ${idx + 1}`).trim() || baseFund.name,
+      fee: normalizeFundValue(row.fee, Number(baseFund.fee) || 0, 0, 20),
+      return: normalizeFundValue(row.return, Number(baseFund.r5y) || 0, 0, 30),
+    };
+  });
+
+  const normalizedPepp = (srcPepp.length ? srcPepp : PEPP_PORTFOLIOS).map((row, idx) => {
+    const fallback = PEPP_PORTFOLIOS[idx] || PEPP_PORTFOLIOS[0];
+    return {
+      name: String(row.name || fallback.name || `PEPP fond ${idx + 1}`).trim() || fallback.name,
+      fee: normalizeFundValue(row.fee, Number(fallback.fee) || 1, 0, 20),
+      return: normalizeFundValue(row.return, Number(fallback.return) || PEPP_RATE, 0, 30),
+    };
+  });
+
+  return { dmf: normalizedDmf, pepp: normalizedPepp };
+}
+
+function rebuildDmfSelectors() {
+  const p0aSel = $('p0a-fund-select');
+  if (p0aSel) {
+    const prevIdx = Number.isFinite(p0aSel.selectedIndex) ? p0aSel.selectedIndex : 0;
+    p0aSel.innerHTML = '';
+    DMF_FUNDS.forEach((fund) => {
+      const opt = document.createElement('option');
+      opt.value = `${Number(fund.r2024).toFixed(2)},${Number(fund.r5y).toFixed(2)}`;
+      opt.textContent = `${fund.name} (${String(fund.risk || '').toLowerCase()} rizik)`;
+      p0aSel.appendChild(opt);
+    });
+    p0aSel.selectedIndex = Math.max(0, Math.min(prevIdx, DMF_FUNDS.length - 1));
+  }
+
+  const p1Sel = $('p1-dmf-select');
+  if (p1Sel) {
+    const prevIdx = Number.isFinite(p1Sel.selectedIndex) ? p1Sel.selectedIndex : 0;
+    p1Sel.innerHTML = '';
+    DMF_FUNDS.forEach((fund) => {
+      const opt = document.createElement('option');
+      opt.value = fund.name;
+      opt.textContent = `${fund.name} — ${fund.risk} rizik`;
+      p1Sel.appendChild(opt);
+    });
+    p1Sel.selectedIndex = Math.max(0, Math.min(prevIdx, DMF_FUNDS.length - 1));
+  }
+}
+
+function rebuildPeppSelector() {
+  const peppSel = $('pepp-strategy-fund');
+  if (!peppSel) return;
+  const prevIdx = Number.isFinite(peppSel.selectedIndex) ? peppSel.selectedIndex : 0;
+  peppSel.innerHTML = '';
+  (funds.pepp || []).forEach((row) => {
+    const opt = document.createElement('option');
+    opt.value = `${Number(row.return).toFixed(2)},${row.name}`;
+    opt.textContent = row.name;
+    peppSel.appendChild(opt);
+  });
+  if (!peppSel.options.length) return;
+  peppSel.selectedIndex = Math.max(0, Math.min(prevIdx, peppSel.options.length - 1));
+  const rateInput = $('pepp-strategy-rate');
+  const selectedRate = Number(String(peppSel.value).split(',')[0]);
+  if (rateInput && document.activeElement !== rateInput && Number.isFinite(selectedRate)) {
+    rateInput.value = selectedRate.toFixed(1);
+  }
+}
+
+function applyFundsStateToRuntime(options = {}) {
+  const cfg = {
+    rebuildSelectors: options.rebuildSelectors !== false,
+    rerenderAdmin: options.rerenderAdmin !== false,
+    recalculate: options.recalculate === true,
+  };
+  funds = normalizeFundsForSession(funds);
+
+  DMF_FUNDS = DMF_FUNDS.map((baseFund, idx) => {
+    const row = funds.dmf[idx] || {};
+    const nextReturn = Number(row.return) || Number(baseFund.r5y) || 0;
+    return {
+      ...baseFund,
+      name: row.name || baseFund.name,
+      fee: Number(row.fee) || 0,
+      r5y: nextReturn,
+      r10y: nextReturn,
+      rAll: nextReturn,
+    };
+  });
+
+  const primaryPepp = funds.pepp[0] || { return: 7, fee: 1 };
+  PEPP_RATE = Number(primaryPepp.return) || 7;
+  PEPP_RATE_GROSS = PEPP_RATE + (Number(primaryPepp.fee) || 0);
+
+  if (cfg.rebuildSelectors) {
+    rebuildDmfSelectors();
+    rebuildPeppSelector();
+  }
+
+  if (cfg.recalculate) {
+    [updateP0a, updateP1, updateP2, updateP3].forEach((fn) => {
+      try { fn(); } catch (_) {}
+    });
+    try { updatePeppStrategyModel(); } catch (_) {}
+    try { renderMyStrategyDashboard(); } catch (_) {}
+  }
+
+  if (cfg.rerenderAdmin) {
+    try { renderAdminFundsEditor(); } catch (_) {}
+  }
+}
+
+applyFundsStateToRuntime({ rebuildSelectors: true, rerenderAdmin: false, recalculate: false });
 
 function updateP0a() {
   ensureP0aFireUi();
@@ -3344,7 +3479,7 @@ function switchAdminTab(tab) {
     if (tabContent) tabContent.classList.toggle('active', t === tab);
   });
   if (tab === 'fb') { loadFeedbackLog(); loadPollResults(); }
-  if (tab === 'mgmt') { loadKvItems(); renderAdminLiveStats(); loadAdminGlobalNotification(); }
+  if (tab === 'mgmt') { loadKvItems(); renderAdminLiveStats(); loadAdminGlobalNotification(); renderAdminFundsEditor(); }
 }
 
 async function loadFeedbackLog() {
@@ -3749,6 +3884,130 @@ function showMgmtMsg(text, type) {
   el.style.display = 'block';
   clearTimeout(el._hideTimer);
   el._hideTimer = setTimeout(() => { el.style.display = 'none'; }, 4500);
+}
+
+function showAdminFundsEditorMsg(text, isError) {
+  const msgEl = $('admin-funds-editor-msg');
+  if (!msgEl) return;
+  msgEl.textContent = text;
+  msgEl.style.display = 'block';
+  msgEl.style.color = isError ? '#f56060' : '#4ae8a0';
+  clearTimeout(msgEl._hideTimer);
+  msgEl._hideTimer = setTimeout(() => { msgEl.style.display = 'none'; }, 2800);
+}
+
+function renderAdminFundsEditor() {
+  const tbody = $('admin-funds-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+
+  const rows = [
+    ...(funds.dmf || []).map((fund, index) => ({ type: 'DMF', group: 'dmf', index, fund })),
+    ...(funds.pepp || []).map((fund, index) => ({ type: 'PEPP', group: 'pepp', index, fund })),
+  ];
+
+  rows.forEach(({ type, group, index, fund }) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><span class="admin-fund-type ${type === 'DMF' ? 'dmf' : 'pepp'}">${type}</span></td>
+      <td>
+        <input class="admin-fund-input admin-fund-input-name" type="text"
+          data-group="${group}" data-index="${index}" data-field="name" value="${String(fund.name || '').replace(/"/g, '&quot;')}">
+      </td>
+      <td>
+        <input class="admin-fund-input" type="number" min="0" max="20" step="0.01"
+          data-group="${group}" data-index="${index}" data-field="fee" value="${Number(fund.fee || 0).toFixed(2)}">
+      </td>
+      <td>
+        <input class="admin-fund-input" type="number" min="0" max="30" step="0.01"
+          data-group="${group}" data-index="${index}" data-field="return" value="${Number(fund.return || 0).toFixed(2)}">
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function handleAdminFundsEditorChange(e) {
+  const input = e.target;
+  if (!(input instanceof HTMLInputElement)) return;
+  if (!input.matches('.admin-fund-input')) return;
+
+  const group = input.dataset.group;
+  const index = Number(input.dataset.index);
+  const field = input.dataset.field;
+  if (!group || !Number.isFinite(index) || !field) return;
+  if (!funds[group] || !funds[group][index]) return;
+
+  if (field === 'name') {
+    const trimmed = String(input.value || '').trim();
+    if (!trimmed) {
+      showAdminFundsEditorMsg('Naziv fonda ne smije biti prazan.', true);
+      renderAdminFundsEditor();
+      return;
+    }
+    funds[group][index].name = trimmed;
+  } else {
+    const parsed = Number(String(input.value || '').replace(',', '.'));
+    if (!Number.isFinite(parsed)) {
+      showAdminFundsEditorMsg('Unesite ispravan broj za naknadu/prinos.', true);
+      renderAdminFundsEditor();
+      return;
+    }
+    funds[group][index][field] = parsed;
+  }
+
+  applyFundsStateToRuntime({ rebuildSelectors: true, rerenderAdmin: false, recalculate: true });
+  showAdminFundsEditorMsg('Promjena je primijenjena na trenutnu sesiju.', false);
+}
+
+function generateFundsSnippet() {
+  return `let funds = ${JSON.stringify(funds, null, 2)};`;
+}
+
+async function copyAdminFundsSnippet() {
+  const output = $('admin-funds-json-output');
+  if (!output || !output.value) {
+    showAdminFundsEditorMsg('Prvo kliknite "Generate JSON".', true);
+    return;
+  }
+  try {
+    await navigator.clipboard.writeText(output.value);
+    showAdminFundsEditorMsg('JSON snippet kopiran u clipboard.', false);
+  } catch (_) {
+    output.focus();
+    output.select();
+    try {
+      document.execCommand('copy');
+      showAdminFundsEditorMsg('JSON snippet kopiran u clipboard.', false);
+    } catch (_) {
+      showAdminFundsEditorMsg('Kopiranje nije uspjelo. Ručno kopirajte iz polja.', true);
+    }
+  }
+}
+
+function initAdminFundsEditor() {
+  const wrap = $('admin-funds-editor');
+  if (!wrap || wrap.dataset.bound === '1') return;
+  wrap.dataset.bound = '1';
+
+  wrap.addEventListener('change', handleAdminFundsEditorChange);
+
+  const generateBtn = $('admin-funds-generate-btn');
+  if (generateBtn) {
+    generateBtn.addEventListener('click', () => {
+      const output = $('admin-funds-json-output');
+      if (!output) return;
+      output.value = generateFundsSnippet();
+      showAdminFundsEditorMsg('JSON snippet je spreman za copy-paste.', false);
+    });
+  }
+
+  const copyBtn = $('admin-funds-copy-btn');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', () => { copyAdminFundsSnippet(); });
+  }
+
+  renderAdminFundsEditor();
 }
 
 // ========== QUIZ LOGIC ==========
@@ -4208,6 +4467,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (tabAi) tabAi.addEventListener('click', () => switchAdminTab('ai'));
   if (tabFb) tabFb.addEventListener('click', () => switchAdminTab('fb'));
   if (tabMgmt) tabMgmt.addEventListener('click', () => switchAdminTab('mgmt'));
+  initAdminFundsEditor();
 
   const notificationInput = document.getElementById('admin-global-notification-input');
   if (notificationInput) {

@@ -360,6 +360,154 @@
 #admin-kv-list::-webkit-scrollbar-track { background: transparent; }
 #admin-kv-list::-webkit-scrollbar-thumb { background: #2e3850; border-radius: 4px; }
 
+/* ── Admin Fund Data Editor ── */
+.admin-funds-editor {
+  margin-bottom: 1rem;
+}
+
+.admin-funds-head {
+  margin-bottom: 0.55rem;
+}
+
+.admin-funds-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #dbe6ff;
+}
+
+.admin-funds-sub {
+  margin-top: 0.2rem;
+  font-size: 0.72rem;
+  color: #7d8aaa;
+}
+
+.admin-funds-table-wrap {
+  max-height: 230px;
+  overflow: auto;
+  border: 1px solid #2e3850;
+  border-radius: 10px;
+}
+
+.admin-funds-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 560px;
+  font-size: 0.72rem;
+}
+
+.admin-funds-table th {
+  text-align: left;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  color: #8ea0c2;
+  padding: 0.45rem 0.55rem;
+  background: rgba(30, 41, 59, 0.8);
+  border-bottom: 1px solid #2e3850;
+  position: sticky;
+  top: 0;
+}
+
+.admin-funds-table td {
+  padding: 0.4rem 0.55rem;
+  border-bottom: 1px solid rgba(46, 56, 80, 0.7);
+  vertical-align: middle;
+}
+
+.admin-fund-type {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.admin-fund-type.dmf {
+  background: rgba(232, 164, 74, 0.16);
+  color: #f5c87a;
+}
+
+.admin-fund-type.pepp {
+  background: rgba(74, 159, 232, 0.16);
+  color: #7abff5;
+}
+
+.admin-fund-input {
+  width: 100%;
+  padding: 0.35rem 0.45rem;
+  border-radius: 7px;
+  border: 1px solid #2e3850;
+  background: rgba(25, 32, 48, 0.86);
+  color: #e2e8f0;
+  font-size: 0.72rem;
+}
+
+.admin-fund-input-name {
+  min-width: 180px;
+}
+
+.admin-fund-input:focus {
+  outline: none;
+  border-color: #4a9fe8;
+}
+
+.admin-funds-actions {
+  display: flex;
+  gap: 0.45rem;
+  margin-top: 0.6rem;
+}
+
+.admin-funds-btn {
+  flex: 1;
+  min-width: 120px;
+  padding: 0.48rem 0.7rem;
+  border-radius: 8px;
+  border: 1px solid #2e3850;
+  font-size: 0.73rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.admin-funds-btn.generate {
+  background: rgba(74, 159, 232, 0.16);
+  color: #a8d4f5;
+  border-color: rgba(74, 159, 232, 0.45);
+}
+
+.admin-funds-btn.copy {
+  background: rgba(74, 232, 160, 0.14);
+  color: #b8f3d8;
+  border-color: rgba(74, 232, 160, 0.4);
+}
+
+.admin-funds-btn:hover {
+  opacity: 0.9;
+}
+
+.admin-funds-json-output {
+  width: 100%;
+  margin-top: 0.6rem;
+  border-radius: 9px;
+  border: 1px solid #2e3850;
+  background: rgba(20, 27, 42, 0.88);
+  color: #c5d4f0;
+  font-size: 0.69rem;
+  line-height: 1.45;
+  font-family: 'DM Mono', monospace;
+  padding: 0.55rem 0.65rem;
+  resize: vertical;
+}
+
+.admin-funds-editor-msg {
+  display: none;
+  margin-top: 0.45rem;
+  font-size: 0.73rem;
+  font-weight: 700;
+}
+
 /* ===== Table identity + focus mode ===== */
 .table-card {
   position: relative;
