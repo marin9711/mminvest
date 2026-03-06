@@ -44,6 +44,7 @@ function escapeHtml(s) {
 }
 
 // ── Admin Dashboard (glassmorphism, tabovi) ──
+// IMPORTANT: Keep feature parity with Pages admin panel (index.html/script.js).
 function adminDashboardPage(isOn, systemPromptOverride = '', appStatus = '', msg = '') {
   const esc = escapeHtml;
   return `<!DOCTYPE html>
@@ -56,102 +57,138 @@ function adminDashboardPage(isOn, systemPromptOverride = '', appStatus = '', msg
   * { margin:0; padding:0; box-sizing:border-box; }
   body { background: linear-gradient(135deg, #0f1219 0%, #181d28 50%, #1a1f2e 100%); color:#e2e5f0; font-family:'Segoe UI',system-ui,sans-serif; min-height:100vh; padding:1rem; }
   .wrap { max-width:1280px; margin:0 auto; width:100%; padding:0 1rem; }
-  .header { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem; }
-  .header h1 { font-size:1.5rem; }
-  .header .sub { color:#7d8aaa; font-size:0.85rem; }
-  .glass { background: rgba(30,36,51,0.65); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(74,158,232,0.15); border-radius:16px; padding:1.5rem; margin-bottom:1rem; }
-  .tabs { display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1rem; }
-  .tabs button { padding:0.6rem 1rem; border:1px solid rgba(46,56,80,0.8); background:rgba(30,36,51,0.6); color:#9aa2c0; border-radius:10px; cursor:pointer; font-size:0.9rem; }
+  .header { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom:1.2rem; }
+  .header h1 { font-size:1.4rem; }
+  .sub { color:#7d8aaa; font-size:0.82rem; }
+  .glass { background:rgba(30,36,51,0.65); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border:1px solid rgba(74,158,232,0.15); border-radius:16px; padding:1.2rem; margin-bottom:1rem; }
+  .tabs { display:flex; gap:0.45rem; flex-wrap:wrap; margin-bottom:1rem; }
+  .tabs button { padding:0.55rem 0.8rem; border:1px solid rgba(46,56,80,0.8); background:rgba(30,36,51,0.6); color:#9aa2c0; border-radius:9px; cursor:pointer; font-size:0.78rem; font-weight:700; }
   .tabs button:hover { background:rgba(46,56,80,0.5); color:#e2e5f0; }
   .tabs button.active { background:rgba(74,158,232,0.2); border-color:rgba(74,158,232,0.4); color:#4a9fe8; }
   .tab-panel { display:none; }
   .tab-panel.active { display:block; }
-  .status-badge { display:inline-block; padding:0.35rem 0.75rem; border-radius:999px; font-size:0.85rem; font-weight:700; }
+  .status-badge { display:inline-block; padding:0.33rem 0.7rem; border-radius:999px; font-size:0.78rem; font-weight:700; }
   .status-badge.on { background:rgba(74,232,160,0.2); border:1px solid rgba(74,232,160,0.4); color:#4ae8a0; }
   .status-badge.off { background:rgba(245,96,96,0.2); border:1px solid rgba(245,96,96,0.4); color:#f56060; }
-  label { display:block; font-size:0.8rem; color:#9aa2c0; margin-bottom:0.35rem; }
-  input[type=text], input[type=email], textarea { width:100%; padding:0.6rem 0.9rem; background:rgba(36,43,61,0.8); border:1px solid #2e3850; border-radius:8px; color:#e2e5f0; font-size:0.9rem; margin-bottom:1rem; outline:none; }
-  textarea { min-height:100px; resize:vertical; }
+  label { display:block; font-size:0.76rem; color:#9aa2c0; margin-bottom:0.35rem; }
+  input[type=text], textarea { width:100%; padding:0.56rem 0.75rem; background:rgba(36,43,61,0.8); border:1px solid #2e3850; border-radius:8px; color:#e2e5f0; font-size:0.82rem; margin-bottom:0.7rem; outline:none; }
+  textarea { min-height:96px; resize:vertical; }
   input:focus, textarea:focus { border-color:#4a9fe8; }
-  .btn { padding:0.6rem 1.2rem; border:none; border-radius:10px; font-size:0.9rem; font-weight:600; cursor:pointer; transition:opacity 0.2s; }
-  .btn-primary { background: linear-gradient(135deg,#4a9fe8,#4ae8a0); color:#0b0d12; }
-  .btn-danger { background: linear-gradient(135deg,#f56060,#d44); color:#fff; }
-  .btn-secondary { background: rgba(46,56,80,0.8); color:#e2e5f0; border:1px solid #2e3850; }
+  .btn { padding:0.5rem 0.8rem; border:none; border-radius:8px; font-size:0.76rem; font-weight:700; cursor:pointer; transition:opacity 0.2s; }
+  .btn-primary { background:linear-gradient(135deg,#4a9fe8,#4ae8a0); color:#0b0d12; }
+  .btn-danger { background:linear-gradient(135deg,#f56060,#d44); color:#fff; }
+  .btn-secondary { background:rgba(46,56,80,0.8); color:#e2e5f0; border:1px solid #2e3850; }
   .btn:hover { opacity:0.9; }
-  .msg { margin-bottom:1rem; padding:0.6rem; border-radius:8px; font-size:0.85rem; background:rgba(74,232,160,0.1); border:1px solid rgba(74,232,160,0.3); color:#4ae8a0; }
-  .err { background:rgba(245,96,96,0.1); border:1px solid rgba(245,96,96,0.3); color:#f56060; }
-  .logout { font-size:0.8rem; color:#7d8aaa; text-decoration:underline; cursor:pointer; }
-  table { width:100%; border-collapse:collapse; font-size:0.85rem; }
-  th, td { text-align:left; padding:0.5rem 0.75rem; border-bottom:1px solid #2e3850; }
-  th { color:#9aa2c0; font-weight:600; }
-  .log-line { font-family:monospace; font-size:0.8rem; padding:0.35rem 0; border-bottom:1px solid rgba(46,56,80,0.5); }
-  .faq-row { margin-bottom:1rem; padding:1rem; background:rgba(36,43,61,0.5); border-radius:10px; }
-  .inquiry-card { padding:1rem; background:rgba(36,43,61,0.5); border-radius:10px; margin-bottom:1rem; }
-  .inquiry-card .quick-reply { margin-top:0.75rem; display:flex; gap:0.5rem; flex-wrap:wrap; align-items:flex-start; }
-  .inquiry-card textarea { min-height:60px; margin-bottom:0.5rem; }
+  .msg { margin-bottom:0.7rem; padding:0.55rem; border-radius:8px; font-size:0.78rem; background:rgba(74,232,160,0.1); border:1px solid rgba(74,232,160,0.3); color:#4ae8a0; display:none; }
+  .msg.err { background:rgba(245,96,96,0.1); border-color:rgba(245,96,96,0.3); color:#f56060; }
+  .logout { font-size:0.76rem; color:#7d8aaa; text-decoration:underline; cursor:pointer; }
+  .row { display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.6rem; }
+  .section-title { font-size:0.79rem; font-weight:700; color:#c8d2ec; margin:0.25rem 0 0.45rem; }
+  .soft-sep { height:1px; background:#2e3850; margin:0.8rem 0; }
+  .fb-list { max-height:360px; overflow:auto; padding-right:0.2rem; }
+  .inquiry-card { padding:0.7rem; background:rgba(36,43,61,0.5); border-radius:10px; margin-bottom:0.55rem; border:1px solid rgba(46,56,80,0.7); }
+  .inquiry-card .quick-reply { margin-top:0.55rem; display:flex; gap:0.45rem; align-items:flex-start; }
+  .inquiry-card .quick-reply textarea { margin:0; min-height:55px; }
+  .inquiry-card p { font-size:0.78rem; line-height:1.45; margin-bottom:0.25rem; color:#c9d3ec; }
+  .poll-box { background:rgba(255,255,255,0.03); border:1px solid #2e3850; border-radius:8px; padding:0.55rem 0.65rem; margin-bottom:0.55rem; }
+  .poll-row { display:flex; align-items:center; gap:0.4rem; margin:0.2rem 0; }
+  .poll-bar { flex:0 0 90px; height:5px; background:#2a3248; border-radius:999px; overflow:hidden; }
+  .poll-bar > div { height:100%; background:#4a9fe8; border-radius:999px; }
+  .stat-grid { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:0.45rem; }
+  .stat-card { background:rgba(36,43,61,0.52); border:1px solid #2e3850; border-radius:10px; padding:0.5rem 0.6rem; min-height:68px; }
+  .stat-value { font-size:1.2rem; font-weight:800; line-height:1.1; color:#f1f5f9; }
+  .stat-label { font-size:0.67rem; color:#8ea0c2; margin-top:0.15rem; line-height:1.35; }
+  #kvList { max-height:260px; overflow:auto; }
+  .kv-item { display:flex; align-items:center; gap:0.45rem; background:rgba(255,255,255,0.03); border:1px solid #2e3850; border-radius:7px; padding:0.35rem 0.5rem; margin-bottom:0.3rem; }
+  .kv-ns { font-size:0.66rem; min-width:56px; font-weight:700; color:#7abff5; }
+  .kv-key { flex:1; font-size:0.73rem; color:#c5cfe9; font-family:monospace; word-break:break-all; }
+  .faq-row { margin-bottom:0.7rem; padding:0.75rem; background:rgba(36,43,61,0.5); border-radius:10px; }
+  .log-line { font-family:monospace; font-size:0.76rem; padding:0.3rem 0; border-bottom:1px solid rgba(46,56,80,0.5); color:#c5cfe9; }
 </style>
 </head>
 <body>
-<!-- MM Invest Admin Dashboard (glassmorphism, tabovi) -->
 <div class="wrap">
   <header class="glass header">
     <div>
       <h1>🤖 MM Invest Admin</h1>
-      <p class="sub">Upravljanje aplikacijom</p>
+      <p class="sub">Worker panel sinkroniziran s Pages admin feature-ima</p>
     </div>
     <div style="display:flex;align-items:center;gap:1rem;">
       <span class="status-badge ${isOn ? 'on' : 'off'}" id="globalStatusBadge">${isOn ? '✅ Bot uključen' : '⛔ Bot isključen'}</span>
       <a class="logout" href="/admin/logout">🔒 Odjavi se</a>
     </div>
   </header>
-  ${msg ? '<div class="msg">' + esc(msg) + '</div>' : ''}
+  ${msg ? '<div class="msg" style="display:block">' + esc(msg) + '</div>' : ''}
   <div class="glass">
     <div class="tabs">
-      <button type="button" class="active" data-tab="general">General & AI</button>
-      <button type="button" data-tab="ankete">Ankete & Analytics</button>
-      <button type="button" data-tab="mail">Mini Mail</button>
+      <button type="button" class="active" data-tab="ai">🤖 AI Bot</button>
+      <button type="button" data-tab="feedback">💬 Feedback</button>
+      <button type="button" data-tab="mgmt">⚙️ Upravljanje</button>
       <button type="button" data-tab="faq">FAQ Builder</button>
       <button type="button" data-tab="logs">System Logs</button>
     </div>
-    <div id="tab-general" class="tab-panel active">
-      <h2 style="margin-bottom:1rem;font-size:1.1rem;">General & AI</h2>
-      <form id="formGeneral">
-        <p style="margin-bottom:1rem;">Status bota: <span class="status-badge ${isOn ? 'on' : 'off'}" id="badgeGeneral">${isOn ? 'Uključen' : 'Isključen'}</span></p>
-        <label>Uključi / Isključi AI bota</label>
-        <div style="display:flex;gap:0.5rem;margin-bottom:1rem;">
-          <button type="button" class="btn btn-primary" data-set-bot="on">▶ Uključi</button>
-          <button type="button" class="btn btn-danger" data-set-bot="off">⏸ Isključi</button>
-        </div>
-        <label>System prompt override (ostavi prazno za default)</label>
-        <textarea name="system_prompt_override" id="systemPromptOverride" maxlength="2000">${esc(systemPromptOverride)}</textarea>
-        <label>Globalni status (npr. održavanje, obavijesti)</label>
-        <input type="text" name="app_status" id="appStatus" value="${esc(appStatus)}" placeholder="npr. Održavanje u tijeku" maxlength="500">
-        <div id="msgGeneral" class="msg" style="display:none;"></div>
-        <button type="submit" class="btn btn-primary">Spremi</button>
-      </form>
+    <div id="tab-ai" class="tab-panel active">
+      <p style="margin-bottom:0.6rem;">Status bota: <span class="status-badge ${isOn ? 'on' : 'off'}" id="badgeGeneral">${isOn ? 'Uključen' : 'Isključen'}</span></p>
+      <div class="row">
+        <button type="button" class="btn btn-primary" data-set-bot="on">▶ Uključi AI</button>
+        <button type="button" class="btn btn-danger" data-set-bot="off">⏸ Isključi AI</button>
+      </div>
+      <div class="soft-sep"></div>
+      <label>System prompt override</label>
+      <textarea id="systemPromptOverride" maxlength="8000">${esc(systemPromptOverride)}</textarea>
+      <label>Globalna obavijest (app status)</label>
+      <input type="text" id="appStatus" value="${esc(appStatus)}" maxlength="500" placeholder="Upiši obavijest za korisnike...">
+      <div id="msgGeneral" class="msg"></div>
+      <button type="button" class="btn btn-primary" id="btnSaveGeneral">Spremi promjene</button>
     </div>
-    <div id="tab-ankete" class="tab-panel">
-      <h2 style="margin-bottom:1rem;font-size:1.1rem;">Ankete & Analytics</h2>
-      <div id="msgAnkete" class="msg" style="display:none;"></div>
-      <div id="anketeList"></div>
-      <div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
-        <a href="/admin/api/ankete/export" class="btn btn-secondary" download>Export CSV</a>
-        <button type="button" class="btn btn-danger" id="btnClearAnkete">Clear Data</button>
+
+    <div id="tab-feedback" class="tab-panel">
+      <div class="section-title">📊 Poll rezultati</div>
+      <div id="pollsList"></div>
+      <div class="soft-sep"></div>
+      <div class="section-title">💬 Feedback unosi</div>
+      <div id="feedbackList" class="fb-list"></div>
+      <div class="row" style="margin-top:0.65rem;">
+        <button type="button" class="btn btn-secondary" id="btnRefreshFeedback">🔄 Osvježi</button>
       </div>
     </div>
-    <div id="tab-mail" class="tab-panel">
-      <h2 style="margin-bottom:1rem;font-size:1.1rem;">Mini Mail — Upiti</h2>
-      <div id="feedbackList"></div>
+
+    <div id="tab-mgmt" class="tab-panel">
+      <div class="row" style="justify-content:space-between;align-items:center;">
+        <div class="section-title">📈 Live Stats Overview</div>
+        <button type="button" class="btn btn-danger" id="btnResetStats">Reset Stats</button>
+      </div>
+      <div class="stat-grid" id="statsGrid">
+        <div class="stat-card"><div class="stat-value" id="st-calc">0</div><div class="stat-label">Ukupno Izračunaj klikova</div></div>
+        <div class="stat-card"><div class="stat-value" id="st-most">-</div><div class="stat-label">Najposjećeniji kalkulator</div></div>
+        <div class="stat-card"><div class="stat-value" id="st-btc">0</div><div class="stat-label">Copy BTC klikovi</div></div>
+        <div class="stat-card"><div class="stat-value" id="st-ai">0</div><div class="stat-label">AI poruke (sesija)</div></div>
+      </div>
+      <div class="soft-sep"></div>
+      <div class="section-title">🗂️ Masovne operacije</div>
+      <div class="row">
+        <button type="button" class="btn btn-secondary" id="btnExportAnkete">Export CSV</button>
+        <button type="button" class="btn btn-danger" id="btnClearAnkete">Resetiraj ankete</button>
+        <button type="button" class="btn btn-danger" id="btnClearFeedback">Obriši feedback</button>
+      </div>
+      <div id="msgMgmt" class="msg"></div>
+      <div class="soft-sep"></div>
+      <div class="row" style="justify-content:space-between;align-items:center;">
+        <div class="section-title" style="margin:0;">📦 KV stavke</div>
+        <button type="button" class="btn btn-secondary" id="btnRefreshKv">↻ Osvježi</button>
+      </div>
+      <div id="kvList"></div>
     </div>
+
     <div id="tab-faq" class="tab-panel">
-      <h2 style="margin-bottom:1rem;font-size:1.1rem;">FAQ Builder</h2>
-      <div id="msgFaq" class="msg" style="display:none;"></div>
+      <h2 style="margin-bottom:0.75rem;font-size:1rem;">FAQ Builder</h2>
+      <div id="msgFaq" class="msg"></div>
       <div id="faqList"></div>
       <button type="button" class="btn btn-primary" id="btnAddFaq">+ Dodaj pitanje</button>
       <button type="button" class="btn btn-primary" style="margin-left:0.5rem;" id="btnSaveFaq">Spremi FAQ</button>
     </div>
     <div id="tab-logs" class="tab-panel">
-      <h2 style="margin-bottom:1rem;font-size:1.1rem;">System Logs</h2>
+      <h2 style="margin-bottom:0.75rem;font-size:1rem;">System Logs</h2>
       <div id="logsList"></div>
     </div>
   </div>
@@ -160,10 +197,13 @@ function adminDashboardPage(isOn, systemPromptOverride = '', appStatus = '', msg
 (function(){
   const cred = 'same-origin';
   function api(path, opts) { return fetch(path, { ...opts, credentials: cred }); }
-  function showMsg(elId, text, isErr) {
+  function esc(s){ var t = String(s == null ? '' : s); return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+  function showMsg(elId, text, isErr){
     const el = document.getElementById(elId);
     if (!el) return;
-    el.textContent = text; el.className = 'msg ' + (isErr ? 'err' : ''); el.style.display = text ? 'block' : 'none';
+    el.textContent = text || '';
+    el.className = 'msg' + (isErr ? ' err' : '');
+    el.style.display = text ? 'block' : 'none';
   }
   document.querySelectorAll('.tabs button').forEach(function(btn){
     btn.addEventListener('click', function(){
@@ -173,68 +213,172 @@ function adminDashboardPage(isOn, systemPromptOverride = '', appStatus = '', msg
       const id = 'tab-' + btn.getAttribute('data-tab');
       const panel = document.getElementById(id);
       if (panel) panel.classList.add('active');
-      if (btn.getAttribute('data-tab') === 'ankete') loadAnkete();
-      if (btn.getAttribute('data-tab') === 'mail') loadFeedback();
+      if (btn.getAttribute('data-tab') === 'feedback') { loadPolls(); loadFeedback(); }
+      if (btn.getAttribute('data-tab') === 'mgmt') { loadLiveStats(); loadKvItems(); }
       if (btn.getAttribute('data-tab') === 'faq') loadFaq();
       if (btn.getAttribute('data-tab') === 'logs') loadLogs();
     });
   });
-  document.getElementById('formGeneral').addEventListener('submit', function(e){
-    e.preventDefault();
+
+  function setStatusBadge(isOn){
+    var g = document.getElementById('globalStatusBadge');
+    var l = document.getElementById('badgeGeneral');
+    if (g) { g.textContent = isOn ? '✅ Bot uključen' : '⛔ Bot isključen'; g.className = 'status-badge ' + (isOn ? 'on' : 'off'); }
+    if (l) { l.textContent = isOn ? 'Uključen' : 'Isključen'; l.className = 'status-badge ' + (isOn ? 'on' : 'off'); }
+  }
+
+  document.getElementById('btnSaveGeneral').addEventListener('click', function(){
     const system_prompt_override = document.getElementById('systemPromptOverride').value;
     const app_status = document.getElementById('appStatus').value;
     api('/admin/api/config', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ system_prompt_override, app_status }) })
       .then(function(r){ return r.json().then(function(d){ return { ok: r.ok, d }; }); })
       .then(function({ ok, d }){
-        if (ok) { showMsg('msgGeneral', 'Spremljeno.'); } else { showMsg('msgGeneral', d.error || 'Greška', true); }
+        showMsg('msgGeneral', ok ? 'Spremljeno.' : (d.error || 'Greška'), !ok);
       })
       .catch(function(){ showMsg('msgGeneral', 'Greška mreže', true); });
   });
+
   document.querySelectorAll('[data-set-bot]').forEach(function(btn){
     btn.addEventListener('click', function(){
       const v = btn.getAttribute('data-set-bot');
       api('/admin/api/config', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ai_enabled: v }) })
         .then(function(r){ return r.json().then(function(d){ return { ok: r.ok, d }; }); })
         .then(function({ ok }){
-          if (ok) { document.getElementById('globalStatusBadge').textContent = v === 'on' ? '✅ Bot uključen' : '⛔ Bot isključen'; document.getElementById('globalStatusBadge').className = 'status-badge ' + (v === 'on' ? 'on' : 'off'); document.getElementById('badgeGeneral').textContent = v === 'on' ? 'Uključen' : 'Isključen'; document.getElementById('badgeGeneral').className = 'status-badge ' + (v === 'on' ? 'on' : 'off'); }
+          if (ok) setStatusBadge(v === 'on');
         });
     });
   });
-  function loadAnkete(){
-    api('/admin/api/ankete').then(function(r){ return r.json(); }).then(function(d){
-      const div = document.getElementById('anketeList');
-      if (!d.items || !d.items.length) { div.innerHTML = '<p style="color:#9aa2c0;">Nema podataka.</p>'; return; }
-      div.innerHTML = '<table><thead><tr><th>Key</th><th>Value</th></tr></thead><tbody>' + d.items.map(function(it){ return '<tr><td>' + escapeHtml(it.key) + '</td><td>' + escapeHtml(String(it.value).slice(0,200)) + (String(it.value).length > 200 ? '…' : '') + '</td></tr>'; }).join('') + '</tbody></table>';
-    }).catch(function(){ document.getElementById('anketeList').innerHTML = '<p class="err">Greška učitavanja</p>'; });
+
+  function loadPolls(){
+    var div = document.getElementById('pollsList');
+    div.innerHTML = '<p style="color:#9aa2c0;font-size:0.76rem;">Učitavanje...</p>';
+    api('/admin/api/polls').then(function(r){ return r.json(); }).then(function(d){
+      var polls = d.polls || {};
+      var labels = {
+        feature: { title: 'Nova funkcionalnost', options: { dijete: 'Kalkulator za dijete', inflacija: 'Usporedba inflacije', export: 'Export izvještaja' } },
+        priority: { title: 'Prioritet razvoja', options: { bugovi: 'Popraviti bugove', ai: 'AI asistent', nova: 'Nova funkcionalnost' } }
+      };
+      var html = '';
+      Object.keys(labels).forEach(function(pollId){
+        var meta = labels[pollId];
+        var votes = polls[pollId] || {};
+        var total = Object.values(votes).reduce(function(s,v){ return s + (Number(v) || 0); }, 0);
+        if (!total) return;
+        html += '<div class="poll-box"><div style="font-size:0.76rem;font-weight:700;margin-bottom:0.35rem;">' + esc(meta.title) + ' <span style="color:#9aa2c0;font-weight:400;">(' + total + ' glasova)</span></div>';
+        Object.entries(meta.options).sort(function(a,b){ return (votes[b[0]]||0) - (votes[a[0]]||0); }).forEach(function(entry){
+          var val = entry[0], label = entry[1];
+          var cnt = votes[val] || 0;
+          var pct = total ? Math.round((cnt/total)*100) : 0;
+          html += '<div class="poll-row"><div style="flex:1;font-size:0.72rem;color:#c5cfe9;">' + esc(label) + '</div><div class="poll-bar"><div style="width:' + pct + '%"></div></div><div style="font-size:0.68rem;min-width:30px;text-align:right;color:#8ea0c2;">' + pct + '%</div></div>';
+        });
+        html += '</div>';
+      });
+      if (!html) html = '<p style="color:#9aa2c0;font-size:0.76rem;">Još nema glasova.</p>';
+      div.innerHTML = html;
+    }).catch(function(){ div.innerHTML = '<p style="color:#f56060;font-size:0.76rem;">Greška učitavanja.</p>'; });
   }
-  document.getElementById('btnClearAnkete').addEventListener('click', function(){
-    if (!confirm('Jesi li siguran da želiš obrisati sve podatke anketa?')) return;
-    api('/admin/api/reset-polls', { method: 'POST' }).then(function(r){ return r.json(); }).then(function(d){ if (d.ok) { loadAnkete(); showMsg('msgAnkete', 'Podaci obrisani.'); } else { showMsg('msgAnkete', d.error || 'Greška', true); } }).catch(function(){ showMsg('msgAnkete', 'Greška', true); });
-  });
+
   function loadFeedback(){
     api('/admin/api/feedback').then(function(r){ return r.json(); }).then(function(d){
       const div = document.getElementById('feedbackList');
-      if (!d.items || !d.items.length) { div.innerHTML = '<p style="color:#9aa2c0;">Nema upita.</p>'; return; }
+      if (!d.items || !d.items.length) { div.innerHTML = '<p style="color:#9aa2c0;font-size:0.76rem;">Nema upita.</p>'; return; }
       div.innerHTML = d.items.map(function(it, idx){
         var email = (it.email || '').trim();
-        var text = escapeHtml((it.text || it.message || '').slice(0,300));
-        var replied = it.reply ? '<p style="font-size:0.8rem;color:#4ae8a0;">Odgovoreno: ' + escapeHtml(it.reply).slice(0,150) + '</p>' : '';
+        var text = esc((it.text || it.message || '').slice(0,300));
+        var replied = it.reply ? '<p style="font-size:0.74rem;color:#4ae8a0;">Odgovoreno: ' + esc(it.reply).slice(0,150) + '</p>' : '';
         var replyBlock = it.reply ? '' : '<div class="quick-reply"><textarea placeholder="Quick reply" data-idx="' + idx + '" rows="2"></textarea><button type="button" class="btn btn-primary btn-reply" data-idx="' + idx + '">Pošalji odgovor</button></div>';
-        return '<div class="inquiry-card"><p><strong>' + escapeHtml(email || 'Nema email') + '</strong> ' + (it.type ? escapeHtml(it.type) : '') + '</p><p>' + text + '</p>' + replied + replyBlock + '</div>';
+        return '<div class="inquiry-card"><p><strong>' + esc(email || 'Nema email') + '</strong> ' + (it.type ? esc(it.type) : '') + '</p><p>' + text + '</p>' + replied + replyBlock + '</div>';
       }).join('');
       document.getElementById('feedbackList').querySelectorAll('.btn-reply').forEach(function(b){
         b.addEventListener('click', function(){ var idx = parseInt(b.getAttribute('data-idx'),10); var ta = document.querySelector('textarea[data-idx="' + idx + '"]'); var reply = ta && ta.value ? ta.value.trim() : ''; if (!reply) return; api('/admin/api/feedback/reply', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idx, reply }) }).then(function(r){ return r.json(); }).then(function(d){ if (!d.error) { loadFeedback(); } else { alert(d.error); } }); });
       });
-    }).catch(function(){ document.getElementById('feedbackList').innerHTML = '<p class="err">Greška učitavanja</p>'; });
+    }).catch(function(){ document.getElementById('feedbackList').innerHTML = '<p style="color:#f56060;font-size:0.76rem;">Greška učitavanja.</p>'; });
   }
-  function escapeHtml(s){ var t = String(s); return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  function renderLiveStats(stats){
+    var data = stats || {};
+    document.getElementById('st-calc').textContent = String(Number(data.izracunaj_clicks || 0));
+    document.getElementById('st-most').textContent = String(data.most_visited || '-');
+    document.getElementById('st-btc').textContent = String(Number(data.copy_btc_clicks || 0));
+    document.getElementById('st-ai').textContent = String(Number(data.ai_messages_session || 0));
+  }
+
+  function loadLiveStats(){
+    api('/admin/api/live-stats').then(function(r){ return r.json(); }).then(function(d){ renderLiveStats(d.stats || {}); }).catch(function(){ renderLiveStats({}); });
+  }
+
+  function loadKvItems(){
+    var listEl = document.getElementById('kvList');
+    listEl.innerHTML = '<p style="color:#9aa2c0;font-size:0.76rem;">Učitavanje...</p>';
+    api('/admin/api/list-items').then(function(r){ return r.json(); }).then(function(d){
+      var items = d.items || [];
+      var filtered = items.filter(function(it){
+        return !(it.key || '').startsWith('session:') &&
+               !(it.key || '').startsWith('bf:') &&
+               !(it.key || '').startsWith('rl:') &&
+               !(it.key || '').startsWith('vote_lock:');
+      });
+      if (!filtered.length) { listEl.innerHTML = '<p style="color:#9aa2c0;font-size:0.76rem;">Nema stavki.</p>'; return; }
+      listEl.innerHTML = filtered.map(function(it){
+        var rawKey = String(it.key || '');
+        var safeKey = esc(rawKey);
+        var keyEncoded = encodeURIComponent(rawKey);
+        var ns = esc(it.namespace || 'config');
+        return '<div class="kv-item"><span class="kv-ns">[' + ns + ']</span><span class="kv-key">' + safeKey + '</span><button type="button" class="btn btn-danger btn-del" data-key="' + keyEncoded + '" data-ns="' + ns + '">🗑</button></div>';
+      }).join('');
+      listEl.querySelectorAll('.btn-del').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var key = decodeURIComponent(btn.getAttribute('data-key') || '');
+          var namespace = btn.getAttribute('data-ns');
+          if (!confirm('Obrisati ključ "' + key + '"?')) return;
+          api('/admin/api/delete-item', {
+            method:'POST',
+            headers:{ 'Content-Type':'application/json' },
+            body: JSON.stringify({ key: key, namespace: namespace })
+          }).then(function(r){ return r.json(); }).then(function(d){
+            if (d.ok) { showMsg('msgMgmt', 'Stavka obrisana.', false); loadKvItems(); } else { showMsg('msgMgmt', d.error || 'Greška', true); }
+          }).catch(function(){ showMsg('msgMgmt', 'Greška mreže.', true); });
+        });
+      });
+    }).catch(function(){ listEl.innerHTML = '<p style="color:#f56060;font-size:0.76rem;">Greška učitavanja.</p>'; });
+  }
+
+  document.getElementById('btnRefreshFeedback').addEventListener('click', function(){ loadPolls(); loadFeedback(); });
+  document.getElementById('btnRefreshKv').addEventListener('click', loadKvItems);
+  document.getElementById('btnResetStats').addEventListener('click', function(){
+    if (!confirm('Resetirati live stats?')) return;
+    api('/admin/api/live-stats', { method:'DELETE' }).then(function(r){ return r.json(); }).then(function(d){
+      if (d.ok) { showMsg('msgMgmt', 'Stats resetiran.', false); loadLiveStats(); }
+      else { showMsg('msgMgmt', d.error || 'Greška', true); }
+    }).catch(function(){ showMsg('msgMgmt', 'Greška mreže.', true); });
+  });
+  document.getElementById('btnExportAnkete').addEventListener('click', function(){
+    window.location.href = '/admin/api/ankete/export';
+  });
+  document.getElementById('btnClearAnkete').addEventListener('click', function(){
+    if (!confirm('Jesi li siguran da želiš obrisati sve podatke anketa?')) return;
+    api('/admin/api/reset-polls', { method: 'POST' }).then(function(r){ return r.json(); }).then(function(d){
+      showMsg('msgMgmt', d.ok ? 'Ankete obrisane.' : (d.error || 'Greška'), !d.ok);
+      loadPolls();
+      loadKvItems();
+    }).catch(function(){ showMsg('msgMgmt', 'Greška mreže', true); });
+  });
+  document.getElementById('btnClearFeedback').addEventListener('click', function(){
+    if (!confirm('Jesi li siguran da želiš obrisati sav feedback?')) return;
+    api('/admin/api/clear-feedback', { method: 'POST' }).then(function(r){ return r.json(); }).then(function(d){
+      showMsg('msgMgmt', d.ok ? 'Feedback obrisan.' : (d.error || 'Greška'), !d.ok);
+      loadFeedback();
+      loadKvItems();
+    }).catch(function(){ showMsg('msgMgmt', 'Greška mreže', true); });
+  });
+
   function loadFaq(){
     api('/admin/api/faq').then(function(r){ return r.json(); }).then(function(d){
       var items = d.items || [];
       var div = document.getElementById('faqList');
-      div.innerHTML = items.map(function(it, i){ return '<div class="faq-row" data-i="' + i + '"><label>Pitanje</label><input type="text" class="faq-q" value="' + escapeHtml(it.q || '') + '" maxlength="300"><label>Odgovor</label><textarea class="faq-a" maxlength="2000">' + escapeHtml(it.a || '') + '</textarea><button type="button" class="btn btn-secondary btn-remove-faq" data-i="' + i + '">Ukloni</button></div>'; }).join('');
+      div.innerHTML = items.map(function(it, i){ return '<div class="faq-row" data-i="' + i + '"><label>Pitanje</label><input type="text" class="faq-q" value="' + esc(it.q || '') + '" maxlength="300"><label>Odgovor</label><textarea class="faq-a" maxlength="2000">' + esc(it.a || '') + '</textarea><button type="button" class="btn btn-secondary btn-remove-faq" data-i="' + i + '">Ukloni</button></div>'; }).join('');
       div.querySelectorAll('.btn-remove-faq').forEach(function(btn){ btn.addEventListener('click', function(){ var row = btn.closest('.faq-row'); if (row) row.remove(); }); });
-    }).catch(function(){ document.getElementById('faqList').innerHTML = '<p class="err">Greška učitavanja</p>'; });
+    }).catch(function(){ document.getElementById('faqList').innerHTML = '<p style="color:#f56060;font-size:0.76rem;">Greška učitavanja.</p>'; });
   }
   document.getElementById('btnAddFaq').addEventListener('click', function(){
     var div = document.getElementById('faqList');
@@ -255,10 +399,15 @@ function adminDashboardPage(isOn, systemPromptOverride = '', appStatus = '', msg
     api('/admin/api/logs').then(function(r){ return r.json(); }).then(function(d){
       var logs = (d.logs || []).slice(-30).reverse();
       var div = document.getElementById('logsList');
-      if (!logs.length) { div.innerHTML = '<p style="color:#9aa2c0;">Nema zapisa.</p>'; return; }
-      div.innerHTML = logs.map(function(l){ return '<div class="log-line">' + escapeHtml(l.ts || '') + ' | ' + escapeHtml(l.type || '') + ' | ' + escapeHtml(l.status || '') + '</div>'; }).join('');
-    }).catch(function(){ document.getElementById('logsList').innerHTML = '<p class="err">Greška učitavanja</p>'; });
+      if (!logs.length) { div.innerHTML = '<p style="color:#9aa2c0;font-size:0.76rem;">Nema zapisa.</p>'; return; }
+      div.innerHTML = logs.map(function(l){ return '<div class="log-line">' + esc(l.ts || '') + ' | ' + esc(l.type || '') + ' | ' + esc(l.status || '') + '</div>'; }).join('');
+    }).catch(function(){ document.getElementById('logsList').innerHTML = '<p style="color:#f56060;font-size:0.76rem;">Greška učitavanja.</p>'; });
   }
+
+  loadPolls();
+  loadFeedback();
+  loadLiveStats();
+  loadKvItems();
 })();
 </script>
 </body>
@@ -761,6 +910,64 @@ async function handleRequest(request, env) {
         } catch(e) {
           return new Response(JSON.stringify({ error: e.message }), {
             status: 400, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+      }
+
+      // ── API Poll results (agregirano) ──
+      if (path === '/admin/api/polls' && request.method === 'GET') {
+        try {
+          const raw = await env.ANKETE_DATA.get('poll_votes');
+          const polls = raw ? JSON.parse(raw) : {};
+          return new Response(JSON.stringify({ polls }), {
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        } catch (e) {
+          return new Response(JSON.stringify({ error: e.message }), {
+            status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+      }
+
+      // ── API Live stats (shared Pages/Worker admin) ──
+      if (path === '/admin/api/live-stats' && request.method === 'GET') {
+        try {
+          const raw = await env.AI_CONFIG.get('live_stats');
+          const stats = raw ? JSON.parse(raw) : {};
+          return new Response(JSON.stringify({ stats }), {
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        } catch (e) {
+          return new Response(JSON.stringify({ error: e.message }), {
+            status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+      }
+      if (path === '/admin/api/live-stats' && request.method === 'POST') {
+        try {
+          const body = await request.json();
+          const raw = await env.AI_CONFIG.get('live_stats');
+          const prev = raw ? JSON.parse(raw) : {};
+          const next = { ...prev, ...(body && typeof body === 'object' ? body : {}) };
+          await env.AI_CONFIG.put('live_stats', JSON.stringify(next));
+          return new Response(JSON.stringify({ ok: true, stats: next }), {
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        } catch (e) {
+          return new Response(JSON.stringify({ error: e.message }), {
+            status: 400, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+      }
+      if (path === '/admin/api/live-stats' && request.method === 'DELETE') {
+        try {
+          await env.AI_CONFIG.delete('live_stats');
+          return new Response(JSON.stringify({ ok: true }), {
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        } catch (e) {
+          return new Response(JSON.stringify({ error: e.message }), {
+            status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
           });
         }
       }
