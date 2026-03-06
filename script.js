@@ -182,6 +182,9 @@ function buildStrategyRecommendation(selectedMap) {
       text: txt,
       curve: peppCurve,
       label: `Pametni prijedlog: PEPP (${PEPP_RATE.toFixed(1)}%)`,
+      shortcuts: [
+        { page: 'pepp', inputId: 'pepp-strategy-monthly', label: '↗ Otvori PEPP scenarij' },
+      ],
     };
   }
   if (etf && !dmf) {
@@ -206,13 +209,31 @@ function buildStrategyRecommendation(selectedMap) {
       text: txt,
       curve: dmfCurve,
       label: `Pametni prijedlog: ${dmfFundName} + poticaj`,
+      shortcuts: [
+        { page: 'p0a', inputId: 'p0a-uplata-v', label: '↗ Otvori DMF kalkulator' },
+      ],
     };
   }
   return {
     text: 'Za precizniji pametan prijedlog odaberi barem jedan scenarij i uključi ga u "Moje ulaganje". Najviše koristi dobivaš kad usporediš DMF + PEPP + ETF.',
     curve: null,
     label: '',
+    shortcuts: [],
   };
+}
+
+function goToStrategyShortcut(page, inputId) {
+  const tab = document.querySelector(`[data-page="${page}"]`);
+  if (tab) tab.click();
+  window.setTimeout(() => {
+    const input = $(inputId);
+    if (input && typeof input.focus === 'function') {
+      input.focus();
+      if (typeof input.select === 'function' && (input.tagName === 'INPUT' || input.tagName === 'TEXTAREA')) {
+        input.select();
+      }
+    }
+  }, 120);
 }
 
 function renderMyStrategyDashboard() {
@@ -220,10 +241,11 @@ function renderMyStrategyDashboard() {
   const dashboard = $('strategy-dashboard');
   const cardsWrap = $('strategy-summary-cards');
   const smartText = $('strategy-smart-text');
+  const smartActions = $('strategy-smart-actions');
   const smartToggleWrap = $('strategy-smart-toggle-wrap');
   const smartToggle = $('strategy-show-suggestion');
   const proConWrap = $('strategy-procon');
-  if (!placeholder || !dashboard || !cardsWrap || !smartText || !smartToggleWrap || !smartToggle || !proConWrap) return;
+  if (!placeholder || !dashboard || !cardsWrap || !smartText || !smartActions || !smartToggleWrap || !smartToggle || !proConWrap) return;
 
   const selected = getSelectedStrategyData();
 
@@ -263,6 +285,9 @@ function renderMyStrategyDashboard() {
   const selectedMap = selected.reduce((acc, item) => { acc[item.key] = item; return acc; }, {});
   const recommendation = buildStrategyRecommendation(selectedMap);
   smartText.textContent = recommendation.text;
+  smartActions.innerHTML = (recommendation.shortcuts || []).map((s) =>
+    `<button type="button" class="strategy-shortcut-btn" onclick="goToStrategyShortcut('${s.page}','${s.inputId}')">${s.label}</button>`
+  ).join('');
   smartToggleWrap.style.display = recommendation.curve ? 'inline-flex' : 'none';
   smartToggle.checked = !!window.myStrategy.showSuggestedOnChart;
 
