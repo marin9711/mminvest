@@ -320,82 +320,6 @@ async function handleRequest(request, env) {
       return new Response(null, { status: 204, headers: CORS_HEADERS });
     }
 
-    // ── ADMIN API FEEDBACK REPLY ──
-    if (path === '/admin/api/feedback/reply' && request.method === 'POST') {
-      const authHeader = request.headers.get('Authorization') || '';
-      const bearerToken = authHeader.replace('Bearer ', '').trim();
-      const isApiAuthed = await validateSession(bearerToken, env);
-
-      if (!isApiAuthed) {
-        return new Response(JSON.stringify({ error: 'unauthorized' }), {
-          status: 401, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-        });
-      }
-
-      try {
-        const body = await request.json();
-        const idx = parseInt(body.idx);
-        const replyText = String(body.reply || '').slice(0, 2000);
-        if (isNaN(idx) || !replyText) {
-          return new Response(JSON.stringify({ error: 'Bad data' }), {
-            status: 400, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-          });
-        }
-
-        // Dohvati feedback log, dodaj reply
-        const raw = await env.AI_CONFIG.get('feedback_log');
-        const items = raw ? JSON.parse(raw) : [];
-        if (!items[idx]) {
-          return new Response(JSON.stringify({ error: 'Not found' }), {
-            status: 404, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-          });
-        }
-        items[idx].reply = replyText;
-        items[idx].repliedAt = new Date().toISOString();
-        await env.AI_CONFIG.put('feedback_log', JSON.stringify(items));
-
-        // Pošalji email ako korisnik ima email (Resend)
-        const userEmail = items[idx].email;
-        if (userEmail && env.RESEND_API_KEY) {
-          await fetch('https://api.resend.com/emails', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${env.RESEND_API_KEY}`,
-            },
-            body: JSON.stringify({
-              from: 'MarsanInvest <onboarding@resend.dev>',
-              to: [userEmail],
-              subject: 'Odgovor na tvoj feedback — MarsanInvest',
-              html: `
-                <div style="font-family:sans-serif;max-width:520px;margin:0 auto;background:#181d28;color:#e2e5f0;padding:2rem;border-radius:12px;">
-                  <h2 style="color:#4ae8a0;margin-bottom:0.5rem">💬 Odgovor na tvoj feedback</h2>
-                  <p style="color:#7d8aaa;font-size:0.85rem;margin-bottom:1.5rem">Zahvaljujemo na povratnoj informaciji!</p>
-                  <div style="background:#1e2433;border-radius:8px;padding:1rem;margin-bottom:1rem;">
-                    <div style="font-size:0.75rem;color:#7d8aaa;margin-bottom:0.4rem">Tvoj feedback:</div>
-                    <div style="color:#9aa2c0;font-size:0.9rem">${items[idx].text.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
-                  </div>
-                  <div style="background:#1a2a1e;border-left:3px solid #4ae8a0;border-radius:8px;padding:1rem;">
-                    <div style="font-size:0.75rem;color:#4ae8a0;margin-bottom:0.4rem">💬 Odgovor admina:</div>
-                    <div style="color:#e2e5f0;font-size:0.95rem">${replyText.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
-                  </div>
-                  <p style="margin-top:1.5rem;font-size:0.75rem;color:#5a6180;">MarsanInvest &middot; <a href="https://mminvest.pages.dev" style="color:#4a9fe8">mminvest.pages.dev</a></p>
-                </div>
-              `,
-            }),
-          });
-        }
-
-        return new Response(JSON.stringify({ ok: true }), {
-          headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-        });
-      } catch(e) {
-        return new Response(JSON.stringify({ error: 'Internal error' }), {
-          status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-        });
-      }
-    }
-
     // ── ADMIN ROUTES ──
     if (path.startsWith('/admin')) {
       // CORS preflight za admin rute
@@ -461,7 +385,7 @@ async function handleRequest(request, env) {
 
       // ── API ENDPOINTS (za frontend admin panel) ──
 
-      // API Login
+      // API Login (jedina /admin/api/* ruta koja NE zahtijeva postojeću sesiju)
       if (path === '/admin/api/login' && request.method === 'POST') {
         const clientIP =
           request.headers.get('CF-Connecting-IP') ||
@@ -510,6 +434,21 @@ async function handleRequest(request, env) {
       const authHeader = request.headers.get('Authorization') || '';
       const bearerToken = authHeader.replace('Bearer ', '').trim();
       const isApiAuthed = await validateSession(bearerToken, env);
+
+      // Sve /admin/* rute (osim /admin/login, /admin/api/login i /admin/logout)
+      // moraju imati valjanu sesiju (isLoggedIn).
+      // API rute vraćaju JSON 401, HTML rute prikazuju login.
+      if (!isLoggedIn) {
+        if (path.startsWith('/admin/api/')) {
+          return new Response(JSON.stringify({ error: 'unauthorized' }), {
+            status: 401,
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+        return new Response(loginPage(), {
+          headers: { ...CORS_HEADERS, 'Content-Type': 'text/html;charset=UTF-8' },
+        });
+      }
 
       // API Status
       if (path === '/admin/api/status') {
@@ -647,18 +586,77 @@ async function handleRequest(request, env) {
         }
       }
 
-      // Sve /admin/* rute zahtijevaju autentifikaciju.
-      // API rute (/admin/api/*) vraćaju JSON 401, ostale prikazuju login stranicu.
-      if (!isLoggedIn) {
-        if (path.startsWith('/admin/api/')) {
+      // ── API Feedback Reply ──
+      if (path === '/admin/api/feedback/reply' && request.method === 'POST') {
+        // Dodatna zaštita: već imamo isLoggedIn guard iznad, ovdje tražimo i valjani API token.
+        if (!isApiAuthed) {
           return new Response(JSON.stringify({ error: 'unauthorized' }), {
-            status: 401,
-            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+            status: 401, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
           });
         }
-        return new Response(loginPage(), {
-          headers: { ...CORS_HEADERS, 'Content-Type': 'text/html;charset=UTF-8' },
-        });
+
+        try {
+          const body = await request.json();
+          const idx = parseInt(body.idx);
+          const replyText = String(body.reply || '').slice(0, 2000);
+          if (isNaN(idx) || !replyText) {
+            return new Response(JSON.stringify({ error: 'Bad data' }), {
+              status: 400, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+            });
+          }
+
+          // Dohvati feedback log, dodaj reply
+          const raw = await env.AI_CONFIG.get('feedback_log');
+          const items = raw ? JSON.parse(raw) : [];
+          if (!items[idx]) {
+            return new Response(JSON.stringify({ error: 'Not found' }), {
+              status: 404, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+            });
+          }
+          items[idx].reply = replyText;
+          items[idx].repliedAt = new Date().toISOString();
+          await env.AI_CONFIG.put('feedback_log', JSON.stringify(items));
+
+          // Pošalji email ako korisnik ima email (Resend)
+          const userEmail = items[idx].email;
+          if (userEmail && env.RESEND_API_KEY) {
+            await fetch('https://api.resend.com/emails', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+              },
+              body: JSON.stringify({
+                from: 'MarsanInvest <onboarding@resend.dev>',
+                to: [userEmail],
+                subject: 'Odgovor na tvoj feedback — MarsanInvest',
+                html: `
+                  <div style="font-family:sans-serif;max-width:520px;margin:0 auto;background:#181d28;color:#e2e5f0;padding:2rem;border-radius:12px;">
+                    <h2 style="color:#4ae8a0;margin-bottom:0.5rem">💬 Odgovor na tvoj feedback</h2>
+                    <p style="color:#7d8aaa;font-size:0.85rem;margin-bottom:1.5rem">Zahvaljujemo na povratnoj informaciji!</p>
+                    <div style="background:#1e2433;border-radius:8px;padding:1rem;margin-bottom:1rem;">
+                      <div style="font-size:0.75rem;color:#7d8aaa;margin-bottom:0.4rem">Tvoj feedback:</div>
+                      <div style="color:#9aa2c0;font-size:0.9rem">${items[idx].text.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+                    </div>
+                    <div style="background:#1a2a1e;border-left:3px solid #4ae8a0;border-radius:8px;padding:1rem;">
+                      <div style="font-size:0.75rem;color:#4ae8a0;margin-bottom:0.4rem">💬 Odgovor admina:</div>
+                      <div style="color:#e2e5f0;font-size:0.95rem">${replyText.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+                    </div>
+                    <p style="margin-top:1.5rem;font-size:0.75rem;color:#5a6180;">MarsanInvest &middot; <a href="https://mminvest.pages.dev" style="color:#4a9fe8">mminvest.pages.dev</a></p>
+                  </div>
+                `,
+              }),
+            });
+          }
+
+          return new Response(JSON.stringify({ ok: true }), {
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        } catch(e) {
+          return new Response(JSON.stringify({ error: 'Internal error' }), {
+            status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
       }
 
       // Admin toggle POST
