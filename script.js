@@ -1209,6 +1209,230 @@ function toggleAiChat() {
   }
 }
 
+// ── Draggable & minimizable FAB (mobile) ──
+const fabDragState = {
+  isMobile: false,
+  dragging: false,
+  moved: false,
+  startX: 0, startY: 0, startLeft: 0, startTop: 0,
+  minimized: false,
+  snappedSide: 'right' // 'left' | 'right'
+};
+
+function isFabMobile() {
+  return window.matchMedia && window.matchMedia('(max-width: 767px)').matches;
+}
+
+function getFabEl() {
+  return document.getElementById('ai-fab');
+}
+
+function getFabRect() {
+  const fab = getFabEl();
+  if (!fab) return null;
+  const r = fab.getBoundingClientRect();
+  return { left: r.left, top: r.top, width: r.width, height: r.height };
+}
+
+function setFabPosition(left, top, right, bottom) {
+  const fab = getFabEl();
+  if (!fab) return;
+  fab.classList.add('ai-fab--dragging');
+  if (left != null) { fab.style.left = (typeof left === 'number' ? left + 'px' : left); fab.style.right = 'auto'; }
+  if (right != null) { fab.style.right = (typeof right === 'number' ? right + 'px' : right); fab.style.left = 'auto'; }
+  if (top != null) fab.style.top = (typeof top === 'number' ? top + 'px' : top);
+  if (bottom != null) fab.style.bottom = (typeof bottom === 'number' ? bottom + 'px' : bottom);
+  fab.classList.remove('ai-fab--dragging');
+}
+
+function snapFabToEdge() {
+  const fab = getFabEl();
+  if (!fab || !isFabMobile()) return;
+  const r = fab.getBoundingClientRect();
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const centerX = r.left + r.width / 2;
+  const margin = 8;
+  const minTop = 8;
+  const maxTop = vh - r.height - margin;
+  let top = Math.max(minTop, Math.min(maxTop, r.top));
+
+  fab.classList.add('ai-fab--dragging');
+  fab.style.bottom = 'auto';
+  if (centerX < vw / 2) {
+    fab.style.left = margin + 'px';
+    fab.style.right = 'auto';
+    fabDragState.snappedSide = 'left';
+  } else {
+    fab.style.right = margin + 'px';
+    fab.style.left = 'auto';
+    fabDragState.snappedSide = 'right';
+  }
+  fab.style.top = top + 'px';
+  fab.classList.remove('ai-fab--dragging');
+}
+
+function toggleFabMinimize() {
+  if (!isFabMobile()) return;
+  const fab = getFabEl();
+  if (!fab) return;
+  fabDragState.minimized = !fabDragState.minimized;
+  fab.classList.toggle('ai-fab--minimized', fabDragState.minimized);
+  if (fabDragState.minimized) {
+    const r = fab.getBoundingClientRect();
+    const vh = window.innerHeight;
+    const margin = 8;
+    const top = Math.max(8, Math.min(vh - 40 - margin, r.top));
+    fab.style.top = top + 'px';
+    fab.style.bottom = 'auto';
+    if (fabDragState.snappedSide === 'left') {
+      fab.style.left = margin + 'px';
+      fab.style.right = 'auto';
+    } else {
+      fab.style.right = margin + 'px';
+      fab.style.left = 'auto';
+    }
+  }
+}
+
+function handleFabClick(ev) {
+  if (!isFabMobile()) {
+    toggleAiChat();
+    return;
+  }
+  if (fabDragState.moved) {
+    fabDragState.moved = false;
+    return;
+  }
+  if (fabDragState.minimized) {
+    fabDragState.minimized = false;
+    const fab = getFabEl();
+    if (fab) fab.classList.remove('ai-fab--minimized');
+    toggleAiChat();
+    return;
+  }
+  toggleAiChat();
+}
+
+function initFabDrag() {
+  const fab = getFabEl();
+  if (!fab || !isFabMobile()) return;
+
+  const DRAG_THRESHOLD = 5;
+
+  function pointerStart(clientX, clientY) {
+    const r = fab.getBoundingClientRect();
+    fabDragState.dragging = true;
+    fabDragState.moved = false;
+    fabDragState.startX = clientX;
+    fabDragState.startY = clientY;
+    fabDragState.startLeft = r.left;
+    fabDragState.startTop = r.top;
+    fab.style.right = 'auto';
+    fab.style.bottom = 'auto';
+    fab.style.left = r.left + 'px';
+    fab.style.top = r.top + 'px';
+    fab.classList.add('ai-fab--dragging');
+  }
+
+  function pointerMove(clientX, clientY) {
+    if (!fabDragState.dragging) return;
+    const dx = clientX - fabDragState.startX;
+    const dy = clientY - fabDragState.startY;
+    if (Math.abs(dx) > DRAG_THRESHOLD || Math.abs(dy) > DRAG_THRESHOLD) fabDragState.moved = true;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const w = fab.getBoundingClientRect().width;
+    const h = fab.getBoundingClientRect().height;
+    let left = fabDragState.startLeft + dx;
+    let top = fabDragState.startTop + dy;
+    left = Math.max(0, Math.min(vw - w, left));
+    top = Math.max(0, Math.min(vh - h, top));
+    fab.style.left = left + 'px';
+    fab.style.top = top + 'px';
+  }
+
+  function pointerEnd() {
+    if (!fabDragState.dragging) return;
+    fabDragState.dragging = false;
+    fab.classList.remove('ai-fab--dragging');
+    if (fabDragState.moved) snapFabToEdge();
+  }
+
+  fab.addEventListener('touchstart', function (e) {
+    if (e.target.closest('.fab-icon-minimize')) return;
+    e.preventDefault();
+    const t = e.touches[0];
+    pointerStart(t.clientX, t.clientY);
+  }, { passive: false });
+
+  fab.addEventListener('touchmove', function (e) {
+    if (!fabDragState.dragging || !e.touches.length) return;
+    e.preventDefault();
+    pointerMove(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: false });
+
+  fab.addEventListener('touchend', function (e) {
+    pointerEnd();
+  }, { passive: true });
+
+  fab.addEventListener('mousedown', function (e) {
+    if (!isFabMobile() || e.button !== 0) return;
+    if (e.target.closest('.fab-icon-minimize')) return;
+    pointerStart(e.clientX, e.clientY);
+    const onMouseMove = (e2) => pointerMove(e2.clientX, e2.clientY);
+    const onMouseUp = () => {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+      pointerEnd();
+    };
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  });
+
+  // Inline onclick runs after mousedown; prevent toggle if we dragged
+  fab.addEventListener('click', function (e) {
+    if (fabDragState.moved) e.preventDefault();
+  }, true);
+
+  // Init position on mobile: right 1rem, bottom 1rem -> left/top
+  function setInitialPosition() {
+    if (!isFabMobile() || !fab) return;
+    const margin = 16;
+    const w = 52;
+    const h = 52;
+    fab.style.left = (window.innerWidth - w - margin) + 'px';
+    fab.style.top = (window.innerHeight - h - margin) + 'px';
+    fab.style.right = 'auto';
+    fab.style.bottom = 'auto';
+  }
+  setInitialPosition();
+  window.addEventListener('resize', function () {
+    if (!isFabMobile() || fabDragState.dragging) return;
+    if (fabDragState.minimized) return;
+    const r = fab.getBoundingClientRect();
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    if (r.left + r.width / 2 > vw / 2) {
+      fab.style.right = '8px';
+      fab.style.left = 'auto';
+      fab.style.top = Math.max(8, Math.min(vh - r.height - 8, r.top)) + 'px';
+    } else {
+      fab.style.left = '8px';
+      fab.style.right = 'auto';
+      fab.style.top = Math.max(8, Math.min(vh - r.height - 8, r.top)) + 'px';
+    }
+  });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function () {
+    setTimeout(initFabDrag, 100);
+  });
+} else {
+  setTimeout(initFabDrag, 100);
+}
+
 // Dohvati statistiku ocjena sa servera
 async function loadRatingStats() {
   const el = document.getElementById('rating-stats');

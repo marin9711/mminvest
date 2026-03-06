@@ -1154,6 +1154,7 @@ tr:hover td { background:var(--surface2); }
 .ai-fab .fab-icon-close { opacity: 0; transform: rotate(-90deg); }
 .ai-fab.open .fab-icon-chat { opacity: 0; transform: rotate(90deg); }
 .ai-fab.open .fab-icon-close { opacity: 1; transform: rotate(0); }
+.fab-icon-minimize { display: none; }
 @keyframes fabPulse {
   0%, 100% { box-shadow: 0 4px 20px rgba(74,159,232,0.4), 0 0 0 0 rgba(74,159,232,0.3); }
   50% { box-shadow: 0 4px 20px rgba(74,159,232,0.4), 0 0 0 10px rgba(74,159,232,0); }
@@ -1174,22 +1175,51 @@ tr:hover td { background:var(--surface2); }
   opacity: 1; transform: translateY(0) scale(1);
   pointer-events: all;
 }
-/* AI FAB na mobilnim: unlocked float, lagano proziran */
+/* AI FAB na mobilnim: draggable, lebdeći, opacity 0.85, iznad donate bara (z-index 9999 > 900) */
 @media (max-width: 767px) {
   .ai-fab {
-    opacity: 0.7;
     position: fixed;
+    z-index: 9999;
+    opacity: 0.85;
     bottom: 1rem; right: 1rem;
-    transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+    width: 52px; height: 52px;
+    font-size: 1.35rem;
+    transition: opacity 0.2s, box-shadow 0.2s, width 0.2s, height 0.2s, left 0.2s ease, right 0.2s ease, top 0.2s ease, bottom 0.2s ease;
+    touch-action: none;
   }
   .ai-fab:hover, .ai-fab:focus, .ai-fab.open { opacity: 1; }
+  .ai-fab.ai-fab--dragging { transition: none; }
+  .ai-fab.ai-fab--minimized {
+    width: 40px; height: 40px;
+    font-size: 1rem;
+    min-width: 40px; min-height: 40px;
+  }
+  .ai-fab.ai-fab--minimized .fab-icon-minimize { display: none; }
+  .ai-fab .fab-icon-minimize {
+    position: absolute;
+    top: 2px; right: 2px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.25);
+    color: #fff;
+    font-size: 0.9rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+    z-index: 2;
+  }
+  .ai-fab .fab-icon-minimize:active { background: rgba(0,0,0,0.4); }
+  .ai-fab.open .fab-icon-minimize { display: none; }
 }
 @media (max-width: 480px) {
   .ai-chat-float {
     width: calc(100vw - 1.5rem); right: 0.75rem; bottom: 5rem;
     max-height: calc(100vh - 7rem);
   }
-  .ai-fab { bottom: 1rem; right: 1rem; width: 50px; height: 50px; font-size: 1.3rem; }
 }
 
 .ai-chat-header {
@@ -3509,9 +3539,10 @@ tr:hover td { background:var(--surface2); }
   </div>
   <div id="ai-rate-notice" style="display:none;font-size:0.72rem;color:#f56060;padding:0.3rem 0.75rem 0.5rem;text-align:center;"></div>
 </div>
-<button class="ai-fab" id="ai-fab" onclick="toggleAiChat()">
+<button class="ai-fab" id="ai-fab" onclick="handleFabClick(event)">
   <span class="fab-icon-chat">🤖</span>
   <span class="fab-icon-close">✕</span>
+  <span class="fab-icon-minimize" id="ai-fab-minimize" onclick="event.stopPropagation(); toggleFabMinimize();" aria-label="Minimiziraj">−</span>
 </button>
 <button class="ai-fab-hide" id="ai-fab-hide" onclick="hideFabToggle()">👁️ sakrij AI</button>
 
