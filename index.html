@@ -881,6 +881,148 @@ tr:hover td { background:var(--surface2); }
 }
 .quiz-restart-btn:hover { border-color:var(--muted); color:var(--text); }
 
+/* Personalizirani Plan Ulaganja (na stranici Kviza) */
+.plan-advisor {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+.plan-advisor-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.5rem;
+  margin-bottom: 0.35rem;
+  color: var(--text);
+}
+.plan-advisor-sub {
+  font-size: 0.88rem;
+  color: var(--muted2);
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+.plan-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.75rem;
+  margin-bottom: 1.25rem;
+}
+.plan-row {
+  margin-bottom: 1.25rem;
+}
+.plan-row:last-of-type { margin-bottom: 0; }
+.plan-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted2);
+  margin-bottom: 0.5rem;
+}
+.plan-input {
+  width: 100%;
+  max-width: 180px;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.95rem;
+}
+.plan-input:focus {
+  outline: none;
+  border-color: var(--pepp);
+}
+.plan-options {
+  display: grid;
+  gap: 0.5rem;
+}
+.plan-option {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.7rem 1rem;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-size: 0.85rem;
+}
+.plan-option:hover { border-color: var(--muted); }
+.plan-option input { accent-color: var(--pepp); }
+.plan-option input:checked + span { color: var(--text); }
+.plan-option:has(input:checked) {
+  border-color: var(--pepp);
+  background: rgba(74, 159, 232, 0.06);
+}
+.plan-nav { margin-top: 1.25rem; }
+.plan-btn-submit {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, var(--pepp), var(--etf));
+  color: #0b0d12;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.plan-btn-submit:hover { opacity: 0.9; }
+
+.plan-result {
+  display: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-top: 1rem;
+  animation: fadeInUp 0.4s ease;
+}
+.plan-result.show { display: block; }
+.plan-result-inner { text-align: center; }
+.plan-result-emoji { font-size: 2.5rem; margin-bottom: 0.5rem; }
+.plan-result-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: var(--text);
+}
+.plan-result-desc {
+  font-size: 0.88rem;
+  color: var(--muted2);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  text-align: left;
+}
+.plan-result-cta { margin-bottom: 1rem; }
+.plan-result-cta a,
+.plan-result-cta button {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--pepp), var(--etf));
+  color: #0b0d12;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.plan-result-cta a:hover,
+.plan-result-cta button:hover { opacity: 0.9; }
+.plan-warning {
+  background: rgba(245, 185, 60, 0.12);
+  border: 1px solid rgba(245, 185, 60, 0.35);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  font-size: 0.8rem;
+  color: var(--text);
+  text-align: left;
+  margin-bottom: 1rem;
+}
+.plan-warning--hidden { display: none; }
+
 /* FEEDBACK PAGE */
 .feedback-hero {
   text-align: center; padding: 2rem 1rem 1.5rem;
@@ -3016,6 +3158,66 @@ tr:hover td { background:var(--surface2); }
     <button class="quiz-restart-btn" onclick="quizRestart()">↩ Počni iznova</button>
     <p class="disclaimer" style="margin-top:1rem">⚠️ Preporuka je informativnog karaktera i ne predstavlja financijski savjet. Konzultiraj licenciranog savjetnika.</p>
   </div>
+
+  <!-- Personalizirani Plan Ulaganja -->
+  <section class="plan-advisor" id="plan-advisor">
+    <h2 class="plan-advisor-title">📋 Personalizirani Plan Ulaganja</h2>
+    <p class="plan-advisor-sub">Unesi iznos, odaberi rok i odgovori na pitanja — dobit ćeš preporuku prilagođenu tvojoj situaciji.</p>
+
+    <div class="plan-card">
+      <div class="plan-row">
+        <label class="plan-label">Mjesečni iznos (€)</label>
+        <input type="number" id="plan-amount" class="plan-input" min="10" max="5000" step="10" value="100" placeholder="npr. 100">
+      </div>
+      <div class="plan-row">
+        <span class="plan-label">Vremenski period</span>
+        <div class="plan-options" role="group">
+          <label class="plan-option"><input type="radio" name="plan-period" value="short"> <span><strong>Do 3 godine</strong> — kratak rok</span></label>
+          <label class="plan-option"><input type="radio" name="plan-period" value="medium"> <span><strong>3–10 godina</strong> — srednji rok</span></label>
+          <label class="plan-option"><input type="radio" name="plan-period" value="long" checked> <span><strong>10+ godina</strong> — dugi rok</span></label>
+        </div>
+      </div>
+      <div class="plan-row">
+        <span class="plan-label">Ulogaš li već?</span>
+        <div class="plan-options" role="group">
+          <label class="plan-option"><input type="radio" name="plan-investing" value="no"> <span>Ne, tek planiram</span></label>
+          <label class="plan-option"><input type="radio" name="plan-investing" value="yes"> <span>Da, već uplaćujem</span></label>
+        </div>
+      </div>
+      <div class="plan-row">
+        <span class="plan-label">Poznaješ li DMF, PEPP ili ETF?</span>
+        <div class="plan-options" role="group">
+          <label class="plan-option"><input type="radio" name="plan-knows" value="no"> <span>Ne — trebam osnove</span></label>
+          <label class="plan-option"><input type="radio" name="plan-knows" value="little"> <span>Malo — čitam, učim</span></label>
+          <label class="plan-option"><input type="radio" name="plan-knows" value="yes"> <span>Da — razumijem razlike</span></label>
+        </div>
+      </div>
+      <div class="plan-row">
+        <span class="plan-label">Koliko rizika želiš preuzeti?</span>
+        <div class="plan-options" role="group">
+          <label class="plan-option"><input type="radio" name="plan-risk" value="low"> <span>Nizak — prioritet sigurnost</span></label>
+          <label class="plan-option"><input type="radio" name="plan-risk" value="mid"> <span>Umjeren — balans</span></label>
+          <label class="plan-option"><input type="radio" name="plan-risk" value="high"> <span>Visok — maksimalan rast</span></label>
+        </div>
+      </div>
+      <div class="plan-nav">
+        <button type="button" class="plan-btn-submit" id="plan-submit" onclick="showPlanRecommendation()">Dobij preporuku</button>
+      </div>
+    </div>
+
+    <div class="plan-result" id="plan-result">
+      <div class="plan-result-inner">
+        <div class="plan-result-emoji" id="plan-emoji">🎯</div>
+        <div class="plan-result-title" id="plan-title">Tvoja preporuka</div>
+        <div class="plan-result-desc" id="plan-desc"></div>
+        <div class="plan-result-cta" id="plan-cta-wrap"></div>
+        <div class="plan-warning plan-warning--hidden" id="plan-warning">
+          <strong>⚠️ Upozorenje:</strong> Kriptovalute i aktivno trgovanje nose visok rizik. Samo ulagaj novac koji možeš izgubiti. Ovo nije financijski savjet.
+        </div>
+        <button type="button" class="quiz-restart-btn" onclick="resetPlanResult()">Nova preporuka</button>
+      </div>
+    </div>
+  </section>
 
 </div>
 <!-- ========== END QUIZ PAGE ========== -->

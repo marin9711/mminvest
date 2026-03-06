@@ -2391,6 +2391,123 @@ function quizRestart() {
   document.getElementById('quizResult').classList.remove('show');
 }
 
+// ── Personalizirani Plan Ulaganja (preporuka na temelju iznosa, roka i pitanja) ──
+function getPlanData() {
+  const amount = parseFloat(document.getElementById('plan-amount')?.value) || 100;
+  const period = document.querySelector('input[name="plan-period"]:checked')?.value || 'long';
+  const investing = document.querySelector('input[name="plan-investing"]:checked')?.value || 'no';
+  const knows = document.querySelector('input[name="plan-knows"]:checked')?.value || 'no';
+  const risk = document.querySelector('input[name="plan-risk"]:checked')?.value || 'mid';
+  return { amount, period, investing, knows, risk };
+}
+
+function getPlanRecommendation(data) {
+  const { period, knows, risk } = data;
+  const shortTerm = period === 'short';
+  const longTerm = period === 'long';
+  const highRisk = risk === 'high';
+  const beginner = knows === 'no';
+
+  // Kratak rok + visok rizik → kripto/aktivno trgovanje + upozorenje
+  if (shortTerm && highRisk) {
+    return {
+      emoji: '⚠️',
+      title: 'Visok rizik za kratak rok',
+      desc: 'Za kratak rok (do 3 godine) s visokim rizikom ne preporučujemo klasične ETF-ove jer tržište može biti u minusu. Ako i dalje želiš visok rizik, neki razmišljaju o kriptovalutama ili aktivnom trgovanju — ali to nosi vrlo visok rizik gubitka. Razmisli o odgodi cilja ili smanjenju rizika.',
+      ctaPage: 'kripto',
+      ctaLabel: 'Pročitaj o kriptovalutama',
+      showWarning: true,
+    };
+  }
+
+  // Kratak rok (bez visokog rizika) → štednja / niskorizični
+  if (shortTerm) {
+    return {
+      emoji: '🏦',
+      title: 'Štednja ili niskorizični produkti',
+      desc: 'Za rok do 3 godine najsigurnija je štednja ili niskorizični DMF/PEPP. ETF-ovi nisu preporučeni za tako kratak rok jer bi pad tržišta mogao ostaviti manje nego što si uložio/la. Pogledaj Hrvatski DMF ili PEPP za umjeren prinos.',
+      ctaPage: 'p0a',
+      ctaLabel: 'Hrvatski DMF kalkulator',
+      showWarning: false,
+    };
+  }
+
+  // Dugi rok (10+) → ETF ili PEPP/DMF ovisno o poznavanju i poreznim olakšicama
+  if (longTerm) {
+    if (beginner) {
+      return {
+        emoji: '🏛️',
+        title: 'Hrvatski DMF ili PEPP',
+        desc: 'Za dugi rok kao početnik idealan je DMF (državni poticaj do 99,54€/god) ili PEPP — jednostavno, regulirano i s poreznim beneficijama. Kad se osjećaš sigurnije, možeš dio prebaciti u ETF. Koristi kalkulator za DMF vs PEPP.',
+        ctaPage: 'p1',
+        ctaLabel: 'DMF vs PEPP usporedba',
+        showWarning: false,
+      };
+    }
+    return {
+      emoji: '📈',
+      title: 'ETF (VWCE / IWDA) ili kombinacija',
+      desc: 'Za dugi rok s poznavanjem teme preporučujemo globalne ETF-ove (VWCE, IWDA) za maksimalan rast, ili kombinaciju: dio u DMF za poticaj, dio u ETF. Usporedi platforme i naknade u "ETF Platforme" i "Pension + ETF".',
+      ctaPage: 'p0b',
+      ctaLabel: 'ETF Platforme',
+      showWarning: false,
+    };
+  }
+
+  // Srednji rok (3–10)
+  if (beginner) {
+    return {
+      emoji: '🌍',
+      title: 'PEPP ili DMF',
+      desc: 'Za srednji rok s dobrom osnovom preporučujemo PEPP ili Hrvatski DMF — europski/porezni okvir i umjeren prinos. Pogledaj usporedbu DMF vs PEPP i odaberi prema naknadama.',
+      ctaPage: 'p1',
+      ctaLabel: 'DMF vs PEPP',
+      showWarning: false,
+    };
+  }
+  return {
+    emoji: '⚖️',
+    title: 'Kombinirani pristup',
+    desc: 'Za 3–10 godina idealno je kombinirati: dio u mirovinski fond (poticaj/sigurnost), dio u ETF za rast. Koristi "Pension + ETF" kalkulator da vidiš alokaciju i projekciju.',
+    ctaPage: 'p3',
+    ctaLabel: 'Pension + ETF kalkulator',
+    showWarning: false,
+  };
+}
+
+function showPlanRecommendation() {
+  const data = getPlanData();
+  const rec = getPlanRecommendation(data);
+  const resultEl = document.getElementById('plan-result');
+  const wrap = document.getElementById('plan-cta-wrap');
+  const warnEl = document.getElementById('plan-warning');
+  if (!resultEl || !wrap || !warnEl) return;
+
+  document.getElementById('plan-emoji').textContent = rec.emoji;
+  document.getElementById('plan-title').textContent = rec.title;
+  document.getElementById('plan-desc').textContent = rec.desc;
+
+  wrap.innerHTML = '';
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.textContent = rec.ctaLabel;
+  btn.onclick = () => {
+    const tab = document.querySelector(`[data-page="${rec.ctaPage}"]`);
+    if (tab) tab.click();
+  };
+  wrap.appendChild(btn);
+
+  warnEl.classList.toggle('plan-warning--hidden', !rec.showWarning);
+
+  resultEl.classList.add('show');
+  resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function resetPlanResult() {
+  const resultEl = document.getElementById('plan-result');
+  if (resultEl) resultEl.classList.remove('show');
+}
+
 // Attach click listeners to quiz options (run on DOM ready)
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.quiz-option').forEach(opt => {
