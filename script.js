@@ -25,12 +25,30 @@ if (typeof Chart !== 'undefined') {
 }
 
 // NAV
+function scrollToTopInstant() {
+  try {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  } catch (_) {
+    window.scrollTo(0, 0);
+  }
+}
+
+function preventFocusJumpOnPageChange() {
+  const activeEl = document.activeElement;
+  if (!(activeEl instanceof HTMLElement)) return;
+  if (activeEl.matches('input, textarea, select, button, a, [tabindex]')) {
+    activeEl.blur();
+  }
+}
+
 document.querySelectorAll('.nav-tab').forEach(tab => {
   tab.addEventListener('click', () => {
-    document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
-    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     tab.classList.add('active');
     $(tab.dataset.page).classList.add('active');
+    preventFocusJumpOnPageChange();
+    scrollToTopInstant();
   });
 });
 
