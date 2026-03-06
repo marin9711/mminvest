@@ -1617,7 +1617,12 @@ async function sendReply(idx) {
       const item = $(`fb-item-${idx}`);
       if (item) {
         const replyRow = item.querySelector('.fb-reply-row');
-        if (replyRow) replyRow.outerHTML = `<div class="fb-log-reply">💬 Odgovor: ${replyText.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`;
+        if (replyRow) {
+          const replyDiv = document.createElement('div');
+          replyDiv.className = 'fb-log-reply';
+          replyDiv.textContent = '💬 Odgovor: ' + replyText;
+          replyRow.replaceWith(replyDiv);
+        }
         const badge = item.querySelector('.fb-log-status');
         if (badge) { badge.className = 'fb-log-status odgovoreno'; badge.textContent = '✅ odgovoreno'; }
       }
