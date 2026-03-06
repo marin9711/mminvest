@@ -64,6 +64,178 @@ document.querySelectorAll('.nav-tab').forEach(tab => {
   });
 });
 
+// ============ MOJE ULAGANJE (GLOBAL STATE) ============
+window.myStrategy = window.myStrategy || {
+  p0a: { enabled: false, data: null },
+  pepp: { enabled: false, data: null },
+  p0b: { enabled: false, data: null },
+  showSuggestedOnChart: false,
+};
+
+let strategyChart;
+
+const STRATEGY_META = {
+  p0a: {
+    color: '#e8a44a',
+    pros: ['Državni poticaj do 99.54€/god', 'Stabilniji profil ulaganja', 'Mogućnost poslodavčeve uplate'],
+    cons: ['Niža fleksibilnost isplate', 'Kapital uglavnom zaključan do 55. god.', 'Prinos često niži od ETF/PEPP alternativa'],
+  },
+  pepp: {
+    color: '#4a9fe8',
+    pros: ['EU portabilnost', 'Niže naknade nego većina DMF varijanti', 'Potencijalno viši dugoročni rast'],
+    cons: ['Nema državnog poticaja u HR', 'Tržišna volatilnost', 'Porezni tretman ovisi o državi/okviru'],
+  },
+  p0b: {
+    color: '#4ae8a0',
+    pros: ['Najveća fleksibilnost i likvidnost', 'Širok izbor ETF strategija', 'Potencijalno najviši dugoročni prinos'],
+    cons: ['Nema državnog poticaja', 'Potrebna disciplina i razumijevanje rizika', 'Naknade i porezi ovise o platformi'],
+  },
+  suggested: {
+    color: '#c77af5',
+  },
+};
+
+function computeCompoundCurve(initial, annualContribution, years, ratePct) {
+  let value = Number(initial) || 0;
+  const arr = [];
+  for (let i = 1; i <= years; i++) {
+    value = (value + annualContribution) * (1 + ratePct / 100);
+    arr.push(Math.round(value));
+  }
+  return arr;
+}
+
+function buildStrategyRecommendation(selectedMap) {
+  const dmf = selectedMap.p0a;
+  const pepp = selectedMap.pepp;
+  if (dmf && !pepp && dmf.years >= 15) {
+    const peppCurve = computeCompoundCurve(dmf.initial, dmf.annualContribution, dmf.years, PEPP_RATE);
+    const peppFinal = peppCurve[peppCurve.length - 1] || 0;
+    const diff = peppFinal - dmf.finalAmount;
+    const absDiff = Math.abs(diff);
+    const txt = diff >= 0
+      ? `Primijetili smo da ulažete na ${dmf.years} godina. U istom scenariju PEPP bi mogao donijeti oko ${fmt(absDiff)} više, primarno zbog nižih naknada i višeg očekivanog neto prinosa.`
+      : `Primijetili smo da ulažete na ${dmf.years} godina. U ovom scenariju vaš odabrani DMF završava oko ${fmt(absDiff)} bolje od PEPP projekcije (uz korištene pretpostavke).`;
+    return {
+      text: txt,
+      curve: peppCurve,
+      label: `Pametni prijedlog: PEPP (${PEPP_RATE.toFixed(1)}%)`,
+    };
+  }
+  return {
+    text: 'Za precizniji pametan prijedlog odaberi barem jedan scenarij i uključi ga u "Moje ulaganje". Najviše koristi dobivaš kad usporediš DMF + PEPP + ETF.',
+    curve: null,
+    label: '',
+  };
+}
+
+function renderMyStrategyDashboard() {
+  const placeholder = $('strategy-placeholder');
+  const dashboard = $('strategy-dashboard');
+  const cardsWrap = $('strategy-summary-cards');
+  const smartText = $('strategy-smart-text');
+  const smartToggleWrap = $('strategy-smart-toggle-wrap');
+  const smartToggle = $('strategy-show-suggestion');
+  const proConWrap = $('strategy-procon');
+  if (!placeholder || !dashboard || !cardsWrap || !smartText || !smartToggleWrap || !smartToggle || !proConWrap) return;
+
+  const selected = Object.entries(window.myStrategy)
+    .filter(([k, v]) => ['p0a', 'pepp', 'p0b'].includes(k) && v.enabled && v.data)
+    .map(([, v]) => v.data);
+
+  if (!selected.length) {
+    placeholder.style.display = 'block';
+    dashboard.style.display = 'none';
+    if (strategyChart) { strategyChart.destroy(); strategyChart = null; }
+    return;
+  }
+
+  placeholder.style.display = 'none';
+  dashboard.style.display = 'block';
+
+  cardsWrap.innerHTML = selected.map((s) => `
+    <div class="strategy-card">
+      <div class="label">${s.instrument}</div>
+      <div class="name">${s.fundType}</div>
+      <div class="value">${fmt(s.finalAmount)}</div>
+      <div style="margin-top:0.35rem;font-size:0.74rem;color:var(--muted2);">${s.monthlyPayment.toFixed(2)}€/mj · ${s.years} god · ${s.expectedReturn.toFixed(2)}%</div>
+    </div>
+  `).join('');
+
+  const maxYears = Math.max(...selected.map(s => s.years));
+  const labels = Array.from({ length: maxYears }, (_, i) => i + 1);
+  const datasets = selected.map((s) => ({
+    label: `${s.instrument}: ${s.fundType}`,
+    data: labels.map((_, idx) => s.curve[idx] ?? null),
+    borderColor: STRATEGY_META[s.key].color,
+    backgroundColor: 'transparent',
+    fill: false,
+    borderWidth: 2.4,
+    pointRadius: 0,
+    tension: 0.35,
+    spanGaps: false,
+  }));
+
+  const selectedMap = selected.reduce((acc, item) => { acc[item.key] = item; return acc; }, {});
+  const recommendation = buildStrategyRecommendation(selectedMap);
+  smartText.textContent = recommendation.text;
+  smartToggleWrap.style.display = recommendation.curve ? 'inline-flex' : 'none';
+  smartToggle.checked = !!window.myStrategy.showSuggestedOnChart;
+
+  if (recommendation.curve && window.myStrategy.showSuggestedOnChart) {
+    datasets.push({
+      label: recommendation.label,
+      data: labels.map((_, idx) => recommendation.curve[idx] ?? null),
+      borderColor: STRATEGY_META.suggested.color,
+      backgroundColor: 'transparent',
+      fill: false,
+      borderWidth: 2,
+      borderDash: [6, 4],
+      pointRadius: 0,
+      tension: 0.35,
+      spanGaps: false,
+    });
+  }
+
+  if (!strategyChart) strategyChart = makeChart('strategy-chart', labels, datasets);
+  else {
+    strategyChart.data.labels = labels;
+    strategyChart.data.datasets = datasets;
+    strategyChart.update();
+  }
+
+  proConWrap.innerHTML = selected.map((s) => {
+    const meta = STRATEGY_META[s.key];
+    return `
+      <div class="strategy-procon-card">
+        <h4>${s.instrument} — ${s.fundType}</h4>
+        <div class="strategy-procon-grid">
+          <div class="strategy-col pro">
+            <strong>Pro</strong>
+            <ul>${meta.pros.map((p) => `<li>${p}</li>`).join('')}</ul>
+          </div>
+          <div class="strategy-col con">
+            <strong>Con</strong>
+            <ul>${meta.cons.map((c) => `<li>${c}</li>`).join('')}</ul>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function setStrategyEnabled(key, enabled) {
+  if (!window.myStrategy[key]) return;
+  window.myStrategy[key].enabled = !!enabled;
+  renderMyStrategyDashboard();
+}
+
+function syncStrategyData(key, data) {
+  if (!window.myStrategy[key]) return;
+  window.myStrategy[key].data = data;
+  if (window.myStrategy[key].enabled) renderMyStrategyDashboard();
+}
+
 // HELPERS
 function compoundFV(annual, rateP, years) {
   let v=0;
@@ -562,6 +734,19 @@ function updateP0a() {
   storeChartData('p0a-chart-all', allLabels, allDS);
   if(!chartP0aAll){ chartP0aAll=makeChart('p0a-chart-all',allLabels,allDS); }
   else{ chartP0aAll.data.labels=allLabels; chartP0aAll.data.datasets.forEach((d,i)=>{d.data=allDS[i].data;}); chartP0aAll.update(); }
+
+  syncStrategyData('p0a', {
+    key: 'p0a',
+    instrument: 'DMF',
+    fundType: fundName,
+    monthlyPayment: annualUplata / 12,
+    annualContribution: annualUplata,
+    years: god,
+    expectedReturn: rate,
+    initial,
+    finalAmount: Math.round(val),
+    curve: [...vals],
+  });
 }
 
 ['p0a-uplata','p0a-initial','p0a-god'].forEach(id => $(id).addEventListener('syncedInput', updateP0a));
@@ -713,10 +898,59 @@ function updateP0b() {
     });
     chartP0bPlatforms.update();
   }
+
+  syncStrategyData('p0b', {
+    key: 'p0b',
+    instrument: 'ETF',
+    fundType: `${etf.name} · ${pl.name}`,
+    monthlyPayment: uplata / 12,
+    annualContribution: uplata,
+    years: god,
+    expectedReturn: etf.rate,
+    initial,
+    finalAmount: Math.round(afterTax),
+    curve: [...afterArr],
+  });
 }
 
 ['p0b-uplata','p0b-initial','p0b-god','p0b-custom-r'].forEach(id => $(id).addEventListener('syncedInput', updateP0b));
 ['p0b-etf-select','p0b-platform','p0b-tax'].forEach(id=>$(id).addEventListener('change',updateP0b));
+
+function updatePeppStrategyModel() {
+  const fundSel = $('pepp-strategy-fund');
+  const monthlyEl = $('pepp-strategy-monthly');
+  const yearsEl = $('pepp-strategy-years');
+  const rateEl = $('pepp-strategy-rate');
+  const finalEl = $('pepp-strategy-final');
+  const infoEl = $('pepp-strategy-info');
+  if (!fundSel || !monthlyEl || !yearsEl || !rateEl || !finalEl || !infoEl) return;
+
+  const [baseRate, fundName] = String(fundSel.value || '').split(',');
+  if (document.activeElement !== rateEl && baseRate) rateEl.value = Number(baseRate).toFixed(1);
+
+  const monthly = Math.max(0, parseFloat(monthlyEl.value) || 0);
+  const years = Math.max(2, Math.min(60, parseInt(yearsEl.value, 10) || 20));
+  const rate = Math.max(1, Math.min(20, parseFloat(rateEl.value) || Number(baseRate) || PEPP_RATE));
+  const annual = monthly * 12;
+  const curve = computeCompoundCurve(0, annual, years, rate);
+  const finalAmount = curve[curve.length - 1] || 0;
+
+  finalEl.textContent = fmt(finalAmount);
+  infoEl.textContent = `${monthly.toFixed(2)}€/mj · ${years} god · ${rate.toFixed(1)}% očekivani neto prinos`;
+
+  syncStrategyData('pepp', {
+    key: 'pepp',
+    instrument: 'PEPP',
+    fundType: fundName || 'PEPP scenarij',
+    monthlyPayment: monthly,
+    annualContribution: annual,
+    years,
+    expectedReturn: rate,
+    initial: 0,
+    finalAmount: Math.round(finalAmount),
+    curve,
+  });
+}
 
 // ============ SLIDER <-> NUMBER INPUT SYNC ============
 const SLIDER_PAIRS = [
@@ -929,9 +1163,54 @@ CHART_META.forEach(([canvasId, title]) => {
   });
 });
 
+function initMyStrategyFeature() {
+  if (window._myStrategyInitDone) return;
+  window._myStrategyInitDone = true;
+
+  const p0aToggle = $('p0a-strategy-toggle');
+  const peppToggle = $('pepp-strategy-toggle');
+  const p0bToggle = $('p0b-strategy-toggle');
+  const showSug = $('strategy-show-suggestion');
+
+  if (p0aToggle) {
+    p0aToggle.addEventListener('change', () => {
+      setStrategyEnabled('p0a', p0aToggle.checked);
+      try { updateP0a(); } catch (_) {}
+    });
+  }
+  if (peppToggle) {
+    peppToggle.addEventListener('change', () => {
+      setStrategyEnabled('pepp', peppToggle.checked);
+      try { updatePeppStrategyModel(); } catch (_) {}
+    });
+  }
+  if (p0bToggle) {
+    p0bToggle.addEventListener('change', () => {
+      setStrategyEnabled('p0b', p0bToggle.checked);
+      try { updateP0b(); } catch (_) {}
+    });
+  }
+  if (showSug) {
+    showSug.addEventListener('change', () => {
+      window.myStrategy.showSuggestedOnChart = showSug.checked;
+      renderMyStrategyDashboard();
+    });
+  }
+
+  const peppFund = $('pepp-strategy-fund');
+  const peppMonthly = $('pepp-strategy-monthly');
+  const peppYears = $('pepp-strategy-years');
+  const peppRate = $('pepp-strategy-rate');
+  if (peppFund) peppFund.addEventListener('change', updatePeppStrategyModel);
+  if (peppMonthly) peppMonthly.addEventListener('input', updatePeppStrategyModel);
+  if (peppYears) peppYears.addEventListener('input', updatePeppStrategyModel);
+  if (peppRate) peppRate.addEventListener('input', updatePeppStrategyModel);
+}
+
 // ============ INIT ============
 // Ensure DOM is fully ready before init
 function initApp() {
+  initMyStrategyFeature();
   setupSyncPairs();
   // Also restore from localStorage if available
   const STORE_KEYS = Object.keys(localStorage).filter(k => k.startsWith('miv_'));
@@ -953,6 +1232,8 @@ function initApp() {
   [updateP0a, updateP0b, updateP1, updateP2, updateP3].forEach(fn => {
     try { fn(); } catch(e) { console.error('Update error:', fn.name, e); }
   });
+  try { updatePeppStrategyModel(); } catch (_) {}
+  renderMyStrategyDashboard();
 }
 function safeInitApp() {
   try { initApp(); } catch(e) { 

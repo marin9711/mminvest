@@ -1512,6 +1512,7 @@ tr:hover td { background: var(--surface2) !important; }
     <div class="nav-tab" data-page="p1">HR DMF (3.stup) vs PEPP</div>
     <div class="nav-tab" data-page="p2">DMF/PEPP vs ETF</div>
     <div class="nav-tab" data-page="p3">Pension + ETF</div>
+    <div class="nav-tab" data-page="p_strategy">📦 Moje ulaganje</div>
     <div class="nav-tab" data-page="kviz">🧭 Koji put?</div>
     <div class="nav-tab" data-page="stednja-dijete">👶 Štednja za dijete</div>
     <div class="nav-tab" data-page="kripto">₿ Kriptovalute</div>
@@ -1909,6 +1910,16 @@ tr:hover td { background: var(--surface2) !important; }
       </select>
     </div>
   </div>
+  <div class="strategy-toggle-row">
+    <label class="strategy-toggle">
+      <input type="checkbox" id="p0a-strategy-toggle">
+      <span class="strategy-toggle-slider"></span>
+    </label>
+    <div>
+      <div class="strategy-toggle-title">Dodaj u moje ulaganje</div>
+      <div class="strategy-toggle-sub">Spremi ovaj DMF scenarij i usporedi ga na tabu "Moje ulaganje".</div>
+    </div>
+  </div>
 
   <!-- Stats -->
   <div class="stat-cards">
@@ -1985,6 +1996,46 @@ tr:hover td { background: var(--surface2) !important; }
       </tr></thead>
       <tbody id="p0a-tbody"></tbody>
     </table></div>
+  </div>
+
+  <div class="table-card">
+    <h3>🧠 PEPP scenarij za "Moje ulaganje"</h3>
+    <div class="controls" style="margin-bottom:0.8rem;">
+      <div class="ctrl-group c-pepp">
+        <label for="pepp-strategy-fund">PEPP portfelj</label>
+        <select id="pepp-strategy-fund">
+          <option value="7.0,Finax 100/0 (globalni dionički ETF)">Finax 100/0 (globalni dionički ETF)</option>
+          <option value="6.0,Finax 80/20 (umjereni portfelj)">Finax 80/20 (umjereni portfelj)</option>
+          <option value="4.5,Finax 60/40 (konzervativni portfelj)">Finax 60/40 (konzervativni portfelj)</option>
+        </select>
+      </div>
+      <div class="ctrl-group c-neutral">
+        <label for="pepp-strategy-monthly">Mjesečna uplata (€)</label>
+        <input type="number" id="pepp-strategy-monthly" class="ctrl-val-input" min="20" max="5000" step="10" value="100">
+      </div>
+      <div class="ctrl-group c-neutral">
+        <label for="pepp-strategy-years">Broj godina</label>
+        <input type="number" id="pepp-strategy-years" class="ctrl-val-input" min="2" max="60" step="1" value="20">
+      </div>
+      <div class="ctrl-group c-neutral">
+        <label for="pepp-strategy-rate">Očekivani prinos (%/god)</label>
+        <input type="number" id="pepp-strategy-rate" class="ctrl-val-input" min="2" max="15" step="0.1" value="7.0">
+      </div>
+    </div>
+    <div class="winner-banner" style="margin-top:0.4rem;">
+      <div><div class="wb-label">Projekcija PEPP</div><div class="wb-val" id="pepp-strategy-final" style="color:var(--pepp-l)">—</div></div>
+      <div class="wb-desc" id="pepp-strategy-info">Unesi iznos i broj godina da vidiš projekciju.</div>
+    </div>
+    <div class="strategy-toggle-row">
+      <label class="strategy-toggle">
+        <input type="checkbox" id="pepp-strategy-toggle">
+        <span class="strategy-toggle-slider"></span>
+      </label>
+      <div>
+        <div class="strategy-toggle-title">Dodaj u moje ulaganje</div>
+        <div class="strategy-toggle-sub">Spremi ovaj PEPP scenarij za jedinstvenu usporedbu.</div>
+      </div>
+    </div>
   </div>
   <div class="liq-info-box">
     <div class="liq-row"><span class="liq-icon">🔒</span><div class="liq-text"><strong>Niska likvidnost — HR DMF (3. mirovinski stup)</strong><span>Novac je zaključan do <strong>55. godine</strong>. Možeš povući max <strong>30% jednokratno</strong>, ostatak se isplaćuje u mirovinskim ratama. Prijevremeni otkup nije moguć.</span></div></div>
@@ -2210,6 +2261,16 @@ tr:hover td { background: var(--surface2) !important; }
         <option value="0">0% (≥2 god, HR rezident)</option>
         <option value="12">12% (kraće od 2 god)</option>
       </select>
+    </div>
+  </div>
+  <div class="strategy-toggle-row">
+    <label class="strategy-toggle">
+      <input type="checkbox" id="p0b-strategy-toggle">
+      <span class="strategy-toggle-slider"></span>
+    </label>
+    <div>
+      <div class="strategy-toggle-title">Dodaj u moje ulaganje</div>
+      <div class="strategy-toggle-sub">Spremi ovaj ETF scenarij i usporedi ga s DMF/PEPP strategijama.</div>
     </div>
   </div>
 
@@ -2973,6 +3034,38 @@ tr:hover td { background: var(--surface2) !important; }
   </div>
 
   <p class="disclaimer">⚠️ Navedeni resursi su informativnog karaktera. MM Invest nije povezan s navedenim autorima i platformama. Uvijek konzultiraj licenciranog financijskog savjetnika prije donošenja investicijskih odluka.</p>
+</div>
+
+<!-- ========== MY STRATEGY PAGE ========== -->
+<div class="page" id="p_strategy">
+  <div class="page-header">
+    <h2><span class="grad-combo">📦 Moje ulaganje</span></h2>
+    <p>Na jednom mjestu vidi sve odabrane scenarije, zajednički graf rasta i pametni prijedlog optimizacije.</p>
+  </div>
+
+  <div class="strategy-placeholder" id="strategy-placeholder">
+    Aktiviraj toggle na bilo kojem kalkulatoru da vidiš analizu ovdje.
+  </div>
+
+  <div id="strategy-dashboard" style="display:none;">
+    <div class="strategy-grid" id="strategy-summary-cards"></div>
+
+    <div class="chart-card">
+      <h3>Unified rast portfelja</h3>
+      <canvas id="strategy-chart"></canvas>
+    </div>
+
+    <div class="table-card" id="strategy-smart-box">
+      <h3>💡 Pametan prijedlog</h3>
+      <div id="strategy-smart-text" style="color:var(--muted2);font-size:0.9rem;line-height:1.6;">—</div>
+      <label class="strategy-inline-toggle" id="strategy-smart-toggle-wrap" style="display:none;">
+        <input type="checkbox" id="strategy-show-suggestion">
+        <span>Prikaži preporuku na grafu</span>
+      </label>
+    </div>
+
+    <div class="strategy-procon" id="strategy-procon"></div>
+  </div>
 </div>
 
 <!-- ========== QUIZ PAGE ========== -->
@@ -3936,6 +4029,7 @@ const TRANSLATIONS = {
   'nav-p1':          { hr: 'HR DMF (3.stup) vs PEPP', en: 'HR VMF vs PEPP' },
   'nav-p2':          { hr: 'DMF/PEPP vs ETF',       en: 'VMF/PEPP vs ETF' },
   'nav-p3':          { hr: 'Pension + ETF',          en: 'Pension + ETF' },
+  'nav-strategy':    { hr: '📦 Moje ulaganje',       en: '📦 My Investment' },
   'nav-kviz':        { hr: '🧭 Koji put?',           en: '🧭 Which path?' },
   'nav-stednja':     { hr: '👶 Štednja za dijete',   en: '👶 Saving for a child' },
   'nav-kripto':      { hr: '₿ Kriptovalute',         en: '₿ Cryptocurrencies' },
@@ -4014,6 +4108,7 @@ const I18N_MAP = {
   '[data-page="p1"]':            'nav-p1',
   '[data-page="p2"]':            'nav-p2',
   '[data-page="p3"]':            'nav-p3',
+  '[data-page="p_strategy"]':    'nav-strategy',
   '[data-page="kviz"]':          'nav-kviz',
   '[data-page="stednja-dijete"]':'nav-stednja',
   '[data-page="kripto"]':        'nav-kripto',
