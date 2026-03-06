@@ -3287,6 +3287,7 @@ async function showAdminDash() {
   document.getElementById('admin-dash-view').style.display = '';
   await hydrateLiveStatsFromWorker();
   renderAdminLiveStats();
+  loadAdminGlobalNotification();
   
   try {
     const resp = await fetch(WORKER_URL + '/admin/api/status', {
@@ -3343,7 +3344,7 @@ function switchAdminTab(tab) {
     if (tabContent) tabContent.classList.toggle('active', t === tab);
   });
   if (tab === 'fb') { loadFeedbackLog(); loadPollResults(); }
-  if (tab === 'mgmt') { loadKvItems(); renderAdminLiveStats(); }
+  if (tab === 'mgmt') { loadKvItems(); renderAdminLiveStats(); loadAdminGlobalNotification(); }
 }
 
 async function loadFeedbackLog() {
@@ -3586,6 +3587,85 @@ async function adminClearFeedback() {
     showMgmtMsg('❌ Mrežna greška.', 'error');
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = '🧹 Obriši sav feedback'; }
+  }
+}
+
+async function loadAdminGlobalNotification() {
+  const input = document.getElementById('admin-global-notification-input');
+  if (!adminToken || !input) return;
+  try {
+    const resp = await fetch(WORKER_URL + '/admin/api/config', {
+      headers: { 'Authorization': 'Bearer ' + adminToken }
+    });
+    if (!resp.ok) {
+      if (resp.status === 401) { adminLogout(); return; }
+      return;
+    }
+    const data = await resp.json();
+    const value = typeof data.app_status === 'string' ? data.app_status : '';
+    input.value = value;
+  } catch (_) {}
+}
+
+async function adminPublishGlobalNotification() {
+  const input = document.getElementById('admin-global-notification-input');
+  const btn = document.getElementById('admin-notification-publish-btn');
+  if (!adminToken || !input || !btn) return;
+
+  const appStatus = input.value.trim().slice(0, 500);
+  btn.disabled = true;
+  btn.textContent = 'Spremanje...';
+  try {
+    const resp = await fetch(WORKER_URL + '/admin/api/config', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
+      body: JSON.stringify({ app_status: appStatus })
+    });
+    const data = await resp.json();
+    if (!resp.ok || data.error) {
+      if (resp.status === 401 || data.error === 'unauthorized') { adminLogout(); return; }
+      showMgmtMsg('❌ Greška: ' + (data.error || 'nepoznata'), 'error');
+      return;
+    }
+    showMgmtMsg('✅ Obavijest spremljena i objavljena.', 'success');
+    showAppNotificationBar(appStatus);
+    loadKvItems();
+  } catch (e) {
+    showMgmtMsg('❌ Mrežna greška.', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Spremi i Objavi';
+  }
+}
+
+async function adminClearGlobalNotification() {
+  const input = document.getElementById('admin-global-notification-input');
+  const btn = document.getElementById('admin-notification-clear-btn');
+  if (!adminToken || !input || !btn) return;
+
+  btn.disabled = true;
+  btn.textContent = 'Čistim...';
+  try {
+    const resp = await fetch(WORKER_URL + '/admin/api/config', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
+      body: JSON.stringify({ app_status: '' })
+    });
+    const data = await resp.json();
+    if (!resp.ok || data.error) {
+      if (resp.status === 401 || data.error === 'unauthorized') { adminLogout(); return; }
+      showMgmtMsg('❌ Greška: ' + (data.error || 'nepoznata'), 'error');
+      return;
+    }
+    input.value = '';
+    showMgmtMsg('✅ Globalna obavijest je obrisana.', 'success');
+    showAppNotificationBar('');
+    loadKvItems();
+  } catch (e) {
+    showMgmtMsg('❌ Mrežna greška.', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Clear Notification';
   }
 }
 
@@ -4129,24 +4209,22 @@ document.addEventListener('DOMContentLoaded', () => {
   if (tabFb) tabFb.addEventListener('click', () => switchAdminTab('fb'));
   if (tabMgmt) tabMgmt.addEventListener('click', () => switchAdminTab('mgmt'));
 
+  const notificationInput = document.getElementById('admin-global-notification-input');
+  if (notificationInput) {
+    notificationInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        adminPublishGlobalNotification();
+      }
+    });
+  }
+
   // Notification bar: X minimizira u ikonu, klik na ikonu ponovno otvara bar
   const notifClose = document.getElementById('app-notification-close');
   const notifIcon = document.getElementById('app-notification-icon');
   if (notifClose) notifClose.addEventListener('click', minimizeNotificationBar);
   if (notifIcon) notifIcon.addEventListener('click', expandNotificationBar);
 
-  // Notification bar: dohvati app_status pri učitavanju stranice
-  fetch(AI_WORKER_URL + '/status')
-    .then((r) => r.json())
-    .then((d) => {
-      if (d.app_status && String(d.app_status).trim()) {
-        const bar = document.getElementById('app-notification-bar');
-        const txt = document.getElementById('app-notification-text');
-        if (bar && txt) {
-          txt.textContent = d.app_status.trim();
-          bar.style.display = 'flex';
-        }
-      }
-    })
-    .catch(() => {});
+  // Notification bar + AI status: dohvati pri učitavanju stranice
+  checkAiStatus();
 });

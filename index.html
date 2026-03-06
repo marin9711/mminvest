@@ -4231,6 +4231,27 @@ tr:hover td { background: var(--surface2) !important; }
 
         <div style="border-top:1px solid var(--border); margin-bottom:0.75rem;"></div>
 
+        <!-- Global notification controller -->
+        <div style="margin-bottom:1rem;">
+          <div style="font-size:0.78rem; font-weight:700; color:var(--muted2); margin-bottom:0.5rem;">📢 Global Notification</div>
+          <input type="text" id="admin-global-notification-input"
+            placeholder="Upiši obavijest za sve korisnike..."
+            maxlength="500"
+            style="width:100%; padding:0.55rem 0.75rem; background:rgba(36,43,61,0.8); border:1px solid #2e3850; border-radius:8px; color:#e2e5f0; font-size:0.75rem; margin-bottom:0.5rem; outline:none;">
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <button id="admin-notification-publish-btn" onclick="adminPublishGlobalNotification()"
+              style="flex:1; min-width:130px; padding:0.55rem 0.75rem; background:linear-gradient(135deg,#4a9fe8,#4ae8a0); border:1px solid rgba(74,158,232,0.55); color:#0b0d12; border-radius:8px; font-size:0.75rem; font-weight:700; cursor:pointer;">
+              Spremi i Objavi
+            </button>
+            <button id="admin-notification-clear-btn" onclick="adminClearGlobalNotification()"
+              style="flex:1; min-width:130px; padding:0.55rem 0.75rem; background:rgba(245,96,96,0.12); border:1px solid rgba(245,96,96,0.35); color:#f56060; border-radius:8px; font-size:0.75rem; font-weight:700; cursor:pointer;">
+              Clear Notification
+            </button>
+          </div>
+        </div>
+
+        <div style="border-top:1px solid var(--border); margin-bottom:0.75rem;"></div>
+
         <!-- Masovne operacije -->
         <div style="margin-bottom:1rem;">
           <div style="font-size:0.78rem; font-weight:700; color:var(--muted2); margin-bottom:0.5rem;">🗂️ Masovne operacije</div>

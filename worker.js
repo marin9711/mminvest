@@ -732,7 +732,7 @@ async function handleRequest(request, env) {
           return new Response(JSON.stringify({
             ai_enabled: aiEnabled !== 'off',
             system_prompt_override: systemPrompt || '',
-            app_status: appStatus || '{}',
+            app_status: appStatus || '',
           }), { headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } });
         } catch(e) {
           return new Response(JSON.stringify({ error: e.message }), {
