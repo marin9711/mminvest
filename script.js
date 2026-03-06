@@ -865,8 +865,45 @@ if ($('p3-infl-toggle')) {
 }
 
 // ============ CHART FACTORY ============
+const FIRE_WITHDRAWAL_MULTIPLIER = 25; // 4% rule => 25x annual expenses
+const FIRE_MONTHLY_EXPENSES_INPUT_ID = 'p0a-fire-monthly-expenses';
+
+const fireMilestonePlugin = {
+  id: 'fireMilestonePlugin',
+  afterDatasetsDraw(chart) {
+    const { ctx, chartArea } = chart;
+    if (!ctx || !chartArea) return;
+
+    chart.data.datasets.forEach((dataset, datasetIndex) => {
+      if (!dataset || !dataset.fireMarkerLabel) return;
+      const meta = chart.getDatasetMeta(datasetIndex);
+      if (!meta || meta.hidden) return;
+
+      const pointIndex = (dataset.data || []).findIndex(v => Number.isFinite(v));
+      if (pointIndex < 0 || !meta.data || !meta.data[pointIndex]) return;
+
+      const point = meta.data[pointIndex];
+      const x = point.x;
+      const y = point.y;
+      const label = dataset.fireMarkerLabel;
+
+      ctx.save();
+      ctx.font = '600 11px DM Sans, sans-serif';
+      ctx.textBaseline = 'middle';
+      const w = ctx.measureText(label).width;
+      let tx = x + 10;
+      if (tx + w > chartArea.right - 4) tx = x - w - 10;
+      const ty = Math.max(chartArea.top + 10, y - 12);
+      ctx.fillStyle = '#4ae8a0';
+      ctx.fillText(label, tx, ty);
+      ctx.restore();
+    });
+  }
+};
+
 function makeChart(canvasId, labels, datasets) {
   return new Chart($(canvasId), {
+    plugins: [fireMilestonePlugin],
     type: 'line',
     data: { labels, datasets },
     options: {
@@ -904,6 +941,52 @@ function makeChart(canvasId, labels, datasets) {
   });
 }
 
+function ensureP0aFireUi() {
+  const periodEl = $('p0a-period');
+  const winnerBanner = document.querySelector('#p0a .winner-banner');
+  if (!periodEl || !winnerBanner) return;
+
+  if (!$(FIRE_MONTHLY_EXPENSES_INPUT_ID)) {
+    const fireCtrl = document.createElement('div');
+    fireCtrl.className = 'ctrl-group c-neutral';
+    fireCtrl.innerHTML = `
+      <label for="${FIRE_MONTHLY_EXPENSES_INPUT_ID}">Mjesečni troškovi života (€)</label>
+      <input
+        type="number"
+        id="${FIRE_MONTHLY_EXPENSES_INPUT_ID}"
+        class="ctrl-val-input"
+        min="0"
+        step="50"
+        value="1000"
+        placeholder="1000"
+      >
+    `;
+    const controlsWrap = periodEl.closest('.controls');
+    if (controlsWrap) controlsWrap.appendChild(fireCtrl);
+  }
+
+  if (!$('p0a-fire-number')) {
+    const fireBox = document.createElement('div');
+    fireBox.className = 'tax-info-box';
+    fireBox.style.marginTop = '0.8rem';
+    fireBox.innerHTML = `
+      <div class="tax-title">FIRE projekcija (4% pravilo)</div>
+      <div class="tax-main" id="p0a-fire-number">FIRE broj: —</div>
+      <div class="tax-sub" id="p0a-fire-message">Unesite mjesečne troškove života za izračun FIRE cilja.</div>
+    `;
+    winnerBanner.insertAdjacentElement('afterend', fireBox);
+  }
+
+  const fireInput = $(FIRE_MONTHLY_EXPENSES_INPUT_ID);
+  if (fireInput && !fireInput.dataset.fireBound) {
+    fireInput.addEventListener('input', () => {
+      localStorage.setItem('miv_' + FIRE_MONTHLY_EXPENSES_INPUT_ID, fireInput.value);
+      updateP0a();
+    });
+    fireInput.dataset.fireBound = '1';
+  }
+}
+
 // ============ PAGE 0A: HRVATSKI DMF ============
 let chartP0aAll, chartP0a;
 
@@ -921,6 +1004,7 @@ const PEPP_RATE = 7.0; // Finax historijski ~8% bruto - 1% naknada = ~7% neto
 const PEPP_RATE_GROSS = 8.0;
 
 function updateP0a() {
+  ensureP0aFireUi();
   const sel = $('p0a-fund-select');
   const [r2024, r5y] = sel.value.split(',').map(Number);
   const fundName = sel.options[sel.selectedIndex].text.split(' (')[0];
@@ -928,6 +1012,8 @@ function updateP0a() {
   const inputAmt = parseFloat(($('p0a-uplata-v').value+'').replace(',','.')) || parseFloat($('p0a-uplata').value) || 663;
   const initial = parseFloat($('p0a-initial-v').value) || parseFloat($('p0a-initial').value) || 0;
   const god = parseInt($('p0a-god-v').value) || parseInt($('p0a-god').value) || 25;
+  const fireMonthlyExpenses = Math.max(0, parseFloat((($(FIRE_MONTHLY_EXPENSES_INPUT_ID)?.value) || '0').toString().replace(',','.')) || 0);
+  const fireNumber = fireMonthlyExpenses * 12 * FIRE_WITHDRAWAL_MULTIPLIER;
   const showTaxNet = $('p0a-net-toggle') ? $('p0a-net-toggle').checked : false;
   const usePoticaj = $('p0a-poticaj').value === 'yes';
   const inflationOn = setInflationUiState('p0a-infl-toggle', 'p0a-infl-toggle-lbl', 'p0a-infl-note', god, 100000);
@@ -1003,6 +1089,30 @@ function updateP0a() {
     const pointTax = yearsAtPoint < 2 ? pointProfit * 0.12 : 0;
     return Math.round(v - pointTax);
   });
+  const fireMilestoneIndex = fireNumber > 0 ? valsAfterTax.findIndex(v => v >= fireNumber) : -1;
+  const fireMilestoneYear = fireMilestoneIndex >= 0 ? (fireMilestoneIndex + 1) : null;
+
+  const fireNumberEl = $('p0a-fire-number');
+  const fireMessageEl = $('p0a-fire-message');
+  if (fireNumberEl) {
+    fireNumberEl.textContent = fireNumber > 0
+      ? `FIRE broj (4% pravilo): ${fmt(Math.round(fireNumber))}`
+      : 'FIRE broj: —';
+  }
+  if (fireMessageEl) {
+    const fireGap = Math.round(afterTaxVal - fireNumber);
+    const comparisonText = fireNumber > 0
+      ? ` Projekcija portfelja je ${fireGap >= 0 ? `iznad` : `ispod`} FIRE broja za ${fmt(Math.abs(fireGap))}.`
+      : '';
+    if (fireNumber <= 0) {
+      fireMessageEl.textContent = 'Unesite mjesečne troškove života za izračun FIRE cilja.';
+    } else if (fireMilestoneYear !== null) {
+      fireMessageEl.textContent = `S ovim tempom, postajete financijski neovisni za ${fireMilestoneYear} godina.${comparisonText}`;
+    } else {
+      fireMessageEl.textContent = `U odabranom periodu (${god} god.) projekcija ostaje ispod FIRE broja.${comparisonText}`;
+    }
+  }
+
   const p0aDs = [
     {label:fundName,data:vals,borderColor:'#e8a44a',backgroundColor:'rgba(232,164,74,0.08)',fill:true,borderWidth:2.5,pointRadius:0,tension:0.4},
   ];
@@ -1012,6 +1122,21 @@ function updateP0a() {
   }
   if (showTaxNet) {
     p0aDs.push({label:'Neto (nakon poreza)',data:valsAfterTax,borderColor:'#4ae8a0',backgroundColor:'transparent',fill:false,borderWidth:1.6,pointRadius:0,tension:0.4,borderDash:[4,3]});
+  }
+  if (fireMilestoneYear !== null) {
+    const fireMarkerData = labels.map((_, idx) => idx === fireMilestoneIndex ? valsAfterTax[idx] : null);
+    p0aDs.push({
+      label: 'Dan financijske slobode',
+      data: fireMarkerData,
+      borderColor: '#4ae8a0',
+      backgroundColor: '#4ae8a0',
+      showLine: false,
+      pointRadius: 6,
+      pointHoverRadius: 7,
+      pointBorderColor: '#0f172a',
+      pointBorderWidth: 1.5,
+      fireMarkerLabel: 'Dan financijske slobode'
+    });
   }
   storeChartData('p0a-chart', labels, p0aDs);
   if(!chartP0a){
@@ -1253,8 +1378,21 @@ function updateP0b() {
   else{ chartP0b.data.labels=labels; chartP0b.data.datasets=ds; chartP0b.update(); }
 
   const dcaCard = $('p0b-dca-card');
+  const dcaSummary = $('p0b-dca-summary');
   if (dcaCard) {
     dcaCard.style.display = availableAmount > 0 ? 'block' : 'none';
+  }
+  if (dcaSummary) {
+    if (availableAmount > 0 && god > 0) {
+      const lumpEnd = withLumpArr[withLumpArr.length - 1] || 0;
+      const dcaEnd = withDcaArr[withDcaArr.length - 1] || 0;
+      const diff = lumpEnd - dcaEnd;
+      const better = diff >= 0 ? 'Lump Sum' : 'DCA';
+      const absDiff = Math.abs(diff);
+      dcaSummary.textContent = `Nakon ${god} god.: Lump Sum ${fmt(lumpEnd)}, DCA ${fmt(dcaEnd)}. ${better} je viši za ${fmt(absDiff)}.`;
+    } else {
+      dcaSummary.textContent = '';
+    }
   }
 
   // Platform comparison chart
@@ -1696,6 +1834,7 @@ function initMyStrategyFeature() {
 function initApp() {
   initDonationModal();
   initMyStrategyFeature();
+  ensureP0aFireUi();
   setupSyncPairs();
   // Also restore from localStorage if available
   const STORE_KEYS = Object.keys(localStorage).filter(k => k.startsWith('miv_'));
