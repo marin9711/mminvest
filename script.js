@@ -2719,6 +2719,14 @@ const WORKER_URL = 'https://empty-pine-8e64.marin-marsan.workers.dev';
 let adminToken = sessionStorage.getItem('marsanai_admin') || null;
 let adminAiOn = true;
 
+// Worker logout redirect signal: clear Pages admin session token too.
+if (new URLSearchParams(window.location.search).get('admin_logout') === '1') {
+  adminToken = null;
+  sessionStorage.removeItem('marsanai_admin');
+  const cleanUrl = window.location.origin + window.location.pathname + window.location.hash;
+  window.history.replaceState({}, document.title, cleanUrl);
+}
+
 function openAdminPanel() {
   document.getElementById('admin-overlay').classList.add('open');
   if (adminToken) {

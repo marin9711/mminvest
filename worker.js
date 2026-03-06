@@ -570,7 +570,7 @@ async function handleRequest(request, env) {
         return new Response(null, {
           status: 302,
           headers: {
-            'Location': '/admin',
+            'Location': 'https://mminvest.pages.dev/?admin_logout=1#admin',
             'Set-Cookie': 'marsanai_session=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax',
           },
         });
