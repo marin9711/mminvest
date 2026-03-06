@@ -1870,7 +1870,7 @@ tr:hover td { background: var(--surface2) !important; }
   <!-- Calculator -->
   <div class="controls">
     <div class="ctrl-group c-neutral">
-      <label>Odaberi fond</label>
+      <label for="p0a-fund-select">Odaberi fond</label>
       <select id="p0a-fund-select">
         <option value="11.5,5.35">Croatia 1000A (visok rizik)</option>
         <option value="10.44,6.62" selected>Erste Plavi Expert (visok rizik)</option>
@@ -1883,26 +1883,26 @@ tr:hover td { background: var(--surface2) !important; }
       </select>
     </div>
     <div class="ctrl-group c-neutral">
-      <label>Način uplate</label>
+      <label for="p0a-period">Način uplate</label>
       <select id="p0a-period">
         <option value="godisnje">Godišnje</option>
         <option value="mjesecno">Mjesečno</option>
       </select>
     </div>
     <div class="ctrl-group c-neutral">
-      <label>Iznos uplate</label>
-      <div class="row"><input type="range" id="p0a-uplata" min="0" max="5000" step="50" value="663"><input type="number" class="ctrl-val-input" id="p0a-uplata-v" value="663.00" data-decimals="2" min="10" max="5000" step="any" placeholder="1000"></div>
+      <label for="p0a-uplata-v">Iznos uplate</label>
+      <div class="row"><input type="range" id="p0a-uplata" min="0" max="5000" step="50" value="663" aria-label="Iznos uplate (klizač)"><input type="number" class="ctrl-val-input" id="p0a-uplata-v" value="663.00" data-decimals="2" min="10" max="5000" step="any" placeholder="1000" aria-label="Iznos uplate"></div>
     </div>
     <div class="ctrl-group c-neutral">
-      <label>Početna uplata (€)</label>
-      <div class="row"><input type="range" id="p0a-initial" min="0" max="5000" step="100" value="0"><input type="number" class="ctrl-val-input" id="p0a-initial-v" value="0.00" data-decimals="2" min="0" max="20000" step="any" placeholder="1000"></div>
+      <label for="p0a-initial-v">Početna uplata (€)</label>
+      <div class="row"><input type="range" id="p0a-initial" min="0" max="5000" step="100" value="0" aria-label="Početna uplata (klizač)"><input type="number" class="ctrl-val-input" id="p0a-initial-v" value="0.00" data-decimals="2" min="0" max="20000" step="any" placeholder="1000" aria-label="Početna uplata (€)"></div>
     </div>
     <div class="ctrl-group c-neutral">
-      <label>Broj godina</label>
-      <div class="row"><input type="range" id="p0a-god" min="5" max="60" step="1" value="25"><input type="number" class="ctrl-val-input" id="p0a-god-v" value="25" min="5" max="60" step="1" placeholder="25"></div>
+      <label for="p0a-god-v">Broj godina</label>
+      <div class="row"><input type="range" id="p0a-god" min="5" max="60" step="1" value="25" aria-label="Broj godina (klizač)"><input type="number" class="ctrl-val-input" id="p0a-god-v" value="25" min="5" max="60" step="1" placeholder="25" aria-label="Broj godina"></div>
     </div>
     <div class="ctrl-group c-neutral">
-      <label>Koristiti državni poticaj?</label>
+      <label for="p0a-poticaj">Koristiti državni poticaj?</label>
       <select id="p0a-poticaj">
         <option value="yes" selected>Da (godišnja uplata ≥ 663.61€)</option>
         <option value="no">Ne / manje od 663.61€/god</option>
@@ -2164,7 +2164,7 @@ tr:hover td { background: var(--surface2) !important; }
   <!-- Calculator -->
   <div class="controls">
     <div class="ctrl-group c-etf">
-      <label>ETF fond</label>
+      <label for="p0b-etf-select">ETF fond</label>
       <select id="p0b-etf-select">
         <option value="9.5,VISOK,VWCE — Vanguard All World Acc">VWCE — Vanguard All World (Acc) — Visok rizik</option>
         <option value="10.2,VISOK,IWDA — iShares MSCI World Acc">IWDA — iShares MSCI World (Acc) — Visok rizik</option>
@@ -2180,11 +2180,11 @@ tr:hover td { background: var(--surface2) !important; }
       </select>
     </div>
     <div class="ctrl-group c-etf" id="p0b-etf-custom-wrap" style="display:none">
-      <label>Vlastiti prinos (%)</label>
-      <div class="row"><input type="range" id="p0b-custom-r" min="2" max="18" step="0.1" value="9.0"><input type="number" class="ctrl-val-input" id="p0b-custom-r-v" value="9.0" min="2" max="18" step="0.1" placeholder="8"></div>
+      <label for="p0b-custom-r-v">Vlastiti prinos (%)</label>
+      <div class="row"><input type="range" id="p0b-custom-r" min="2" max="18" step="0.1" value="9.0" aria-label="Vlastiti prinos (klizač)"><input type="number" class="ctrl-val-input" id="p0b-custom-r-v" value="9.0" min="2" max="18" step="0.1" placeholder="8" aria-label="Vlastiti prinos (%)"></div>
     </div>
     <div class="ctrl-group c-neutral">
-      <label>Platforma</label>
+      <label for="p0b-platform">Platforma</label>
       <select id="p0b-platform">
         <option value="ibkr">Interactive Brokers (IBKR)</option>
         <option value="t212">Trading 212 (bankovni transfer)</option>
@@ -2193,19 +2193,19 @@ tr:hover td { background: var(--surface2) !important; }
       </select>
     </div>
     <div class="ctrl-group c-neutral">
-      <label>Godišnja uplata</label>
-      <div class="row"><input type="range" id="p0b-uplata" min="0" max="5000" step="50" value="1200"><input type="number" class="ctrl-val-input" id="p0b-uplata-v" value="1200.00" data-decimals="2" min="100" max="5000" step="any" placeholder="1000"></div>
+      <label for="p0b-uplata-v">Godišnja uplata</label>
+      <div class="row"><input type="range" id="p0b-uplata" min="0" max="5000" step="50" value="1200" aria-label="Godišnja uplata (klizač)"><input type="number" class="ctrl-val-input" id="p0b-uplata-v" value="1200.00" data-decimals="2" min="100" max="5000" step="any" placeholder="1000" aria-label="Godišnja uplata"></div>
     </div>
     <div class="ctrl-group c-neutral">
-      <label>Početna uplata (€)</label>
-      <div class="row"><input type="range" id="p0b-initial" min="0" max="20000" step="500" value="1000"><input type="number" class="ctrl-val-input" id="p0b-initial-v" value="1000.00" data-decimals="2" min="0" max="20000" step="any" placeholder="1000"></div>
+      <label for="p0b-initial-v">Početna uplata (€)</label>
+      <div class="row"><input type="range" id="p0b-initial" min="0" max="20000" step="500" value="1000" aria-label="Početna uplata (klizač)"><input type="number" class="ctrl-val-input" id="p0b-initial-v" value="1000.00" data-decimals="2" min="0" max="20000" step="any" placeholder="1000" aria-label="Početna uplata (€)"></div>
     </div>
     <div class="ctrl-group c-neutral">
-      <label>Broj godina</label>
-      <div class="row"><input type="range" id="p0b-god" min="2" max="60" step="1" value="20"><input type="number" class="ctrl-val-input" id="p0b-god-v" value="20" min="2" max="60" step="1" placeholder="25"></div>
+      <label for="p0b-god-v">Broj godina</label>
+      <div class="row"><input type="range" id="p0b-god" min="2" max="60" step="1" value="20" aria-label="Broj godina (klizač)"><input type="number" class="ctrl-val-input" id="p0b-god-v" value="20" min="2" max="60" step="1" placeholder="25" aria-label="Broj godina"></div>
     </div>
     <div class="ctrl-group c-neutral">
-      <label>Porez na kapitalnu dobit</label>
+      <label for="p0b-tax">Porez na kapitalnu dobit</label>
       <select id="p0b-tax">
         <option value="0">0% (≥2 god, HR rezident)</option>
         <option value="12">12% (kraće od 2 god)</option>
@@ -2319,8 +2319,8 @@ tr:hover td { background: var(--surface2) !important; }
 
   <div class="controls">
     <div class="ctrl-group c-neutral">
-      <label>Godišnja uplata</label>
-      <div class="row"><input type="range" id="p1-uplata" min="0" max="5000" step="50" value="663"><input type="number" class="ctrl-val-input" id="p1-uplata-v" value="663.00" data-decimals="2" min="0" max="5000" step="any" placeholder="663.61"></div>
+      <label for="p1-uplata-v">Godišnja uplata</label>
+      <div class="row"><input type="range" id="p1-uplata" min="0" max="5000" step="50" value="663" aria-label="Godišnja uplata (klizač)"><input type="number" class="ctrl-val-input" id="p1-uplata-v" value="663.00" data-decimals="2" min="0" max="5000" step="any" placeholder="663.61" aria-label="Godišnja uplata"></div>
     </div>
     <div class="ctrl-group c-neutral">
       <label>Državni poticaj (DMF)</label>
@@ -2331,11 +2331,11 @@ tr:hover td { background: var(--surface2) !important; }
       <div class="poticaj-info" id="p1-poticaj-info">15% od osobne uplate, max 99.54€/god. Neoporeziva uplata poslodavca do 804€/god nije uključena — dodaj je u iznos uplate ako je koristiš.</div>
     </div>
     <div class="ctrl-group c-neutral">
-      <label>Broj godina</label>
-      <div class="row"><input type="range" id="p1-god" min="5" max="60" step="1" value="30"><input type="number" class="ctrl-val-input" id="p1-god-v" value="30" min="5" max="60" step="1" placeholder="25"></div>
+      <label for="p1-god-v">Broj godina</label>
+      <div class="row"><input type="range" id="p1-god" min="5" max="60" step="1" value="30" aria-label="Broj godina (klizač)"><input type="number" class="ctrl-val-input" id="p1-god-v" value="30" min="5" max="60" step="1" placeholder="25" aria-label="Broj godina"></div>
     </div>
     <div class="ctrl-group c-dmf">
-      <label>Odaberi DMF fond</label>
+      <label for="p1-dmf-select">Odaberi DMF fond</label>
       <select id="p1-dmf-select" onchange="updateP1()" style="width:100%;padding:0.5rem 0.75rem;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.85rem;cursor:pointer">
         <option value="Croatia 1000A">Croatia 1000A — VISOK rizik</option>
         <option value="Erste Plavi Expert" selected>Erste Plavi Expert — VISOK rizik</option>
@@ -2422,8 +2422,8 @@ tr:hover td { background: var(--surface2) !important; }
 
   <div class="controls">
     <div class="ctrl-group c-neutral">
-      <label>Godišnja uplata (ukupno)</label>
-      <div class="row"><input type="range" id="p2-uplata" min="0" max="5000" step="50" value="1200"><input type="number" class="ctrl-val-input" id="p2-uplata-v" value="1200.00" data-decimals="2" min="0" max="5000" step="any" placeholder="1200"></div>
+      <label for="p2-uplata-v">Godišnja uplata (ukupno)</label>
+      <div class="row"><input type="range" id="p2-uplata" min="0" max="5000" step="50" value="1200" aria-label="Godišnja uplata (klizač)"><input type="number" class="ctrl-val-input" id="p2-uplata-v" value="1200.00" data-decimals="2" min="0" max="5000" step="any" placeholder="1200" aria-label="Godišnja uplata (ukupno)"></div>
     </div>
     <div class="ctrl-group c-neutral">
       <label>Državni poticaj (DMF)</label>
@@ -2434,20 +2434,20 @@ tr:hover td { background: var(--surface2) !important; }
       <div class="poticaj-info" id="p2-poticaj-info">15% od osobne uplate, max 99.54€/god. Neoporeziva uplata poslodavca do 804€/god nije uključena — dodaj je u iznos uplate ako je koristiš.</div>
     </div>
     <div class="ctrl-group c-neutral">
-      <label>Broj godina</label>
-      <div class="row"><input type="range" id="p2-god" min="5" max="60" step="1" value="25"><input type="number" class="ctrl-val-input" id="p2-god-v" value="25" min="5" max="60" step="1" placeholder="25"></div>
+      <label for="p2-god-v">Broj godina</label>
+      <div class="row"><input type="range" id="p2-god" min="5" max="60" step="1" value="25" aria-label="Broj godina (klizač)"><input type="number" class="ctrl-val-input" id="p2-god-v" value="25" min="5" max="60" step="1" placeholder="25" aria-label="Broj godina"></div>
     </div>
     <div class="ctrl-group c-dmf">
-      <label>Prinos DMF (%/god)</label>
-      <div class="row"><input type="range" id="p2-dmfr" min="1" max="8" step="0.1" value="3.5"><input type="number" class="ctrl-val-input" id="p2-dmfr-v" value="3.5" min="1" max="8" step="0.1" placeholder="8"></div>
+      <label for="p2-dmfr-v">Prinos DMF (%/god)</label>
+      <div class="row"><input type="range" id="p2-dmfr" min="1" max="8" step="0.1" value="3.5" aria-label="Prinos DMF (klizač)"><input type="number" class="ctrl-val-input" id="p2-dmfr-v" value="3.5" min="1" max="8" step="0.1" placeholder="8" aria-label="Prinos DMF (%/god)"></div>
     </div>
     <div class="ctrl-group c-pepp">
-      <label>Prinos PEPP (%/god)</label>
-      <div class="row"><input type="range" id="p2-peppr" min="3" max="14" step="0.1" value="8.0"><input type="number" class="ctrl-val-input" id="p2-peppr-v" value="8.0" min="3" max="14" step="0.1" placeholder="8"></div>
+      <label for="p2-peppr-v">Prinos PEPP (%/god)</label>
+      <div class="row"><input type="range" id="p2-peppr" min="3" max="14" step="0.1" value="8.0" aria-label="Prinos PEPP (klizač)"><input type="number" class="ctrl-val-input" id="p2-peppr-v" value="8.0" min="3" max="14" step="0.1" placeholder="8" aria-label="Prinos PEPP (%/god)"></div>
       <div class="rate-note" id="p2-pepp-rate-note">Nakon 1% Finax naknade: —</div>
     </div>
     <div class="ctrl-group c-etf">
-      <label>Odaberi ETF</label>
+      <label for="p2-etf-select">Odaberi ETF</label>
       <select id="p2-etf-select">
         <option value="9.5">VWCE — Vanguard All World (9.5%)</option>
         <option value="10.2">IWDA — iShares MSCI World (10.2%)</option>
@@ -2459,8 +2459,8 @@ tr:hover td { background: var(--surface2) !important; }
       </select>
     </div>
     <div class="ctrl-group c-etf" id="p2-etf-custom-wrap" style="display:none">
-      <label>Vlastiti prinos ETF (%)</label>
-      <div class="row"><input type="range" id="p2-etfr-custom" min="3" max="18" step="0.1" value="9.0"><input type="number" class="ctrl-val-input" id="p2-etfr-custom-v" value="9.0" min="3" max="18" step="0.1" placeholder="8"></div>
+      <label for="p2-etfr-custom-v">Vlastiti prinos ETF (%)</label>
+      <div class="row"><input type="range" id="p2-etfr-custom" min="3" max="18" step="0.1" value="9.0" aria-label="Vlastiti prinos ETF (klizač)"><input type="number" class="ctrl-val-input" id="p2-etfr-custom-v" value="9.0" min="3" max="18" step="0.1" placeholder="8" aria-label="Vlastiti prinos ETF (%)"></div>
     </div>
   </div>
 
@@ -2587,30 +2587,30 @@ tr:hover td { background: var(--surface2) !important; }
 
   <div class="controls">
     <div class="ctrl-group c-neutral">
-      <label>Ukupna godišnja uplata</label>
-      <div class="row"><input type="range" id="p3-uplata" min="0" max="5000" step="50" value="2400"><input type="number" class="ctrl-val-input" id="p3-uplata-v" value="2400.00" data-decimals="2" min="500" max="5000" step="any" placeholder="1000"></div>
+      <label for="p3-uplata-v">Ukupna godišnja uplata</label>
+      <div class="row"><input type="range" id="p3-uplata" min="0" max="5000" step="50" value="2400" aria-label="Ukupna godišnja uplata (klizač)"><input type="number" class="ctrl-val-input" id="p3-uplata-v" value="2400.00" data-decimals="2" min="500" max="5000" step="any" placeholder="1000" aria-label="Ukupna godišnja uplata"></div>
     </div>
     <div class="ctrl-group c-neutral">
-      <label>Broj godina ulaganja</label>
-      <div class="row"><input type="range" id="p3-god" min="5" max="60" step="1" value="25"><input type="number" class="ctrl-val-input" id="p3-god-v" value="25" min="5" max="60" step="1" placeholder="25"></div>
+      <label for="p3-god-v">Broj godina ulaganja</label>
+      <div class="row"><input type="range" id="p3-god" min="5" max="60" step="1" value="25" aria-label="Broj godina ulaganja (klizač)"><input type="number" class="ctrl-val-input" id="p3-god-v" value="25" min="5" max="60" step="1" placeholder="25" aria-label="Broj godina ulaganja"></div>
     </div>
     <div class="ctrl-group c-combo">
-      <label>Udio ETF-a (%)</label>
-      <div class="row"><input type="range" id="p3-etf-share" min="0" max="100" step="5" value="60"><input type="number" class="ctrl-val-input" id="p3-etf-share-v" value="60" min="0" max="100" step="1" placeholder="8"></div>
+      <label for="p3-etf-share-v">Udio ETF-a (%)</label>
+      <div class="row"><input type="range" id="p3-etf-share" min="0" max="100" step="5" value="60" aria-label="Udio ETF-a (klizač)"><input type="number" class="ctrl-val-input" id="p3-etf-share-v" value="60" min="0" max="100" step="1" placeholder="8" aria-label="Udio ETF-a (%)"></div>
     </div>
     <div class="ctrl-group c-neutral">
-      <label>Mirovinski fond</label>
+      <label for="p3-pension-type">Mirovinski fond</label>
       <select id="p3-pension-type">
         <option value="dmf">3. Stup DMF (s poticajem)</option>
         <option value="pepp" selected>PEPP</option>
       </select>
     </div>
     <div class="ctrl-group c-dmf" id="p3-dmf-rate-wrap">
-      <label>Prinos mirovinskog (%)</label>
-      <div class="row"><input type="range" id="p3-penr" min="1" max="12" step="0.1" value="8.0"><input type="number" class="ctrl-val-input" id="p3-penr-v" value="8.0" min="1" max="12" step="0.1" placeholder="8"></div>
+      <label for="p3-penr-v">Prinos mirovinskog (%)</label>
+      <div class="row"><input type="range" id="p3-penr" min="1" max="12" step="0.1" value="8.0" aria-label="Prinos mirovinskog (klizač)"><input type="number" class="ctrl-val-input" id="p3-penr-v" value="8.0" min="1" max="12" step="0.1" placeholder="8" aria-label="Prinos mirovinskog (%)"></div>
     </div>
     <div class="ctrl-group c-etf">
-      <label>ETF fond</label>
+      <label for="p3-etf-select">ETF fond</label>
       <select id="p3-etf-select">
         <option value="9.5">VWCE (9.5%)</option>
         <option value="10.2">IWDA (10.2%)</option>
@@ -2621,12 +2621,12 @@ tr:hover td { background: var(--surface2) !important; }
       </select>
     </div>
     <div class="ctrl-group c-etf" id="p3-etf-custom-wrap" style="display:none">
-      <label>Vlastiti prinos ETF (%)</label>
-      <div class="row"><input type="range" id="p3-etfr-custom" min="3" max="18" step="0.1" value="9.0"><input type="number" class="ctrl-val-input" id="p3-etfr-custom-v" value="9.0" min="3" max="18" step="0.1" placeholder="8"></div>
+      <label for="p3-etfr-custom-v">Vlastiti prinos ETF (%)</label>
+      <div class="row"><input type="range" id="p3-etfr-custom" min="3" max="18" step="0.1" value="9.0" aria-label="Vlastiti prinos ETF (klizač)"><input type="number" class="ctrl-val-input" id="p3-etfr-custom-v" value="9.0" min="3" max="18" step="0.1" placeholder="8" aria-label="Vlastiti prinos ETF (%)"></div>
     </div>
     <div class="ctrl-group c-neutral">
-      <label>Inflacija (%/god)</label>
-      <div class="row"><input type="range" id="p3-inf" min="0" max="5" step="0.1" value="2.5"><input type="number" class="ctrl-val-input" id="p3-inf-v" value="2.5" min="0" max="5" step="0.1" placeholder="8"></div>
+      <label for="p3-inf-v">Inflacija (%/god)</label>
+      <div class="row"><input type="range" id="p3-inf" min="0" max="5" step="0.1" value="2.5" aria-label="Inflacija (klizač)"><input type="number" class="ctrl-val-input" id="p3-inf-v" value="2.5" min="0" max="5" step="0.1" placeholder="8" aria-label="Inflacija (%/god)"></div>
     </div>
   </div>
 
@@ -3179,7 +3179,7 @@ tr:hover td { background: var(--surface2) !important; }
 
     <div class="plan-card">
       <div class="plan-row">
-        <label class="plan-label">Mjesečni iznos (€)</label>
+        <label class="plan-label" for="plan-amount">Mjesečni iznos (€)</label>
         <input type="number" id="plan-amount" class="plan-input" min="10" max="5000" step="10" value="100" placeholder="npr. 100">
       </div>
       <div class="plan-row">
@@ -3685,7 +3685,9 @@ tr:hover td { background: var(--surface2) !important; }
       <button class="fb-type-btn" data-type="greška">🐛 Greška</button>
       <button class="fb-type-btn" data-type="pitanje">❓ Pitanje</button>
     </div>
+    <label for="fb-text" class="visually-hidden">Povratna informacija</label>
     <textarea class="fb-textarea" id="fb-text" placeholder="Napiši svoju povratnu informaciju, prijedlog ili opis greške..."></textarea>
+    <label for="fb-email" class="visually-hidden">Email za odgovor (opcionalno)</label>
     <input type="email" class="fb-email" id="fb-email" placeholder="📧 Tvoj email (opcionalno) — za odgovor admina">
     <button class="fb-submit-btn" id="fb-submit-btn" onclick="submitFeedback()">Pošalji feedback ✉️</button>
     <div class="feedback-sent" id="feedback-sent">✅ Hvala! Tvoj feedback je zabilježen.</div>
@@ -3735,7 +3737,8 @@ tr:hover td { background: var(--surface2) !important; }
     <!-- Gumbi se generiraju u script.js renderFaqButtons() -->
   </div>
   <div class="ai-input-row">
-    <input class="ai-input" id="ai-input" type="text" placeholder="Pitaj nešto o ulaganju..." 
+    <input class="ai-input" id="ai-input" type="text" placeholder="Pitaj nešto o ulaganju..."
+           aria-label="Pitanje za MM Invest asistenta"
            onkeydown="if(event.key==='Enter') sendAiMsg()">
     <button class="ai-send-btn" id="ai-send-btn" onclick="sendAiMsg()">➤</button>
   </div>
@@ -3754,9 +3757,9 @@ tr:hover td { background: var(--surface2) !important; }
   </div>
   <div id="ai-rate-notice" style="display:none;font-size:0.72rem;color:#f56060;padding:0.3rem 0.75rem 0.5rem;text-align:center;"></div>
 </div>
-<button class="ai-fab" id="ai-fab" onclick="handleFabClick(event)">
-  <span class="fab-icon-chat">🤖</span>
-  <span class="fab-icon-close">✕</span>
+<button class="ai-fab" id="ai-fab" onclick="handleFabClick(event)" aria-label="Otvori MM Invest AI asistenta" aria-expanded="false">
+  <span class="fab-icon-chat" aria-hidden="true">🤖</span>
+  <span class="fab-icon-close" aria-hidden="true">✕</span>
   <span class="fab-icon-minimize" id="ai-fab-minimize" onclick="event.stopPropagation(); toggleFabMinimize();" aria-label="Minimiziraj">−</span>
 </button>
 <button class="ai-fab-hide" id="ai-fab-hide" onclick="hideFabToggle()">👁️ sakrij AI</button>
@@ -3831,9 +3834,9 @@ tr:hover td { background: var(--surface2) !important; }
       <h2>🔐 Admin</h2>
       <p class="admin-sub">MM Invest upravljanje</p>
       <div class="admin-err" id="admin-err"></div>
-      <label>Korisničko ime</label>
+      <label for="admin-user">Korisničko ime</label>
       <input type="text" id="admin-user" autocomplete="username">
-      <label>Lozinka</label>
+      <label for="admin-pass">Lozinka</label>
       <input type="password" id="admin-pass" autocomplete="current-password" onkeydown="if(event.key==='Enter')adminLogin()">
       <button class="admin-login-btn" onclick="adminLogin()" id="admin-login-btn">Prijavi se</button>
     </div>

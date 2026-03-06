@@ -1420,6 +1420,7 @@ function toggleAiChat() {
   const fabEl = document.getElementById('ai-fab');
   chatEl.classList.toggle('open');
   fabEl.classList.toggle('open');
+  fabEl.setAttribute('aria-expanded', chatEl.classList.contains('open') ? 'true' : 'false');
   if (chatEl.classList.contains('open')) {
     checkAiStatus().then(() => {
       setTimeout(() => (aiBotEnabled ? $('ai-input')?.focus() : null), 300);
