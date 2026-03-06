@@ -3570,6 +3570,7 @@ tr:hover td { background:var(--surface2); }
       <div class="admin-tab-row">
         <button class="admin-tab-btn active" id="admin-tab-ai">🤖 AI Bot</button>
         <button class="admin-tab-btn" id="admin-tab-fb">💬 Feedback</button>
+        <button class="admin-tab-btn" id="admin-tab-mgmt">⚙️ Upravljanje</button>
       </div>
 
       <!-- Tab: AI toggle -->
@@ -3595,6 +3596,43 @@ tr:hover td { background:var(--surface2); }
           <div class="fb-log-empty">Učitavanje...</div>
         </div>
         <button class="admin-toggle" style="margin-top:0.75rem; background:var(--surface2); color:var(--muted2); font-size:0.75rem; padding:0.5rem 1rem;" onclick="loadFeedbackLog(); loadPollResults();">🔄 Osvježi</button>
+      </div>
+
+      <!-- Tab: Upravljanje -->
+      <div class="admin-tab-content" id="admin-tab-content-mgmt">
+
+        <!-- Masovne operacije -->
+        <div style="margin-bottom:1rem;">
+          <div style="font-size:0.78rem; font-weight:700; color:var(--muted2); margin-bottom:0.5rem;">🗂️ Masovne operacije</div>
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <button id="admin-reset-polls-btn" onclick="adminResetPolls()"
+              style="flex:1; min-width:130px; padding:0.55rem 0.75rem; background:rgba(232,164,74,0.15); border:1px solid rgba(232,164,74,0.4); color:#e8a44a; border-radius:8px; font-size:0.75rem; font-weight:700; cursor:pointer;">
+              🗑️ Resetiraj ankete
+            </button>
+            <button id="admin-clear-fb-btn" onclick="adminClearFeedback()"
+              style="flex:1; min-width:130px; padding:0.55rem 0.75rem; background:rgba(245,96,96,0.12); border:1px solid rgba(245,96,96,0.35); color:#f56060; border-radius:8px; font-size:0.75rem; font-weight:700; cursor:pointer;">
+              🧹 Obriši sav feedback
+            </button>
+          </div>
+          <div id="admin-mgmt-msg" style="display:none; font-size:0.78rem; font-weight:600; padding:0.5rem 0; margin-top:0.25rem;"></div>
+        </div>
+
+        <div style="border-top:1px solid var(--border); margin-bottom:0.75rem;"></div>
+
+        <!-- KV stavke -->
+        <div>
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.5rem;">
+            <div style="font-size:0.78rem; font-weight:700; color:var(--muted2);">📦 KV stavke</div>
+            <button onclick="loadKvItems()"
+              style="font-size:0.7rem; color:var(--muted2); background:none; border:none; cursor:pointer; text-decoration:underline;">
+              ↻ Osvježi
+            </button>
+          </div>
+          <div id="admin-kv-list" style="max-height:260px; overflow-y:auto;">
+            <div style="color:var(--muted2); font-size:0.78rem; text-align:center; padding:1rem 0;">Učitavanje...</div>
+          </div>
+        </div>
+
       </div>
 
       <span class="admin-logout-link" onclick="adminLogout()">🔒 Odjavi se</span>
