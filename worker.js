@@ -132,6 +132,104 @@ function parseFormData(body) {
   return obj;
 }
 
+// ── Sigurno upravljanje sesijama (KV-based UUID tokeni) ──
+// Sesijski token je kriptografski random UUID pohranjen u KV-u s TTL-om.
+// Nije deterministički deriviran iz lozinke — kompromitacija tokena ne otkriva credentials.
+
+const SESSION_TTL = 86400; // 24 sata u sekundama
+
+async function createSession(env) {
+  const token = crypto.randomUUID();
+  const expiresAt = Date.now() + SESSION_TTL * 1000;
+  await env.AI_CONFIG.put(
+    `session:${token}`,
+    JSON.stringify({ createdAt: Date.now(), expiresAt }),
+    { expirationTtl: SESSION_TTL }
+  );
+  return token;
+}
+
+async function validateSession(token, env) {
+  if (!token) return false;
+  // Osnovna sanacija: UUID format
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(token)) return false;
+  try {
+    const raw = await env.AI_CONFIG.get(`session:${token}`);
+    if (!raw) return false;
+    const data = JSON.parse(raw);
+    return data.expiresAt > Date.now();
+  } catch (_) {
+    return false;
+  }
+}
+
+async function deleteSession(token, env) {
+  if (!token) return;
+  try {
+    await env.AI_CONFIG.delete(`session:${token}`);
+  } catch (_) {}
+}
+
+// ── Zaštita od brute-force napada na login ──
+// Nakon MAX_LOGIN_ATTEMPTS neuspjelih pokušaja s iste IP adrese,
+// pristup se blokira na LOCKOUT_SECONDS sekundi.
+
+const MAX_LOGIN_ATTEMPTS = 5;
+const LOCKOUT_SECONDS    = 15 * 60; // 15 minuta
+
+async function checkLoginBruteForce(ip, env) {
+  if (!ip) return { allowed: true };
+  const key = `bf:${ip}`;
+  try {
+    const raw = await env.AI_CONFIG.get(key);
+    if (!raw) return { allowed: true };
+    const data = JSON.parse(raw);
+    if (data.lockedUntil && data.lockedUntil > Date.now()) {
+      const retryAfter = Math.ceil((data.lockedUntil - Date.now()) / 1000);
+      return { allowed: false, retryAfter };
+    }
+    return { allowed: true };
+  } catch (_) {
+    return { allowed: true };
+  }
+}
+
+async function recordFailedLogin(ip, env) {
+  if (!ip) return;
+  const key = `bf:${ip}`;
+  let data = { attempts: 0, lockedUntil: null };
+  try {
+    const raw = await env.AI_CONFIG.get(key);
+    if (raw) data = JSON.parse(raw);
+    // Resetiraj ako je prethodni lockout istekao
+    if (data.lockedUntil && data.lockedUntil < Date.now()) {
+      data = { attempts: 0, lockedUntil: null };
+    }
+  } catch (_) {}
+
+  data.attempts = (data.attempts || 0) + 1;
+
+  let ttl = LOCKOUT_SECONDS;
+  if (data.attempts >= MAX_LOGIN_ATTEMPTS) {
+    data.lockedUntil = Date.now() + LOCKOUT_SECONDS * 1000;
+    ttl = LOCKOUT_SECONDS;
+  } else {
+    // Zadrži brojač samo kroz prozor od 15 minuta čak i bez lockout
+    ttl = LOCKOUT_SECONDS;
+  }
+
+  try {
+    await env.AI_CONFIG.put(key, JSON.stringify(data), { expirationTtl: ttl });
+  } catch (_) {}
+}
+
+async function clearLoginAttempts(ip, env) {
+  if (!ip) return;
+  try {
+    await env.AI_CONFIG.delete(`bf:${ip}`);
+  } catch (_) {}
+}
+
 // ── Cloudflare Turnstile provjera ──
 // Zahtijeva TURNSTILE_SECRET_KEY secret u Cloudflare dashboardu.
 async function verifyTurnstile(token, ip, env) {
@@ -198,10 +296,9 @@ export default {
 
     // ── ADMIN API FEEDBACK REPLY ──
     if (path === '/admin/api/feedback/reply' && request.method === 'POST') {
-      const sessionSecret = env.ADMIN_USER + ':' + env.ADMIN_PASS + ':marsanai-session';
-      const validToken = await hashToken(sessionSecret);
       const authHeader = request.headers.get('Authorization') || '';
-      const isApiAuthed = authHeader.replace('Bearer ', '') === validToken;
+      const bearerToken = authHeader.replace('Bearer ', '').trim();
+      const isApiAuthed = await validateSession(bearerToken, env);
 
       if (!isApiAuthed) {
         return new Response(JSON.stringify({ error: 'unauthorized' }), {
@@ -275,11 +372,9 @@ export default {
 
     // ── ADMIN API POLLS & FEEDBACK (mora biti PRIJE admin bloka!) ──
     if (path === '/admin/api/polls' || path === '/admin/api/feedback') {
-      const sessionSecret = env.ADMIN_USER + ':' + env.ADMIN_PASS + ':marsanai-session';
-      const validToken = await hashToken(sessionSecret);
       const authHeader = request.headers.get('Authorization') || '';
-      const bearerToken = authHeader.replace('Bearer ', '');
-      const isApiAuthed = bearerToken === validToken;
+      const bearerToken = authHeader.replace('Bearer ', '').trim();
+      const isApiAuthed = await validateSession(bearerToken, env);
 
       if (!isApiAuthed) {
         return new Response(JSON.stringify({ error: 'unauthorized' }), {
@@ -323,13 +418,14 @@ export default {
       if (request.method === 'OPTIONS') {
         return new Response(null, { status: 204, headers: CORS_HEADERS });
       }
-      const sessionSecret = env.ADMIN_USER + ':' + env.ADMIN_PASS + ':marsanai-session';
-      const validToken = await hashToken(sessionSecret);
+
       const cookies = parseCookies(request.headers.get('Cookie'));
-      const isLoggedIn = cookies['marsanai_session'] === validToken;
+      const sessionToken = cookies['marsanai_session'];
+      const isLoggedIn = await validateSession(sessionToken, env);
 
       // Logout
       if (path === '/admin/logout') {
+        await deleteSession(sessionToken, env);
         return new Response(null, {
           status: 302,
           headers: {
@@ -341,18 +437,38 @@ export default {
 
       // Login POST
       if (path === '/admin/login' && request.method === 'POST') {
+        const clientIP =
+          request.headers.get('CF-Connecting-IP') ||
+          request.headers.get('X-Forwarded-For')?.split(',')[0]?.trim() ||
+          null;
+
+        // Provjeri brute-force lockout
+        const bfCheck = await checkLoginBruteForce(clientIP, env);
+        if (!bfCheck.allowed) {
+          const minutes = Math.ceil(bfCheck.retryAfter / 60);
+          return new Response(
+            loginPage(`🔒 Previše neuspjelih pokušaja. Pokušaj ponovo za ${minutes} min.`),
+            { status: 429, headers: { 'Content-Type': 'text/html;charset=UTF-8' } }
+          );
+        }
+
         const body = await request.text();
         const form = parseFormData(body);
 
         if (form.username === env.ADMIN_USER && form.password === env.ADMIN_PASS) {
+          await clearLoginAttempts(clientIP, env);
+          const newToken = await createSession(env);
           return new Response(null, {
             status: 302,
             headers: {
               'Location': '/admin',
-              'Set-Cookie': `marsanai_session=${validToken}; Path=/; Max-Age=86400; HttpOnly; Secure; SameSite=Strict`,
+              'Set-Cookie': `marsanai_session=${newToken}; Path=/; Max-Age=${SESSION_TTL}; HttpOnly; Secure; SameSite=Strict`,
             },
           });
         }
+
+        // Neuspjeli pokušaj — zabilježi
+        await recordFailedLogin(clientIP, env);
         return new Response(loginPage('❌ Pogrešno korisničko ime ili lozinka'), {
           status: 401,
           headers: { 'Content-Type': 'text/html;charset=UTF-8' },
@@ -360,16 +476,40 @@ export default {
       }
 
       // ── API ENDPOINTS (za frontend admin panel) ──
-      
+
       // API Login
       if (path === '/admin/api/login' && request.method === 'POST') {
+        const clientIP =
+          request.headers.get('CF-Connecting-IP') ||
+          request.headers.get('X-Forwarded-For')?.split(',')[0]?.trim() ||
+          null;
+
+        // Provjeri brute-force lockout
+        const bfCheck = await checkLoginBruteForce(clientIP, env);
+        if (!bfCheck.allowed) {
+          return new Response(
+            JSON.stringify({ success: false, error: 'Previše neuspjelih pokušaja. Pokušaj ponovo za malo.' }),
+            {
+              status: 429,
+              headers: {
+                ...CORS_HEADERS,
+                'Content-Type': 'application/json',
+                'Retry-After': String(bfCheck.retryAfter),
+              },
+            }
+          );
+        }
+
         try {
           const body = await request.json();
           if (body.username === env.ADMIN_USER && body.password === env.ADMIN_PASS) {
-            return new Response(JSON.stringify({ success: true, token: validToken }), {
+            await clearLoginAttempts(clientIP, env);
+            const newToken = await createSession(env);
+            return new Response(JSON.stringify({ success: true, token: newToken }), {
               headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
             });
           }
+          await recordFailedLogin(clientIP, env);
           return new Response(JSON.stringify({ success: false }), {
             status: 401,
             headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
@@ -382,10 +522,10 @@ export default {
         }
       }
 
-      // API auth check helper
+      // API auth check helper (Bearer token = UUID sesija pohranjena u KV-u)
       const authHeader = request.headers.get('Authorization') || '';
-      const bearerToken = authHeader.replace('Bearer ', '');
-      const isApiAuthed = bearerToken === validToken;
+      const bearerToken = authHeader.replace('Bearer ', '').trim();
+      const isApiAuthed = await validateSession(bearerToken, env);
 
       // API Status
       if (path === '/admin/api/status') {
@@ -453,11 +593,9 @@ export default {
 
     // ── ADMIN API POLLS & FEEDBACK (Bearer auth, izvan admin HTML bloka) ──
     if (path === '/admin/api/polls' || path === '/admin/api/feedback') {
-      const sessionSecret = env.ADMIN_USER + ':' + env.ADMIN_PASS + ':marsanai-session';
-      const validToken = await hashToken(sessionSecret);
       const authHeader = request.headers.get('Authorization') || '';
-      const bearerToken = authHeader.replace('Bearer ', '');
-      const isApiAuthed = bearerToken === validToken;
+      const bearerToken = authHeader.replace('Bearer ', '').trim();
+      const isApiAuthed = await validateSession(bearerToken, env);
 
       if (!isApiAuthed) {
         return new Response(JSON.stringify({ error: 'unauthorized' }), {
