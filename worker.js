@@ -385,7 +385,7 @@ export default {
 
       if (path === '/admin/api/polls') {
         try {
-          const raw = await env.AI_CONFIG.get('poll_votes');
+          const raw = await env.ANKETE_DATA.get('poll_votes');
           const polls = raw ? JSON.parse(raw) : {};
           return new Response(JSON.stringify({ polls }), {
             headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
@@ -606,7 +606,7 @@ export default {
 
       if (path === '/admin/api/polls') {
         try {
-          const raw = await env.AI_CONFIG.get('poll_votes');
+          const raw = await env.ANKETE_DATA.get('poll_votes');
           const polls = raw ? JSON.parse(raw) : {};
           return new Response(JSON.stringify({ polls }), {
             headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
@@ -646,14 +646,14 @@ export default {
           });
         }
         // Dohvati postojeće glasove i agregiraj
-        const raw = await env.AI_CONFIG.get('poll_votes');
+        const raw = await env.ANKETE_DATA.get('poll_votes');
         const allPolls = raw ? JSON.parse(raw) : {};
         if (!allPolls[pollId]) allPolls[pollId] = {};
         for (const [val, cnt] of Object.entries(votes)) {
           const key = String(val).slice(0, 50);
           allPolls[pollId][key] = (allPolls[pollId][key] || 0) + Number(cnt);
         }
-        await env.AI_CONFIG.put('poll_votes', JSON.stringify(allPolls));
+        await env.ANKETE_DATA.put('poll_votes', JSON.stringify(allPolls));
         return new Response(JSON.stringify({ ok: true, polls: allPolls[pollId] }), {
           headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
         });
@@ -760,10 +760,12 @@ export default {
         }
 
         // Provjeri je li već glasao (samo ako imamo IP)
+        // poll lockovi → ANKETE_DATA, rating lockovi → AI_CONFIG
         if (voteKey) {
           let existingVote = null;
           try {
-            existingVote = await env.AI_CONFIG.get(voteKey);
+            const kvStore = voteType === 'poll' ? env.ANKETE_DATA : env.AI_CONFIG;
+            existingVote = await kvStore.get(voteKey);
           } catch (_) {}
 
           if (existingVote) {
@@ -797,10 +799,10 @@ export default {
           }
 
           const pollKvKey = 'poll_votes';
-          const raw = await env.AI_CONFIG.get(pollKvKey);
+          const raw = await env.ANKETE_DATA.get(pollKvKey);
           const allPolls = raw ? JSON.parse(raw) : {};
           allPolls[pollId] = sanitizedVotes;
-          await env.AI_CONFIG.put(pollKvKey, JSON.stringify(allPolls));
+          await env.ANKETE_DATA.put(pollKvKey, JSON.stringify(allPolls));
 
         } else if (voteType === 'rating') {
           const rating = parseInt(body.rating);
@@ -822,9 +824,11 @@ export default {
         }
 
         // ── Pohrani lock (IP + tip + pollId) na 24h ──
+        // poll lockovi → ANKETE_DATA, rating lockovi → AI_CONFIG
         if (voteKey) {
           try {
-            await env.AI_CONFIG.put(voteKey, '1', { expirationTtl: VOTE_TTL });
+            const kvStore = voteType === 'poll' ? env.ANKETE_DATA : env.AI_CONFIG;
+            await kvStore.put(voteKey, '1', { expirationTtl: VOTE_TTL });
           } catch (_) {}
         }
 
