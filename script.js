@@ -1187,18 +1187,44 @@ async function checkAiStatus() {
   updateChatUI();
 }
 
-// Notification bar: prikaži samo ako app_status nije prazan
+// Notification bar: minimizira se u ikonu na lijevoj strani (chat bubble je desno)
+let notificationMinimized = false;
+
 function showAppNotificationBar(appStatus) {
   const msg = appStatus && String(appStatus).trim();
   const bar = document.getElementById('app-notification-bar');
   const txt = document.getElementById('app-notification-text');
+  const icon = document.getElementById('app-notification-icon');
   if (!bar || !txt) return;
   if (msg) {
     txt.textContent = msg;
-    bar.style.display = 'flex';
+    if (notificationMinimized && icon) {
+      icon.style.display = 'flex';
+      bar.style.display = 'none';
+    } else {
+      bar.style.display = 'flex';
+      if (icon) icon.style.display = 'none';
+    }
   } else {
     bar.style.display = 'none';
+    if (icon) icon.style.display = 'none';
   }
+}
+
+function minimizeNotificationBar() {
+  notificationMinimized = true;
+  const bar = document.getElementById('app-notification-bar');
+  const icon = document.getElementById('app-notification-icon');
+  if (bar) bar.style.display = 'none';
+  if (icon) icon.style.display = 'flex';
+}
+
+function expandNotificationBar() {
+  notificationMinimized = false;
+  const bar = document.getElementById('app-notification-bar');
+  const icon = document.getElementById('app-notification-icon');
+  if (bar) bar.style.display = 'flex';
+  if (icon) icon.style.display = 'none';
 }
 
 // Prikaži FAQ sučelje kad je AI isključen, inače normalan input
@@ -2571,6 +2597,12 @@ document.addEventListener('DOMContentLoaded', () => {
   if (tabAi) tabAi.addEventListener('click', () => switchAdminTab('ai'));
   if (tabFb) tabFb.addEventListener('click', () => switchAdminTab('fb'));
   if (tabMgmt) tabMgmt.addEventListener('click', () => switchAdminTab('mgmt'));
+
+  // Notification bar: X minimizira u ikonu, klik na ikonu ponovno otvara bar
+  const notifClose = document.getElementById('app-notification-close');
+  const notifIcon = document.getElementById('app-notification-icon');
+  if (notifClose) notifClose.addEventListener('click', minimizeNotificationBar);
+  if (notifIcon) notifIcon.addEventListener('click', expandNotificationBar);
 
   // Notification bar: dohvati app_status pri učitavanju stranice
   fetch(AI_WORKER_URL + '/status')
