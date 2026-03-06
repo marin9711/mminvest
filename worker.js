@@ -452,9 +452,10 @@ async function handleRequest(request, env) {
       const isApiAuthed = await validateSession(bearerToken, env);
 
       // Sve /admin/* rute (osim /admin/login, /admin/api/login i /admin/logout)
-      // moraju imati valjanu sesiju (isLoggedIn).
+      // moraju imati valjanu sesiju — cookie (HTML panel) ILI Bearer token (JS frontend).
       // API rute vraćaju JSON 401, HTML rute prikazuju login.
-      if (!isLoggedIn) {
+      const isAuthed = isLoggedIn || isApiAuthed;
+      if (!isAuthed) {
         if (path.startsWith('/admin/api/')) {
           return new Response(JSON.stringify({ error: 'unauthorized' }), {
             status: 401,
