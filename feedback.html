@@ -1,0 +1,395 @@
+<div class="page" id="feedback">
+  <div class="feedback-hero">
+    <h1 data-i18n="feedback-title">💬 Feedback & Prijedlozi</h1>
+    <p data-i18n="feedback-desc">Pomozi nam poboljšati MarsanInvest — ocijeni aplikaciju, pošalji prijedlog ili pitaj AI asistenta za pomoć.</p>
+  </div>
+
+  <!-- STAR RATING -->
+  <div class="rating-section">
+    <h3>Ocijeni MarsanInvest</h3>
+    <div class="stars-row" id="stars-row">
+      <button class="star-btn" data-val="1">⭐</button>
+      <button class="star-btn" data-val="2">⭐</button>
+      <button class="star-btn" data-val="3">⭐</button>
+      <button class="star-btn" data-val="4">⭐</button>
+      <button class="star-btn" data-val="5">⭐</button>
+    </div>
+    <div class="rating-label" id="rating-label">Klikni za ocjenu</div>
+    <div class="rating-stats" id="rating-stats"></div>
+  </div>
+
+  <!-- POLL 1: Nova funkcionalnost -->
+  <div class="poll-section" id="poll-feature">
+    <h3>📊 Koja nova funkcionalnost te zanima?</h3>
+    <p class="poll-subtitle">Odaberi jednu ili više opcija — rezultati se prikazuju odmah.</p>
+    <div class="poll-options" id="poll-feature-options">
+      <div class="poll-option" data-poll="feature" data-value="dijete" onclick="togglePollOption(this)">
+        <div class="poll-bar-bg"></div>
+        <span class="poll-icon">👶</span>
+        <span class="poll-label">Kalkulator za dijete / štednju</span>
+        <span class="poll-pct"></span>
+        <span class="poll-check">✓</span>
+      </div>
+      <div class="poll-option" data-poll="feature" data-value="inflacija" onclick="togglePollOption(this)">
+        <div class="poll-bar-bg"></div>
+        <span class="poll-icon">📉</span>
+        <span class="poll-label">Usporedba inflacije</span>
+        <span class="poll-pct"></span>
+        <span class="poll-check">✓</span>
+      </div>
+      <div class="poll-option" data-poll="feature" data-value="export" onclick="togglePollOption(this)">
+        <div class="poll-bar-bg"></div>
+        <span class="poll-icon">🖨️</span>
+        <span class="poll-label">Export / print izvještaja</span>
+        <span class="poll-pct"></span>
+        <span class="poll-check">✓</span>
+      </div>
+    </div>
+    <button class="poll-vote-btn" id="poll-feature-btn" onclick="submitPoll('feature')" disabled>Glasaj</button>
+    <div class="poll-total" id="poll-feature-total"></div>
+  </div>
+
+  <!-- POLL 2: Prioritet -->
+  <div class="poll-section" id="poll-priority">
+    <h3>🎯 Što je prioritet za nastavak?</h3>
+    <p class="poll-subtitle">Odaberi što ti je najvažnije — možeš odabrati jednu opciju.</p>
+    <div class="poll-options" id="poll-priority-options">
+      <div class="poll-option" data-poll="priority" data-value="bugovi" onclick="selectPollSingle(this)">
+        <div class="poll-bar-bg"></div>
+        <span class="poll-icon">🐛</span>
+        <span class="poll-label">Popraviti bugove (slideri / prazna polja)</span>
+        <span class="poll-pct"></span>
+        <span class="poll-check">✓</span>
+      </div>
+      <div class="poll-option" data-poll="priority" data-value="ai" onclick="selectPollSingle(this)">
+        <div class="poll-bar-bg"></div>
+        <span class="poll-icon">🤖</span>
+        <span class="poll-label">AI asistent u aplikaciji</span>
+        <span class="poll-pct"></span>
+        <span class="poll-check">✓</span>
+      </div>
+      <div class="poll-option" data-poll="priority" data-value="nova" onclick="selectPollSingle(this)">
+        <div class="poll-bar-bg"></div>
+        <span class="poll-icon">✨</span>
+        <span class="poll-label">Nova funkcionalnost</span>
+        <span class="poll-pct"></span>
+        <span class="poll-check">✓</span>
+      </div>
+    </div>
+    <button class="poll-vote-btn" id="poll-priority-btn" onclick="submitPoll('priority')" disabled>Glasaj</button>
+    <div class="poll-total" id="poll-priority-total"></div>
+  </div>
+
+  <!-- FEEDBACK FORM -->
+  <div class="feedback-form-card">
+    <h3>Pošalji povratnu informaciju</h3>
+    <div class="fb-type-row">
+      <button class="fb-type-btn active" data-type="prijedlog">💡 Prijedlog</button>
+      <button class="fb-type-btn" data-type="pohvala">👏 Pohvala</button>
+      <button class="fb-type-btn" data-type="greška">🐛 Greška</button>
+      <button class="fb-type-btn" data-type="pitanje">❓ Pitanje</button>
+    </div>
+    <textarea class="fb-textarea" id="fb-text" placeholder="Napiši svoju povratnu informaciju, prijedlog ili opis greške..."></textarea>
+    <input type="email" class="fb-email" id="fb-email" placeholder="📧 Tvoj email (opcionalno) — za odgovor admina">
+    <button class="fb-submit-btn" id="fb-submit-btn" onclick="submitFeedback()">Pošalji feedback ✉️</button>
+    <div class="feedback-sent" id="feedback-sent">✅ Hvala! Tvoj feedback je zabilježen.</div>
+  </div>
+
+  <div class="feedback-form-card" style="text-align:center; padding: 1.25rem;">
+    <h3>🤖 AI Asistent</h3>
+    <p style="font-size:0.82rem; color:var(--muted2); margin-bottom:0.75rem;">Trebate pomoć? Kliknite na chat ikonu dolje desno — MarsanAI asistent dostupan je na svakoj stranici.</p>
+    <button class="fb-submit-btn" onclick="toggleAiChat()" style="margin-top:0;">Otvori AI chat 🤖</button>
+  </div>
+
+<p class="disclaimer">⚠️ AI asistent pruža općenite informacije u edukativne svrhe. Nije zamjena za profesionalni financijski savjet.</p>
+
+  <div class="donate-feedback">
+    <p>☕ MarsanInvest je besplatan i bez reklama. Ako ti je od pomoći, možeš podržati razvoj.</p>
+    <button class="donate-feedback-btn" disabled title="Dolazi uskoro">❤️ Podrži autora</button>
+  </div>
+
+</div>
+
+
+<!-- FLOATING AI CHAT -->
+<div class="ai-chat-float" id="ai-chat-float">
+  <div class="ai-chat-header">
+    <div class="ai-chat-avatar">🤖</div>
+    <div>
+      <div class="ai-chat-title">MarsanAI Asistent</div>
+      <div class="ai-chat-sub">Pitaj me o fondovima, ETF-ovima ili kalkulatoru</div>
+    </div>
+    <div class="ai-online-dot"></div>
+  </div>
+  <div class="ai-messages" id="ai-messages">
+    <div class="ai-msg bot">
+      <div class="ai-msg-avatar">🤖</div>
+      <div class="ai-msg-bubble">Bok! Ja sam MarsanAI asistent. 👋 Mogu ti pomoći razumjeti razliku između DMF-a i PEPP-a, objasniti ETF fondove, ili te voditi kroz kalkulator. Što te zanima?</div>
+    </div>
+  </div>
+  <div class="ai-quick-btns">
+    <button class="ai-quick-btn" onclick="sendQuickMsg('Što je razlika između DMF i PEPP?')">DMF vs PEPP</button>
+    <button class="ai-quick-btn" onclick="sendQuickMsg('Koji ETF preporučuješ za početnike?')">ETF za početnike</button>
+    <button class="ai-quick-btn" onclick="sendQuickMsg('Kako koristiti kalkulator?')">Kako koristiti?</button>
+    <button class="ai-quick-btn" onclick="sendQuickMsg('Što je državni poticaj na 3. stup?')">Državni poticaj</button>
+    <button class="ai-quick-btn" onclick="sendQuickMsg('Koje su naknade na IBKR vs Trading 212?')">IBKR vs T212</button>
+  </div>
+  <div class="ai-input-row">
+    <input class="ai-input" id="ai-input" type="text" placeholder="Pitaj nešto o ulaganju..." 
+           onkeydown="if(event.key==='Enter') sendAiMsg()">
+    <button class="ai-send-btn" id="ai-send-btn" onclick="sendAiMsg()">➤</button>
+  </div>
+</div>
+<button class="ai-fab" id="ai-fab" onclick="toggleAiChat()">
+  <span class="fab-icon-chat">🤖</span>
+  <span class="fab-icon-close">✕</span>
+</button>
+<button class="ai-fab-hide" id="ai-fab-hide" onclick="hideFabToggle()">👁️ sakrij AI</button>
+
+<!-- SITE FOOTER -->
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="fb-name">MarsanInvest</div>
+      <p>Besplatni kalkulator za usporedbu mirovinskih fondova i ETF ulaganja prilagođen hrvatskom tržištu.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Kalkulatori</h4>
+      <span onclick="document.querySelector('[data-page=kviz]').click()">🧭 Koji put?</span>
+      <span onclick="document.querySelector('[data-page=p0a]').click()">Hrvatski DMF</span>
+      <span onclick="document.querySelector('[data-page=p0b]').click()">ETF Platforme</span>
+      <span onclick="document.querySelector('[data-page=p1]').click()">3. Stup vs PEPP</span>
+      <span onclick="document.querySelector('[data-page=p2]').click()">DMF/PEPP vs ETF</span>
+      <span onclick="document.querySelector('[data-page=p3]').click()">Pension + ETF</span>
+    </div>
+    <div class="footer-col">
+      <h4>Resursi</h4>
+      <a href="https://mytetka.com/blog/" target="_blank">Tetka — mytetka.com</a>
+      <a href="https://tonivitali.com/svi-postovi/" target="_blank">Škrti Otočanin — tonivitali.com</a>
+      <a href="https://www.reddit.com/r/financije/" target="_blank">Reddit r/financije</a>
+      <a href="https://www.europskamirovina.hr/" target="_blank">europskamirovina.hr</a>
+      <a href="https://www.hanfa.hr" target="_blank">HANFA</a>
+      <a href="https://www.regos.hr" target="_blank">REGOS</a>
+      <a href="https://www.mirovinsko.hr" target="_blank">HZMO</a>
+      <a href="https://finax.eu/hr" target="_blank">Finax HR</a>
+    </div>
+    <div class="footer-col">
+      <h4>Aplikacija</h4>
+      <span onclick="document.querySelector('[data-page=home]').click()">Početna</span>
+      <span onclick="document.querySelector('[data-page=feedback]').click()">💬 Feedback</span>
+      <span onclick="toggleAiChat()">🤖 AI Asistent</span>
+      <span onclick="openAdminPanel()" style="opacity:0.35;font-size:0.65rem;margin-top:0.5rem">🔐 Admin</span>
+    </div>
+  </div>
+  <div class="footer-disclaimer">
+    <strong>⚠️ DISCLAIMER:</strong> MarsanInvest je informativni alat namijenjen isključivo u edukativne svrhe. Nije izrađen od strane licenciranog financijskog savjetnika niti predstavlja financijski savjet. Sve projekcije su temeljene na historijskim podacima i <strong>ne garantiraju buduće rezultate</strong>. Autor ne preuzima nikakvu odgovornost za financijske gubitke nastale na temelju informacija prikazanih u ovoj aplikaciji. Prije donošenja bilo kakve investicijske odluke obvezno konzultiraj licenciranog financijskog savjetnika.
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 MarsanInvest · Sva prava pridržana</span>
+    <span class="footer-version">v0.9.1-beta</span>
+    <span>Podaci: HANFA 2024 · ETF historijski prosjeci</span>
+  </div>
+</footer>
+
+<!-- DONATE BAR - floating, samo desktop -->
+<div class="donate-bar" id="donate-bar">
+  <span class="donate-bar-text">☕ MarsanInvest je besplatan i bez reklama. Ako ti je koristan, možeš podržati razvoj:</span>
+  <button class="donate-btn" disabled title="Donate opcija dolazi uskoro">❤️ Podrži autora</button>
+  <button class="donate-bar-close" onclick="document.getElementById('donate-bar').style.display='none'" title="Zatvori">×</button>
+</div>
+
+<!-- ADMIN MODAL -->
+<div class="admin-overlay" id="admin-overlay" onclick="if(event.target===this)closeAdminPanel()">
+  <div class="admin-card" id="admin-card">
+    <button class="admin-close" onclick="closeAdminPanel()">✕</button>
+    
+    <!-- Login view -->
+    <div id="admin-login-view">
+      <h2>🔐 Admin</h2>
+      <p class="admin-sub">MarsanAI upravljanje</p>
+      <div class="admin-err" id="admin-err"></div>
+      <label>Korisničko ime</label>
+      <input type="text" id="admin-user" autocomplete="username">
+      <label>Lozinka</label>
+      <input type="password" id="admin-pass" autocomplete="current-password" onkeydown="if(event.key==='Enter')adminLogin()">
+      <button class="admin-login-btn" onclick="adminLogin()" id="admin-login-btn">Prijavi se</button>
+    </div>
+    
+    <!-- Dashboard view -->
+    <div id="admin-dash-view" style="display:none">
+      <h2>🤖 MarsanAI Admin</h2>
+      <p class="admin-sub">Upravljanje AI asistentom</p>
+
+      <!-- Tab navigacija -->
+      <div class="admin-tab-row">
+        <button class="admin-tab-btn active" id="admin-tab-ai">🤖 AI Bot</button>
+        <button class="admin-tab-btn" id="admin-tab-fb">💬 Feedback</button>
+      </div>
+
+      <!-- Tab: AI toggle -->
+      <div class="admin-tab-content active" id="admin-tab-content-ai">
+        <div class="admin-status" id="admin-status"></div>
+        <button class="admin-toggle" id="admin-toggle-btn" onclick="adminToggle()"></button>
+      </div>
+
+      <!-- Tab: Feedback log -->
+      <div class="admin-tab-content" id="admin-tab-content-fb">
+
+        <!-- Poll rezultati -->
+        <div style="margin-bottom:1rem;">
+          <div style="font-size:0.78rem; font-weight:700; color:var(--muted2); margin-bottom:0.5rem;">📊 Poll rezultati (svi korisnici)</div>
+          <div id="admin-poll-results" style="font-size:0.75rem; color:var(--muted2); text-align:center; padding:0.75rem 0;">Učitavanje...</div>
+        </div>
+
+        <div style="border-top:1px solid var(--border); margin-bottom:0.75rem;"></div>
+
+        <!-- Feedback log -->
+        <div style="font-size:0.78rem; font-weight:700; color:var(--muted2); margin-bottom:0.5rem;">💬 Feedback unosi</div>
+        <div id="admin-feedback-log" class="admin-feedback-log">
+          <div class="fb-log-empty">Učitavanje...</div>
+        </div>
+        <button class="admin-toggle" style="margin-top:0.75rem; background:var(--surface2); color:var(--muted2); font-size:0.75rem; padding:0.5rem 1rem;" onclick="loadFeedbackLog(); loadPollResults();">🔄 Osvježi</button>
+      </div>
+
+      <span class="admin-logout-link" onclick="adminLogout()">🔒 Odjavi se</span>
+    </div>
+  </div>
+</div>
+
+</footer>
+<script src="script.js"></script>
+
+<script>
+// ── MarsanInvest Language System ──
+const TRANSLATIONS = {
+  // NAV
+  'nav-home':        { hr: 'Početna',              en: 'Home' },
+  'nav-p0a':         { hr: 'Hrvatski DMF',          en: 'Croatian VMF' },
+  'nav-pepp':        { hr: 'PEPP',                  en: 'PEPP' },
+  'nav-p0b':         { hr: 'ETF Platforme',         en: 'ETF Platforms' },
+  'nav-p1':          { hr: 'HR DMF (3.stup) vs PEPP', en: 'HR VMF vs PEPP' },
+  'nav-p2':          { hr: 'DMF/PEPP vs ETF',       en: 'VMF/PEPP vs ETF' },
+  'nav-p3':          { hr: 'Pension + ETF',          en: 'Pension + ETF' },
+  'nav-kviz':        { hr: '🧭 Koji put?',           en: '🧭 Which path?' },
+  'nav-stednja':     { hr: '👶 Štednja za dijete',   en: '👶 Saving for a child' },
+  'nav-kripto':      { hr: '₿ Kriptovalute',         en: '₿ Cryptocurrencies' },
+  'nav-trading':     { hr: '📈 Trading',              en: '📈 Trading' },
+  'nav-edukacija':   { hr: '📚 Edukacija',           en: '📚 Education' },
+  'nav-feedback':    { hr: '💬 Feedback',            en: '💬 Feedback' },
+
+  // HOME
+  'home-title':      { hr: 'Tvoj osobni kalkulator mirovinskog i investicijskog planiranja — usporedi fondove, ETF-ove i strategije na jednom mjestu.', en: 'Your personal retirement and investment planning calculator — compare funds, ETFs and strategies in one place.' },
+  'home-cta':        { hr: '▶ Pokreni kalkulator',   en: '▶ Launch calculator' },
+  'home-skip':       { hr: 'Preskoči &rarr; Kalkulatori', en: 'Skip &rarr; Calculators' },
+  'home-fc1-title':  { hr: 'Hrvatski DMF fondovi',   en: 'Croatian Voluntary Pension Funds' },
+  'home-fc1-desc':   { hr: 'Usporedi svih 8 dostupnih dobrovoljnih mirovinskih fondova u RH — prinosi, naknade, rizik. Kalkulator s državnim poticajem (15% godišnje).', en: 'Compare all 8 available voluntary pension funds in Croatia — returns, fees, risk. Calculator includes state subsidy (15% annually).' },
+  'home-fc2-title':  { hr: 'PEPP — Pan-europska mirovina', en: 'PEPP — Pan-European Pension' },
+  'home-fc2-desc':   { hr: 'Sve o PEPP-u — što je, kako funkcionira, tko ga nudi u HR, naknade i za koga je prikladan. Idealno za EU mobilne radnike.', en: 'Everything about PEPP — what it is, how it works, who offers it in Croatia, fees and who it\'s suitable for. Ideal for EU mobile workers.' },
+  'home-fc3-title':  { hr: 'ETF Platforme',           en: 'ETF Platforms' },
+  'home-fc3-desc':   { hr: 'VWCE, IWDA, S&P 500, Nasdaq i više — usporedi ETF fondove po riziku i prinosu. IBKR vs Trading 212 vs Finax — sve naknade uračunate.', en: 'VWCE, IWDA, S&P 500, Nasdaq and more — compare ETF funds by risk and return. IBKR vs Trading 212 vs Finax — all fees included.' },
+  'home-fc4-title':  { hr: 'HR DMF (3.stup) vs PEPP', en: 'Croatian VMF vs PEPP' },
+  'home-fc4-desc':   { hr: 'Direktna usporedba domaćeg DMF-a s Finaxovim PEPP-om. Je li europska mirovina bolja od državnog poticaja? Odgovor je ovdje.', en: 'Direct comparison of Croatian VMF with Finax PEPP. Is the European pension better than the state subsidy? The answer is here.' },
+  'home-fc5-title':  { hr: 'DMF/PEPP vs ETF',         en: 'VMF/PEPP vs ETF' },
+  'home-fc5-desc':   { hr: 'Što donosi više novca dugoročno — mirovinski fond ili ETF? Usporedi sve tri opcije paralelno s uključivanjem/isključivanjem pojedinih linija.', en: 'What brings more money long-term — pension fund or ETF? Compare all three options in parallel with toggle lines.' },
+  'home-fc6-title':  { hr: 'Pension + ETF strategija', en: 'Pension + ETF Strategy' },
+  'home-fc6-desc':   { hr: 'Kombiniraj mirovinski fond i ETF u jedan portfelj. Podesi alokaciju, vidi realnu vrijednost s inflacijom i izračunaj mjesečnu isplatu po 4% pravilu.', en: 'Combine a pension fund and ETF into one portfolio. Set allocation, see real value with inflation and calculate monthly payout using the 4% rule.' },
+  'home-fc7-title':  { hr: 'Koji put je za mene?',     en: 'Which path is right for me?' },
+  'home-fc7-desc':   { hr: 'Nisi siguran gdje početi? Odgovori na 5 pitanja i dobij preporuku — DMF, PEPP, ETF ili kombinacija — prilagođenu tvojoj situaciji.', en: 'Not sure where to start? Answer 5 questions and get a recommendation — VMF, PEPP, ETF or a combination — tailored to your situation.' },
+
+  // QUIZ home
+  'quiz-q0':         { hr: 'Koliko imaš godina?',     en: 'How old are you?' },
+  'quiz-q0-sub':     { hr: 'Dob određuje vremenski horizont i razinu rizika.', en: 'Age determines your investment horizon and risk level.' },
+  'quiz-q1':         { hr: 'Koliko možeš odvajati mjesečno?', en: 'How much can you set aside monthly?' },
+  'quiz-q1-sub':     { hr: 'Državni poticaj vrijedi do 66,36€/mj.', en: 'State subsidy applies up to €66.36/month.' },
+  'quiz-q2':         { hr: 'Koliko rizika možeš podnijeti?', en: 'How much risk can you tolerate?' },
+  'quiz-q2-sub':     { hr: 'Što kad ulaganje padne 30%?', en: 'What if your investment drops 30%?' },
+  'quiz-q3':         { hr: 'Koji ti je primarni cilj?', en: 'What is your primary goal?' },
+  'quiz-q3-sub':     { hr: 'Određuje omjer mirovinskih fondova i ETF-ova.', en: 'Determines the ratio of pension funds to ETFs.' },
+  'quiz-q4':         { hr: 'Kakvo je tvoje iskustvo?', en: 'What is your investment experience?' },
+  'quiz-q4-sub':     { hr: 'Pomaže nam preporučiti pravu razinu složenosti.', en: 'Helps us recommend the right level of complexity.' },
+
+  // DISCLAIMER / FOOTER
+  'disclaimer-main': { hr: 'MarsanInvest je informativni alat za edukacijske svrhe. Nije financijski savjet. Uvijek konzultiraj licenciranog financijskog savjetnika prije donošenja investicijskih odluka. Podaci su temeljeni na javno dostupnim historijskim prinosima.', en: 'MarsanInvest is an informational tool for educational purposes. Not financial advice. Always consult a licensed financial advisor before making investment decisions. Data based on publicly available historical returns.' },
+
+  // PAGE TITLES & DESCRIPTIONS
+  'p0a-title':       { hr: 'Hrvatski Dobrovoljni Mirovinski Fondovi', en: 'Croatian Voluntary Pension Funds' },
+  'p0a-desc':        { hr: 'Usporedi sve dostupne otvorene DMF fondove u Hrvatskoj prema prosječnim prinosima, razini rizika i projekciji rasta. Podaci HANFA 2024.', en: 'Compare all available open voluntary pension funds in Croatia by average returns, risk level and growth projection. HANFA 2024 data.' },
+  'pepp-title':      { hr: '🌍 PEPP — Pan-europska osobna mirovina', en: '🌍 PEPP — Pan-European Personal Pension' },
+  'pepp-desc':       { hr: 'Pan-European Personal Pension Product (PEPP) je EU-reguliran mirovinski proizvod dostupan građanima svih država članica.', en: 'The Pan-European Personal Pension Product (PEPP) is an EU-regulated pension product available to citizens of all member states.' },
+  'p0b-title':       { hr: 'ETF Ulaganje — Platforme & Projekcija', en: 'ETF Investing — Platforms & Projection' },
+  'p0b-desc':        { hr: 'Usporedi ulaganje u ETF fondove preko IBKR, Trading 212 i Finax. Sve naknade, osiguranje i projekcija rasta uračunati su automatski.', en: 'Compare ETF investing via IBKR, Trading 212 and Finax. All fees, insurance and growth projections calculated automatically.' },
+  'p1-title':        { hr: 'HR DMF (3.stup) vs PEPP', en: 'Croatian VMF (3rd pillar) vs PEPP' },
+  'p1-desc':         { hr: 'Usporedi domaći dobrovoljni mirovinski fond s državnim poticajem nasuprot pan-europske osobne mirovine.', en: 'Compare the domestic voluntary pension fund with state subsidy versus the pan-European personal pension.' },
+  'p2-title':        { hr: 'DMF/PEPP vs ETF', en: 'VMF/PEPP vs ETF' },
+  'p2-desc':         { hr: 'Usporedi mirovinske fondove s globalnim ETF-ovima. Uključi/isključi fondove i vidi koja strategija donosi više.', en: 'Compare pension funds with global ETFs. Toggle funds on/off and see which strategy delivers more.' },
+  'p3-title':        { hr: 'Pension + ETF', en: 'Pension + ETF' },
+  'p3-desc':         { hr: 'Simuliraj paralelnu strategiju — dio novca u sigurnost mirovinskog fonda, dio u rast ETF-a. Podesi alokaciju i vidi što dobivaš na kraju.', en: 'Simulate a parallel strategy — part of your money in the security of a pension fund, part in ETF growth. Set allocation and see your end result.' },
+  'stednja-title':   { hr: '👶 Štednja za dijete', en: '👶 Saving for a Child' },
+  'stednja-desc':    { hr: 'Kako mudro početi štedjeti i ulagati za djetetovu budućnost — i zašto većina popularnih metoda zapravo gubi novac.', en: 'How to wisely start saving and investing for your child\'s future — and why most popular methods actually lose money.' },
+  'kripto-title':    { hr: '₿ Ulaganja u kriptovalute', en: '₿ Cryptocurrency Investing' },
+  'kripto-desc':     { hr: 'Osnove kriptovaluta kao klase imovine — mogućnosti, rizici i što treba znati prije nego uložiš.', en: 'Cryptocurrency basics as an asset class — opportunities, risks and what to know before investing.' },
+  'trading-title':   { hr: '📈 Trading — aktivno trgovanje', en: '📈 Trading — Active Trading' },
+  'trading-desc':    { hr: 'Razumijevanje osnova tradinga — strategije, pojmovi i razlika od dugoročnog ulaganja.', en: 'Understanding trading basics — strategies, terminology and the difference from long-term investing.' },
+  'edu-title':       { hr: '📚 Edukacija', en: '📚 Education' },
+  'edu-desc':        { hr: 'Najbolji hrvatski i međunarodni resursi za financijsku pismenost, investiranje i mirovinsko planiranje.', en: 'The best Croatian and international resources for financial literacy, investing and retirement planning.' },
+  'feedback-title':  { hr: '💬 Feedback & Prijedlozi', en: '💬 Feedback & Suggestions' },
+  'feedback-desc':   { hr: 'Pomozi nam poboljšati MarsanInvest — ocijeni aplikaciju, pošalji prijedlog ili pitaj AI asistenta za pomoć.', en: 'Help us improve MarsanInvest — rate the app, send a suggestion or ask the AI assistant for help.' },
+};
+
+let currentLang = 'hr';
+
+// Data-i18n attribute elements
+const I18N_MAP = {
+  // Nav tabs (by data-page attribute)
+  '[data-page="home"]':          'nav-home',
+  '[data-page="p0a"]':           'nav-p0a',
+  '[data-page="pepp"]':          'nav-pepp',
+  '[data-page="p0b"]':           'nav-p0b',
+  '[data-page="p1"]':            'nav-p1',
+  '[data-page="p2"]':            'nav-p2',
+  '[data-page="p3"]':            'nav-p3',
+  '[data-page="kviz"]':          'nav-kviz',
+  '[data-page="stednja-dijete"]':'nav-stednja',
+  '[data-page="kripto"]':        'nav-kripto',
+  '[data-page="trading"]':       'nav-trading',
+  '[data-page="edukacija"]':     'nav-edukacija',
+  '[data-page="feedback"]':      'nav-feedback',
+};
+
+function setLang(lang) {
+  currentLang = lang;
+  document.documentElement.lang = lang;
+
+  // Toggle buttons
+  document.getElementById('btn-hr').classList.toggle('active', lang === 'hr');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+
+  // Translate nav tabs
+  Object.entries(I18N_MAP).forEach(([sel, key]) => {
+    const el = document.querySelector('.nav-tabs ' + sel);
+    if (el && TRANSLATIONS[key]) el.innerHTML = TRANSLATIONS[key][lang];
+  });
+
+  // Translate all [data-i18n] elements
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (TRANSLATIONS[key] && TRANSLATIONS[key][lang]) {
+      el.innerHTML = TRANSLATIONS[key][lang];
+    }
+  });
+
+  // Save to localStorage
+  try { localStorage.setItem('marsan-lang', lang); } catch(e) {}
+}
+
+// Apply saved lang on load
+(function() {
+  try {
+    const saved = localStorage.getItem('marsan-lang');
+    if (saved && saved !== 'hr') setLang(saved);
+  } catch(e) {}
+})();
+</script>
+
+</body>
+</html>

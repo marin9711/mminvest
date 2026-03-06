@@ -1,0 +1,104 @@
+<div class="page" id="p1">
+  <div class="page-header">
+    <h2><span class="grad-warm" data-i18n="p1-title">HR DMF (3.stup) vs PEPP</span></h2>
+    <p data-i18n="p1-desc">Usporedi domaći dobrovoljni mirovinski fond s državnim poticajem nasuprot pan-europske osobne mirovine.</p>
+  </div>
+
+  <div class="controls">
+    <div class="ctrl-group c-neutral">
+      <label>Godišnja uplata</label>
+      <div class="row"><input type="range" id="p1-uplata" min="0" max="5000" step="50" value="663"><input type="number" class="ctrl-val-input" id="p1-uplata-v" value="663.00" data-decimals="2" min="0" max="5000" step="any" placeholder="663.61"></div>
+    </div>
+    <div class="ctrl-group c-neutral">
+      <label>Državni poticaj (DMF)</label>
+      <div class="toggle-switch-wrap">
+        <label class="toggle-switch"><input type="checkbox" id="p1-poticaj-toggle" checked><span class="toggle-slider"></span></label>
+        <span class="toggle-label active" id="p1-poticaj-lbl">Uključen</span>
+      </div>
+      <div class="poticaj-info" id="p1-poticaj-info">15% od osobne uplate, max 99.54€/god. Neoporeziva uplata poslodavca do 804€/god nije uključena — dodaj je u iznos uplate ako je koristiš.</div>
+    </div>
+    <div class="ctrl-group c-neutral">
+      <label>Broj godina</label>
+      <div class="row"><input type="range" id="p1-god" min="5" max="60" step="1" value="30"><input type="number" class="ctrl-val-input" id="p1-god-v" value="30" min="5" max="60" step="1" placeholder="25"></div>
+    </div>
+    <div class="ctrl-group c-dmf">
+      <label>Odaberi DMF fond</label>
+      <select id="p1-dmf-select" onchange="updateP1()" style="width:100%;padding:0.5rem 0.75rem;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.85rem;cursor:pointer">
+        <option value="Croatia 1000A">Croatia 1000A — VISOK rizik</option>
+        <option value="Erste Plavi Expert" selected>Erste Plavi Expert — VISOK rizik</option>
+        <option value="AZ Profit">AZ Profit — UMJEREN rizik</option>
+        <option value="Croatia DMF">Croatia DMF — UMJEREN rizik</option>
+        <option value="AZ Benefit">AZ Benefit — NIZAK rizik</option>
+        <option value="Raiffeisen DMF">Raiffeisen DMF — NIZAK rizik</option>
+        <option value="Erste Plavi Protect">Erste Plavi Protect — NIZAK rizik</option>
+        <option value="Croatia 1000C">Croatia 1000C — NIZAK rizik</option>
+      </select>
+      <div class="rate-note" id="p1-dmf-rate-note" style="margin-top:0.4rem">Prosječni prinos (10g): —</div>
+    </div>
+    <div class="ctrl-group c-pepp">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <label>PEPP (Finax)</label>
+        <span class="liq-tag liq-mid" style="font-size:0.65rem">Automatski prinos</span>
+      </div>
+      <div class="rate-note" id="p1-pepp-rate-note" style="margin-top:0.25rem;font-size:0.82rem;color:var(--muted2)">Finax historijski: ~8%/god bruto → nakon 1% naknade: <strong id="p1-pepp-net" style="color:var(--pepp-l)">7.0%</strong>/god</div>
+    </div>
+  </div>
+
+  <div class="stat-cards" id="p1-cards">
+    <div class="stat-card sc-dmf" id="p1-sc-dmf">
+      <div class="sc-label">3. Stup</div>
+      <div class="sc-name">DMF + Državni poticaj</div>
+      <div class="sc-row"><div class="sr-lbl">Ukupna vrijednost</div><div class="sr-val" id="p1-dmf-total">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Neto zarada</div><div class="sr-val" id="p1-dmf-earn" style="font-size:.95rem">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Ukupno uplaćeno</div><div class="sr-val" id="p1-dmf-in" style="font-size:.85rem">—</div><div class="sr-sub" id="p1-dmf-pot">poticaj: —</div></div>
+    </div>
+    <div class="stat-card sc-pepp" id="p1-sc-pepp">
+      <div class="sc-label">PEPP</div>
+      <div class="sc-name">Pan-europska mirovina</div>
+      <div class="sc-row"><div class="sr-lbl">Ukupna vrijednost</div><div class="sr-val" id="p1-pepp-total">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Neto zarada</div><div class="sr-val" id="p1-pepp-earn" style="font-size:.95rem">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Ukupno uplaćeno</div><div class="sr-val" id="p1-pepp-in" style="font-size:.85rem">—</div><div class="sr-sub">bez poticaja</div></div>
+    </div>
+  </div>
+
+  <div class="winner-banner">
+    <div><div class="wb-label">Razlika u korist pobjednika</div><div class="wb-val" id="p1-diff">—</div></div>
+    <div class="wb-desc" id="p1-desc">—</div>
+  </div>
+
+  <div class="chart-card">
+    <h3>Rast vrijednosti kroz godine</h3>
+    <canvas id="p1-chart"></canvas>
+    <div class="chart-controls">
+      <div class="period-btns" id="p1-chart-periods">
+        <span style="font-size:0.62rem;color:var(--muted);margin-right:0.2rem">Period:</span>
+        <button class="period-btn" data-years="1" data-chart="p1-chart">1Y</button><button class="period-btn" data-years="3" data-chart="p1-chart">3Y</button><button class="period-btn" data-years="5" data-chart="p1-chart">5Y</button><button class="period-btn" data-years="10" data-chart="p1-chart">10Y</button><button class="period-btn" data-years="15" data-chart="p1-chart">15Y</button><button class="period-btn" data-years="20" data-chart="p1-chart">20Y</button><button class="period-btn" data-years="25" data-chart="p1-chart">25Y</button><button class="period-btn" data-years="30" data-chart="p1-chart">30Y</button>
+        <button class="period-btn active" data-years="all" data-chart="p1-chart">SVE</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem">
+
+      </div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <h3>Pregled po periodima</h3>
+    <div class="tbl-wrap">
+      <table><thead><tr>
+        <th>Godina</th>
+        <th style="color:var(--dmf-l)">3. Stup (DMF)</th>
+        <th style="color:var(--pepp-l)">PEPP</th>
+        <th style="color:var(--etf-l)">Razlika</th>
+      </tr></thead><tbody id="p1-tbody"></tbody></table>
+    </div>
+  </div>
+  <div class="liq-info-box">
+    <div class="liq-row"><span class="liq-icon">🔒</span><div class="liq-text"><strong>HR DMF — Niska likvidnost</strong><span>Isplata najranije od <strong>55. god.</strong> Max 30% jednokratno, ostatak u mirovinskim ratama. Nema prijevremenog otkupa.</span></div></div>
+    <div class="liq-row"><span class="liq-icon">🟡</span><div class="liq-text"><strong>PEPP (Finax) — Srednja likvidnost</strong><span>Isplata od <strong>55. god.</strong> ali možeš povući <strong>100% odjednom</strong> — bez ograničenja na 30% kao kod HR DMF-a. Veća fleksibilnost pri isplati.</span></div></div>
+    <div class="liq-row"><span class="liq-icon">ℹ️</span><div class="liq-text"><strong>Zašto je to važno?</strong><span>Ako možeš birati, PEPP daje više slobode pri isplati. HR DMF je bolji samo ako je važan državni poticaj (99.54€/god) koji PEPP ne nudi.</span></div></div>
+  </div>
+  <p class="disclaimer">⚠️ Ilustrativna projekcija. Prinos DMF ~3.5% i PEPP ~8% su povijesni prosjeci, ne garancija. Državni poticaj 15% do 663.61€/god (max 99.54€). Nije financijski savjet.</p>
+</div>
+
+<!-- ========== PAGE 2 ========== -->
+<div class="page" id="p2">

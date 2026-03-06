@@ -1,0 +1,201 @@
+<div class="page" id="kviz">
+  <div class="quiz-hero">
+    <h1>🧭 Koji put je za mene?</h1>
+    <p>Odgovori na 5 pitanja i dobit ćeš preporuku investicijske strategije prilagođene tvojoj situaciji.</p>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="quiz-progress" id="quizProgress">
+    <div class="quiz-step active" id="qstep-0"></div>
+    <div class="quiz-step" id="qstep-1"></div>
+    <div class="quiz-step" id="qstep-2"></div>
+    <div class="quiz-step" id="qstep-3"></div>
+    <div class="quiz-step" id="qstep-4"></div>
+  </div>
+
+  <!-- Questions container -->
+  <div id="quizQuestions">
+
+    <!-- Q1: Dob -->
+    <div class="quiz-card" id="qq-0">
+      <div class="quiz-question">Koliko imaš godina?</div>
+      <div class="quiz-sub">Dob utječe na vremenski horizont ulaganja i preporučenu razinu rizika.</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-q="0" data-val="young">
+          <span class="quiz-option-icon">🌱</span>
+          <div class="quiz-option-text">
+            <strong>18–35 godina</strong>
+            <span>Dugi horizont, možeš preuzeti više rizika</span>
+          </div>
+        </div>
+        <div class="quiz-option" data-q="0" data-val="mid">
+          <span class="quiz-option-icon">📈</span>
+          <div class="quiz-option-text">
+            <strong>36–50 godina</strong>
+            <span>Srednji horizont, balans između rasta i sigurnosti</span>
+          </div>
+        </div>
+        <div class="quiz-option" data-q="0" data-val="senior">
+          <span class="quiz-option-icon">🏁</span>
+          <div class="quiz-option-text">
+            <strong>51+ godina</strong>
+            <span>Kraći horizont, prioritet stabilnost</span>
+          </div>
+        </div>
+      </div>
+      <div class="quiz-nav">
+        <button class="quiz-btn-next" id="qnext-0" onclick="quizNext(0)">Dalje →</button>
+      </div>
+    </div>
+
+    <!-- Q2: Miesečni iznos -->
+    <div class="quiz-card" id="qq-1" style="display:none">
+      <div class="quiz-question">Koliko možeš odvajati mjesečno?</div>
+      <div class="quiz-sub">Minimalni iznosi variraju po platformama. Državni poticaj vrijedi do 66,36€/mj.</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-q="1" data-val="low">
+          <span class="quiz-option-icon">💶</span>
+          <div class="quiz-option-text">
+            <strong>Do 50€ mjesečno</strong>
+            <span>Mali iznosi — ETF platforme imaju najmanji minimum</span>
+          </div>
+        </div>
+        <div class="quiz-option" data-q="1" data-val="mid">
+          <span class="quiz-option-icon">💰</span>
+          <div class="quiz-option-text">
+            <strong>50€ – 150€ mjesečno</strong>
+            <span>Idealan raspon za iskorištavanje državnog poticaja + ETF</span>
+          </div>
+        </div>
+        <div class="quiz-option" data-q="1" data-val="high">
+          <span class="quiz-option-icon">🏦</span>
+          <div class="quiz-option-text">
+            <strong>150€+ mjesečno</strong>
+            <span>Kombinirani pristupi s diverzifikacijom</span>
+          </div>
+        </div>
+      </div>
+      <div class="quiz-nav">
+        <button class="quiz-btn-back" onclick="quizBack(1)">← Natrag</button>
+        <button class="quiz-btn-next" id="qnext-1" onclick="quizNext(1)">Dalje →</button>
+      </div>
+    </div>
+
+    <!-- Q3: Rizik -->
+    <div class="quiz-card" id="qq-2" style="display:none">
+      <div class="quiz-question">Koliko rizika možeš podnijeti?</div>
+      <div class="quiz-sub">Što bi napravio/la da tvoje ulaganje padne 30% u jednoj godini?</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-q="2" data-val="low">
+          <span class="quiz-option-icon">😰</span>
+          <div class="quiz-option-text">
+            <strong>Nisam za rizik</strong>
+            <span>Prodao/la bih ili bih bio/la jako zabrinut/a. Preferiram sigurnost.</span>
+          </div>
+        </div>
+        <div class="quiz-option" data-q="2" data-val="mid">
+          <span class="quiz-option-icon">😌</span>
+          <div class="quiz-option-text">
+            <strong>Prihvaćam umjeren rizik</strong>
+            <span>Ostao/la bih miran/a, ali ne bih dodavao/la još. Dugoročni sam.</span>
+          </div>
+        </div>
+        <div class="quiz-option" data-q="2" data-val="high">
+          <span class="quiz-option-icon">😎</span>
+          <div class="quiz-option-text">
+            <strong>Visok rizik, visok prinos</strong>
+            <span>Kupio/la bih još — pad je prilika. Razumijem volatilnost.</span>
+          </div>
+        </div>
+      </div>
+      <div class="quiz-nav">
+        <button class="quiz-btn-back" onclick="quizBack(2)">← Natrag</button>
+        <button class="quiz-btn-next" id="qnext-2" onclick="quizNext(2)">Dalje →</button>
+      </div>
+    </div>
+
+    <!-- Q4: Cilj -->
+    <div class="quiz-card" id="qq-3" style="display:none">
+      <div class="quiz-question">Koji ti je primarni cilj ulaganja?</div>
+      <div class="quiz-sub">To određuje optimalan omjer između mirovinskih fondova i ETF-ova.</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-q="3" data-val="pension">
+          <span class="quiz-option-icon">🏖️</span>
+          <div class="quiz-option-text">
+            <strong>Mirovina i financijska sloboda</strong>
+            <span>Ulagam za dugi rok — 20+ godina do isplate</span>
+          </div>
+        </div>
+        <div class="quiz-option" data-q="3" data-val="growth">
+          <span class="quiz-option-icon">🚀</span>
+          <div class="quiz-option-text">
+            <strong>Rast imovine (FIRE / dugoročno)</strong>
+            <span>Maksimizirati prinos kroz ETF-ove, neovisno o mirovini</span>
+          </div>
+        </div>
+        <div class="quiz-option" data-q="3" data-val="both">
+          <span class="quiz-option-icon">⚖️</span>
+          <div class="quiz-option-text">
+            <strong>Oboje — iskoristiti poticaje I rasti</strong>
+            <span>Kombinirani pristup s državnim poticajem + slobodni ETF</span>
+          </div>
+        </div>
+      </div>
+      <div class="quiz-nav">
+        <button class="quiz-btn-back" onclick="quizBack(3)">← Natrag</button>
+        <button class="quiz-btn-next" id="qnext-3" onclick="quizNext(3)">Dalje →</button>
+      </div>
+    </div>
+
+    <!-- Q5: Iskustvo -->
+    <div class="quiz-card" id="qq-4" style="display:none">
+      <div class="quiz-question">Kakvo je tvoje iskustvo s ulaganjem?</div>
+      <div class="quiz-sub">Ovo nam pomaže preporučiti pravu razinu složenosti.</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-q="4" data-val="none">
+          <span class="quiz-option-icon">🐣</span>
+          <div class="quiz-option-text">
+            <strong>Početnik — nikad nisam ulagao/la</strong>
+            <span>Trebam jednostavno rješenje s minimalnim odlukama</span>
+          </div>
+        </div>
+        <div class="quiz-option" data-q="4" data-val="some">
+          <span class="quiz-option-icon">📚</span>
+          <div class="quiz-option-text">
+            <strong>Malo iskustva — čitam, učim</strong>
+            <span>Razumijem osnove ETF-ova, tražim potvrdu</span>
+          </div>
+        </div>
+        <div class="quiz-option" data-q="4" data-val="expert">
+          <span class="quiz-option-icon">🧠</span>
+          <div class="quiz-option-text">
+            <strong>Iskusan — imam portfelj</strong>
+            <span>Tražim usporedbu i optimizaciju naknade</span>
+          </div>
+        </div>
+      </div>
+      <div class="quiz-nav">
+        <button class="quiz-btn-back" onclick="quizBack(4)">← Natrag</button>
+        <button class="quiz-btn-next" id="qnext-4" onclick="quizShowResult()">Vidi preporuku ✓</button>
+      </div>
+    </div>
+
+  </div><!-- /quizQuestions -->
+
+  <!-- Result (hidden until quiz done) -->
+  <div class="quiz-result" id="quizResult">
+    <div class="quiz-result-hero">
+      <div class="quiz-result-emoji" id="qr-emoji">🎯</div>
+      <div class="quiz-result-title" id="qr-title">Tvoja strategija</div>
+      <div class="quiz-result-subtitle" id="qr-subtitle"></div>
+    </div>
+    <div class="quiz-result-cards" id="qr-cards"></div>
+    <button class="quiz-restart-btn" onclick="quizRestart()">↩ Počni iznova</button>
+    <p class="disclaimer" style="margin-top:1rem">⚠️ Preporuka je informativnog karaktera i ne predstavlja financijski savjet. Konzultiraj licenciranog savjetnika.</p>
+  </div>
+
+</div>
+<!-- ========== END QUIZ PAGE ========== -->
+
+<!-- ========== ŠTEDNJA ZA DIJETE PAGE ========== -->
+<div class="page" id="stednja-dijete">

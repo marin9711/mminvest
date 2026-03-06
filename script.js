@@ -1,3 +1,67 @@
+
+// ── MarsanInvest v2 - Modular Architecture ──
+
+var $ = id => document.getElementById(id);
+const fmt = n => new Intl.NumberFormat('hr-HR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n);
+const fmtX = (n,d=1) => n.toFixed(d)+'x';
+const fmtPct = n => (n>=0?'+':'')+n.toFixed(1)+'%';
+
+// ── PAGE LOADER ──
+const PAGES = {
+  home: 'pages/home.html',
+  p0a: 'pages/p0a.html',
+  pepp: 'pages/pepp.html',
+  p0b: 'pages/p0b.html',
+  p1: 'pages/p1.html',
+  p2: 'pages/p2.html',
+  p3: 'pages/p3.html',
+  edukacija: 'pages/edukacija.html',
+  kviz: 'pages/kviz.html',
+  'stednja-dijete': 'pages/stednja-dijete.html',
+  kripto: 'pages/kripto.html',
+  trading: 'pages/trading.html',
+  feedback: 'pages/feedback.html',
+};
+
+async function loadPage(pageId) {
+  const container = document.getElementById('pages-container');
+  if (!PAGES[pageId]) {
+    console.error('Page not found:', pageId);
+    return;
+  }
+  
+  try {
+    const response = await fetch(PAGES[pageId]);
+    const html = await response.text();
+    container.innerHTML = html;
+    
+    // Re-attach event listeners nakon što se stranica učita
+    attachPageListeners();
+  } catch (err) {
+    console.error('Error loading page:', err);
+    container.innerHTML = '<p>Greška pri učitavanju stranice</p>';
+  }
+}
+
+// ── NAV TABS ──
+document.querySelectorAll('.nav-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    
+    const pageId = tab.dataset.page;
+    loadPage(pageId);
+  });
+});
+
+// ── INICIJALNO UČITAJ HOME STRANICU ──
+window.addEventListener('DOMContentLoaded', () => {
+  loadPage('home');
+  attachPageListeners();
+});
+
+// ── FUNKCIJE IZ ORIGINALNOG SCRIPT.JS ──
+
 var $ = id => document.getElementById(id);
 const fmt = n => new Intl.NumberFormat('hr-HR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n);
 const fmtX = (n,d=1) => n.toFixed(d)+'x';
@@ -1781,3 +1845,30 @@ document.addEventListener('DOMContentLoaded', () => {
   if (tabAi) tabAi.addEventListener('click', () => switchAdminTab('ai'));
   if (tabFb) tabFb.addEventListener('click', () => switchAdminTab('fb'));
 });
+
+
+// ── PAGE LISTENERS ATTACHMENT ──
+function attachPageListeners() {
+  // Provjeri vidi se li neki page-specific listener trebao biti
+  // Zatim ga ponovno attachaj nakon dinamičkog učitavanja
+  
+  // Quiz listeners
+  document.querySelectorAll('.quiz-option').forEach(opt => {
+    if (!opt._listener_attached) {
+      opt.addEventListener('click', () => quizSelectOption(opt));
+      opt._listener_attached = true;
+    }
+  });
+  
+  // Admin tab buttons
+  const tabAi = document.getElementById('admin-tab-ai');
+  const tabFb = document.getElementById('admin-tab-fb');
+  if (tabAi && !tabAi._listener_attached) {
+    tabAi.addEventListener('click', () => switchAdminTab('ai'));
+    tabAi._listener_attached = true;
+  }
+  if (tabFb && !tabFb._listener_attached) {
+    tabFb.addEventListener('click', () => switchAdminTab('fb'));
+    tabFb._listener_attached = true;
+  }
+}
