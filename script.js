@@ -91,12 +91,12 @@ function updateP1() {
 
   const milestones = [5,10,15,20,25,30,35,40,50,60].filter(y=>y<=god);
   if(!milestones.includes(god)) milestones.push(god);
-  $('p1-tbody').innerHTML = milestones.map(y=>{
+  $('p1-tbody').innerHTML = DOMPurify.sanitize(milestones.map(y=>{
     const d=compoundFV(uplata+pot,dmfR,y);
     const p=compoundFV(uplata,peppR,y);
     const dif=p-d;
     return `<tr><td>${y}. god</td><td style="color:var(--dmf-l)">${fmt(d)}</td><td style="color:var(--pepp-l)">${fmt(p)}</td><td style="color:${dif>0?'var(--etf-l)':'var(--dmf-l)'}">${dif>0?'+':''}${fmt(dif)}</td></tr>`;
-  }).join('');
+  }).join(''), { ALLOWED_TAGS: ['tr','td'], ALLOWED_ATTR: ['style'] });
 
   const labels=[], dmfArr=[], peppArr=[];
   for(let i=1;i<=god;i++){
@@ -203,7 +203,7 @@ function updateP2() {
 
   const milestones=[5,10,15,20,25,30,35,40].filter(y=>y<=god);
   if(!milestones.includes(god)) milestones.push(god);
-  $('p2-tbody').innerHTML=milestones.map(y=>{
+  $('p2-tbody').innerHTML=DOMPurify.sanitize(milestones.map(y=>{
     const d=compoundFV(uplata+calcPoticaj(uplata,'p2-poticaj-toggle'),dmfR,y);
     const p=compoundFV(uplata,peppR,y);
     const e=compoundFV(uplata,etfR,y);
@@ -211,7 +211,7 @@ function updateP2() {
       <td style="color:var(--dmf-l);opacity:${p2vis.dmf?1:0.3}">${fmt(d)}</td>
       <td style="color:var(--pepp-l);opacity:${p2vis.pepp?1:0.3}">${fmt(p)}</td>
       <td style="color:var(--etf-l);opacity:${p2vis.etf?1:0.3}">${fmt(e)}</td></tr>`;
-  }).join('');
+  }).join(''), { ALLOWED_TAGS: ['tr','td'], ALLOWED_ATTR: ['style'] });
 
   const labels=[];
   const dmfArr=[],peppArr=[],etfArr=[];
@@ -335,7 +335,7 @@ function updateP3() {
   // Chart + table
   const milestones=[5,10,15,20,25,30,35,40].filter(y=>y<=god);
   if(!milestones.includes(god)) milestones.push(god);
-  $('p3-tbody').innerHTML=milestones.map(y=>{
+  $('p3-tbody').innerHTML=DOMPurify.sanitize(milestones.map(y=>{
     const pv=compoundFV(penUplata+penBonus,penR,y);
     const ev=compoundFV(etfUplata,etfR,y);
     const cv=pv+ev; const rf=Math.pow(1+inf/100,y);
@@ -344,7 +344,7 @@ function updateP3() {
       <td style="color:var(--etf-l)">${fmt(ev)}</td>
       <td style="color:var(--combo-l)">${fmt(cv)}</td>
       <td style="color:var(--muted2)">${fmt(cv/rf)}</td></tr>`;
-  }).join('');
+  }).join(''), { ALLOWED_TAGS: ['tr','td'], ALLOWED_ATTR: ['style'] });
 
   const labels=[],penArr=[],etfArr2=[],comboArr=[],realArr=[];
   for(let i=1;i<=god;i++){
@@ -466,7 +466,7 @@ function updateP0a() {
   $('p0a-monthly').textContent = fmt(val*0.04/12)+'/mj';
   $('p0a-rate-used').textContent = rate.toFixed(2)+'%/god';
   $('p0a-info').innerHTML = DOMPurify.sanitize(`Korišten <strong>5-godišnji prosjek</strong> fonda (${r5y}%). Prinos 2024: <strong>${r2024}%</strong>. ${usePoticaj?`Godišnji poticaj: <strong>${fmt(poticajGod)}</strong>.`:''}`, { ALLOWED_TAGS: ['strong'], ALLOWED_ATTR: [] });
-  $('p0a-tbody').innerHTML = tbody.join('');
+  $('p0a-tbody').innerHTML = DOMPurify.sanitize(tbody.join(''), { ALLOWED_TAGS: ['tr','td'], ALLOWED_ATTR: ['style'] });
 
   // Chart single fund
   if(!chartP0a){ chartP0a=makeChart('p0a-chart',labels,[{label:fundName,data:vals,borderColor:'#e8a44a',backgroundColor:'rgba(232,164,74,0.08)',fill:true,borderWidth:2.5,pointRadius:0,tension:0.4}]); }
@@ -575,13 +575,13 @@ function updateP0b() {
   // Table
   const mils=[2,5,10,15,20,25,30,35,40].filter(y=>y<=god);
   if(!mils.includes(god)) mils.push(god);
-  $('p0b-tbody').innerHTML=mils.map(y=>{
+  $('p0b-tbody').innerHTML=DOMPurify.sanitize(mils.map(y=>{
     const a=arr[y-1];
     let b=initial; for(let i=0;i<y;i++) b=(b+uplata)*(1+etf.rate/100);
     const inp2=initial+uplata*y;
     const g2=a.val-inp2;
     return `<tr><td>${y}.</td><td style="color:var(--muted2)">${fmt(inp2)}</td><td style="color:var(--etf-l)">${fmt(Math.round(b))}</td><td style="color:var(--pepp-l)">${fmt(a.val)}</td><td style="color:var(--red)">${fmt(a.fees)}</td><td style="color:var(--etf-l)">${fmt(inp2+g2*(1-taxRate))}</td></tr>`;
-  }).join('');
+  }).join(''), { ALLOWED_TAGS: ['tr','td'], ALLOWED_ATTR: ['style'] });
 
   // Chart single
   const labels=[];
@@ -1669,7 +1669,7 @@ async function loadPollResults() {
       }
       html += `</div>`;
     }
-    el.innerHTML = hasAny ? html : '<div style="text-align:center;padding:0.75rem 0;color:var(--muted);">Još nema glasova.</div>';
+    el.innerHTML = hasAny ? DOMPurify.sanitize(html, { ALLOWED_TAGS: ['div','span'], ALLOWED_ATTR: ['style'] }) : '<div style="text-align:center;padding:0.75rem 0;color:var(--muted);">Još nema glasova.</div>';
   } catch(e) {
     el.innerHTML = '⚠️ Greška.';
   }
@@ -1774,7 +1774,7 @@ async function loadKvItems() {
     }
 
     const nsColor = { config: '#4a9fe8', ankete: '#e8a44a' };
-    listEl.innerHTML = filtered.map(it => {
+    listEl.innerHTML = DOMPurify.sanitize(filtered.map(it => {
       const safeKey = it.key.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/'/g, "\\'");
       const displayKey = it.key.replace(/</g,'&lt;').replace(/>/g,'&gt;');
       const color = nsColor[it.namespace] || '#9aa2c0';
@@ -1786,13 +1786,13 @@ async function loadKvItems() {
           🗑️ Obriši
         </button>
       </div>`;
-    }).join('');
+    }).join(''), { ALLOWED_TAGS: ['div','span','button'], ALLOWED_ATTR: ['style','onclick'] });
 
     if (filtered.length < items.length) {
-      listEl.innerHTML += `<div style="color:#5a6180;font-size:0.68rem;margin-top:0.3rem;text-align:center;">(${items.length - filtered.length} internih ključeva skriveno)</div>`;
+      { const hintDiv = document.createElement('div'); hintDiv.style.cssText = 'color:#5a6180;font-size:0.68rem;margin-top:0.3rem;text-align:center;'; hintDiv.textContent = `(${items.length - filtered.length} internih ključeva skriveno)`; listEl.appendChild(hintDiv); }
     }
   } catch(e) {
-    listEl.innerHTML = '<div style="color:#f56060;font-size:0.78rem;text-align:center;padding:0.5rem 0;">⚠️ Greška: ' + e.message + '</div>';
+    { const errDiv = document.createElement('div'); errDiv.style.cssText = 'color:#f56060;font-size:0.78rem;text-align:center;padding:0.5rem 0;'; errDiv.textContent = '⚠️ Greška: ' + e.message; listEl.replaceChildren(errDiv); }
   }
 }
 
