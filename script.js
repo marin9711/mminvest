@@ -1099,12 +1099,52 @@ function calcP0bGrowth(annualUplata, initial, rate, annualFeeRate, txFeeRate, go
   return arr;
 }
 
+function calcP0bLumpVsDca(availableAmount, rate, annualFeeRate, txFeeRate, god, minTx) {
+  const lumpByYear = [];
+  const dcaByYear = [];
+  if (availableAmount <= 0 || god <= 0) {
+    for (let i = 0; i < god; i++) {
+      lumpByYear.push(0);
+      dcaByYear.push(0);
+    }
+    return { lumpByYear, dcaByYear };
+  }
+
+  const monthlyRate = Math.pow(1 + rate / 100, 1 / 12) - 1;
+  const monthlyFeeRate = annualFeeRate / 12;
+  const monthlyInstallment = availableAmount / 12;
+  const months = god * 12;
+
+  let lumpVal = Math.max(0, availableAmount - Math.max(minTx, availableAmount * txFeeRate));
+  let dcaVal = 0;
+
+  for (let m = 1; m <= months; m++) {
+    lumpVal *= 1 + monthlyRate;
+    lumpVal -= lumpVal * monthlyFeeRate;
+
+    if (m <= 12) {
+      const dcaTxFee = Math.max(minTx, monthlyInstallment * txFeeRate);
+      dcaVal += Math.max(0, monthlyInstallment - dcaTxFee);
+    }
+    dcaVal *= 1 + monthlyRate;
+    dcaVal -= dcaVal * monthlyFeeRate;
+
+    if (m % 12 === 0) {
+      lumpByYear.push(Math.round(lumpVal));
+      dcaByYear.push(Math.round(dcaVal));
+    }
+  }
+  return { lumpByYear, dcaByYear };
+}
+
 function updateP0b() {
   const etf=getP0bEtfData();
   const plKey=$('p0b-platform').value;
   const pl=PLATFORMS[plKey];
   const uplata=parseFloat($('p0b-uplata-v').value)||parseFloat($('p0b-uplata').value)||1200;
   const initial=parseFloat($('p0b-initial-v').value)||parseFloat($('p0b-initial').value)||1000;
+  const availableInput = $('p0b-available-v');
+  const availableAmount = Math.max(0, parseFloat(String(availableInput?.value || '').replace(',', '.')) || 0);
   const god=parseInt($('p0b-god-v').value)||parseInt($('p0b-god').value)||20;
   const showTaxNet = $('p0b-net-toggle') ? $('p0b-net-toggle').checked : false;
   const inflationOn = setInflationUiState('p0b-infl-toggle', 'p0b-infl-toggle-lbl', 'p0b-infl-note', god, 100000);
@@ -1186,6 +1226,9 @@ function updateP0b() {
     const taxAtPoint=i<2?Math.max(0,gg)*0.12:0;
     afterArr.push(Math.round(arr[i-1].val-taxAtPoint));
   }
+  const dcaComparison = calcP0bLumpVsDca(availableAmount, rateUsed, pl.annualFee, pl.txFee, god, pl.minTx);
+  const withLumpArr = netoArr.map((base, idx) => base + (dcaComparison.lumpByYear[idx] || 0));
+  const withDcaArr = netoArr.map((base, idx) => base + (dcaComparison.dcaByYear[idx] || 0));
   const ds=[
     {label:'Bruto',data:brutoArr,borderColor:'#4ae8a0',backgroundColor:'rgba(74,232,160,0.06)',fill:true,borderWidth:2,pointRadius:0,tension:0.4},
     {label:'Neto (naknade)',data:netoArr,borderColor:'#4a9fe8',backgroundColor:'rgba(74,159,232,0.06)',fill:true,borderWidth:2,pointRadius:0,tension:0.4},
@@ -1199,9 +1242,20 @@ function updateP0b() {
   if (showTaxNet) {
     ds.push({label:'Neto (nakon poreza)',data:afterArr,borderColor:'#e8a44a',backgroundColor:'transparent',fill:false,borderWidth:1.5,pointRadius:0,tension:0.4,borderDash:[4,3]});
   }
+  if (availableAmount > 0) {
+    ds.push(
+      {label:'Scenarij A (Lump Sum)',data:withLumpArr,borderColor:'#facc15',backgroundColor:'transparent',fill:false,borderWidth:1.8,pointRadius:0,tension:0.35,borderDash:[3,4]},
+      {label:'Scenarij B (DCA 12 mj)',data:withDcaArr,borderColor:'#fb7185',backgroundColor:'transparent',fill:false,borderWidth:1.8,pointRadius:0,tension:0.35,borderDash:[3,4]}
+    );
+  }
   storeChartData('p0b-chart', labels, ds);
   if(!chartP0b){ chartP0b=makeChart('p0b-chart',labels,ds); }
   else{ chartP0b.data.labels=labels; chartP0b.data.datasets=ds; chartP0b.update(); }
+
+  const dcaCard = $('p0b-dca-card');
+  if (dcaCard) {
+    dcaCard.style.display = availableAmount > 0 ? 'block' : 'none';
+  }
 
   // Platform comparison chart
   const plKeys=['ibkr','t212','t212card','finax'];
@@ -1251,6 +1305,10 @@ function updateP0b() {
 
 ['p0b-uplata','p0b-initial','p0b-god','p0b-custom-r'].forEach(id => $(id).addEventListener('syncedInput', updateP0b));
 ['p0b-etf-select','p0b-platform'].forEach(id=>$(id).addEventListener('change',updateP0b));
+if ($('p0b-available-v')) {
+  $('p0b-available-v').addEventListener('input', updateP0b);
+  $('p0b-available-v').addEventListener('change', updateP0b);
+}
 if ($('p0b-infl-toggle')) {
   $('p0b-infl-toggle').addEventListener('change', updateP0b);
 }

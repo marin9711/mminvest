@@ -2295,6 +2295,10 @@ tr:hover td { background: var(--surface2) !important; }
       <div class="row"><input type="range" id="p0b-initial" min="0" max="20000" step="500" value="1000" aria-label="Početna uplata (klizač)"><input type="number" class="ctrl-val-input" id="p0b-initial-v" value="1000.00" data-decimals="2" min="0" max="20000" step="any" placeholder="1000" aria-label="Početna uplata (€)"></div>
     </div>
     <div class="ctrl-group c-neutral">
+      <label for="p0b-available-v">Početni raspoloživi iznos (€)</label>
+      <div class="row"><input type="number" class="ctrl-val-input" id="p0b-available-v" value="" data-decimals="2" min="0" step="any" placeholder="Npr. 12000" aria-label="Početni raspoloživi iznos (€)"></div>
+    </div>
+    <div class="ctrl-group c-neutral">
       <label for="p0b-god-v">Broj godina</label>
       <div class="row"><input type="range" id="p0b-god" min="1" max="60" step="1" value="20" aria-label="Broj godina (klizač)"><input type="number" class="ctrl-val-input" id="p0b-god-v" value="20" min="1" max="60" step="1" placeholder="25" aria-label="Broj godina"></div>
     </div>
@@ -2366,6 +2370,9 @@ tr:hover td { background: var(--surface2) !important; }
     <div class="tax-title">Procjena poreza</div>
     <div class="tax-main" id="p0b-tax-main">Porez: 0€ (Oslobođeno nakon 2 god.)</div>
     <div class="tax-sub" id="p0b-tax-sub">Ako je horizont ulaganja kraći od 2 godine, obračunava se 12% na dobit.</div>
+  </div>
+  <div id="p0b-dca-card" style="margin:0.8rem 0 1rem;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.75rem .9rem;font-size:.8rem;line-height:1.45;color:var(--muted2);display:none">
+    Lump sum bi povijesno bio bolji u 75% slučajeva, ali DCA smanjuje rizik ulaska na vrhuncu.
   </div>
 
   <!-- Chart -->
