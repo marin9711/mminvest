@@ -80,15 +80,15 @@
 }
 
 #home .home-hero .home-cta-skip {
-  color: var(--text-open);
-  border-color: rgba(51, 65, 85, 0.35);
-  background: rgba(255, 255, 255, 0.55);
+  color: var(--text-open) !important;
+  border-color: rgba(51, 65, 85, 0.35) !important;
+  background: rgba(255, 255, 255, 0.55) !important;
 }
 
 #home .home-hero .home-cta-skip:hover {
-  color: #0f172a;
-  border-color: #334155;
-  background: rgba(255, 255, 255, 0.75);
+  color: #0f172a !important;
+  border-color: #334155 !important;
+  background: rgba(255, 255, 255, 0.75) !important;
 }
 
 /* Context B: tekst unutar tamnih kartica/elemenata ostaje svijetao */
