@@ -564,6 +564,105 @@ export default {
         }
       }
 
+      // ── API Reset Polls ──
+      if (path === '/admin/api/reset-polls' && request.method === 'POST') {
+        if (!isApiAuthed) {
+          return new Response(JSON.stringify({ error: 'unauthorized' }), {
+            status: 401, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+        try {
+          const listResult = await env.ANKETE_DATA.list();
+          await Promise.all(listResult.keys.map(k => env.ANKETE_DATA.delete(k.name)));
+          return new Response(JSON.stringify({ ok: true, deleted: listResult.keys.length }), {
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        } catch(e) {
+          return new Response(JSON.stringify({ error: 'Greška pri brisanju anketa: ' + e.message }), {
+            status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+      }
+
+      // ── API Clear Feedback ──
+      if (path === '/admin/api/clear-feedback' && request.method === 'POST') {
+        if (!isApiAuthed) {
+          return new Response(JSON.stringify({ error: 'unauthorized' }), {
+            status: 401, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+        try {
+          await env.AI_CONFIG.delete('feedback_log');
+          return new Response(JSON.stringify({ ok: true }), {
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        } catch(e) {
+          return new Response(JSON.stringify({ error: 'Greška pri brisanju feedbacka: ' + e.message }), {
+            status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+      }
+
+      // ── API Delete Item ──
+      if (path === '/admin/api/delete-item' && request.method === 'POST') {
+        if (!isApiAuthed) {
+          return new Response(JSON.stringify({ error: 'unauthorized' }), {
+            status: 401, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+        try {
+          const body = await request.json();
+          const key = String(body.key || '').trim();
+          const ns  = String(body.namespace || 'config').trim();
+          if (!key) {
+            return new Response(JSON.stringify({ error: 'Nedostaje key' }), {
+              status: 400, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+            });
+          }
+          // Zaštita: ne dopusti brisanje session ili brute-force ključeva
+          if (key.startsWith('session:') || key.startsWith('bf:') || key.startsWith('rl:') || key.startsWith('vote_lock:')) {
+            return new Response(JSON.stringify({ error: 'Brisanje internih ključeva nije dozvoljeno.' }), {
+              status: 403, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+            });
+          }
+          const store = ns === 'ankete' ? env.ANKETE_DATA : env.AI_CONFIG;
+          await store.delete(key);
+          return new Response(JSON.stringify({ ok: true, key, namespace: ns }), {
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        } catch(e) {
+          return new Response(JSON.stringify({ error: 'Greška pri brisanju stavke: ' + e.message }), {
+            status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+      }
+
+      // ── API List Items ──
+      if (path === '/admin/api/list-items' && request.method === 'GET') {
+        if (!isApiAuthed) {
+          return new Response(JSON.stringify({ error: 'unauthorized' }), {
+            status: 401, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+        try {
+          const [configList, anketeList] = await Promise.all([
+            env.AI_CONFIG.list(),
+            env.ANKETE_DATA.list(),
+          ]);
+          const items = [
+            ...configList.keys.map(k => ({ key: k.name, namespace: 'config' })),
+            ...anketeList.keys.map(k => ({ key: k.name, namespace: 'ankete' })),
+          ];
+          return new Response(JSON.stringify({ items }), {
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        } catch(e) {
+          return new Response(JSON.stringify({ error: 'Greška pri dohvaćanju stavki: ' + e.message }), {
+            status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+      }
+
       // API rute koriste Bearer token, ne cookie session — preskoči HTML redirect
       if (!isLoggedIn && !path.includes('/api/')) {
         return new Response(loginPage(), {

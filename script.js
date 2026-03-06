@@ -1541,11 +1541,14 @@ function adminLogout() {
 }
 
 function switchAdminTab(tab) {
-  ['ai','fb'].forEach(t => {
-    document.getElementById('admin-tab-' + t).classList.toggle('active', t === tab);
-    document.getElementById('admin-tab-content-' + t).classList.toggle('active', t === tab);
+  ['ai','fb','mgmt'].forEach(t => {
+    const tabBtn = document.getElementById('admin-tab-' + t);
+    const tabContent = document.getElementById('admin-tab-content-' + t);
+    if (tabBtn) tabBtn.classList.toggle('active', t === tab);
+    if (tabContent) tabContent.classList.toggle('active', t === tab);
   });
   if (tab === 'fb') { loadFeedbackLog(); loadPollResults(); }
+  if (tab === 'mgmt') { loadKvItems(); }
 }
 
 async function loadFeedbackLog() {
@@ -1672,6 +1675,136 @@ async function loadPollResults() {
   }
 }
 
+
+// ========== ADMIN UPRAVLJANJE TAB ==========
+
+async function adminResetPolls() {
+  if (!confirm('Jesi li siguran? Ovo će TRAJNO obrisati sve podatke anketa!')) return;
+  const btn = document.getElementById('admin-reset-polls-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Brisanje...'; }
+  try {
+    const resp = await fetch(WORKER_URL + '/admin/api/reset-polls', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + adminToken }
+    });
+    const data = await resp.json();
+    if (data.ok) {
+      showMgmtMsg('✅ Ankete su obrisane (' + (data.deleted || 0) + ' ključeva).', 'success');
+      loadKvItems();
+    } else {
+      showMgmtMsg('❌ Greška: ' + (data.error || 'nepoznata'), 'error');
+    }
+  } catch(e) {
+    showMgmtMsg('❌ Mrežna greška.', 'error');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '🗑️ Resetiraj ankete'; }
+  }
+}
+
+async function adminClearFeedback() {
+  if (!confirm('Jesi li siguran? Ovo će TRAJNO obrisati SV feedback poruke!')) return;
+  const btn = document.getElementById('admin-clear-fb-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Brisanje...'; }
+  try {
+    const resp = await fetch(WORKER_URL + '/admin/api/clear-feedback', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + adminToken }
+    });
+    const data = await resp.json();
+    if (data.ok) {
+      showMgmtMsg('✅ Sav feedback je obrisan.', 'success');
+      loadKvItems();
+    } else {
+      showMgmtMsg('❌ Greška: ' + (data.error || 'nepoznata'), 'error');
+    }
+  } catch(e) {
+    showMgmtMsg('❌ Mrežna greška.', 'error');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '🧹 Obriši sav feedback'; }
+  }
+}
+
+async function adminDeleteItem(key, namespace) {
+  if (!confirm('Jesi li siguran? Brišem ključ: "' + key + '" (' + namespace + ')')) return;
+  try {
+    const resp = await fetch(WORKER_URL + '/admin/api/delete-item', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
+      body: JSON.stringify({ key, namespace })
+    });
+    const data = await resp.json();
+    if (data.ok) {
+      showMgmtMsg('✅ Stavka "' + key + '" obrisana.', 'success');
+      loadKvItems();
+    } else {
+      showMgmtMsg('❌ Greška: ' + (data.error || 'nepoznata'), 'error');
+    }
+  } catch(e) {
+    showMgmtMsg('❌ Mrežna greška.', 'error');
+  }
+}
+
+async function loadKvItems() {
+  const listEl = document.getElementById('admin-kv-list');
+  if (!adminToken || !listEl) return;
+  listEl.innerHTML = '<div style="color:var(--muted2);font-size:0.78rem;text-align:center;padding:1rem 0;">Učitavanje...</div>';
+  try {
+    const resp = await fetch(WORKER_URL + '/admin/api/list-items', {
+      headers: { 'Authorization': 'Bearer ' + adminToken }
+    });
+    if (!resp.ok) {
+      if (resp.status === 401) { adminLogout(); return; }
+      listEl.innerHTML = '<div style="color:#f56060;font-size:0.78rem;text-align:center;padding:1rem 0;">⚠️ Greška pri dohvaćanju.</div>';
+      return;
+    }
+    const data = await resp.json();
+    const items = data.items || [];
+
+    // Filtriraj interne ključeve (sesije, brute-force, rate-limit, vote lock)
+    const filtered = items.filter(it =>
+      !it.key.startsWith('session:') &&
+      !it.key.startsWith('bf:') &&
+      !it.key.startsWith('rl:') &&
+      !it.key.startsWith('vote_lock:')
+    );
+
+    if (!filtered.length) {
+      listEl.innerHTML = '<div style="color:var(--muted2);font-size:0.78rem;text-align:center;padding:1rem 0;">Nema stavki u KV storageu.</div>';
+      return;
+    }
+
+    const nsColor = { config: '#4a9fe8', ankete: '#e8a44a' };
+    listEl.innerHTML = filtered.map(it => {
+      const safeKey = it.key.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/'/g, "\\'");
+      const displayKey = it.key.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      const color = nsColor[it.namespace] || '#9aa2c0';
+      return `<div style="display:flex;align-items:center;gap:0.5rem;padding:0.4rem 0.6rem;background:rgba(255,255,255,0.03);border:1px solid #2e3850;border-radius:7px;margin-bottom:0.3rem;">
+        <span style="font-size:0.68rem;color:${color};min-width:50px;font-weight:700;">[${it.namespace}]</span>
+        <span style="flex:1;font-size:0.75rem;color:#c5cfe9;font-family:monospace;word-break:break-all;">${displayKey}</span>
+        <button onclick="adminDeleteItem('${safeKey}','${it.namespace}')"
+          style="background:rgba(245,96,96,0.12);border:1px solid rgba(245,96,96,0.3);color:#f56060;border-radius:6px;padding:0.18rem 0.5rem;font-size:0.7rem;cursor:pointer;white-space:nowrap;flex-shrink:0;">
+          🗑️ Obriši
+        </button>
+      </div>`;
+    }).join('');
+
+    if (filtered.length < items.length) {
+      listEl.innerHTML += `<div style="color:#5a6180;font-size:0.68rem;margin-top:0.3rem;text-align:center;">(${items.length - filtered.length} internih ključeva skriveno)</div>`;
+    }
+  } catch(e) {
+    listEl.innerHTML = '<div style="color:#f56060;font-size:0.78rem;text-align:center;padding:0.5rem 0;">⚠️ Greška: ' + e.message + '</div>';
+  }
+}
+
+function showMgmtMsg(text, type) {
+  const el = document.getElementById('admin-mgmt-msg');
+  if (!el) return;
+  el.textContent = text;
+  el.style.color = type === 'success' ? '#4ae8a0' : '#f56060';
+  el.style.display = 'block';
+  clearTimeout(el._hideTimer);
+  el._hideTimer = setTimeout(() => { el.style.display = 'none'; }, 4500);
+}
 
 // ========== QUIZ LOGIC ==========
 const quizAnswers = {};
@@ -1874,6 +2007,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Admin tab buttons
   const tabAi = document.getElementById('admin-tab-ai');
   const tabFb = document.getElementById('admin-tab-fb');
+  const tabMgmt = document.getElementById('admin-tab-mgmt');
   if (tabAi) tabAi.addEventListener('click', () => switchAdminTab('ai'));
   if (tabFb) tabFb.addEventListener('click', () => switchAdminTab('fb'));
+  if (tabMgmt) tabMgmt.addEventListener('click', () => switchAdminTab('mgmt'));
 });
