@@ -370,48 +370,6 @@ export default {
       }
     }
 
-    // ── ADMIN API POLLS & FEEDBACK (mora biti PRIJE admin bloka!) ──
-    if (path === '/admin/api/polls' || path === '/admin/api/feedback') {
-      const authHeader = request.headers.get('Authorization') || '';
-      const bearerToken = authHeader.replace('Bearer ', '').trim();
-      const isApiAuthed = await validateSession(bearerToken, env);
-
-      if (!isApiAuthed) {
-        return new Response(JSON.stringify({ error: 'unauthorized' }), {
-          status: 401,
-          headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-        });
-      }
-
-      if (path === '/admin/api/polls') {
-        try {
-          const raw = await env.ANKETE_DATA.get('poll_votes');
-          const polls = raw ? JSON.parse(raw) : {};
-          return new Response(JSON.stringify({ polls }), {
-            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-          });
-        } catch(e) {
-          return new Response(JSON.stringify({ polls: {} }), {
-            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-          });
-        }
-      }
-
-      if (path === '/admin/api/feedback') {
-        try {
-          const raw = await env.AI_CONFIG.get('feedback_log');
-          const items = raw ? JSON.parse(raw) : [];
-          return new Response(JSON.stringify({ items }), {
-            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-          });
-        } catch(e) {
-          return new Response(JSON.stringify({ items: [] }), {
-            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-          });
-        }
-      }
-    }
-
     // ── ADMIN ROUTES ──
     if (path.startsWith('/admin')) {
       // CORS preflight za admin rute
@@ -663,8 +621,15 @@ export default {
         }
       }
 
-      // API rute koriste Bearer token, ne cookie session — preskoči HTML redirect
-      if (!isLoggedIn && !path.includes('/api/')) {
+      // Sve /admin/* rute zahtijevaju autentifikaciju.
+      // API rute (/admin/api/*) vraćaju JSON 401, ostale prikazuju login stranicu.
+      if (!isLoggedIn) {
+        if (path.startsWith('/admin/api/')) {
+          return new Response(JSON.stringify({ error: 'unauthorized' }), {
+            status: 401,
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
         return new Response(loginPage(), {
           headers: { ...CORS_HEADERS, 'Content-Type': 'text/html;charset=UTF-8' },
         });
@@ -688,48 +653,6 @@ export default {
       return new Response(adminPage(isOn), {
         headers: { 'Content-Type': 'text/html;charset=UTF-8' },
       });
-    }
-
-    // ── ADMIN API POLLS & FEEDBACK (Bearer auth, izvan admin HTML bloka) ──
-    if (path === '/admin/api/polls' || path === '/admin/api/feedback') {
-      const authHeader = request.headers.get('Authorization') || '';
-      const bearerToken = authHeader.replace('Bearer ', '').trim();
-      const isApiAuthed = await validateSession(bearerToken, env);
-
-      if (!isApiAuthed) {
-        return new Response(JSON.stringify({ error: 'unauthorized' }), {
-          status: 401,
-          headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-        });
-      }
-
-      if (path === '/admin/api/polls') {
-        try {
-          const raw = await env.ANKETE_DATA.get('poll_votes');
-          const polls = raw ? JSON.parse(raw) : {};
-          return new Response(JSON.stringify({ polls }), {
-            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-          });
-        } catch(e) {
-          return new Response(JSON.stringify({ polls: {} }), {
-            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-          });
-        }
-      }
-
-      if (path === '/admin/api/feedback') {
-        try {
-          const raw = await env.AI_CONFIG.get('feedback_log');
-          const items = raw ? JSON.parse(raw) : [];
-          return new Response(JSON.stringify({ items }), {
-            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-          });
-        } catch(e) {
-          return new Response(JSON.stringify({ items: [] }), {
-            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-          });
-        }
-      }
     }
 
     // ── POLLS ENDPOINT ──
