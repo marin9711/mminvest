@@ -1781,3 +1781,134 @@ document.addEventListener('DOMContentLoaded', () => {
   if (tabAi) tabAi.addEventListener('click', () => switchAdminTab('ai'));
   if (tabFb) tabFb.addEventListener('click', () => switchAdminTab('fb'));
 });
+
+// ── MarsanInvest Language System (i18n) ──
+const TRANSLATIONS = {
+  // NAV
+  'nav-home':        { hr: 'Početna',              en: 'Home' },
+  'nav-p0a':         { hr: 'Hrvatski DMF',          en: 'Croatian VMF' },
+  'nav-pepp':        { hr: 'PEPP',                  en: 'PEPP' },
+  'nav-p0b':         { hr: 'ETF Platforme',         en: 'ETF Platforms' },
+  'nav-p1':          { hr: 'HR DMF (3.stup) vs PEPP', en: 'HR VMF vs PEPP' },
+  'nav-p2':          { hr: 'DMF/PEPP vs ETF',       en: 'VMF/PEPP vs ETF' },
+  'nav-p3':          { hr: 'Pension + ETF',          en: 'Pension + ETF' },
+  'nav-kviz':        { hr: '🧭 Koji put?',           en: '🧭 Which path?' },
+  'nav-stednja':     { hr: '👶 Štednja za dijete',   en: '👶 Saving for a child' },
+  'nav-kripto':      { hr: '₿ Kriptovalute',         en: '₿ Cryptocurrencies' },
+  'nav-trading':     { hr: '📈 Trading',              en: '📈 Trading' },
+  'nav-edukacija':   { hr: '📚 Edukacija',           en: '📚 Education' },
+  'nav-feedback':    { hr: '💬 Feedback',            en: '💬 Feedback' },
+
+  // HOME
+  'home-title':      { hr: 'Tvoj osobni kalkulator mirovinskog i investicijskog planiranja — usporedi fondove, ETF-ove i strategije na jednom mjestu.', en: 'Your personal retirement and investment planning calculator — compare funds, ETFs and strategies in one place.' },
+  'home-cta':        { hr: '▶ Pokreni kalkulator',   en: '▶ Launch calculator' },
+  'home-skip':       { hr: 'Preskoči &rarr; Kalkulatori', en: 'Skip &rarr; Calculators' },
+  'home-fc1-title':  { hr: 'Hrvatski DMF fondovi',   en: 'Croatian Voluntary Pension Funds' },
+  'home-fc1-desc':   { hr: 'Usporedi svih 8 dostupnih dobrovoljnih mirovinskih fondova u RH — prinosi, naknade, rizik. Kalkulator s državnim poticajem (15% godišnje).', en: 'Compare all 8 available voluntary pension funds in Croatia — returns, fees, risk. Calculator includes state subsidy (15% annually).' },
+  'home-fc2-title':  { hr: 'PEPP — Pan-europska mirovina', en: 'PEPP — Pan-European Pension' },
+  'home-fc2-desc':   { hr: 'Sve o PEPP-u — što je, kako funkcionira, tko ga nudi u HR, naknade i za koga je prikladan. Idealno za EU mobilne radnike.', en: 'Everything about PEPP — what it is, how it works, who offers it in Croatia, fees and who it\'s suitable for. Ideal for EU mobile workers.' },
+  'home-fc3-title':  { hr: 'ETF Platforme',           en: 'ETF Platforms' },
+  'home-fc3-desc':   { hr: 'VWCE, IWDA, S&P 500, Nasdaq i više — usporedi ETF fondove po riziku i prinosu. IBKR vs Trading 212 vs Finax — sve naknade uračunate.', en: 'VWCE, IWDA, S&P 500, Nasdaq and more — compare ETF funds by risk and return. IBKR vs Trading 212 vs Finax — all fees included.' },
+  'home-fc4-title':  { hr: 'HR DMF (3.stup) vs PEPP', en: 'Croatian VMF vs PEPP' },
+  'home-fc4-desc':   { hr: 'Direktna usporedba domaćeg DMF-a s Finaxovim PEPP-om. Je li europska mirovina bolja od državnog poticaja? Odgovor je ovdje.', en: 'Direct comparison of Croatian VMF with Finax PEPP. Is the European pension better than the state subsidy? The answer is here.' },
+  'home-fc5-title':  { hr: 'DMF/PEPP vs ETF',         en: 'VMF/PEPP vs ETF' },
+  'home-fc5-desc':   { hr: 'Što donosi više novca dugoročno — mirovinski fond ili ETF? Usporedi sve tri opcije paralelno s uključivanjem/isključivanjem pojedinih linija.', en: 'What brings more money long-term — pension fund or ETF? Compare all three options in parallel with toggle lines.' },
+  'home-fc6-title':  { hr: 'Pension + ETF strategija', en: 'Pension + ETF Strategy' },
+  'home-fc6-desc':   { hr: 'Kombiniraj mirovinski fond i ETF u jedan portfelj. Podesi alokaciju, vidi realnu vrijednost s inflacijom i izračunaj mjesečnu isplatu po 4% pravilu.', en: 'Combine a pension fund and ETF into one portfolio. Set allocation, see real value with inflation and calculate monthly payout using the 4% rule.' },
+  'home-fc7-title':  { hr: 'Koji put je za mene?',     en: 'Which path is right for me?' },
+  'home-fc7-desc':   { hr: 'Nisi siguran gdje početi? Odgovori na 5 pitanja i dobij preporuku — DMF, PEPP, ETF ili kombinacija — prilagođenu tvojoj situaciji.', en: 'Not sure where to start? Answer 5 questions and get a recommendation — VMF, PEPP, ETF or a combination — tailored to your situation.' },
+
+  // QUIZ home
+  'quiz-q0':         { hr: 'Koliko imaš godina?',     en: 'How old are you?' },
+  'quiz-q0-sub':     { hr: 'Dob određuje vremenski horizont i razinu rizika.', en: 'Age determines your investment horizon and risk level.' },
+  'quiz-q1':         { hr: 'Koliko možeš odvajati mjesečno?', en: 'How much can you set aside monthly?' },
+  'quiz-q1-sub':     { hr: 'Državni poticaj vrijedi do 66,36€/mj.', en: 'State subsidy applies up to €66.36/month.' },
+  'quiz-q2':         { hr: 'Koliko rizika možeš podnijeti?', en: 'How much risk can you tolerate?' },
+  'quiz-q2-sub':     { hr: 'Što kad ulaganje padne 30%?', en: 'What if your investment drops 30%?' },
+  'quiz-q3':         { hr: 'Koji ti je primarni cilj?', en: 'What is your primary goal?' },
+  'quiz-q3-sub':     { hr: 'Određuje omjer mirovinskih fondova i ETF-ova.', en: 'Determines the ratio of pension funds to ETFs.' },
+  'quiz-q4':         { hr: 'Kakvo je tvoje iskustvo?', en: 'What is your investment experience?' },
+  'quiz-q4-sub':     { hr: 'Pomaže nam preporučiti pravu razinu složenosti.', en: 'Helps us recommend the right level of complexity.' },
+
+  // DISCLAIMER / FOOTER
+  'disclaimer-main': { hr: 'MarsanInvest je informativni alat za edukacijske svrhe. Nije financijski savjet. Uvijek konzultiraj licenciranog financijskog savjetnika prije donošenja investicijskih odluka. Podaci su temeljeni na javno dostupnim historijskim prinosima.', en: 'MarsanInvest is an informational tool for educational purposes. Not financial advice. Always consult a licensed financial advisor before making investment decisions. Data based on publicly available historical returns.' },
+
+  // PAGE TITLES & DESCRIPTIONS
+  'p0a-title':       { hr: 'Hrvatski Dobrovoljni Mirovinski Fondovi', en: 'Croatian Voluntary Pension Funds' },
+  'p0a-desc':        { hr: 'Usporedi sve dostupne otvorene DMF fondove u Hrvatskoj prema prosječnim prinosima, razini rizika i projekciji rasta. Podaci HANFA 2024.', en: 'Compare all available open voluntary pension funds in Croatia by average returns, risk level and growth projection. HANFA 2024 data.' },
+  'pepp-title':      { hr: '🌍 PEPP — Pan-europska osobna mirovina', en: '🌍 PEPP — Pan-European Personal Pension' },
+  'pepp-desc':       { hr: 'Pan-European Personal Pension Product (PEPP) je EU-reguliran mirovinski proizvod dostupan građanima svih država članica.', en: 'The Pan-European Personal Pension Product (PEPP) is an EU-regulated pension product available to citizens of all member states.' },
+  'p0b-title':       { hr: 'ETF Ulaganje — Platforme & Projekcija', en: 'ETF Investing — Platforms & Projection' },
+  'p0b-desc':        { hr: 'Usporedi ulaganje u ETF fondove preko IBKR, Trading 212 i Finax. Sve naknade, osiguranje i projekcija rasta uračunati su automatski.', en: 'Compare ETF investing via IBKR, Trading 212 and Finax. All fees, insurance and growth projections calculated automatically.' },
+  'p1-title':        { hr: 'HR DMF (3.stup) vs PEPP', en: 'Croatian VMF (3rd pillar) vs PEPP' },
+  'p1-desc':         { hr: 'Usporedi domaći dobrovoljni mirovinski fond s državnim poticajem nasuprot pan-europske osobne mirovine.', en: 'Compare the domestic voluntary pension fund with state subsidy versus the pan-European personal pension.' },
+  'p2-title':        { hr: 'DMF/PEPP vs ETF', en: 'VMF/PEPP vs ETF' },
+  'p2-desc':         { hr: 'Usporedi mirovinske fondove s globalnim ETF-ovima. Uključi/isključi fondove i vidi koja strategija donosi više.', en: 'Compare pension funds with global ETFs. Toggle funds on/off and see which strategy delivers more.' },
+  'p3-title':        { hr: 'Pension + ETF', en: 'Pension + ETF' },
+  'p3-desc':         { hr: 'Simuliraj paralelnu strategiju — dio novca u sigurnost mirovinskog fonda, dio u rast ETF-a. Podesi alokaciju i vidi što dobivaš na kraju.', en: 'Simulate a parallel strategy — part of your money in the security of a pension fund, part in ETF growth. Set allocation and see your end result.' },
+  'stednja-title':   { hr: '👶 Štednja za dijete', en: '👶 Saving for a Child' },
+  'stednja-desc':    { hr: 'Kako mudro početi štedjeti i ulagati za djetetovu budućnost — i zašto većina popularnih metoda zapravo gubi novac.', en: 'How to wisely start saving and investing for your child\'s future — and why most popular methods actually lose money.' },
+  'kripto-title':    { hr: '₿ Ulaganja u kriptovalute', en: '₿ Cryptocurrency Investing' },
+  'kripto-desc':     { hr: 'Osnove kriptovaluta kao klase imovine — mogućnosti, rizici i što treba znati prije nego uložiš.', en: 'Cryptocurrency basics as an asset class — opportunities, risks and what to know before investing.' },
+  'trading-title':   { hr: '📈 Trading — aktivno trgovanje', en: '📈 Trading — Active Trading' },
+  'trading-desc':    { hr: 'Razumijevanje osnova tradinga — strategije, pojmovi i razlika od dugoročnog ulaganja.', en: 'Understanding trading basics — strategies, terminology and the difference from long-term investing.' },
+  'edu-title':       { hr: '📚 Edukacija', en: '📚 Education' },
+  'edu-desc':        { hr: 'Najbolji hrvatski i međunarodni resursi za financijsku pismenost, investiranje i mirovinsko planiranje.', en: 'The best Croatian and international resources for financial literacy, investing and retirement planning.' },
+  'feedback-title':  { hr: '💬 Feedback & Prijedlozi', en: '💬 Feedback & Suggestions' },
+  'feedback-desc':   { hr: 'Pomozi nam poboljšati MarsanInvest — ocijeni aplikaciju, pošalji prijedlog ili pitaj AI asistenta za pomoć.', en: 'Help us improve MarsanInvest — rate the app, send a suggestion or ask the AI assistant for help.' },
+};
+
+let currentLang = 'hr';
+
+// Data-i18n attribute elements
+const I18N_MAP = {
+  '[data-page="home"]':          'nav-home',
+  '[data-page="p0a"]':           'nav-p0a',
+  '[data-page="pepp"]':          'nav-pepp',
+  '[data-page="p0b"]':           'nav-p0b',
+  '[data-page="p1"]':            'nav-p1',
+  '[data-page="p2"]':            'nav-p2',
+  '[data-page="p3"]':            'nav-p3',
+  '[data-page="kviz"]':          'nav-kviz',
+  '[data-page="stednja-dijete"]':'nav-stednja',
+  '[data-page="kripto"]':        'nav-kripto',
+  '[data-page="trading"]':       'nav-trading',
+  '[data-page="edukacija"]':     'nav-edukacija',
+  '[data-page="feedback"]':      'nav-feedback',
+};
+
+function setLang(lang) {
+  currentLang = lang;
+  document.documentElement.lang = lang;
+
+  // Toggle buttons
+  const btnHr = document.getElementById('btn-hr');
+  const btnEn = document.getElementById('btn-en');
+  if (btnHr) btnHr.classList.toggle('active', lang === 'hr');
+  if (btnEn) btnEn.classList.toggle('active', lang === 'en');
+
+  // Translate nav tabs
+  Object.entries(I18N_MAP).forEach(([sel, key]) => {
+    const el = document.querySelector('.nav-tabs ' + sel);
+    if (el && TRANSLATIONS[key]) el.innerHTML = TRANSLATIONS[key][lang];
+  });
+
+  // Translate all [data-i18n] elements
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (TRANSLATIONS[key] && TRANSLATIONS[key][lang]) {
+      el.innerHTML = TRANSLATIONS[key][lang];
+    }
+  });
+
+  // Save to localStorage
+  try { localStorage.setItem('marsan-lang', lang); } catch(e) {}
+}
+
+// Apply saved lang on load
+(function() {
+  try {
+    const saved = localStorage.getItem('marsan-lang');
+    if (saved && saved !== 'hr') setLang(saved);
+  } catch(e) {}
+})();
