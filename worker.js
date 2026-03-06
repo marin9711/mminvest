@@ -15,6 +15,26 @@ const CORS_HEADERS = {
   'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Turnstile-Token',
 };
 
+// ── Sigurnosna zaglavlja — dodaju se na svaki odgovor ──
+const SEC_HEADERS = {
+  'Cache-Control': 'no-store, no-cache, must-revalidate',
+  'Strict-Transport-Security': 'max-age=63072000; includeSubDomains',
+  'X-Content-Type-Options': 'nosniff',
+};
+
+// Middleware: dodaje SEC_HEADERS na svaki Response
+function addSecHeaders(response) {
+  const newHeaders = new Headers(response.headers);
+  for (const [k, v] of Object.entries(SEC_HEADERS)) {
+    newHeaders.set(k, v);
+  }
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers: newHeaders,
+  });
+}
+
 // ── Admin HTML stranica ──
 function adminPage(isOn, msg = '') {
   return `<!DOCTYPE html>
@@ -286,6 +306,12 @@ async function checkRateLimit(ip, env) {
 // ── Glavni handler ──
 export default {
   async fetch(request, env) {
+    const response = await handleRequest(request, env);
+    return addSecHeaders(response);
+  },
+};
+
+async function handleRequest(request, env) {
     const url = new URL(request.url);
     const path = url.pathname;
 
@@ -1044,5 +1070,4 @@ Odgovaraj kratko, jasno i na hrvatskom jeziku. Koristi emoji umjereno.`;
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
       });
     }
-  },
-};
+}
