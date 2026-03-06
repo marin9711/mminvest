@@ -26,11 +26,23 @@ if (typeof Chart !== 'undefined') {
 
 // NAV
 function scrollToTopInstant() {
+  const root = document.documentElement;
+  const prevBehavior = root.style.scrollBehavior;
+  // Force instant jump even when CSS has `html { scroll-behavior: smooth; }`
+  root.style.scrollBehavior = 'auto';
   try {
-    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
   } catch (_) {
     window.scrollTo(0, 0);
   }
+  root.scrollTop = 0;
+  document.body.scrollTop = 0;
+  requestAnimationFrame(() => {
+    window.scrollTo(0, 0);
+    root.scrollTop = 0;
+    document.body.scrollTop = 0;
+    root.style.scrollBehavior = prevBehavior;
+  });
 }
 
 function preventFocusJumpOnPageChange() {
