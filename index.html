@@ -1291,6 +1291,8 @@ tr:hover td { background:var(--surface2); }
 .lang-btn.active { background: var(--pepp); color: #fff; border-color: var(--pepp); }
 .lang-btn:hover:not(.active) { color: var(--text); border-color: var(--muted); }
 </style>
+<!-- Cloudflare Turnstile -->
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
 
@@ -3467,6 +3469,20 @@ tr:hover td { background:var(--surface2); }
            onkeydown="if(event.key==='Enter') sendAiMsg()">
     <button class="ai-send-btn" id="ai-send-btn" onclick="sendAiMsg()">➤</button>
   </div>
+  <!-- Cloudflare Turnstile — invisible widget, token se šalje s API pozivom -->
+  <!-- ZAMIJENI data-sitekey s tvojim Turnstile Site Key-em iz Cloudflare dashboarda -->
+  <div id="ai-turnstile-container" style="display:none">
+    <div class="cf-turnstile"
+         id="ai-turnstile-widget"
+         data-sitekey="0x4AAAAAACnRnEJwxvINVx6G"
+         data-theme="dark"
+         data-size="invisible"
+         data-callback="onTurnstileSuccess"
+         data-expired-callback="onTurnstileExpired"
+         data-error-callback="onTurnstileError">
+    </div>
+  </div>
+  <div id="ai-rate-notice" style="display:none;font-size:0.72rem;color:#f56060;padding:0.3rem 0.75rem 0.5rem;text-align:center;"></div>
 </div>
 <button class="ai-fab" id="ai-fab" onclick="toggleAiChat()">
   <span class="fab-icon-chat">🤖</span>
@@ -3586,6 +3602,7 @@ tr:hover td { background:var(--surface2); }
 
 </footer>
 <script src="script.js"></script>
+<script src="script-ai-security-patch.js"></script>
 
 <script>
 // ── MarsanInvest Language System ──
@@ -3717,6 +3734,75 @@ function setLang(lang) {
     if (saved && saved !== 'hr') setLang(saved);
   } catch(e) {}
 })();
+
+// ── Turnstile token management ──
+// Token se osvježava automatski. Kada sendAiMsg() zatraži token,
+// čeka da Turnstile izvrši challenge (obično nevidljivo <1s).
+let _turnstileToken = null;
+let _turnstilePending = null; // resolve callback dok čekamo token
+
+function onTurnstileSuccess(token) {
+  _turnstileToken = token;
+  if (_turnstilePending) {
+    _turnstilePending(token);
+    _turnstilePending = null;
+  }
+}
+function onTurnstileExpired() {
+  _turnstileToken = null;
+  // Resetiraj widget kako bi se mogao ponovo riješiti
+  try { turnstile.reset('#ai-turnstile-widget'); } catch(e) {}
+}
+function onTurnstileError() {
+  _turnstileToken = null;
+  try { turnstile.reset('#ai-turnstile-widget'); } catch(e) {}
+}
+
+// Vrati token — ako već postoji vraća odmah, inače čeka challenge
+function getTurnstileToken() {
+  return new Promise((resolve) => {
+    if (_turnstileToken) { resolve(_turnstileToken); return; }
+    _turnstilePending = resolve;
+    // Pokreni challenge
+    try { turnstile.execute('#ai-turnstile-widget'); } catch(e) { resolve(null); }
+    // Timeout fallback (5s) — nastavi bez tokena ako Turnstile nije učitan
+    setTimeout(() => {
+      if (_turnstilePending) { _turnstilePending = null; resolve(null); }
+    }, 5000);
+  });
+}
+
+// Patch sendAiMsg iz script.js da šalje Turnstile token
+// Ovo je wrapper — original sendAiMsg definiran je u script.js
+document.addEventListener('DOMContentLoaded', function() {
+  // Inject Turnstile header interceptor — preuzima originalnu funkciju iz script.js
+  // ako nije definirana (script.js se učitava ranije), odmah patchamo globalnu funkciju
+  const _origSendAiMsg = window.sendAiMsg;
+  if (typeof _origSendAiMsg === 'function') {
+    _patchSendAiMsg(_origSendAiMsg);
+  } else {
+    // script.js se možda učitava async — čekaj kratko
+    setTimeout(() => {
+      if (typeof window.sendAiMsg === 'function' && !window._marsanTurnstilePatched) {
+        _patchSendAiMsg(window.sendAiMsg);
+      }
+    }, 500);
+  }
+});
+
+function _patchSendAiMsg(original) {
+  window._marsanTurnstilePatched = true;
+  window._originalSendAiMsg = original;
+  // sendAiMsg se poziva direktno iz HTML-a (onclick), tako da patch mora biti na window
+  // Umjesto patchiranja same funkcije, Turnstile token dohvat je integriran
+  // u window.marsanGetTurnstileToken koji script.js treba koristiti
+}
+
+// Globalna helper funkcija za script.js
+// U script.js, kod koji šalje fetch na worker mora pozvati:
+//   const token = await window.marsanGetTurnstileToken?.() ?? null;
+// i zatim dodati u headers: 'X-Turnstile-Token': token
+window.marsanGetTurnstileToken = getTurnstileToken;
 </script>
 
 </body>

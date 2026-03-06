@@ -12,7 +12,7 @@
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Turnstile-Token',
 };
 
 // ── Admin HTML stranica ──
@@ -130,6 +130,59 @@ function parseFormData(body) {
   const obj = {};
   for (const [k, v] of params) obj[k] = v;
   return obj;
+}
+
+// ── Cloudflare Turnstile provjera ──
+// Zahtijeva TURNSTILE_SECRET_KEY secret u Cloudflare dashboardu.
+async function verifyTurnstile(token, ip, env) {
+  if (!env.TURNSTILE_SECRET_KEY) return true; // Skip if not configured
+  const formData = new FormData();
+  formData.append('secret', env.TURNSTILE_SECRET_KEY);
+  formData.append('response', token);
+  if (ip) formData.append('remoteip', ip);
+
+  const resp = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+    method: 'POST',
+    body: formData,
+  });
+  const result = await resp.json();
+  return result.success === true;
+}
+
+// ── Rate limiting po IP adresi (KV: AI_CONFIG) ──
+// Limit: MAX_REQUESTS zahtjeva po WINDOW_SECONDS sekundi po IP-u.
+const RATE_LIMIT_MAX = 20;         // max poruka po IP-u u prozoru
+const RATE_LIMIT_WINDOW = 3600;    // prozor u sekundama (1 sat)
+
+async function checkRateLimit(ip, env) {
+  if (!ip) return { allowed: true, remaining: RATE_LIMIT_MAX };
+  const key = `rl:${ip}`;
+  let data = { count: 0, resetAt: Date.now() + RATE_LIMIT_WINDOW * 1000 };
+
+  try {
+    const raw = await env.AI_CONFIG.get(key);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed.resetAt > Date.now()) {
+        data = parsed;
+      }
+      // Ako je prozor istekao, počinjemo iznova (data ostaje default s novim resetAt)
+    }
+  } catch (_) {}
+
+  if (data.count >= RATE_LIMIT_MAX) {
+    const retryAfter = Math.ceil((data.resetAt - Date.now()) / 1000);
+    return { allowed: false, remaining: 0, retryAfter };
+  }
+
+  data.count += 1;
+  const remaining = RATE_LIMIT_MAX - data.count;
+  const ttl = Math.ceil((data.resetAt - Date.now()) / 1000);
+  try {
+    await env.AI_CONFIG.put(key, JSON.stringify(data), { expirationTtl: ttl > 0 ? ttl : RATE_LIMIT_WINDOW });
+  } catch (_) {}
+
+  return { allowed: true, remaining };
 }
 
 // ── Glavni handler ──
@@ -615,8 +668,50 @@ export default {
       });
     }
 
+    // ── Rate limiting po IP adresi ──
+    const clientIP =
+      request.headers.get('CF-Connecting-IP') ||
+      request.headers.get('X-Forwarded-For')?.split(',')[0]?.trim() ||
+      null;
+
+    const rateCheck = await checkRateLimit(clientIP, env);
+    if (!rateCheck.allowed) {
+      return new Response(JSON.stringify({
+        error: 'Previše zahtjeva. Pokušaj ponovo za malo.',
+        retryAfter: rateCheck.retryAfter,
+      }), {
+        status: 429,
+        headers: {
+          ...CORS_HEADERS,
+          'Content-Type': 'application/json',
+          'Retry-After': String(rateCheck.retryAfter ?? 60),
+          'X-RateLimit-Limit': String(RATE_LIMIT_MAX),
+          'X-RateLimit-Remaining': '0',
+        },
+      });
+    }
+
     try {
       const body = await request.json();
+
+      // ── Cloudflare Turnstile provjera ──
+      // Frontend mora slati token u zaglavlju X-Turnstile-Token.
+      const turnstileToken = request.headers.get('X-Turnstile-Token') || body.turnstileToken;
+      if (env.TURNSTILE_SECRET_KEY) {
+        if (!turnstileToken) {
+          return new Response(JSON.stringify({ error: 'Nedostaje Turnstile token.' }), {
+            status: 403,
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+        const isHuman = await verifyTurnstile(turnstileToken, clientIP, env);
+        if (!isHuman) {
+          return new Response(JSON.stringify({ error: 'Turnstile provjera nije uspjela. Osvježi stranicu i pokušaj ponovo.' }), {
+            status: 403,
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+      }
 
       if (!body.messages || !Array.isArray(body.messages)) {
         return new Response(JSON.stringify({ error: 'Missing messages' }), {
@@ -658,7 +753,12 @@ Odgovaraj kratko, jasno i na hrvatskom jeziku. Koristi emoji umjereno.`;
 
       return new Response(JSON.stringify(data), {
         status: apiResponse.status,
-        headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+        headers: {
+          ...CORS_HEADERS,
+          'Content-Type': 'application/json',
+          'X-RateLimit-Limit': String(RATE_LIMIT_MAX),
+          'X-RateLimit-Remaining': String(rateCheck.remaining),
+        },
       });
 
     } catch (err) {
