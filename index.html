@@ -2323,7 +2323,7 @@ tr:hover td { background: var(--surface2) !important; }
       <div class="row"><input type="range" id="p1-uplata" min="0" max="5000" step="50" value="663" aria-label="Godišnja uplata (klizač)"><input type="number" class="ctrl-val-input" id="p1-uplata-v" value="663.00" data-decimals="2" min="0" max="5000" step="any" placeholder="663.61" aria-label="Godišnja uplata"></div>
     </div>
     <div class="ctrl-group c-neutral">
-      <label>Državni poticaj (DMF)</label>
+      <label for="p1-poticaj-toggle">Državni poticaj (DMF)</label>
       <div class="toggle-switch-wrap">
         <label class="toggle-switch"><input type="checkbox" id="p1-poticaj-toggle" checked><span class="toggle-slider"></span></label>
         <span class="toggle-label active" id="p1-poticaj-lbl">Uključen</span>
@@ -2426,7 +2426,7 @@ tr:hover td { background: var(--surface2) !important; }
       <div class="row"><input type="range" id="p2-uplata" min="0" max="5000" step="50" value="1200" aria-label="Godišnja uplata (klizač)"><input type="number" class="ctrl-val-input" id="p2-uplata-v" value="1200.00" data-decimals="2" min="0" max="5000" step="any" placeholder="1200" aria-label="Godišnja uplata (ukupno)"></div>
     </div>
     <div class="ctrl-group c-neutral">
-      <label>Državni poticaj (DMF)</label>
+      <label for="p2-poticaj-toggle">Državni poticaj (DMF)</label>
       <div class="toggle-switch-wrap">
         <label class="toggle-switch"><input type="checkbox" id="p2-poticaj-toggle" checked><span class="toggle-slider"></span></label>
         <span class="toggle-label active" id="p2-poticaj-lbl">Uključen</span>
@@ -3737,6 +3737,7 @@ tr:hover td { background: var(--surface2) !important; }
     <!-- Gumbi se generiraju u script.js renderFaqButtons() -->
   </div>
   <div class="ai-input-row">
+    <label for="ai-input" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">Pitanje za MM Invest asistenta</label>
     <input class="ai-input" id="ai-input" type="text" placeholder="Pitaj nešto o ulaganju..."
            aria-label="Pitanje za MM Invest asistenta"
            onkeydown="if(event.key==='Enter') sendAiMsg()">
