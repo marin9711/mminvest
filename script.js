@@ -1309,6 +1309,71 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closeChartModal();
 });
 
+function openDonationModal() {
+  const overlay = $('donation-modal-overlay');
+  if (!overlay) return;
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDonationModal() {
+  const overlay = $('donation-modal-overlay');
+  if (!overlay) return;
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+async function copyDonationAddress() {
+  const addressEl = $('donation-btc-address');
+  const btn = $('donation-copy-btn');
+  if (!addressEl || !btn) return;
+  const address = (addressEl.textContent || '').trim();
+  if (!address) return;
+
+  const original = btn.textContent;
+  try {
+    await navigator.clipboard.writeText(address);
+    btn.textContent = 'Kopirano!';
+  } catch (_) {
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = address;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      btn.textContent = 'Kopirano!';
+    } catch (_) {
+      btn.textContent = 'Copy nije uspio';
+    }
+  }
+  setTimeout(() => { btn.textContent = original; }, 1400);
+}
+
+function initDonationModal() {
+  if (window._donationModalInitDone) return;
+  window._donationModalInitDone = true;
+
+  const openBtns = [$('donate-feedback-open'), $('donate-bar-open')].filter(Boolean);
+  const overlay = $('donation-modal-overlay');
+  const closeBtn = $('donation-modal-close');
+  const dismissBtn = $('donation-modal-dismiss');
+  const copyBtn = $('donation-copy-btn');
+
+  openBtns.forEach((btn) => btn.addEventListener('click', openDonationModal));
+  if (closeBtn) closeBtn.addEventListener('click', closeDonationModal);
+  if (dismissBtn) dismissBtn.addEventListener('click', closeDonationModal);
+  if (copyBtn) copyBtn.addEventListener('click', copyDonationAddress);
+  if (overlay) {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeDonationModal();
+    });
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeDonationModal();
+  });
+}
+
 // Wire up all chart cards
 const CHART_META = [
   ['p0a-chart-all', 'Usporedba svih fondova'],
@@ -1388,6 +1453,7 @@ function initMyStrategyFeature() {
 // ============ INIT ============
 // Ensure DOM is fully ready before init
 function initApp() {
+  initDonationModal();
   initMyStrategyFeature();
   setupSyncPairs();
   // Also restore from localStorage if available
