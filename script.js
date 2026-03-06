@@ -1,37 +1,4 @@
-const __missingElCache = new Map();
-function __makeMissingEl(id) {
-  const noop = () => {};
-  return {
-    id: `missing-${id}`,
-    value: '',
-    checked: false,
-    textContent: '',
-    innerHTML: '',
-    disabled: false,
-    style: {},
-    dataset: {},
-    classList: { add: noop, remove: noop, toggle: () => false, contains: () => false },
-    addEventListener: noop,
-    removeEventListener: noop,
-    setAttribute: noop,
-    getAttribute: () => '',
-    appendChild: noop,
-    removeChild: noop,
-    scrollIntoView: noop,
-    click: noop,
-    focus: noop,
-    querySelector: () => null,
-    querySelectorAll: () => [],
-    getContext: () => null
-  };
-}
-var $ = id => {
-  const el = document.getElementById(id);
-  if (el) return el;
-  if (!__missingElCache.has(id)) __missingElCache.set(id, __makeMissingEl(id));
-  return __missingElCache.get(id);
-};
-if (typeof window.setLang !== 'function') window.setLang = () => {};
+var $ = id => document.getElementById(id);
 const fmt = n => new Intl.NumberFormat('hr-HR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n);
 
 // DOMPurify helper za tbody fragmente — wrappa u <table> kontekst da se <tr>/<td> ne stripaju
@@ -60,13 +27,10 @@ if (typeof Chart !== 'undefined') {
 // NAV
 document.querySelectorAll('.nav-tab').forEach(tab => {
   tab.addEventListener('click', () => {
-    if (!tab.dataset.page) return;
-    const targetPage = $(tab.dataset.page);
-    if (!targetPage || !targetPage.classList) return;
     document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
     document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
     tab.classList.add('active');
-    targetPage.classList.add('active');
+    $(tab.dataset.page).classList.add('active');
   });
 });
 
@@ -433,9 +397,7 @@ function updateP3() {
 
 // ============ CHART FACTORY ============
 function makeChart(canvasId, labels, datasets) {
-  const canvas = $(canvasId);
-  if (!canvas || typeof canvas.getContext !== 'function' || !canvas.getContext('2d')) return null;
-  return new Chart(canvas, {
+  return new Chart($(canvasId), {
     type: 'line',
     data: { labels, datasets },
     options: {

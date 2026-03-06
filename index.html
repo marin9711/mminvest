@@ -1501,21 +1501,31 @@ tr:hover td { background: var(--surface2) !important; }
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
+
 <nav>
-  <a class="nav-brand" href="index.html">MM <span>Invest</span></a>
+  <div class="nav-brand">MM <span>Invest</span></div>
   <div class="nav-tabs">
-    <a class="nav-tab active" data-page="home" href="index.html">Početna</a>
-    <a class="nav-tab" data-page="p0a" href="dmf.html">Hrvatski DMF</a>
-    <a class="nav-tab" data-page="pepp" href="pepp.html">PEPP</a>
-    <a class="nav-tab" data-page="p0b" href="etf.html">ETF Platforme</a>
-    <a class="nav-tab" data-page="p1" href="strategije.html">Strategije</a>
-    <a class="nav-tab" data-page="edukacija" href="blog.html">📚 Edukacija</a>
+    <div class="nav-tab active" data-page="home">Početna</div>
+    <div class="nav-tab" data-page="p0a">Hrvatski DMF</div>
+    <div class="nav-tab" data-page="pepp">PEPP</div>
+    <div class="nav-tab" data-page="p0b">ETF Platforme</div>
+    <div class="nav-tab" data-page="p1">HR DMF (3.stup) vs PEPP</div>
+    <div class="nav-tab" data-page="p2">DMF/PEPP vs ETF</div>
+    <div class="nav-tab" data-page="p3">Pension + ETF</div>
+    <div class="nav-tab" data-page="kviz">🧭 Koji put?</div>
+    <div class="nav-tab" data-page="stednja-dijete">👶 Štednja za dijete</div>
+    <div class="nav-tab" data-page="kripto">₿ Kriptovalute</div>
+    <div class="nav-tab" data-page="trading">📈 Trading</div>
+    <div class="nav-tab" data-page="edukacija">📚 Edukacija</div>
+    <div class="nav-tab" data-page="feedback">💬 Feedback</div>
   </div>
   <div class="lang-toggle">
     <button class="lang-btn active" id="btn-hr" onclick="setLang('hr')">🇭🇷 HR</button>
     <button class="lang-btn" id="btn-en" onclick="setLang('en')">🇬🇧 EN</button>
   </div>
 </nav>
+
+<!-- ========== HOME PAGE ========== -->
 <div class="page active" id="home">
   <div class="home-hero">
     <div class="brand-big">MM Invest</div>
@@ -1634,43 +1644,43 @@ tr:hover td { background: var(--surface2) !important; }
 
   <!-- Feature cards -->
   <div class="features-grid">
-    <div class="feature-card fc-dmf" onclick="window.location.href='dmf.html'">
+    <div class="feature-card fc-dmf" onclick="document.querySelector('[data-page=p0a]').click()">
       <span class="fc-icon">🏛️</span>
       <div class="fc-title">Hrvatski DMF fondovi</div>
       <div class="fc-desc">Usporedi svih 8 dostupnih dobrovoljnih mirovinskih fondova u RH — prinosi, naknade, rizik. Kalkulator s državnim poticajem (15% godišnje).</div>
       <span class="fc-tag" style="color:var(--dmf-l)">Mjesečno & godišnje</span>
     </div>
-    <div class="feature-card fc-pepp" onclick="window.location.href='pepp.html'">
+    <div class="feature-card fc-pepp" onclick="document.querySelector('[data-page=pepp]').click()">
       <span class="fc-icon">🌍</span>
       <div class="fc-title">PEPP — Pan-europska mirovina</div>
       <div class="fc-desc">Sve o PEPP-u — što je, kako funkcionira, tko ga nudi u HR, naknade i za koga je prikladan. Idealno za EU mobilne radnike.</div>
       <span class="fc-tag" style="color:var(--pepp-l)">EU prenosivo · Finax</span>
     </div>
-    <div class="feature-card fc-etf" onclick="window.location.href='etf.html'">
+    <div class="feature-card fc-etf" onclick="document.querySelector('[data-page=p0b]').click()">
       <span class="fc-icon">📊</span>
       <div class="fc-title">ETF Platforme</div>
       <div class="fc-desc">VWCE, IWDA, S&P 500, Nasdaq i više — usporedi ETF fondove po riziku i prinosu. IBKR vs Trading 212 vs Finax — sve naknade uračunate.</div>
       <span class="fc-tag" style="color:var(--etf-l)">11 ETF fondova · 4 platforme</span>
     </div>
-    <div class="feature-card fc-pepp" onclick="window.location.href='strategije.html'">
+    <div class="feature-card fc-pepp" onclick="document.querySelector('[data-page=p1]').click()">
       <span class="fc-icon">⚖️</span>
       <div class="fc-title">HR DMF (3.stup) vs PEPP</div>
       <div class="fc-desc">Direktna usporedba domaćeg DMF-a s Finaxovim PEPP-om. Je li europska mirovina bolja od državnog poticaja? Odgovor je ovdje.</div>
       <span class="fc-tag" style="color:var(--dmf-l)">Projekcija 5–60 god</span>
     </div>
-    <div class="feature-card fc-combo" onclick="window.location.href='strategije.html'">
+    <div class="feature-card fc-combo" onclick="document.querySelector('[data-page=p2]').click()">
       <span class="fc-icon">📈</span>
       <div class="fc-title">DMF/PEPP vs ETF</div>
       <div class="fc-desc">Što donosi više novca dugoročno — mirovinski fond ili ETF? Usporedi sve tri opcije paralelno s uključivanjem/isključivanjem pojedinih linija.</div>
       <span class="fc-tag" style="color:var(--combo-l)">Interaktivni grafovi</span>
     </div>
-    <div class="feature-card fc-combo" onclick="window.location.href='strategije.html'">
+    <div class="feature-card fc-combo" onclick="document.querySelector('[data-page=p3]').click()">
       <span class="fc-icon">🧩</span>
       <div class="fc-title">Pension + ETF strategija</div>
       <div class="fc-desc">Kombiniraj mirovinski fond i ETF u jedan portfelj. Podesi alokaciju, vidi realnu vrijednost s inflacijom i izračunaj mjesečnu isplatu po 4% pravilu.</div>
       <span class="fc-tag" style="color:var(--combo-l)">4% pravilo · Inflacija</span>
     </div>
-    <div class="feature-card fc-ai" style="cursor:pointer" onclick="window.location.href='strategije.html'">
+    <div class="feature-card fc-ai" style="cursor:pointer" onclick="document.querySelector('[data-page=kviz]').click()">
       <span class="fc-icon">🧭</span>
       <div class="fc-title">Koji put je za mene?</div>
       <div class="fc-desc">Nisi siguran gdje početi? Odgovori na 5 pitanja i dobij preporuku — DMF, PEPP, ETF ili kombinacija — prilagođenu tvojoj situaciji.</div>
@@ -1720,6 +1730,2038 @@ tr:hover td { background: var(--surface2) !important; }
 
   <p class="disclaimer">MM Invest je informativni alat za edukacijske svrhe. Nije financijski savjet. Uvijek konzultiraj licenciranog financijskog savjetnika prije donošenja investicijskih odluka. Podaci su temeljeni na javno dostupnim historijskim prinosima.</p>
 </div>
+
+<!-- ========== PAGE 0A: HRVATSKI DMF ========== -->
+<div class="page" id="p0a">
+  <div class="page-header">
+    <h2><span class="grad-warm" data-i18n="p0a-title">Hrvatski Dobrovoljni Mirovinski Fondovi</span></h2>
+    <p data-i18n="p0a-desc">Usporedi sve dostupne otvorene DMF fondove u Hrvatskoj prema prosječnim prinosima, razini rizika i projekciji rasta. Podaci HANFA 2024.</p>
+  </div>
+
+  <!-- Fund comparison table -->
+  <div class="table-card" style="margin-bottom:1.5rem">
+    <h3>Usporedba fondova — prinosi i naknade (HANFA 2024.)</h3>
+    <div class="tbl-wrap">
+      <table id="dmf-comparison-table">
+        <thead><tr>
+          <th style="text-align:left">Fond</th>
+          <th>Upravljač</th>
+          <th>Rizik</th>
+          <th>Prinos 2024.</th>
+          <th>Prosjek 5g</th>
+          <th>Prosjek od osnivanja</th>
+          <th>Naknada/god</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td style="text-align:left;color:var(--etf-l);font-weight:600">Croatia 1000A</td>
+            <td style="text-align:center;color:var(--muted2)">Croatia Osiguranje</td>
+            <td style="text-align:center"><span style="color:var(--red);font-size:0.7rem;font-weight:700">VISOK ●●●</span></td>
+            <td style="color:var(--etf-l)">11.50%</td><td>5.35%</td><td style="color:var(--etf-l)">5.77%</td><td>max 3%</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;color:var(--pepp-l);font-weight:600">Erste Plavi Expert</td>
+            <td style="text-align:center;color:var(--muted2)">Erste</td>
+            <td style="text-align:center"><span style="color:var(--red);font-size:0.7rem;font-weight:700">VISOK ●●●</span></td>
+            <td style="color:var(--etf-l)">10.44%</td><td style="color:var(--etf-l)">6.62%</td><td>5.30%</td><td>~1.87%</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;color:var(--dmf-l);font-weight:600">AZ Profit</td>
+            <td style="text-align:center;color:var(--muted2)">Allianz</td>
+            <td style="text-align:center"><span style="color:var(--yellow);font-size:0.7rem;font-weight:700">UMJEREN ●●○</span></td>
+            <td>8.89%</td><td>4.51%</td><td>5.10%</td><td>max 3%</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:600">Croatia DMF</td>
+            <td style="text-align:center;color:var(--muted2)">Croatia Osiguranje</td>
+            <td style="text-align:center"><span style="color:var(--yellow);font-size:0.7rem;font-weight:700">UMJEREN ●●○</span></td>
+            <td>7.72%</td><td>4.12%</td><td>3.67%</td><td>max 3%</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:600">AZ Benefit</td>
+            <td style="text-align:center;color:var(--muted2)">Allianz</td>
+            <td style="text-align:center"><span style="color:var(--etf);font-size:0.7rem;font-weight:700">NIZAK ●○○</span></td>
+            <td>4.14%</td><td>~3.20%</td><td>~3.00%</td><td>max 3%</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:600">Raiffeisen DMF</td>
+            <td style="text-align:center;color:var(--muted2)">Raiffeisen</td>
+            <td style="text-align:center"><span style="color:var(--etf);font-size:0.7rem;font-weight:700">NIZAK ●○○</span></td>
+            <td>3.36%</td><td>~3.00%</td><td>~2.80%</td><td>max 3%</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:600">Erste Plavi Protect</td>
+            <td style="text-align:center;color:var(--muted2)">Erste</td>
+            <td style="text-align:center"><span style="color:var(--etf);font-size:0.7rem;font-weight:700">NIZAK ●○○</span></td>
+            <td>3.32%</td><td>~2.80%</td><td>~2.60%</td><td>~1.87%</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:600">Croatia 1000C</td>
+            <td style="text-align:center;color:var(--muted2)">Croatia Osiguranje</td>
+            <td style="text-align:center"><span style="color:var(--etf);font-size:0.7rem;font-weight:700">NIZAK ●○○</span></td>
+            <td style="color:var(--muted2)">3.13%</td><td>~2.70%</td><td>~2.50%</td><td>max 3%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Ključne karakteristike DMF -->
+  <div class="table-card" style="margin-bottom:1.5rem">
+    <h3>Ključne karakteristike DMF fondova u HR</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Karakteristika</th><th>Detalji</th></tr></thead>
+        <tbody>
+          <tr><td>Puni naziv</td><td>Dobrovoljni mirovinski fond (3. mirovinski stup)</td></tr>
+          <tr><td>Regulativa</td><td>Zakon o dobrovoljnim mirovinskim fondovima (HR), nadzire HANFA</td></tr>
+          <tr><td>Ponuđači</td><td>Croatia Osiguranje, Erste, AZ (Allianz), Raiffeisen</td></tr>
+          <tr><td>Državni poticaj</td><td style="color:var(--etf-l)">✅ 15% od tvoje uplate, max <strong>99.54€/god</strong> (uz min. 663.61€/god vlastite uplate)</td></tr>
+          <tr><td>Poslodavčeva uplata</td><td style="color:var(--etf-l)">✅ Do <strong>804€/god</strong> neoporezivo — efektivno besplatan bonus ako ti ga poslodavac plaća</td></tr>
+          <tr><td>Naknada upravljanja</td><td>Zakonski max <strong>3%/god</strong>; Erste faktično ~1.87%, ostali blizu 3%</td></tr>
+          <tr><td>Ulazna naknada</td><td>Max 3% pri uplati (mnogi fondovi ne naplaćuju)</td></tr>
+          <tr><td>Minimalna uplata</td><td>Nema zakonskog minimuma; praktično od ~20€/mj</td></tr>
+          <tr><td>Investicijska strategija</td><td>Konzervativna do umjerena (pretežno obveznice + dionice); viši rizik = više dionica</td></tr>
+          <tr>
+            <td>🔒 Likvidnost</td>
+            <td style="color:var(--red)"><strong>Niska</strong> — isplata najranije od <strong>55. god.</strong><br>
+            Max <strong>30%</strong> jednokratno, ostatak u mirovinskim obrocima<br>
+            <span style="color:var(--muted2);font-size:0.78rem">❌ Prijevremena isplata nije moguća (osim iznimaka poput trajne radne nesposobnosti)</span></td>
+          </tr>
+          <tr><td>Porezne pogodnosti</td><td>✅ Uplata iz bruto plaće (smanjuje poreznu osnovicu); poticaj dolazi direktno od države</td></tr>
+          <tr><td>Nasljeđivanje</td><td>✅ Sredstva se naslijeđuju — ne gubiš u slučaju smrti</td></tr>
+          <tr><td>Promjena fonda</td><td>✅ Moguće promijeniti fond ili društvo; ako raskineš ugovor prerano, vraćaš primljeni državni poticaj državi</td></tr>
+          <tr><td>Valuta</td><td>EUR (od uvoda eura 2023.)</td></tr>
+          <tr><td>Regulatorni nadzor</td><td>HANFA (Hrvatska agencija za nadzor financijskih usluga)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:0.85rem;display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+      <div style="padding:0.75rem 1rem;background:var(--surface2);border-radius:8px;border-left:3px solid var(--etf-l);font-size:0.8rem">
+        <strong style="color:var(--etf-l)">✅ Idealno ako...</strong>
+        <ul style="margin:0.4rem 0 0;padding-left:1.2rem;color:var(--muted2);line-height:1.8">
+          <li>Imaš redovnu plaću i možeš iskoristiti poticaj</li>
+          <li>Poslodavac ti uplate u DMF</li>
+          <li>Plan ti je ostati u HR do mirovine</li>
+          <li>Niska tolerancija na rizik</li>
+        </ul>
+      </div>
+      <div style="padding:0.75rem 1rem;background:var(--surface2);border-radius:8px;border-left:3px solid var(--red);font-size:0.8rem">
+        <strong style="color:var(--red)">⚠️ Pazi na...</strong>
+        <ul style="margin:0.4rem 0 0;padding-left:1.2rem;color:var(--muted2);line-height:1.8">
+          <li>Visoke naknade (do 3%/god) pojednih fondova</li>
+          <li>Novac zaključan do 55. god.</li>
+          <li>Max 30% jednokratne isplate</li>
+          <li>Konzervativni prinosi vs. ETF alternativa</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Risk legend -->
+  <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem;padding:1rem 1.25rem;background:var(--surface);border:1px solid var(--border);border-radius:14px;align-items:center;">
+    <span style="font-size:0.7rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted)">Razine rizika:</span>
+    <span style="font-size:0.8rem"><span style="color:var(--red)">●●●</span> <span style="color:var(--muted2)">Visok (više dionica, veći prinos dugoročno)</span></span>
+    <span style="font-size:0.8rem"><span style="color:var(--yellow)">●●○</span> <span style="color:var(--muted2)">Umjeren (mješoviti portfelj)</span></span>
+    <span style="font-size:0.8rem"><span style="color:var(--etf)">●○○</span> <span style="color:var(--muted2)">Nizak (pretežno obveznice)</span></span>
+    <span style="font-size:0.75rem;color:var(--muted);margin-left:auto">Državni poticaj: 15% do max 99.54€/god | Isplata od 55 god.</span>
+  </div>
+
+  <!-- Calculator -->
+  <div class="controls">
+    <div class="ctrl-group c-neutral">
+      <label>Odaberi fond</label>
+      <select id="p0a-fund-select">
+        <option value="11.5,5.35">Croatia 1000A (visok rizik)</option>
+        <option value="10.44,6.62" selected>Erste Plavi Expert (visok rizik)</option>
+        <option value="8.89,4.51">AZ Profit (umjeren rizik)</option>
+        <option value="7.72,4.12">Croatia DMF (umjeren rizik)</option>
+        <option value="4.14,3.20">AZ Benefit (nizak rizik)</option>
+        <option value="3.36,3.00">Raiffeisen DMF (nizak rizik)</option>
+        <option value="3.32,2.80">Erste Plavi Protect (nizak rizik)</option>
+        <option value="3.13,2.50">Croatia 1000C (nizak rizik)</option>
+      </select>
+    </div>
+    <div class="ctrl-group c-neutral">
+      <label>Način uplate</label>
+      <select id="p0a-period">
+        <option value="godisnje">Godišnje</option>
+        <option value="mjesecno">Mjesečno</option>
+      </select>
+    </div>
+    <div class="ctrl-group c-neutral">
+      <label>Iznos uplate</label>
+      <div class="row"><input type="range" id="p0a-uplata" min="0" max="5000" step="50" value="663"><input type="number" class="ctrl-val-input" id="p0a-uplata-v" value="663.00" data-decimals="2" min="10" max="5000" step="any" placeholder="1000"></div>
+    </div>
+    <div class="ctrl-group c-neutral">
+      <label>Početna uplata (€)</label>
+      <div class="row"><input type="range" id="p0a-initial" min="0" max="5000" step="100" value="0"><input type="number" class="ctrl-val-input" id="p0a-initial-v" value="0.00" data-decimals="2" min="0" max="20000" step="any" placeholder="1000"></div>
+    </div>
+    <div class="ctrl-group c-neutral">
+      <label>Broj godina</label>
+      <div class="row"><input type="range" id="p0a-god" min="5" max="60" step="1" value="25"><input type="number" class="ctrl-val-input" id="p0a-god-v" value="25" min="5" max="60" step="1" placeholder="25"></div>
+    </div>
+    <div class="ctrl-group c-neutral">
+      <label>Koristiti državni poticaj?</label>
+      <select id="p0a-poticaj">
+        <option value="yes" selected>Da (godišnja uplata ≥ 663.61€)</option>
+        <option value="no">Ne / manje od 663.61€/god</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stat-cards">
+    <div class="stat-card sc-dmf">
+      <div class="sc-label">Odabrani fond</div>
+      <div class="sc-name" id="p0a-fund-name">Erste Plavi Expert</div>
+      <div class="sc-row"><div class="sr-lbl">Krajnja vrijednost</div><div class="sr-val" id="p0a-total">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Neto zarada</div><div class="sr-val" id="p0a-earn" style="font-size:.9rem">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Multiplikator</div><div class="sr-val" id="p0a-multi" style="font-size:.9rem">—</div></div>
+    </div>
+    <div class="stat-card sc-pepp">
+      <div class="sc-label">Uplaćeno</div>
+      <div class="sc-name">Ukupno vaše + poticaj</div>
+      <div class="sc-row"><div class="sr-lbl">Vaše uplate</div><div class="sr-val" id="p0a-in" style="font-size:.9rem">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Državni poticaj</div><div class="sr-val" id="p0a-poticaj-val" style="font-size:.9rem;color:var(--etf-l)">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Ukupno u fond</div><div class="sr-val" id="p0a-total-in" style="font-size:.85rem">—</div></div>
+    </div>
+    <div class="stat-card sc-etf">
+      <div class="sc-label">Isplata</div>
+      <div class="sc-name">Projekcija prihoda</div>
+      <div class="sc-row"><div class="sr-lbl">Jednokratno (100%)</div><div class="sr-val" id="p0a-lump" style="font-size:.9rem">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Mj. isplata (4%, 25g)</div><div class="sr-val" id="p0a-monthly" style="font-size:.9rem">—</div></div>
+      <div class="sc-row"><div class="sr-sub" style="color:var(--muted);font-size:0.68rem">*Isplata od 55. god. Max 30% jednokratno</div></div>
+      <div class="sc-row"><div class="sr-sub liq-tag liq-low">🔒 Niska likvidnost</div></div>
+    </div>
+  </div>
+
+  <!-- Scenario comparison -->
+  <div class="winner-banner">
+    <div><div class="wb-label">Prinos (korišten)</div><div class="wb-val" id="p0a-rate-used" style="color:var(--dmf-l)">—</div></div>
+    <div class="wb-desc" id="p0a-info">—</div>
+  </div>
+
+  <!-- Multi-fund comparison chart -->
+  <div class="chart-card">
+    <h3>Usporedba svih fondova — ista uplata, isti period</h3>
+    <canvas id="p0a-chart-all"></canvas>
+    <div class="chart-controls">
+      <div class="period-btns" id="p0a-chart-all-periods">
+        <span style="font-size:0.62rem;color:var(--muted);margin-right:0.2rem">Period:</span>
+        <button class="period-btn" data-years="1" data-chart="p0a-chart-all">1Y</button><button class="period-btn" data-years="3" data-chart="p0a-chart-all">3Y</button><button class="period-btn" data-years="5" data-chart="p0a-chart-all">5Y</button><button class="period-btn" data-years="10" data-chart="p0a-chart-all">10Y</button><button class="period-btn" data-years="15" data-chart="p0a-chart-all">15Y</button><button class="period-btn" data-years="20" data-chart="p0a-chart-all">20Y</button><button class="period-btn" data-years="25" data-chart="p0a-chart-all">25Y</button><button class="period-btn" data-years="30" data-chart="p0a-chart-all">30Y</button>
+        <button class="period-btn active" data-years="all" data-chart="p0a-chart-all">SVE</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem">
+
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <h3>Rast odabranog fonda kroz godine</h3>
+    <canvas id="p0a-chart"></canvas>
+    <div class="chart-controls">
+      <div class="period-btns" id="p0a-chart-periods">
+        <span style="font-size:0.62rem;color:var(--muted);margin-right:0.2rem">Period:</span>
+        <button class="period-btn" data-years="1" data-chart="p0a-chart">1Y</button><button class="period-btn" data-years="3" data-chart="p0a-chart">3Y</button><button class="period-btn" data-years="5" data-chart="p0a-chart">5Y</button><button class="period-btn" data-years="10" data-chart="p0a-chart">10Y</button><button class="period-btn" data-years="15" data-chart="p0a-chart">15Y</button><button class="period-btn" data-years="20" data-chart="p0a-chart">20Y</button><button class="period-btn" data-years="25" data-chart="p0a-chart">25Y</button><button class="period-btn" data-years="30" data-chart="p0a-chart">30Y</button>
+        <button class="period-btn active" data-years="all" data-chart="p0a-chart">SVE</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem">
+
+      </div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <h3>Projekcija odabranog fonda po godinama</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr>
+        <th>Godina</th>
+        <th style="color:var(--muted2)">Uplaćeno</th>
+        <th style="color:var(--muted2)">+Poticaj</th>
+        <th style="color:var(--dmf-l)">Vrijednost fonda</th>
+        <th style="color:var(--etf-l)">Zarada</th>
+      </tr></thead>
+      <tbody id="p0a-tbody"></tbody>
+    </table></div>
+  </div>
+  <div class="liq-info-box">
+    <div class="liq-row"><span class="liq-icon">🔒</span><div class="liq-text"><strong>Niska likvidnost — HR DMF (3. mirovinski stup)</strong><span>Novac je zaključan do <strong>55. godine</strong>. Možeš povući max <strong>30% jednokratno</strong>, ostatak se isplaćuje u mirovinskim ratama. Prijevremeni otkup nije moguć.</span></div></div>
+    <div class="liq-row"><span class="liq-icon">ℹ️</span><div class="liq-text"><strong>Zašto toliko dugo?</strong><span>DMF je mirovinski produkt — država daje poticaj (99.54€/god) upravo zato što je kapital zaključan. Nije za nužnu pričuvu — za to koristi ETF.</span></div></div>
+  </div>
+  <p class="disclaimer">⚠️ Prinosi su historijski podaci HANFA 2024. i ne garantiraju buduće rezultate. Državni poticaj 15% na max 663.61€/god = 99.54€. Isplata najranije s 55 god. Nije financijski savjet.</p>
+</div>
+
+<!-- ========== PAGE 0B: ETF PLATFORME ========== -->
+<div class="page" id="pepp">
+  <div class="page-header">
+    <h2><span class="grad-cool" data-i18n="pepp-title">🌍 PEPP — Pan-europska osobna mirovina</span></h2>
+    <p data-i18n="pepp-desc">Pan-European Personal Pension Product (PEPP) je EU-reguliran mirovinski proizvod dostupan građanima svih država članica.</p>
+  </div>
+
+  <div class="stat-cards">
+    <div class="stat-card sc-pepp">
+      <div class="sc-label">Naknada</div>
+      <div class="sc-name">Max 1% godišnje</div>
+      <div class="sc-row"><div class="sr-lbl">Finax (jedini HR ponuđač)</div><div class="sr-val">1.0% / god</div></div>
+    </div>
+    <div class="stat-card sc-pepp">
+      <div class="sc-label">Portfelj</div>
+      <div class="sc-name">100% globalni ETF-ovi</div>
+      <div class="sc-row"><div class="sr-lbl">Strategija</div><div class="sr-val">Pasivni indeksni fond</div></div>
+    </div>
+    <div class="stat-card sc-pepp">
+      <div class="sc-label">Portabilnost</div>
+      <div class="sc-name">EU prenosivo</div>
+      <div class="sc-row"><div class="sr-lbl">Selidba unutar EU</div><div class="sr-val">✅ Zadržavaš račun</div></div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <h3>Ključne karakteristike PEPP-a</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Karakteristika</th><th>Detalji</th></tr></thead>
+        <tbody>
+          <tr><td>Puni naziv</td><td>Pan-European Personal Pension Product</td></tr>
+          <tr><td>Regulativa</td><td>EU Uredba 2019/1238 — vrijedi u svim EU državama</td></tr>
+          <tr><td>Ponuđač u HR</td><td>Finax (jedini trenutno registrirani u HR)</td></tr>
+          <tr><td>Naknada upravljanja</td><td>Max 1.0% godišnje (regulatorno ograničenje EU)</td></tr>
+          <tr><td>Minimalni ulog</td><td>20€/mj ili jednokratno</td></tr>
+          <tr><td>Investicijska strategija</td><td>Globalni ETF-ovi (MSCI World / All World)</td></tr>
+          <tr><td>Državni poticaj (HR)</td><td>❌ Nije dostupan (za razliku od DMF-a)</td></tr>
+          <tr><td>Porezna olakšica (HR)</td><td>❌ Trenutno nije izjednačena s DMF-om</td></tr>
+          <tr><td>EU portabilnost</td><td>✅ Selišeš se — zadržavaš isti račun</td></tr>
+          <tr><td>Isplata</td><td>Od mirovinske dobi ili prijevremeno uz uvjete</td></tr>
+          <tr><td>Likvidnost</td><td>🟡 <strong>Srednja</strong> — isplata od 55. god. ili ranije kod invalidnosti/terminalne bolesti; 100% jednokratno (za razliku od DMF-a)</td></tr>
+          <tr><td>Prijevremena isplata</td><td>Moguća uz penalizaciju (uvjeti variraju po ponuđaču)</td></tr>
+          <tr><td>Nasljeđivanje</td><td>✅ Prenosivo nasljednicima</td></tr>
+          <tr><td>Podkonti</td><td>Novi podkonto u svakoj novoj EU državi stanovanja</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <h3>PEPP vs DMF — brza usporedba</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Kriterij</th><th style="color:var(--pepp-l)">🌍 PEPP (Finax)</th><th style="color:var(--dmf-l)">🏦 DMF (3. stup)</th></tr></thead>
+        <tbody>
+          <tr><td>Naknada</td><td>~1.0%/god</td><td>0.5–1.87%/god</td></tr>
+          <tr><td>Državni poticaj</td><td style="color:var(--red)">❌ Nema</td><td style="color:var(--etf-l)">✅ 15%, max 99.54€/god</td></tr>
+          <tr><td>Porezna olakšica HR</td><td style="color:var(--red)">❌ Nema</td><td style="color:var(--etf-l)">✅ Uplata poslodavca do 804€/god neoporezivo</td></tr>
+          <tr><td>Prinos (povijesni ~5g)</td><td style="color:var(--etf-l)">~7–9%/god (globalni ETF)</td><td style="color:var(--muted2)">~3–6%/god (ovisi o fondu)</td></tr>
+          <tr><td>Investicijska strategija</td><td>Pasivni globalni ETF indeks</td><td>Konzervativni / mješoviti fond</td></tr>
+          <tr>
+            <td>🔐 Likvidnost</td>
+            <td style="color:var(--yellow)">🟡 Srednja — od 55. god., <strong>100%</strong> jednokratno</td>
+            <td style="color:var(--red)">🔒 Niska — od 55. god., max <strong>30%</strong> jednokratno</td>
+          </tr>
+          <tr><td>Prijevremena isplata</td><td style="color:var(--yellow)">⚠️ Moguća uz penalizaciju</td><td style="color:var(--red)">❌ Nije moguća (bez iznimke)</td></tr>
+          <tr><td>EU portabilnost</td><td style="color:var(--etf-l)">✅ Zadržavaš račun pri selidbi</td><td style="color:var(--red)">❌ Vezano uz HR</td></tr>
+          <tr><td>Valuta</td><td>EUR</td><td>HRK/EUR (fond u EUR)</td></tr>
+          <tr><td>Nasljeđivanje</td><td style="color:var(--etf-l)">✅ Da</td><td style="color:var(--etf-l)">✅ Da</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:0.85rem;padding:0.75rem 1rem;background:var(--surface2);border-radius:8px;font-size:0.8rem;color:var(--muted2);border-left:3px solid var(--pepp)">
+      💡 <strong style="color:var(--text)">Ključna razlika:</strong> DMF nudi državni poticaj (+99.54€/god besplatno), ali PEPP nudi viši potencijalni prinos i više fleksibilnosti pri isplati. Koristi <a href="#" onclick="document.querySelector('[data-page=p1]').click();return false;" style="color:var(--pepp-l)">kalkulator DMF vs PEPP</a> za personaliziranu usporedbu.
+    </div>
+  </div>
+
+  <div class="table-card">
+    <h3>Za koga je PEPP idealan?</h3>
+    <div style="display:grid;gap:0.8rem;margin-top:0.5rem">
+      <div style="background:var(--surface2);border-radius:10px;padding:1rem;border-left:3px solid var(--pepp)">
+        <strong>🌍 EU mobilni radnici</strong>
+        <p style="margin:0.3rem 0 0;font-size:0.88rem;color:var(--muted)">Planiraš raditi u više EU država? PEPP ide s tobom — bez gubitka ulaganja pri selidbi.</p>
+      </div>
+      <div style="background:var(--surface2);border-radius:10px;padding:1rem;border-left:3px solid var(--pepp)">
+        <strong>📈 Investitori s dugim horizontom</strong>
+        <p style="margin:0.3rem 0 0;font-size:0.88rem;color:var(--muted)">10+ godina do mirovine? Viši potencijalni prinos ETF-ova može nadoknaditi izostanak državnog poticaja.</p>
+      </div>
+      <div style="background:var(--surface2);border-radius:10px;padding:1rem;border-left:3px solid var(--pepp)">
+        <strong>💼 Samozaposleni i freelanceri</strong>
+        <p style="margin:0.3rem 0 0;font-size:0.88rem;color:var(--muted)">Nemaš poslodavca koji bi uplaćivao u DMF? PEPP nudi alternativni put za mirovinsku štednju.</p>
+      </div>
+      <div style="background:var(--surface2);border-radius:10px;padding:1rem;border-left:3px solid var(--surface3,#333)">
+        <strong style="color:var(--muted)">⚠️ Nije optimalno za…</strong>
+        <p style="margin:0.3rem 0 0;font-size:0.88rem;color:var(--muted)">Kratkoročnu štednju (&lt;5 god), ili ako je DMF s državnim poticajem i poslodavčevom uplatom dostupan i iskoristiv.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="liq-info-box">
+    <div class="liq-row"><span class="liq-icon">🟡</span><div class="liq-text"><strong>Srednja likvidnost — PEPP (Finax)</strong><span>Isplata je moguća od <strong>55. godine</strong> (ili ranije u posebnim slučajevima: trajna nesposobnost, terminal illness). Sav kapital možeš povući odjednom — bez ograničenja na 30% kao kod HR DMF-a.</span></div></div>
+    <div class="liq-row"><span class="liq-icon">ℹ️</span><div class="liq-text"><strong>Razlika od HR DMF-a</strong><span>Kod HR DMF-a max 30% jednokratno + ostatak u ratama. Kod PEPP-a (Finax) možeš povući <strong>100% odjednom</strong> od 55. god. Veća fleksibilnost pri isplati.</span></div></div>
+  </div>
+  <p class="disclaimer">⚠️ Informativni pregled. Finax je jedini PEPP ponuđač trenutno registriran u HR. Provjeri najnovije uvjete na finax.eu. Nije financijski savjet.</p>
+</div>
+
+<div class="page" id="p0b">
+  <div class="page-header">
+    <h2><span class="grad-cool"><span data-i18n="p0b-title">ETF Ulaganje — Platforme & Projekcija</span></h2>
+    <p data-i18n="p0b-desc">Usporedi ulaganje u ETF fondove preko IBKR, Trading 212 i Finax. Sve naknade, osiguranje i projekcija rasta uračunati su automatski.</p>
+  </div>
+
+  <!-- Platform info cards -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem;margin-bottom:1.5rem;">
+    <div class="stat-card sc-etf">
+      <div class="sc-label">Interactive Brokers (IBKR)</div>
+      <div class="sc-name">Profesionalni broker</div>
+      <div class="sc-row"><div class="sr-lbl">Transakcijska naknada</div><div class="sr-val" style="font-size:.88rem">0.05% (min 3€)</div></div>
+      <div class="sc-row"><div class="sr-lbl">Godišnja naknada</div><div class="sr-val" style="font-size:.88rem">0€ (bez inaktivnosti)</div></div>
+      <div class="sc-row"><div class="sr-lbl">Povlačenje</div><div class="sr-val" style="font-size:.88rem">1× besplatno/mj, +8€</div></div>
+      <div class="sc-row"><div class="sr-lbl">Osigurana svota</div><div class="sr-val" style="font-size:.88rem;color:var(--etf-l)">20.000€ (EU/IBIE)</div></div>
+      <div class="sc-row"><div class="sr-lbl">Fx naknada</div><div class="sr-val" style="font-size:.88rem">~0.002%</div></div>
+      <div class="sr-sub" style="margin-top:.5rem">Reguliran: HANFA, CBI (Irska). Odvojena sredstva klijenata.</div>
+    </div>
+    <div class="stat-card sc-pepp">
+      <div class="sc-label">Trading 212</div>
+      <div class="sc-name">Discount broker (Invest)</div>
+      <div class="sc-row"><div class="sr-lbl">Transakcijska naknada</div><div class="sr-val" style="font-size:.88rem;color:var(--etf-l)">0€ (besplatno!)</div></div>
+      <div class="sc-row"><div class="sr-lbl">Godišnja naknada</div><div class="sr-val" style="font-size:.88rem;color:var(--etf-l)">0€</div></div>
+      <div class="sc-row"><div class="sr-lbl">Uplata karticom</div><div class="sr-val" style="font-size:.88rem">0.7% (do 2.000€), iznad besplatno</div></div>
+      <div class="sc-row"><div class="sr-lbl">Povlačenje</div><div class="sr-val" style="font-size:.88rem;color:var(--etf-l)">0€</div></div>
+      <div class="sc-row"><div class="sr-lbl">Osigurana svota</div><div class="sr-val" style="font-size:.88rem;color:var(--yellow)">20.000€ (ICF) + Lloyd's 1M GBP</div></div>
+      <div class="sc-row"><div class="sr-lbl">Fx naknada</div><div class="sr-val" style="font-size:.88rem">0.15% (samo za non-EUR ETF)</div></div>
+      <div class="sr-sub" style="margin-top:.5rem">Reguliran: FCA, BaFin, CySEC. Bankarski transfer = bez naknade.</div>
+    </div>
+    <div class="stat-card sc-combo">
+      <div class="sc-label">Finax</div>
+      <div class="sc-name">Robo-savjetnik (ETF portfelji)</div>
+      <div class="sc-row"><div class="sr-lbl">Upravljačka naknada</div><div class="sr-val" style="font-size:.88rem;color:var(--yellow)">1% + PDV/god (~1.2% eff.)</div></div>
+      <div class="sc-row"><div class="sr-lbl">Transakcijska naknada</div><div class="sr-val" style="font-size:.88rem;color:var(--etf-l)">0€</div></div>
+      <div class="sc-row"><div class="sr-lbl">Uplata/isplata</div><div class="sr-val" style="font-size:.88rem;color:var(--etf-l)">0€</div></div>
+      <div class="sc-row"><div class="sr-lbl">Osigurana svota</div><div class="sr-val" style="font-size:.88rem;color:var(--etf-l)">20.000€ (Slovak NBS)</div></div>
+      <div class="sc-row"><div class="sr-lbl">Min. uplata</div><div class="sr-val" style="font-size:.88rem">1.000€ (initial)</div></div>
+      <div class="sr-sub" style="margin-top:.5rem">Auto-rebalancing. Prinos slobodan od poreza nakon 2 god. (HR rezidenti).</div>
+    </div>
+  </div>
+
+  <!-- Tax info banner -->
+  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:1.1rem 1.4rem;margin-bottom:1.5rem;display:flex;gap:1.5rem;flex-wrap:wrap;align-items:flex-start;">
+    <div>
+      <div style="font-size:0.68rem;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--muted);margin-bottom:.3rem">Porez HR (od 2024.)</div>
+      <div style="font-size:0.85rem;line-height:1.6;">
+        <span style="color:var(--etf-l)">✓ &lt; 2 godine:</span> porez na kapitalnu dobit <strong>12%</strong><br>
+        <span style="color:var(--etf-l)">✓ ≥ 2 godine:</span> <strong style="color:var(--etf-l)">0% poreza</strong> na kapitalnu dobit<br>
+        <span style="color:var(--yellow)">⚠ Dividende:</span> uvijek oporezovane <strong>12%</strong> (koristiti akumulirajuće ETF-e!)
+      </div>
+    </div>
+    <div style="border-left:1px solid var(--border);padding-left:1.5rem;">
+      <div style="font-size:0.68rem;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--muted);margin-bottom:.3rem">Preporuka za HR</div>
+      <div style="font-size:0.85rem;color:var(--muted2);line-height:1.6;">
+        Koristiti <strong style="color:var(--text)">akumulirajuće (Acc)</strong> ETF-ove.<br>
+        Bankovni transfer za uplate (bez naknade).<br>
+        IBKR ili T212 za min. troškove.
+      </div>
+    </div>
+  </div>
+
+  <!-- Calculator -->
+  <div class="controls">
+    <div class="ctrl-group c-etf">
+      <label>ETF fond</label>
+      <select id="p0b-etf-select">
+        <option value="9.5,VISOK,VWCE — Vanguard All World Acc">VWCE — Vanguard All World (Acc) — Visok rizik</option>
+        <option value="10.2,VISOK,IWDA — iShares MSCI World Acc">IWDA — iShares MSCI World (Acc) — Visok rizik</option>
+        <option value="11.0,VISOK,CSPX — iShares S&amp;P 500 Acc">CSPX — iShares S&amp;P 500 (Acc) — Visok rizik</option>
+        <option value="12.5,VISOK,QQQ — Nasdaq-100 Acc">QQQ / EQQQ — Nasdaq-100 — Visok rizik</option>
+        <option value="8.8,SREDNJI,VEUR — Vanguard Europe Acc">VEUR — Vanguard Europe (Acc) — Srednji rizik</option>
+        <option value="8.0,SREDNJI,VWRA — Vanguard All World ESG Acc">VWRA — Vanguard All World ESG — Srednji rizik</option>
+        <option value="6.5,NIZAK,VAGF — Vanguard Global Bond Acc">VAGF — Global Bonds (Acc) — Nizak rizik</option>
+        <option value="5.5,NIZAK,AGGH — iShares Global Agg Bond">AGGH — Global Aggregate Bonds — Nizak rizik</option>
+        <option value="7.5,SREDNJI,Finax 100% dionice">Finax — Portfelj 100% dionice</option>
+        <option value="6.0,SREDNJI,Finax 60/40 dionice/obveznice">Finax — Portfelj 60/40 mješoviti</option>
+        <option value="custom,VLASTITI,Vlastiti ETF">Vlastiti prinos...</option>
+      </select>
+    </div>
+    <div class="ctrl-group c-etf" id="p0b-etf-custom-wrap" style="display:none">
+      <label>Vlastiti prinos (%)</label>
+      <div class="row"><input type="range" id="p0b-custom-r" min="2" max="18" step="0.1" value="9.0"><input type="number" class="ctrl-val-input" id="p0b-custom-r-v" value="9.0" min="2" max="18" step="0.1" placeholder="8"></div>
+    </div>
+    <div class="ctrl-group c-neutral">
+      <label>Platforma</label>
+      <select id="p0b-platform">
+        <option value="ibkr">Interactive Brokers (IBKR)</option>
+        <option value="t212">Trading 212 (bankovni transfer)</option>
+        <option value="t212card">Trading 212 (kartica, mali iznosi)</option>
+        <option value="finax">Finax (robo-savjetnik)</option>
+      </select>
+    </div>
+    <div class="ctrl-group c-neutral">
+      <label>Godišnja uplata</label>
+      <div class="row"><input type="range" id="p0b-uplata" min="0" max="5000" step="50" value="1200"><input type="number" class="ctrl-val-input" id="p0b-uplata-v" value="1200.00" data-decimals="2" min="100" max="5000" step="any" placeholder="1000"></div>
+    </div>
+    <div class="ctrl-group c-neutral">
+      <label>Početna uplata (€)</label>
+      <div class="row"><input type="range" id="p0b-initial" min="0" max="20000" step="500" value="1000"><input type="number" class="ctrl-val-input" id="p0b-initial-v" value="1000.00" data-decimals="2" min="0" max="20000" step="any" placeholder="1000"></div>
+    </div>
+    <div class="ctrl-group c-neutral">
+      <label>Broj godina</label>
+      <div class="row"><input type="range" id="p0b-god" min="2" max="60" step="1" value="20"><input type="number" class="ctrl-val-input" id="p0b-god-v" value="20" min="2" max="60" step="1" placeholder="25"></div>
+    </div>
+    <div class="ctrl-group c-neutral">
+      <label>Porez na kapitalnu dobit</label>
+      <select id="p0b-tax">
+        <option value="0">0% (≥2 god, HR rezident)</option>
+        <option value="12">12% (kraće od 2 god)</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Risk + platform info row -->
+  <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem;">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.8rem 1.1rem;flex:1;min-width:180px;">
+      <div style="font-size:0.68rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:.25rem">ETF razina rizika</div>
+      <div id="p0b-risk-badge" style="font-size:1rem;font-weight:600">—</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.8rem 1.1rem;flex:1;min-width:180px;">
+      <div style="font-size:0.68rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:.25rem">Efektivna godišnja naknada</div>
+      <div id="p0b-fee-display" style="font-size:1rem;font-weight:600;color:var(--yellow)">—</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.8rem 1.1rem;flex:1;min-width:180px;">
+      <div style="font-size:0.68rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:.25rem">Osigurana svota</div>
+      <div id="p0b-insurance" style="font-size:.9rem;font-weight:600;color:var(--etf-l)">—</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.8rem 1.1rem;flex:1;min-width:180px;">
+      <div style="font-size:0.68rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:.25rem">Bruto prinos ETF</div>
+      <div id="p0b-gross-rate" style="font-size:1rem;font-weight:600;color:var(--etf-l)">—</div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stat-cards">
+    <div class="stat-card sc-etf">
+      <div class="sc-label">Krajnji rezultat</div>
+      <div class="sc-name" id="p0b-etf-name">VWCE</div>
+      <div class="sc-row"><div class="sr-lbl">Bruto vrijednost</div><div class="sr-val" id="p0b-gross">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Neto (nakon naknada)</div><div class="sr-val" id="p0b-net" style="font-size:.9rem">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Neto (nakon poreza)</div><div class="sr-val" id="p0b-after-tax" style="font-size:.9rem;color:var(--etf-l)">—</div></div>
+    </div>
+    <div class="stat-card sc-pepp">
+      <div class="sc-label">Uloženo & Zarada</div>
+      <div class="sc-name">Vaš doprinos</div>
+      <div class="sc-row"><div class="sr-lbl">Ukupno uplaćeno</div><div class="sr-val" id="p0b-in" style="font-size:.9rem">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Neto zarada</div><div class="sr-val" id="p0b-earn" style="font-size:.9rem">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Multiplikator</div><div class="sr-val" id="p0b-multi" style="font-size:.85rem">—</div></div>
+    </div>
+    <div class="stat-card sc-dmf">
+      <div class="sc-label">Trošak naknada</div>
+      <div class="sc-name">Što platforma uzima</div>
+      <div class="sc-row"><div class="sr-lbl">Ukupne naknade</div><div class="sr-val" id="p0b-fees-total" style="font-size:.9rem;color:var(--red)">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">% od zarade</div><div class="sr-val" id="p0b-fees-pct" style="font-size:.9rem;color:var(--red)">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Mj. isplata (4%)</div><div class="sr-val" id="p0b-monthly" style="font-size:.85rem;color:var(--etf-l)">—</div></div>
+    </div>
+  </div>
+
+  <!-- Chart -->
+  <div class="chart-card">
+    <h3>Usporedba platformi — ista uplata, isti ETF, različite naknade</h3>
+    <canvas id="p0b-chart-platforms"></canvas>
+    <div class="chart-controls">
+      <div class="period-btns" id="p0b-chart-platforms-periods">
+        <span style="font-size:0.62rem;color:var(--muted);margin-right:0.2rem">Period:</span>
+        <button class="period-btn" data-years="1" data-chart="p0b-chart-platforms">1Y</button><button class="period-btn" data-years="3" data-chart="p0b-chart-platforms">3Y</button><button class="period-btn" data-years="5" data-chart="p0b-chart-platforms">5Y</button><button class="period-btn" data-years="10" data-chart="p0b-chart-platforms">10Y</button><button class="period-btn" data-years="15" data-chart="p0b-chart-platforms">15Y</button><button class="period-btn" data-years="20" data-chart="p0b-chart-platforms">20Y</button><button class="period-btn" data-years="25" data-chart="p0b-chart-platforms">25Y</button><button class="period-btn" data-years="30" data-chart="p0b-chart-platforms">30Y</button>
+        <button class="period-btn active" data-years="all" data-chart="p0b-chart-platforms">SVE</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem">
+
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <h3>Rast portfelja — bruto vs neto vs realno</h3>
+    <canvas id="p0b-chart"></canvas>
+    <div class="chart-controls">
+      <div class="period-btns" id="p0b-chart-periods">
+        <span style="font-size:0.62rem;color:var(--muted);margin-right:0.2rem">Period:</span>
+        <button class="period-btn" data-years="1" data-chart="p0b-chart">1Y</button><button class="period-btn" data-years="3" data-chart="p0b-chart">3Y</button><button class="period-btn" data-years="5" data-chart="p0b-chart">5Y</button><button class="period-btn" data-years="10" data-chart="p0b-chart">10Y</button><button class="period-btn" data-years="15" data-chart="p0b-chart">15Y</button><button class="period-btn" data-years="20" data-chart="p0b-chart">20Y</button><button class="period-btn" data-years="25" data-chart="p0b-chart">25Y</button><button class="period-btn" data-years="30" data-chart="p0b-chart">30Y</button>
+        <button class="period-btn active" data-years="all" data-chart="p0b-chart">SVE</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem">
+
+      </div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <h3>Projekcija po godinama</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr>
+        <th>God.</th>
+        <th style="color:var(--muted2)">Uloženo</th>
+        <th style="color:var(--etf-l)">Bruto</th>
+        <th style="color:var(--pepp-l)">Neto (naknade)</th>
+        <th style="color:var(--dmf-l)">Naknade ukupno</th>
+        <th style="color:var(--etf-l)">Nakon poreza</th>
+      </tr></thead>
+      <tbody id="p0b-tbody"></tbody>
+    </table></div>
+  </div>
+  <div class="liq-info-box">
+    <div class="liq-row"><span class="liq-icon">🟢</span><div class="liq-text"><strong>Visoka likvidnost — ETF fondovi</strong><span>Možeš prodati i povući novac <strong>u bilo kojem trenutku</strong> — nema dobnih ograničenja, nema kazni. Novac stiže u roku 2–3 radna dana (T+2 settlement).</span></div></div>
+    <div class="liq-row"><span class="liq-icon">⚠️</span><div class="liq-text"><strong>Ali pazi na porez</strong><span>U HR: kapitalnu dobit ne placaš ako držiš ETF <strong>2+ godine</strong>. Ako prodaš ranije, placaš 10% poreza + prirez. Likvidnost postoji, ali porezna optimizacija nagrađuje strpljenje.</span></div></div>
+  </div>
+  <p class="disclaimer">⚠️ ETF prinosi su historijski prosjeci i ne garantiraju buduće rezultate. IBKR EU osiguranje 20.000€ (IBIE, Irska). T212 ICF do 20.000€ + Lloyd's polica. Finax NBS SK do 20.000€. Prinos slobodan od poreza ≥2 god za HR rezidente. Nije financijski savjet.</p>
+</div>
+
+<!-- ========== PAGE 1 ========== -->
+<div class="page" id="p1">
+  <div class="page-header">
+    <h2><span class="grad-warm" data-i18n="p1-title">HR DMF (3.stup) vs PEPP</span></h2>
+    <p data-i18n="p1-desc">Usporedi domaći dobrovoljni mirovinski fond s državnim poticajem nasuprot pan-europske osobne mirovine.</p>
+  </div>
+
+  <div class="controls">
+    <div class="ctrl-group c-neutral">
+      <label>Godišnja uplata</label>
+      <div class="row"><input type="range" id="p1-uplata" min="0" max="5000" step="50" value="663"><input type="number" class="ctrl-val-input" id="p1-uplata-v" value="663.00" data-decimals="2" min="0" max="5000" step="any" placeholder="663.61"></div>
+    </div>
+    <div class="ctrl-group c-neutral">
+      <label>Državni poticaj (DMF)</label>
+      <div class="toggle-switch-wrap">
+        <label class="toggle-switch"><input type="checkbox" id="p1-poticaj-toggle" checked><span class="toggle-slider"></span></label>
+        <span class="toggle-label active" id="p1-poticaj-lbl">Uključen</span>
+      </div>
+      <div class="poticaj-info" id="p1-poticaj-info">15% od osobne uplate, max 99.54€/god. Neoporeziva uplata poslodavca do 804€/god nije uključena — dodaj je u iznos uplate ako je koristiš.</div>
+    </div>
+    <div class="ctrl-group c-neutral">
+      <label>Broj godina</label>
+      <div class="row"><input type="range" id="p1-god" min="5" max="60" step="1" value="30"><input type="number" class="ctrl-val-input" id="p1-god-v" value="30" min="5" max="60" step="1" placeholder="25"></div>
+    </div>
+    <div class="ctrl-group c-dmf">
+      <label>Odaberi DMF fond</label>
+      <select id="p1-dmf-select" onchange="updateP1()" style="width:100%;padding:0.5rem 0.75rem;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.85rem;cursor:pointer">
+        <option value="Croatia 1000A">Croatia 1000A — VISOK rizik</option>
+        <option value="Erste Plavi Expert" selected>Erste Plavi Expert — VISOK rizik</option>
+        <option value="AZ Profit">AZ Profit — UMJEREN rizik</option>
+        <option value="Croatia DMF">Croatia DMF — UMJEREN rizik</option>
+        <option value="AZ Benefit">AZ Benefit — NIZAK rizik</option>
+        <option value="Raiffeisen DMF">Raiffeisen DMF — NIZAK rizik</option>
+        <option value="Erste Plavi Protect">Erste Plavi Protect — NIZAK rizik</option>
+        <option value="Croatia 1000C">Croatia 1000C — NIZAK rizik</option>
+      </select>
+      <div class="rate-note" id="p1-dmf-rate-note" style="margin-top:0.4rem">Prosječni prinos (10g): —</div>
+    </div>
+    <div class="ctrl-group c-pepp">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <label>PEPP (Finax)</label>
+        <span class="liq-tag liq-mid" style="font-size:0.65rem">Automatski prinos</span>
+      </div>
+      <div class="rate-note" id="p1-pepp-rate-note" style="margin-top:0.25rem;font-size:0.82rem;color:var(--muted2)">Finax historijski: ~8%/god bruto → nakon 1% naknade: <strong id="p1-pepp-net" style="color:var(--pepp-l)">7.0%</strong>/god</div>
+    </div>
+  </div>
+
+  <div class="stat-cards" id="p1-cards">
+    <div class="stat-card sc-dmf" id="p1-sc-dmf">
+      <div class="sc-label">3. Stup</div>
+      <div class="sc-name">DMF + Državni poticaj</div>
+      <div class="sc-row"><div class="sr-lbl">Ukupna vrijednost</div><div class="sr-val" id="p1-dmf-total">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Neto zarada</div><div class="sr-val" id="p1-dmf-earn" style="font-size:.95rem">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Ukupno uplaćeno</div><div class="sr-val" id="p1-dmf-in" style="font-size:.85rem">—</div><div class="sr-sub" id="p1-dmf-pot">poticaj: —</div></div>
+    </div>
+    <div class="stat-card sc-pepp" id="p1-sc-pepp">
+      <div class="sc-label">PEPP</div>
+      <div class="sc-name">Pan-europska mirovina</div>
+      <div class="sc-row"><div class="sr-lbl">Ukupna vrijednost</div><div class="sr-val" id="p1-pepp-total">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Neto zarada</div><div class="sr-val" id="p1-pepp-earn" style="font-size:.95rem">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Ukupno uplaćeno</div><div class="sr-val" id="p1-pepp-in" style="font-size:.85rem">—</div><div class="sr-sub">bez poticaja</div></div>
+    </div>
+  </div>
+
+  <div class="winner-banner">
+    <div><div class="wb-label">Razlika u korist pobjednika</div><div class="wb-val" id="p1-diff">—</div></div>
+    <div class="wb-desc" id="p1-desc">—</div>
+  </div>
+
+  <div class="chart-card">
+    <h3>Rast vrijednosti kroz godine</h3>
+    <canvas id="p1-chart"></canvas>
+    <div class="chart-controls">
+      <div class="period-btns" id="p1-chart-periods">
+        <span style="font-size:0.62rem;color:var(--muted);margin-right:0.2rem">Period:</span>
+        <button class="period-btn" data-years="1" data-chart="p1-chart">1Y</button><button class="period-btn" data-years="3" data-chart="p1-chart">3Y</button><button class="period-btn" data-years="5" data-chart="p1-chart">5Y</button><button class="period-btn" data-years="10" data-chart="p1-chart">10Y</button><button class="period-btn" data-years="15" data-chart="p1-chart">15Y</button><button class="period-btn" data-years="20" data-chart="p1-chart">20Y</button><button class="period-btn" data-years="25" data-chart="p1-chart">25Y</button><button class="period-btn" data-years="30" data-chart="p1-chart">30Y</button>
+        <button class="period-btn active" data-years="all" data-chart="p1-chart">SVE</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem">
+
+      </div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <h3>Pregled po periodima</h3>
+    <div class="tbl-wrap">
+      <table><thead><tr>
+        <th>Godina</th>
+        <th style="color:var(--dmf-l)">3. Stup (DMF)</th>
+        <th style="color:var(--pepp-l)">PEPP</th>
+        <th style="color:var(--etf-l)">Razlika</th>
+      </tr></thead><tbody id="p1-tbody"></tbody></table>
+    </div>
+  </div>
+  <div class="liq-info-box">
+    <div class="liq-row"><span class="liq-icon">🔒</span><div class="liq-text"><strong>HR DMF — Niska likvidnost</strong><span>Isplata najranije od <strong>55. god.</strong> Max 30% jednokratno, ostatak u mirovinskim ratama. Nema prijevremenog otkupa.</span></div></div>
+    <div class="liq-row"><span class="liq-icon">🟡</span><div class="liq-text"><strong>PEPP (Finax) — Srednja likvidnost</strong><span>Isplata od <strong>55. god.</strong> ali možeš povući <strong>100% odjednom</strong> — bez ograničenja na 30% kao kod HR DMF-a. Veća fleksibilnost pri isplati.</span></div></div>
+    <div class="liq-row"><span class="liq-icon">ℹ️</span><div class="liq-text"><strong>Zašto je to važno?</strong><span>Ako možeš birati, PEPP daje više slobode pri isplati. HR DMF je bolji samo ako je važan državni poticaj (99.54€/god) koji PEPP ne nudi.</span></div></div>
+  </div>
+  <p class="disclaimer">⚠️ Ilustrativna projekcija. Prinos DMF ~3.5% i PEPP ~8% su povijesni prosjeci, ne garancija. Državni poticaj 15% do 663.61€/god (max 99.54€). Nije financijski savjet.</p>
+</div>
+
+<!-- ========== PAGE 2 ========== -->
+<div class="page" id="p2">
+  <div class="page-header">
+    <h2><span class="grad-cool" data-i18n="p2-title">DMF/PEPP vs ETF</span></h2>
+    <p data-i18n="p2-desc">Usporedi mirovinske fondove s globalnim ETF-ovima. Uključi/isključi fondove i vidi koja strategija donosi više.</p>
+  </div>
+
+  <div class="controls">
+    <div class="ctrl-group c-neutral">
+      <label>Godišnja uplata (ukupno)</label>
+      <div class="row"><input type="range" id="p2-uplata" min="0" max="5000" step="50" value="1200"><input type="number" class="ctrl-val-input" id="p2-uplata-v" value="1200.00" data-decimals="2" min="0" max="5000" step="any" placeholder="1200"></div>
+    </div>
+    <div class="ctrl-group c-neutral">
+      <label>Državni poticaj (DMF)</label>
+      <div class="toggle-switch-wrap">
+        <label class="toggle-switch"><input type="checkbox" id="p2-poticaj-toggle" checked><span class="toggle-slider"></span></label>
+        <span class="toggle-label active" id="p2-poticaj-lbl">Uključen</span>
+      </div>
+      <div class="poticaj-info" id="p2-poticaj-info">15% od osobne uplate, max 99.54€/god. Neoporeziva uplata poslodavca do 804€/god nije uključena — dodaj je u iznos uplate ako je koristiš.</div>
+    </div>
+    <div class="ctrl-group c-neutral">
+      <label>Broj godina</label>
+      <div class="row"><input type="range" id="p2-god" min="5" max="60" step="1" value="25"><input type="number" class="ctrl-val-input" id="p2-god-v" value="25" min="5" max="60" step="1" placeholder="25"></div>
+    </div>
+    <div class="ctrl-group c-dmf">
+      <label>Prinos DMF (%/god)</label>
+      <div class="row"><input type="range" id="p2-dmfr" min="1" max="8" step="0.1" value="3.5"><input type="number" class="ctrl-val-input" id="p2-dmfr-v" value="3.5" min="1" max="8" step="0.1" placeholder="8"></div>
+    </div>
+    <div class="ctrl-group c-pepp">
+      <label>Prinos PEPP (%/god)</label>
+      <div class="row"><input type="range" id="p2-peppr" min="3" max="14" step="0.1" value="8.0"><input type="number" class="ctrl-val-input" id="p2-peppr-v" value="8.0" min="3" max="14" step="0.1" placeholder="8"></div>
+      <div class="rate-note" id="p2-pepp-rate-note">Nakon 1% Finax naknade: —</div>
+    </div>
+    <div class="ctrl-group c-etf">
+      <label>Odaberi ETF</label>
+      <select id="p2-etf-select">
+        <option value="9.5">VWCE — Vanguard All World (9.5%)</option>
+        <option value="10.2">IWDA — iShares MSCI World (10.2%)</option>
+        <option value="11.0">CSPX — iShares S&P 500 (11.0%)</option>
+        <option value="8.8">VEUR — Vanguard Europe (8.8%)</option>
+        <option value="7.5">AGGH — Global Bonds (7.5%)</option>
+        <option value="12.5">QQQ — Nasdaq-100 (12.5%)</option>
+        <option value="9.0" id="custom-etf-opt">Vlastiti prinos...</option>
+      </select>
+    </div>
+    <div class="ctrl-group c-etf" id="p2-etf-custom-wrap" style="display:none">
+      <label>Vlastiti prinos ETF (%)</label>
+      <div class="row"><input type="range" id="p2-etfr-custom" min="3" max="18" step="0.1" value="9.0"><input type="number" class="ctrl-val-input" id="p2-etfr-custom-v" value="9.0" min="3" max="18" step="0.1" placeholder="8"></div>
+    </div>
+  </div>
+
+  <div class="toggles-row" id="p2-toggles">
+    <div class="toggle-btn t-dmf active" data-key="dmf"><span class="dot" style="background:var(--dmf)"></span>3. Stup DMF</div>
+    <div class="toggle-btn t-pepp active" data-key="pepp"><span class="dot" style="background:var(--pepp)"></span>PEPP</div>
+    <div class="toggle-btn t-etf active" data-key="etf"><span class="dot" style="background:var(--etf)"></span>ETF</div>
+  </div>
+
+  <div class="stat-cards" id="p2-cards">
+    <div class="stat-card sc-dmf" id="p2-sc-dmf">
+      <div class="sc-label">3. Stup</div>
+      <div class="sc-name">DMF + Poticaj</div>
+      <div class="sc-row"><div class="sr-lbl">Krajnja vrijednost</div><div class="sr-val" id="p2-dmf-total">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Zarada</div><div class="sr-val" id="p2-dmf-earn" style="font-size:.9rem">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Multiplikator</div><div class="sr-val" id="p2-dmf-multi" style="font-size:.9rem">—</div></div>
+    </div>
+    <div class="stat-card sc-pepp" id="p2-sc-pepp">
+      <div class="sc-label">PEPP</div>
+      <div class="sc-name">Pan-europska mirovina</div>
+      <div class="sc-row"><div class="sr-lbl">Krajnja vrijednost</div><div class="sr-val" id="p2-pepp-total">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Zarada</div><div class="sr-val" id="p2-pepp-earn" style="font-size:.9rem">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Multiplikator</div><div class="sr-val" id="p2-pepp-multi" style="font-size:.9rem">—</div></div>
+    </div>
+    <div class="stat-card sc-etf" id="p2-sc-etf">
+      <div class="sc-label">ETF</div>
+      <div class="sc-name" id="p2-etf-name">VWCE</div>
+      <div class="sc-row"><div class="sr-lbl">Krajnja vrijednost</div><div class="sr-val" id="p2-etf-total">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Zarada</div><div class="sr-val" id="p2-etf-earn" style="font-size:.9rem">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Multiplikator</div><div class="sr-val" id="p2-etf-multi" style="font-size:.9rem">—</div></div>
+    </div>
+  </div>
+
+  <div class="winner-banner">
+    <div><div class="wb-label">Pobjednik</div><div class="wb-val" id="p2-winner">—</div></div>
+    <div class="wb-desc" id="p2-desc">—</div>
+  </div>
+
+  <div class="chart-card">
+    <h3>Rast vrijednosti — usporedba strategija</h3>
+    <canvas id="p2-chart"></canvas>
+    <div class="chart-controls">
+      <div class="period-btns" id="p2-chart-periods">
+        <span style="font-size:0.62rem;color:var(--muted);margin-right:0.2rem">Period:</span>
+        <button class="period-btn" data-years="1" data-chart="p2-chart">1Y</button><button class="period-btn" data-years="3" data-chart="p2-chart">3Y</button><button class="period-btn" data-years="5" data-chart="p2-chart">5Y</button><button class="period-btn" data-years="10" data-chart="p2-chart">10Y</button><button class="period-btn" data-years="15" data-chart="p2-chart">15Y</button><button class="period-btn" data-years="20" data-chart="p2-chart">20Y</button><button class="period-btn" data-years="25" data-chart="p2-chart">25Y</button><button class="period-btn" data-years="30" data-chart="p2-chart">30Y</button>
+        <button class="period-btn active" data-years="all" data-chart="p2-chart">SVE</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem">
+
+      </div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <h3>Pregled po periodima</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr>
+        <th>Godina</th>
+        <th id="p2-th-dmf" style="color:var(--dmf-l)">3. Stup</th>
+        <th id="p2-th-pepp" style="color:var(--pepp-l)">PEPP</th>
+        <th id="p2-th-etf" style="color:var(--etf-l)">ETF</th>
+      </tr></thead>
+      <tbody id="p2-tbody"></tbody>
+    </table></div>
+  </div>
+  <div class="table-card fee-compare-card">
+    <h3>Usporedba naknada (okvirno)</h3>
+    <div class="tbl-wrap"><table>
+      <thead>
+        <tr>
+          <th>Opcija</th>
+          <th>Godišnja naknada</th>
+          <th>Transakcije</th>
+          <th>Državni poticaj</th>
+          <th>Porez na isplatu</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>3. Stup (DMF)</td>
+          <td>~1.5–2.0% / god</td>
+          <td>0 €</td>
+          <td>✅ 15% do 99.54 €/god</td>
+          <td>Ne oporezuje se</td>
+        </tr>
+        <tr>
+          <td>PEPP (Finax)</td>
+          <td>1.0% upravljanje + TER ETF-a</td>
+          <td>0 €</td>
+          <td>✅ 15% do 99.54 €/god</td>
+          <td>Ne oporezuje se</td>
+        </tr>
+        <tr>
+          <td>ETF preko IBKR</td>
+          <td>TER ETF-a (~0.20–0.25%)</td>
+          <td>~1–2 € po kupnji</td>
+          <td>❌ Nema</td>
+          <td>12% kapitalna dobit</td>
+        </tr>
+        <tr>
+          <td>ETF preko T212</td>
+          <td>TER ETF-a (~0.20–0.25%)</td>
+          <td>0 € (bez provizije)</td>
+          <td>❌ Nema</td>
+          <td>12% kapitalna dobit</td>
+        </tr>
+      </tbody>
+    </table></div>
+    <p class="fee-note">Stope su okvirne i pojednostavljene. Prije ulaganja provjeri aktualne cjenike fondova, brokera i porezna pravila.</p>
+  </div>
+  <div class="liq-info-box">
+    <div class="liq-row"><span class="liq-icon">🟢</span><div class="liq-text"><strong>ETF — Visoka likvidnost</strong><span>Prodaješ kad hoćeš, novac za 2–3 dana. Bez dobnih ili vremenskih ograničenja. Idealno kao <strong>nužna pričuva ili fleksibilni kapital</strong>.</span></div></div>
+    <div class="liq-row"><span class="liq-icon">🔒</span><div class="liq-text"><strong>DMF/PEPP — Zaključano do 55. god.</strong><span>Nema pristupa prije mirovine. Ovo je ključna razlika — ETF možeš koristiti i prije umirovljenja, DMF/PEPP ne možeš.</span></div></div>
+  </div>
+  <p class="disclaimer">⚠️ ETF prinosi su historijski prosjeci zadnjih 10–15 godina i ne uključuju poreze na kapitalnu dobit (25% + prirez u HR). Investiranje u ETF nosi rizik gubitka. Nije financijski savjet.</p>
+</div>
+
+<!-- ========== PAGE 3 ========== -->
+<div class="page" id="p3">
+  <div class="page-header">
+    <h2><span class="grad-combo" data-i18n="p3-title">Pension + ETF</span></h2>
+    <p data-i18n="p3-desc">Simuliraj paralelnu strategiju — dio novca u sigurnost mirovinskog fonda, dio u rast ETF-a. Podesi alokaciju i vidi što dobivaš na kraju.</p>
+  </div>
+
+  <div class="controls">
+    <div class="ctrl-group c-neutral">
+      <label>Ukupna godišnja uplata</label>
+      <div class="row"><input type="range" id="p3-uplata" min="0" max="5000" step="50" value="2400"><input type="number" class="ctrl-val-input" id="p3-uplata-v" value="2400.00" data-decimals="2" min="500" max="5000" step="any" placeholder="1000"></div>
+    </div>
+    <div class="ctrl-group c-neutral">
+      <label>Broj godina ulaganja</label>
+      <div class="row"><input type="range" id="p3-god" min="5" max="60" step="1" value="25"><input type="number" class="ctrl-val-input" id="p3-god-v" value="25" min="5" max="60" step="1" placeholder="25"></div>
+    </div>
+    <div class="ctrl-group c-combo">
+      <label>Udio ETF-a (%)</label>
+      <div class="row"><input type="range" id="p3-etf-share" min="0" max="100" step="5" value="60"><input type="number" class="ctrl-val-input" id="p3-etf-share-v" value="60" min="0" max="100" step="1" placeholder="8"></div>
+    </div>
+    <div class="ctrl-group c-neutral">
+      <label>Mirovinski fond</label>
+      <select id="p3-pension-type">
+        <option value="dmf">3. Stup DMF (s poticajem)</option>
+        <option value="pepp" selected>PEPP</option>
+      </select>
+    </div>
+    <div class="ctrl-group c-dmf" id="p3-dmf-rate-wrap">
+      <label>Prinos mirovinskog (%)</label>
+      <div class="row"><input type="range" id="p3-penr" min="1" max="12" step="0.1" value="8.0"><input type="number" class="ctrl-val-input" id="p3-penr-v" value="8.0" min="1" max="12" step="0.1" placeholder="8"></div>
+    </div>
+    <div class="ctrl-group c-etf">
+      <label>ETF fond</label>
+      <select id="p3-etf-select">
+        <option value="9.5">VWCE (9.5%)</option>
+        <option value="10.2">IWDA (10.2%)</option>
+        <option value="11.0">CSPX — S&P 500 (11.0%)</option>
+        <option value="8.8">VEUR — Europa (8.8%)</option>
+        <option value="12.5">QQQ — Nasdaq (12.5%)</option>
+        <option value="custom">Vlastiti prinos...</option>
+      </select>
+    </div>
+    <div class="ctrl-group c-etf" id="p3-etf-custom-wrap" style="display:none">
+      <label>Vlastiti prinos ETF (%)</label>
+      <div class="row"><input type="range" id="p3-etfr-custom" min="3" max="18" step="0.1" value="9.0"><input type="number" class="ctrl-val-input" id="p3-etfr-custom-v" value="9.0" min="3" max="18" step="0.1" placeholder="8"></div>
+    </div>
+    <div class="ctrl-group c-neutral">
+      <label>Inflacija (%/god)</label>
+      <div class="row"><input type="range" id="p3-inf" min="0" max="5" step="0.1" value="2.5"><input type="number" class="ctrl-val-input" id="p3-inf-v" value="2.5" min="0" max="5" step="0.1" placeholder="8"></div>
+    </div>
+  </div>
+
+  <!-- Allocation viz -->
+  <div class="split-scenario">
+    <h3>Alokacija ulaganja</h3>
+    <div class="allocation-row">
+      <div class="alloc-label" id="p3-pension-label" style="color:var(--pepp-l)">PEPP</div>
+      <div class="alloc-bar-wrap"><div class="alloc-bar" id="p3-bar-pension" style="background:var(--pepp); width:40%"></div></div>
+      <div class="alloc-pct" id="p3-pension-pct" style="color:var(--pepp-l)">40%</div>
+      <div class="ctrl-val" id="p3-pension-eur" style="color:var(--pepp-l); min-width:70px">—</div>
+    </div>
+    <div class="allocation-row">
+      <div class="alloc-label" style="color:var(--etf-l)" id="p3-etf-alloc-label">ETF (VWCE)</div>
+      <div class="alloc-bar-wrap"><div class="alloc-bar" id="p3-bar-etf" style="background:var(--etf); width:60%"></div></div>
+      <div class="alloc-pct" id="p3-etf-pct" style="color:var(--etf-l)">60%</div>
+      <div class="ctrl-val" id="p3-etf-eur" style="color:var(--etf-l); min-width:70px">—</div>
+    </div>
+  </div>
+
+  <div class="stat-cards">
+    <div class="stat-card sc-pepp" id="p3-sc-pension">
+      <div class="sc-label" id="p3-sc-pen-lbl">PEPP</div>
+      <div class="sc-name">Mirovinski dio</div>
+      <div class="sc-row"><div class="sr-lbl">Vrijednost</div><div class="sr-val" id="p3-pen-total">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Zarada</div><div class="sr-val" id="p3-pen-earn" style="font-size:.9rem">—</div></div>
+    </div>
+    <div class="stat-card sc-etf">
+      <div class="sc-label">ETF</div>
+      <div class="sc-name" id="p3-etf-name">VWCE</div>
+      <div class="sc-row"><div class="sr-lbl">Vrijednost</div><div class="sr-val" id="p3-etf-total">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Zarada</div><div class="sr-val" id="p3-etf-earn" style="font-size:.9rem">—</div></div>
+    </div>
+    <div class="stat-card sc-combo">
+      <div class="sc-label">Kombinirano</div>
+      <div class="sc-name">Ukupni portfelj</div>
+      <div class="sc-row"><div class="sr-lbl">Ukupna vrijednost</div><div class="sr-val" id="p3-total">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Realna vrijednost*</div><div class="sr-val" id="p3-real" style="font-size:.9rem">—</div></div>
+      <div class="sc-row"><div class="sr-lbl">Ukupno uloženo</div><div class="sr-val" id="p3-in" style="font-size:.85rem">—</div></div>
+    </div>
+  </div>
+
+  <!-- Payout section -->
+  <div class="payout-grid">
+    <div class="payout-card">
+      <h4 style="color:var(--etf-l)">Isplata nakon perioda</h4>
+      <div class="payout-big" id="p3-payout-total">—</div>
+      <div class="payout-sub">Nominalna vrijednost portfelja</div>
+      <br>
+      <div class="payout-row"><div class="pr-l">Jednokratna isplata</div><div class="pr-v" id="p3-lump">—</div></div>
+      <div class="payout-row"><div class="pr-l">Mj. isplata (4% pravilo, 25g)</div><div class="pr-v" id="p3-monthly">—</div></div>
+      <div class="payout-row"><div class="pr-l">Realna mj. isplata*</div><div class="pr-v" id="p3-monthly-real">—</div></div>
+    </div>
+    <div class="payout-card">
+      <h4 style="color:var(--pepp-l)">Usporedba — samo mirovina</h4>
+      <div class="payout-big" id="p3-only-pen">—</div>
+      <div class="payout-sub">Da si sve stavio u mirovinski fond</div>
+      <br>
+      <div class="payout-row"><div class="pr-l">Mj. isplata (4%)</div><div class="pr-v" id="p3-pen-monthly">—</div></div>
+      <div class="payout-row"><div class="pr-l">Razlika vs kombinirano</div><div class="pr-v" id="p3-pen-diff">—</div></div>
+    </div>
+    <div class="payout-card">
+      <h4 style="color:var(--dmf-l)">Usporedba — samo ETF</h4>
+      <div class="payout-big" id="p3-only-etf">—</div>
+      <div class="payout-sub">Da si sve stavio u ETF</div>
+      <br>
+      <div class="payout-row"><div class="pr-l">Mj. isplata (4%)</div><div class="pr-v" id="p3-etf-monthly">—</div></div>
+      <div class="payout-row"><div class="pr-l">Razlika vs kombinirano</div><div class="pr-v" id="p3-etf-only-diff">—</div></div>
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <h3>Rast portfelja kroz godine</h3>
+    <canvas id="p3-chart"></canvas>
+    <div class="chart-controls">
+      <div class="period-btns" id="p3-chart-periods">
+        <span style="font-size:0.62rem;color:var(--muted);margin-right:0.2rem">Period:</span>
+        <button class="period-btn" data-years="1" data-chart="p3-chart">1Y</button><button class="period-btn" data-years="3" data-chart="p3-chart">3Y</button><button class="period-btn" data-years="5" data-chart="p3-chart">5Y</button><button class="period-btn" data-years="10" data-chart="p3-chart">10Y</button><button class="period-btn" data-years="15" data-chart="p3-chart">15Y</button><button class="period-btn" data-years="20" data-chart="p3-chart">20Y</button><button class="period-btn" data-years="25" data-chart="p3-chart">25Y</button><button class="period-btn" data-years="30" data-chart="p3-chart">30Y</button>
+        <button class="period-btn active" data-years="all" data-chart="p3-chart">SVE</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem">
+
+      </div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <h3>Detaljna projekcija</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr>
+        <th>God.</th>
+        <th style="color:var(--pepp-l)" id="p3-th-pen">PEPP</th>
+        <th style="color:var(--etf-l)">ETF</th>
+        <th style="color:var(--combo-l)">Kombinirano</th>
+        <th style="color:var(--muted2)">Realna vr.*</th>
+      </tr></thead>
+      <tbody id="p3-tbody"></tbody>
+    </table></div>
+  </div>
+
+  <div class="liq-info-box">
+    <div class="liq-row"><span class="liq-icon">⚖️</span><div class="liq-text"><strong>Kombinirana strategija — različita likvidnost</strong><span>DMF/PEPP dio je <strong>zaključan do 55. god.</strong> ETF dio je dostupan <strong>u bilo kojem trenutku</strong>. Ovo je ključna prednost kombinacije — imaš i sigurnost mirovine i fleksibilni kapital.</span></div></div>
+    <div class="liq-row"><span class="liq-icon">💡</span><div class="liq-text"><strong>Praktična preporuka</strong><span>Stavi u DMF/PEPP samo ono što si siguran da nećeš trebati prije 55. Ostatak u ETF — tu je tvoja likvidna rezerva i dugoročni rast.</span></div></div>
+  </div>
+  <p class="disclaimer">
+    ⚠️ *Realna vrijednost prilagođena inflacijom. 4% pravilo je uobičajena smjernica, ne garancija. ETF prinos ne uključuje porez na kapitalnu dobit (HR: 25% + prirez). Nije financijski savjet.
+  </p>
+</div>
+
+<!-- CHART FULLSCREEN MODAL -->
+<div class="chart-modal-overlay" id="chart-modal">
+  <div class="chart-modal-inner">
+    <div class="chart-modal-header">
+      <div class="chart-modal-title" id="chart-modal-title">Graf</div>
+      <div class="chart-modal-close" id="chart-modal-close">✕</div>
+    </div>
+    <div class="chart-modal-canvas-wrap">
+      <canvas id="chart-modal-canvas"></canvas>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- ========== EDUKACIJA PAGE ========== -->
+<div class="page" id="edukacija">
+  <div class="edu-hero">
+    <h1 data-i18n="edu-title">📚 Edukacija</h1>
+    <p data-i18n="edu-desc">Najbolji hrvatski i međunarodni resursi za financijsku pismenost, investiranje i mirovinsko planiranje.</p>
+  </div>
+
+  <!-- BOOK HIGHLIGHT -->
+  <div class="edu-book-highlight">
+    <div class="edu-book-emoji">📖</div>
+    <div class="edu-book-info">
+      <h3>Kako biti financijski fit</h3>
+      <p>Autorice: Tetka (mytetka.com) & Škrti Otočanin (Toni Vitali) — najprodavanija knjiga na Interliberu u Zagrebu. Obavezno štivo za svakog tko želi razumjeti osobne financije.</p>
+      <span class="edu-book-badge">🏆 #1 Bestseller — Interliber Zagreb</span>
+    </div>
+  </div>
+
+  <!-- BLOGOVI -->
+  <div class="edu-section">
+    <h2 class="edu-section-title">📝 Blogovi & Autori</h2>
+    <div class="edu-grid">
+      <a class="edu-card" href="https://mytetka.com/blog/" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">👩‍💼</span>
+          <span class="edu-card-title">Tetka — mytetka.com</span>
+        </div>
+        <p class="edu-card-desc">Najpopularniji HR blog o osobnim financijama. Detaljni članci o ETF-ovima, brokerima, III. stupu, PEPP-u i strategijama ulaganja.</p>
+        <span class="edu-card-tag edu-tag-blog">BLOG</span>
+        <span class="edu-card-tag edu-tag-hr">🇭🇷 HR</span>
+      </a>
+      <a class="edu-card" href="https://tonivitali.com/svi-postovi/" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">🧮</span>
+          <span class="edu-card-title">Škrti Otočanin — tonivitali.com</span>
+        </div>
+        <p class="edu-card-desc">Toni Vitali — matematičar i financijski edukator. Praktični savjeti o štednji, ulaganju i financijskoj pismenosti za "običnog čovjeka".</p>
+        <span class="edu-card-tag edu-tag-blog">BLOG</span>
+        <span class="edu-card-tag edu-tag-hr">🇭🇷 HR</span>
+      </a>
+      <a class="edu-card" href="https://mytetka.com/brokeri-kako-odabrati/" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">🏦</span>
+          <span class="edu-card-title">Brokeri — kako odabrati?</span>
+        </div>
+        <p class="edu-card-desc">Detaljna usporedba IBKR, Trading 212, Finax i drugih platformi — naknade, regulativa, raspoloživost ETF-ova.</p>
+        <span class="edu-card-tag edu-tag-blog">ČLANAK</span>
+        <span class="edu-card-tag edu-tag-beginner">POČETNICI</span>
+      </a>
+      <a class="edu-card" href="https://mytetka.com/paneuropska-mirovina-pepp/" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">🌍</span>
+          <span class="edu-card-title">Paneuropska mirovina (PEPP)</span>
+        </div>
+        <p class="edu-card-desc">Sve o PEPP-u — što je, kako funkcionira, usporedba s III. stupom, naknade i investicijska strategija Finaxa.</p>
+        <span class="edu-card-tag edu-tag-blog">ČLANAK</span>
+        <span class="edu-card-tag edu-tag-hr">🇭🇷 HR</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- YOUTUBE HR -->
+  <div class="edu-section">
+    <h2 class="edu-section-title">🎬 YouTube — Hrvatski sadržaj</h2>
+    <div class="edu-grid">
+      <a class="edu-card" href="https://www.youtube.com/live/2CBaocYyqh8" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">▶️</span>
+          <span class="edu-card-title">Tetka & Škrti Otočanin</span>
+        </div>
+        <p class="edu-card-desc">YouTube kanal s podcastima o financijama, ETF-ovima, mirovinskoj štednji i praktičnim savjetima za HR tržište.</p>
+        <span class="edu-card-tag edu-tag-yt">YOUTUBE</span>
+        <span class="edu-card-tag edu-tag-hr">🇭🇷 HR</span>
+      </a>
+      <a class="edu-card" href="https://youtu.be/OD-EHPvyRVA" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">▶️</span>
+          <span class="edu-card-title">Kenan Crnkić: Kako investirati</span>
+        </div>
+        <p class="edu-card-desc">Popularan video o osnovama investiranja — pristupačno objašnjeno za potpune početnike.</p>
+        <span class="edu-card-tag edu-tag-yt">YOUTUBE</span>
+        <span class="edu-card-tag edu-tag-hr">🇭🇷 HR</span>
+        <span class="edu-card-tag edu-tag-beginner">POČETNICI</span>
+      </a>
+      <a class="edu-card" href="https://www.youtube.com/watch?v=SeGUPT9mklk" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">▶️</span>
+          <span class="edu-card-title">Kako početi investirati — FIRE Podcast #41</span>
+        </div>
+        <p class="edu-card-desc">Podcast epizoda o prvim koracima u investiranju — od otvaranja računa do prvog ETF-a.</p>
+        <span class="edu-card-tag edu-tag-yt">PODCAST</span>
+        <span class="edu-card-tag edu-tag-hr">🇭🇷 HR</span>
+      </a>
+      <a class="edu-card" href="https://www.youtube.com/watch?v=OUuNLqSGUzc" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">▶️</span>
+          <span class="edu-card-title">Toni Milun: Pare nisu problem</span>
+        </div>
+        <p class="edu-card-desc">Ako znaš što radiš s njima — praktični pristup financijama i ulaganju.</p>
+        <span class="edu-card-tag edu-tag-yt">YOUTUBE</span>
+        <span class="edu-card-tag edu-tag-hr">🇭🇷 HR</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- YOUTUBE EN -->
+  <div class="edu-section">
+    <h2 class="edu-section-title">🌐 YouTube — Engleski sadržaj</h2>
+    <div class="edu-grid">
+      <a class="edu-card" href="https://www.youtube.com/watch?v=zDm8ZR8Wzjc" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">▶️</span>
+          <span class="edu-card-title">How To Invest For Beginners (European Investor)</span>
+        </div>
+        <p class="edu-card-desc">Vodič za europske investitore — kako početi ulagati u ETF-ove iz EU perspektive.</p>
+        <span class="edu-card-tag edu-tag-yt">YOUTUBE</span>
+        <span class="edu-card-tag edu-tag-en">🌐 EN</span>
+        <span class="edu-card-tag edu-tag-beginner">POČETNICI</span>
+      </a>
+      <a class="edu-card" href="https://www.youtube.com/watch?v=FFlreMF-w4Y" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">▶️</span>
+          <span class="edu-card-title">14 Years of Investing: Everything I Learned</span>
+        </div>
+        <p class="edu-card-desc">Iskustva i lekcije nakon 14 godina investiranja — što bi autor radio drugačije.</p>
+        <span class="edu-card-tag edu-tag-yt">YOUTUBE</span>
+        <span class="edu-card-tag edu-tag-en">🌐 EN</span>
+      </a>
+      <a class="edu-card" href="https://www.youtube.com/watch?v=c7JJGGDQmEQ" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">▶️</span>
+          <span class="edu-card-title">If I Started Investing In 2025, This Is What I Would Do</span>
+        </div>
+        <p class="edu-card-desc">Moderna strategija za početnike — što bi iskusan investitor napravio da kreće ispočetka.</p>
+        <span class="edu-card-tag edu-tag-yt">YOUTUBE</span>
+        <span class="edu-card-tag edu-tag-en">🌐 EN</span>
+        <span class="edu-card-tag edu-tag-beginner">POČETNICI</span>
+      </a>
+      <a class="edu-card" href="https://youtu.be/LtMsBYhVDys" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">▶️</span>
+          <span class="edu-card-title">Gold vs S&P 500 vs QQQ vs BTC — What Profits Most?</span>
+        </div>
+        <p class="edu-card-desc">Usporedba prinosa zlata, S&P 500, Nasdaq-a i Bitcoina u sljedećih 5 godina.</p>
+        <span class="edu-card-tag edu-tag-yt">YOUTUBE</span>
+        <span class="edu-card-tag edu-tag-en">🌐 EN</span>
+      </a>
+      <a class="edu-card" href="https://youtu.be/UolRIbwXf_E" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">▶️</span>
+          <span class="edu-card-title">Is Investing Just Gambling in Disguise?</span>
+        </div>
+        <p class="edu-card-desc">Razlika između investiranja i kockanja — zašto dugoročno ulaganje nije kocka.</p>
+        <span class="edu-card-tag edu-tag-yt">YOUTUBE</span>
+        <span class="edu-card-tag edu-tag-en">🌐 EN</span>
+      </a>
+      <a class="edu-card" href="https://www.youtube.com/watch?v=YilG6KzdlgQ" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">▶️</span>
+          <span class="edu-card-title">100 Years of Index Funds — What I Found</span>
+        </div>
+        <p class="edu-card-desc">Analiza 100 godina indeksnih fondova — dugoročni trendovi i što možemo očekivati.</p>
+        <span class="edu-card-tag edu-tag-yt">YOUTUBE</span>
+        <span class="edu-card-tag edu-tag-en">🌐 EN</span>
+      </a>
+      <a class="edu-card" href="https://youtu.be/1bu07Ed4_ig" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">▶️</span>
+          <span class="edu-card-title">19 Stock Market Terms Explained</span>
+        </div>
+        <p class="edu-card-desc">Jednostavan vodič kroz 19 najvažnijih pojmova na burzi — za potpune početnike.</p>
+        <span class="edu-card-tag edu-tag-yt">YOUTUBE</span>
+        <span class="edu-card-tag edu-tag-en">🌐 EN</span>
+        <span class="edu-card-tag edu-tag-beginner">POČETNICI</span>
+      </a>
+      <a class="edu-card" href="https://youtu.be/-kSrEC5Bqy0" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">▶️</span>
+          <span class="edu-card-title">I've Made Millions Rich — My Investment Playbook</span>
+        </div>
+        <p class="edu-card-desc">Investicijska strategija koja je pomogla milijunima — dugoročni pristup i disciplina.</p>
+        <span class="edu-card-tag edu-tag-yt">YOUTUBE</span>
+        <span class="edu-card-tag edu-tag-en">🌐 EN</span>
+      </a>
+      <a class="edu-card" href="https://youtu.be/tGdRpY1EkJw" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">▶️</span>
+          <span class="edu-card-title">Ultimate ETF Tutorial</span>
+        </div>
+        <p class="edu-card-desc">Sve što trebate znati o ETF-ovima — od osnova do naprednih strategija odabira.</p>
+        <span class="edu-card-tag edu-tag-yt">YOUTUBE</span>
+        <span class="edu-card-tag edu-tag-en">🌐 EN</span>
+        <span class="edu-card-tag edu-tag-beginner">POČETNICI</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ZAJEDNICA -->
+  <div class="edu-section">
+    <h2 class="edu-section-title">💬 Zajednica</h2>
+    <div class="edu-grid">
+      <a class="edu-card" href="https://www.reddit.com/r/financije/" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">🗣️</span>
+          <span class="edu-card-title">r/financije — Reddit zajednica</span>
+        </div>
+        <p class="edu-card-desc">Najveća hrvatska online zajednica za diskusije o investiranju, ETF-ovima, PEPP-u, III. stupu i osobnim financijama.</p>
+        <span class="edu-card-tag edu-tag-community">ZAJEDNICA</span>
+        <span class="edu-card-tag edu-tag-hr">🇭🇷 HR</span>
+      </a>
+      <a class="edu-card" href="https://www.europskamirovina.hr/" target="_blank">
+        <div class="edu-card-head">
+          <span class="edu-card-icon">🌍</span>
+          <span class="edu-card-title">europskamirovina.hr — PEPP portal</span>
+        </div>
+        <p class="edu-card-desc">Službeni portal o Paneuropskoj mirovini — pravila, prednosti, kalkulatori i FAQ za hrvatsko tržište.</p>
+        <span class="edu-card-tag edu-tag-community">PORTAL</span>
+        <span class="edu-card-tag edu-tag-hr">🇭🇷 HR</span>
+      </a>
+    </div>
+  </div>
+
+  <p class="disclaimer">⚠️ Navedeni resursi su informativnog karaktera. MM Invest nije povezan s navedenim autorima i platformama. Uvijek konzultiraj licenciranog financijskog savjetnika prije donošenja investicijskih odluka.</p>
+</div>
+
+<!-- ========== QUIZ PAGE ========== -->
+<div class="page" id="kviz">
+  <div class="quiz-hero">
+    <h1>🧭 Koji put je za mene?</h1>
+    <p>Odgovori na 5 pitanja i dobit ćeš preporuku investicijske strategije prilagođene tvojoj situaciji.</p>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="quiz-progress" id="quizProgress">
+    <div class="quiz-step active" id="qstep-0"></div>
+    <div class="quiz-step" id="qstep-1"></div>
+    <div class="quiz-step" id="qstep-2"></div>
+    <div class="quiz-step" id="qstep-3"></div>
+    <div class="quiz-step" id="qstep-4"></div>
+  </div>
+
+  <!-- Questions container -->
+  <div id="quizQuestions">
+
+    <!-- Q1: Dob -->
+    <div class="quiz-card" id="qq-0">
+      <div class="quiz-question">Koliko imaš godina?</div>
+      <div class="quiz-sub">Dob utječe na vremenski horizont ulaganja i preporučenu razinu rizika.</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-q="0" data-val="young">
+          <span class="quiz-option-icon">🌱</span>
+          <div class="quiz-option-text">
+            <strong>18–35 godina</strong>
+            <span>Dugi horizont, možeš preuzeti više rizika</span>
+          </div>
+        </div>
+        <div class="quiz-option" data-q="0" data-val="mid">
+          <span class="quiz-option-icon">📈</span>
+          <div class="quiz-option-text">
+            <strong>36–50 godina</strong>
+            <span>Srednji horizont, balans između rasta i sigurnosti</span>
+          </div>
+        </div>
+        <div class="quiz-option" data-q="0" data-val="senior">
+          <span class="quiz-option-icon">🏁</span>
+          <div class="quiz-option-text">
+            <strong>51+ godina</strong>
+            <span>Kraći horizont, prioritet stabilnost</span>
+          </div>
+        </div>
+      </div>
+      <div class="quiz-nav">
+        <button class="quiz-btn-next" id="qnext-0" onclick="quizNext(0)">Dalje →</button>
+      </div>
+    </div>
+
+    <!-- Q2: Miesečni iznos -->
+    <div class="quiz-card" id="qq-1" style="display:none">
+      <div class="quiz-question">Koliko možeš odvajati mjesečno?</div>
+      <div class="quiz-sub">Minimalni iznosi variraju po platformama. Državni poticaj vrijedi do 66,36€/mj.</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-q="1" data-val="low">
+          <span class="quiz-option-icon">💶</span>
+          <div class="quiz-option-text">
+            <strong>Do 50€ mjesečno</strong>
+            <span>Mali iznosi — ETF platforme imaju najmanji minimum</span>
+          </div>
+        </div>
+        <div class="quiz-option" data-q="1" data-val="mid">
+          <span class="quiz-option-icon">💰</span>
+          <div class="quiz-option-text">
+            <strong>50€ – 150€ mjesečno</strong>
+            <span>Idealan raspon za iskorištavanje državnog poticaja + ETF</span>
+          </div>
+        </div>
+        <div class="quiz-option" data-q="1" data-val="high">
+          <span class="quiz-option-icon">🏦</span>
+          <div class="quiz-option-text">
+            <strong>150€+ mjesečno</strong>
+            <span>Kombinirani pristupi s diverzifikacijom</span>
+          </div>
+        </div>
+      </div>
+      <div class="quiz-nav">
+        <button class="quiz-btn-back" onclick="quizBack(1)">← Natrag</button>
+        <button class="quiz-btn-next" id="qnext-1" onclick="quizNext(1)">Dalje →</button>
+      </div>
+    </div>
+
+    <!-- Q3: Rizik -->
+    <div class="quiz-card" id="qq-2" style="display:none">
+      <div class="quiz-question">Koliko rizika možeš podnijeti?</div>
+      <div class="quiz-sub">Što bi napravio/la da tvoje ulaganje padne 30% u jednoj godini?</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-q="2" data-val="low">
+          <span class="quiz-option-icon">😰</span>
+          <div class="quiz-option-text">
+            <strong>Nisam za rizik</strong>
+            <span>Prodao/la bih ili bih bio/la jako zabrinut/a. Preferiram sigurnost.</span>
+          </div>
+        </div>
+        <div class="quiz-option" data-q="2" data-val="mid">
+          <span class="quiz-option-icon">😌</span>
+          <div class="quiz-option-text">
+            <strong>Prihvaćam umjeren rizik</strong>
+            <span>Ostao/la bih miran/a, ali ne bih dodavao/la još. Dugoročni sam.</span>
+          </div>
+        </div>
+        <div class="quiz-option" data-q="2" data-val="high">
+          <span class="quiz-option-icon">😎</span>
+          <div class="quiz-option-text">
+            <strong>Visok rizik, visok prinos</strong>
+            <span>Kupio/la bih još — pad je prilika. Razumijem volatilnost.</span>
+          </div>
+        </div>
+      </div>
+      <div class="quiz-nav">
+        <button class="quiz-btn-back" onclick="quizBack(2)">← Natrag</button>
+        <button class="quiz-btn-next" id="qnext-2" onclick="quizNext(2)">Dalje →</button>
+      </div>
+    </div>
+
+    <!-- Q4: Cilj -->
+    <div class="quiz-card" id="qq-3" style="display:none">
+      <div class="quiz-question">Koji ti je primarni cilj ulaganja?</div>
+      <div class="quiz-sub">To određuje optimalan omjer između mirovinskih fondova i ETF-ova.</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-q="3" data-val="pension">
+          <span class="quiz-option-icon">🏖️</span>
+          <div class="quiz-option-text">
+            <strong>Mirovina i financijska sloboda</strong>
+            <span>Ulagam za dugi rok — 20+ godina do isplate</span>
+          </div>
+        </div>
+        <div class="quiz-option" data-q="3" data-val="growth">
+          <span class="quiz-option-icon">🚀</span>
+          <div class="quiz-option-text">
+            <strong>Rast imovine (FIRE / dugoročno)</strong>
+            <span>Maksimizirati prinos kroz ETF-ove, neovisno o mirovini</span>
+          </div>
+        </div>
+        <div class="quiz-option" data-q="3" data-val="both">
+          <span class="quiz-option-icon">⚖️</span>
+          <div class="quiz-option-text">
+            <strong>Oboje — iskoristiti poticaje I rasti</strong>
+            <span>Kombinirani pristup s državnim poticajem + slobodni ETF</span>
+          </div>
+        </div>
+      </div>
+      <div class="quiz-nav">
+        <button class="quiz-btn-back" onclick="quizBack(3)">← Natrag</button>
+        <button class="quiz-btn-next" id="qnext-3" onclick="quizNext(3)">Dalje →</button>
+      </div>
+    </div>
+
+    <!-- Q5: Iskustvo -->
+    <div class="quiz-card" id="qq-4" style="display:none">
+      <div class="quiz-question">Kakvo je tvoje iskustvo s ulaganjem?</div>
+      <div class="quiz-sub">Ovo nam pomaže preporučiti pravu razinu složenosti.</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-q="4" data-val="none">
+          <span class="quiz-option-icon">🐣</span>
+          <div class="quiz-option-text">
+            <strong>Početnik — nikad nisam ulagao/la</strong>
+            <span>Trebam jednostavno rješenje s minimalnim odlukama</span>
+          </div>
+        </div>
+        <div class="quiz-option" data-q="4" data-val="some">
+          <span class="quiz-option-icon">📚</span>
+          <div class="quiz-option-text">
+            <strong>Malo iskustva — čitam, učim</strong>
+            <span>Razumijem osnove ETF-ova, tražim potvrdu</span>
+          </div>
+        </div>
+        <div class="quiz-option" data-q="4" data-val="expert">
+          <span class="quiz-option-icon">🧠</span>
+          <div class="quiz-option-text">
+            <strong>Iskusan — imam portfelj</strong>
+            <span>Tražim usporedbu i optimizaciju naknade</span>
+          </div>
+        </div>
+      </div>
+      <div class="quiz-nav">
+        <button class="quiz-btn-back" onclick="quizBack(4)">← Natrag</button>
+        <button class="quiz-btn-next" id="qnext-4" onclick="quizShowResult()">Vidi preporuku ✓</button>
+      </div>
+    </div>
+
+  </div><!-- /quizQuestions -->
+
+  <!-- Result (hidden until quiz done) -->
+  <div class="quiz-result" id="quizResult">
+    <div class="quiz-result-hero">
+      <div class="quiz-result-emoji" id="qr-emoji">🎯</div>
+      <div class="quiz-result-title" id="qr-title">Tvoja strategija</div>
+      <div class="quiz-result-subtitle" id="qr-subtitle"></div>
+    </div>
+    <div class="quiz-result-cards" id="qr-cards"></div>
+    <button class="quiz-restart-btn" onclick="quizRestart()">↩ Počni iznova</button>
+    <p class="disclaimer" style="margin-top:1rem">⚠️ Preporuka je informativnog karaktera i ne predstavlja financijski savjet. Konzultiraj licenciranog savjetnika.</p>
+  </div>
+
+  <!-- Personalizirani Plan Ulaganja -->
+  <section class="plan-advisor" id="plan-advisor">
+    <h2 class="plan-advisor-title">📋 Personalizirani Plan Ulaganja</h2>
+    <p class="plan-advisor-sub">Unesi iznos, odaberi rok i odgovori na pitanja — dobit ćeš preporuku prilagođenu tvojoj situaciji.</p>
+
+    <div class="plan-card">
+      <div class="plan-row">
+        <label class="plan-label">Mjesečni iznos (€)</label>
+        <input type="number" id="plan-amount" class="plan-input" min="10" max="5000" step="10" value="100" placeholder="npr. 100">
+      </div>
+      <div class="plan-row">
+        <span class="plan-label">Vremenski period</span>
+        <div class="plan-options" role="group">
+          <label class="plan-option"><input type="radio" name="plan-period" value="short"> <span><strong>Do 3 godine</strong> — kratak rok</span></label>
+          <label class="plan-option"><input type="radio" name="plan-period" value="medium"> <span><strong>3–10 godina</strong> — srednji rok</span></label>
+          <label class="plan-option"><input type="radio" name="plan-period" value="long" checked> <span><strong>10+ godina</strong> — dugi rok</span></label>
+        </div>
+      </div>
+      <div class="plan-row">
+        <span class="plan-label">Ulogaš li već?</span>
+        <div class="plan-options" role="group">
+          <label class="plan-option"><input type="radio" name="plan-investing" value="no"> <span>Ne, tek planiram</span></label>
+          <label class="plan-option"><input type="radio" name="plan-investing" value="yes"> <span>Da, već uplaćujem</span></label>
+        </div>
+      </div>
+      <div class="plan-row">
+        <span class="plan-label">Poznaješ li DMF, PEPP ili ETF?</span>
+        <div class="plan-options" role="group">
+          <label class="plan-option"><input type="radio" name="plan-knows" value="no"> <span>Ne — trebam osnove</span></label>
+          <label class="plan-option"><input type="radio" name="plan-knows" value="little"> <span>Malo — čitam, učim</span></label>
+          <label class="plan-option"><input type="radio" name="plan-knows" value="yes"> <span>Da — razumijem razlike</span></label>
+        </div>
+      </div>
+      <div class="plan-row">
+        <span class="plan-label">Koliko rizika želiš preuzeti?</span>
+        <div class="plan-options" role="group">
+          <label class="plan-option"><input type="radio" name="plan-risk" value="low"> <span>Nizak — prioritet sigurnost</span></label>
+          <label class="plan-option"><input type="radio" name="plan-risk" value="mid"> <span>Umjeren — balans</span></label>
+          <label class="plan-option"><input type="radio" name="plan-risk" value="high"> <span>Visok — maksimalan rast</span></label>
+        </div>
+      </div>
+      <div class="plan-nav">
+        <button type="button" class="plan-btn-submit" id="plan-submit" onclick="showPlanRecommendation()">Dobij preporuku</button>
+      </div>
+    </div>
+
+    <div class="plan-result" id="plan-result">
+      <div class="plan-result-inner">
+        <div class="plan-result-emoji" id="plan-emoji">🎯</div>
+        <div class="plan-result-title" id="plan-title">Tvoja preporuka</div>
+        <div class="plan-result-desc" id="plan-desc"></div>
+        <div class="plan-result-cta" id="plan-cta-wrap"></div>
+        <div class="plan-warning plan-warning--hidden" id="plan-warning">
+          <strong>⚠️ Upozorenje:</strong> Kriptovalute i aktivno trgovanje nose visok rizik. Samo ulagaj novac koji možeš izgubiti. Ovo nije financijski savjet.
+        </div>
+        <button type="button" class="quiz-restart-btn" onclick="resetPlanResult()">Nova preporuka</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+<!-- ========== END QUIZ PAGE ========== -->
+
+<!-- ========== ŠTEDNJA ZA DIJETE PAGE ========== -->
+<div class="page" id="stednja-dijete">
+  <div class="page-header">
+    <h2><span class="grad-warm" data-i18n="stednja-title">👶 Štednja za dijete</span></h2>
+    <p data-i18n="stednja-desc">Kako mudro početi štedjeti i ulagati za djetetovu budućnost — i zašto većina popularnih metoda zapravo gubi novac.</p>
+  </div>
+
+  <!-- Uvod -->
+  <div style="background:var(--surface2);border-radius:14px;padding:1.25rem 1.5rem;margin-bottom:1.5rem;border-left:4px solid var(--pepp)">
+    <p style="margin:0;font-size:0.9rem;line-height:1.7;color:var(--muted2)">
+      Roditelji prirodno žele osigurati djetetovu budućnost. Problem je što najraspravljeniji načini — štedna knjižica, zlato, gotovina ispod jastuka, životno osiguranje — u stvarnosti <strong style="color:var(--text)">neće koristiti djetetovom bogatstvu, već inflaciji</strong>. Pogledajmo konkretne brojke.
+    </p>
+  </div>
+
+  <!-- METODE - kartice -->
+  <h3 style="margin-bottom:1rem">Popularne metode štednje — i zašto vas koštaju</h3>
+
+  <div style="display:grid;gap:1rem;margin-bottom:1.5rem">
+
+    <!-- Gotovina -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.25rem 1.5rem">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem">
+        <span style="font-size:1.5rem">💶</span>
+        <div>
+          <div style="font-weight:700;font-size:1rem">Gotovina „ispod jastuka“</div>
+          <span class="liq-tag liq-high" style="font-size:0.65rem">⚠️ Najgora opcija</span>
+        </div>
+      </div>
+      <p style="font-size:0.85rem;color:var(--muted2);margin:0 0 0.75rem">Mnogi roditelji svake godine odvoje 100€ u koverti. Za 18 godina = 1.800€ u koverti. Zvuči dobro? Nije.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;font-size:0.82rem">
+        <div style="background:var(--surface2);border-radius:8px;padding:0.75rem">
+          <div style="color:var(--muted);font-size:0.7rem;margin-bottom:0.25rem">Uplatili ste</div>
+          <div style="font-weight:700;color:var(--text)">1.800 €</div>
+          <div style="color:var(--muted);font-size:0.7rem;margin-top:0.25rem">18 god × 100€</div>
+        </div>
+        <div style="background:var(--surface2);border-radius:8px;padding:0.75rem">
+          <div style="color:var(--muted);font-size:0.7rem;margin-bottom:0.25rem">Realna vrijednost (inflacija ~3%/god)</div>
+          <div style="font-weight:700;color:var(--red)">~1.060 €</div>
+          <div style="color:var(--muted);font-size:0.7rem;margin-top:0.25rem">≈ -740€ kupovne moći</div>
+        </div>
+      </div>
+      <div style="margin-top:0.75rem;padding:0.6rem 0.9rem;background:rgba(220,60,60,0.08);border-radius:8px;font-size:0.78rem;color:var(--red)">
+        🔴 Gotovina ne zarađuje ništa, a inflacija svake godine tiše „jede“ njenu vrijednost. 18 godina inflacije po 3% znači da je 1.800€ u budućnosti vrijedno tek ~1.060€ u današnjim eurima.
+      </div>
+    </div>
+
+    <!-- Štedna knjižica -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.25rem 1.5rem">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem">
+        <span style="font-size:1.5rem">🏦</span>
+        <div>
+          <div style="font-weight:700;font-size:1rem">Štedna knjižica / oročena štednja</div>
+          <span class="liq-tag liq-mid" style="font-size:0.65rem">⚠️ Jedva prati inflaciju</span>
+        </div>
+      </div>
+      <p style="font-size:0.85rem;color:var(--muted2);margin:0 0 0.75rem">Banka nudi ~2–2.5% godišnje na oročenu štednju. Zvuči sigurno. Ali inflacija je 3–4%.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.6rem;font-size:0.82rem">
+        <div style="background:var(--surface2);border-radius:8px;padding:0.75rem">
+          <div style="color:var(--muted);font-size:0.7rem;margin-bottom:0.25rem">Uplatili ste</div>
+          <div style="font-weight:700">1.800 €</div>
+        </div>
+        <div style="background:var(--surface2);border-radius:8px;padding:0.75rem">
+          <div style="color:var(--muted);font-size:0.7rem;margin-bottom:0.25rem">Nakon 18g (2.2%)</div>
+          <div style="font-weight:700;color:var(--yellow)">~2.480 €</div>
+        </div>
+        <div style="background:var(--surface2);border-radius:8px;padding:0.75rem">
+          <div style="color:var(--muted);font-size:0.7rem;margin-bottom:0.25rem">Realno (uz 3% inflaciju)</div>
+          <div style="font-weight:700;color:var(--red)">~1.460 €</div>
+        </div>
+      </div>
+      <div style="margin-top:0.75rem;padding:0.6rem 0.9rem;background:rgba(220,60,60,0.08);border-radius:8px;font-size:0.78rem;color:var(--red)">
+        🔴 Nominalno imaš više novca, ali kupovna moć je niža. Realni prinos štedne knjižice je negativan ili nulti — praktički održavaš vrijednost, ne povećavaš je.
+      </div>
+    </div>
+
+    <!-- Zlato -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.25rem 1.5rem">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem">
+        <span style="font-size:1.5rem">🪩</span>
+        <div>
+          <div style="font-weight:700;font-size:1rem">Zlato (zlatnici, nakit, poluge)</div>
+          <span class="liq-tag liq-mid" style="font-size:0.65rem">⚠️ Precijenjeno u popularnoj kulturi</span>
+        </div>
+      </div>
+      <p style="font-size:0.85rem;color:var(--muted2);margin:0 0 0.75rem">„Zlato uvijek vrijedi!“ — čuješ stalno. Istina je kompliciranija. Zlato ne plaća dividendu, ima visoke spreadove pri kupnji/prodaji, a realni prinos na 20-30 godina je ~1–2%/god.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.6rem;font-size:0.82rem">
+        <div style="background:var(--surface2);border-radius:8px;padding:0.75rem">
+          <div style="color:var(--muted);font-size:0.7rem;margin-bottom:0.25rem">Uplatili ste</div>
+          <div style="font-weight:700">1.800 €</div>
+        </div>
+        <div style="background:var(--surface2);border-radius:8px;padding:0.75rem">
+          <div style="color:var(--muted);font-size:0.7rem;margin-bottom:0.25rem">Nakon 18g (~1.5%/god realno)</div>
+          <div style="font-weight:700;color:var(--yellow)">~2.360 €</div>
+        </div>
+        <div style="background:var(--surface2);border-radius:8px;padding:0.75rem">
+          <div style="color:var(--muted);font-size:0.7rem;margin-bottom:0.25rem">vs. ETF (7% realno)</div>
+          <div style="font-weight:700;color:var(--etf-l)">~6.080 €</div>
+        </div>
+      </div>
+      <div style="margin-top:0.75rem;padding:0.6rem 0.9rem;background:rgba(220,60,60,0.08);border-radius:8px;font-size:0.78rem;color:var(--red)">
+        🔴 Zlato je dobra zaštita od hiperinflacije i geopolitičkih kriza — ali loš alat za dugoročno povećanje bogatstva. Nakit uz to ima i visoke premije (izrada) — platiš zlato + radnu snagu, a prodaješ samo zlato.
+      </div>
+    </div>
+
+    <!-- Životno osiguranje -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.25rem 1.5rem">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem">
+        <span style="font-size:1.5rem">🛡️</span>
+        <div>
+          <div style="font-weight:700;font-size:1rem">Životno osiguranje sa štednjom (mješovito)</div>
+          <span class="liq-tag liq-low" style="font-size:0.65rem">🔴 Marketinški proizvod</span>
+        </div>
+      </div>
+      <p style="font-size:0.85rem;color:var(--muted2);margin:0 0 0.75rem">Agenti ga prodaju kao „štediš i osiguraš dijete odjednom“. U praksi: visoke provizije, niske garancije, lokovani novac i prinosi ispod inflacije.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.6rem;font-size:0.82rem">
+        <div style="background:var(--surface2);border-radius:8px;padding:0.75rem">
+          <div style="color:var(--muted);font-size:0.7rem;margin-bottom:0.25rem">Uplata 18g × 100€/mj</div>
+          <div style="font-weight:700">21.600 €</div>
+        </div>
+        <div style="background:var(--surface2);border-radius:8px;padding:0.75rem">
+          <div style="color:var(--muted);font-size:0.7rem;margin-bottom:0.25rem">Tipična isplata (~2%)</div>
+          <div style="font-weight:700;color:var(--yellow)">~28.000 €</div>
+        </div>
+        <div style="background:var(--surface2);border-radius:8px;padding:0.75rem">
+          <div style="color:var(--muted);font-size:0.7rem;margin-bottom:0.25rem">ETF ista uplata (~8%)</div>
+          <div style="font-weight:700;color:var(--etf-l)">~57.000 €</div>
+        </div>
+      </div>
+      <div style="margin-top:0.75rem;padding:0.6rem 0.9rem;background:rgba(220,60,60,0.08);border-radius:8px;font-size:0.78rem;color:var(--red)">
+        🔴 Veliki dio prvih godišnjih uplata ide na agentovu proviziju i troškove police. Garantirani prinos je 1–2%, a novac je zaključan. Ako izlaziš ranije, gubiš značajan dio. Usporedi sam: ista uplata u ETF = duplo više novca za dijete.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Usporedna tablica -->
+  <div class="table-card" style="margin-bottom:1.5rem">
+    <h3>📊 Usporedba metoda — 100€/mj kroz 18 godina</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Metoda</th>
+          <th>Nominalni iznos</th>
+          <th>Realna vrijednost</th>
+          <th>Prinos/god</th>
+          <th>Ocjena</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td>💶 Gotovina</td>
+            <td>21.600 €</td>
+            <td style="color:var(--red)">~12.700 €</td>
+            <td style="color:var(--red)">0%</td>
+            <td><span style="color:var(--red);font-weight:700">❌ Izbjegavaj</span></td>
+          </tr>
+          <tr>
+            <td>🏦 Štedna knjižica</td>
+            <td>~28.500 €</td>
+            <td style="color:var(--yellow)">~16.800 €</td>
+            <td style="color:var(--yellow)">~2.2%</td>
+            <td><span style="color:var(--yellow);font-weight:700">⚠️ Slabo</span></td>
+          </tr>
+          <tr>
+            <td>🪩 Zlato</td>
+            <td>~30.000 €</td>
+            <td style="color:var(--yellow)">~17.700 €</td>
+            <td style="color:var(--yellow)">~1.5% realno</td>
+            <td><span style="color:var(--yellow);font-weight:700">⚠️ Osrednje</span></td>
+          </tr>
+          <tr>
+            <td>🛡️ Životno osiguranje</td>
+            <td>~28.000 €</td>
+            <td style="color:var(--red)">~16.500 €</td>
+            <td style="color:var(--red)">~2% (zaključano)</td>
+            <td><span style="color:var(--red);font-weight:700">❌ Izbjegavaj</span></td>
+          </tr>
+          <tr style="background:rgba(74,232,160,0.05)">
+            <td><strong>📈 ETF (VWCE/IWDA)</strong></td>
+            <td style="color:var(--etf-l)"><strong>~57.000 €</strong></td>
+            <td style="color:var(--etf-l)"><strong>~33.600 €</strong></td>
+            <td style="color:var(--etf-l)"><strong>~8% bruto</strong></td>
+            <td><span style="color:var(--etf-l);font-weight:700">✅ Preporučeno</span></td>
+          </tr>
+          <tr style="background:rgba(74,159,232,0.05)">
+            <td>🌍 PEPP (Finax)</td>
+            <td style="color:var(--pepp-l)">~48.000 €</td>
+            <td style="color:var(--pepp-l)">~28.300 €</td>
+            <td style="color:var(--pepp-l)">~7% (uz naknadu)</td>
+            <td><span style="color:var(--pepp-l);font-weight:700">✅ Dobra opcija</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:0.75rem;font-size:0.73rem;color:var(--muted);padding:0 0.25rem">
+      * Projekcija pri uplati 100€/mj kroz 18 godina. Realna vrijednost izračunata uz inflaciju 3%/god. ETF prinos ~8% je dugoročni povijesni prosjek globalnih indeksa — nije garancija budućeg prinosa.
+    </div>
+  </div>
+
+  <!-- Što napraviti -->
+  <div class="table-card">
+    <h3>✅ Što stvarno napraviti za djetetovu budućnost</h3>
+    <div style="display:grid;gap:0.75rem;margin-top:0.5rem">
+      <div style="background:var(--surface2);border-radius:10px;padding:1rem;border-left:3px solid var(--etf-l)">
+        <strong>📈 1. Globalni ETF — najjednostavnija i najefikasnija opcija</strong>
+        <p style="margin:0.4rem 0 0;font-size:0.85rem;color:var(--muted2)">Otvori račun na IBKR ili Trading 212, postavi automatsku mjesečnu uplatu na VWCE ili IWDA ETF. Zaboravi na 18 godina. Niske naknade, globalna diverzifikacija, porezna sloboda u HR nakon 2 godine držanja.</p>
+      </div>
+      <div style="background:var(--surface2);border-radius:10px;padding:1rem;border-left:3px solid var(--pepp)">
+        <strong>🌍 2. PEPP (Finax) — ako želiš „auto-pilot“</strong>
+        <p style="margin:0.4rem 0 0;font-size:0.85rem;color:var(--muted2)">Finax automatski rebalancira portfelj i ulaže u globalne ETF-ove. Naknada je 1%/god, ali bez potrebe da išta radiš. Dobra opcija za roditelje koji ne žele pratiti tržište.</p>
+      </div>
+      <div style="background:var(--surface2);border-radius:10px;padding:1rem;border-left:3px solid var(--dmf)">
+        <strong>🏦 3. DMF (3. stup) — samo ako poslodavac doprinosi</strong>
+        <p style="margin:0.4rem 0 0;font-size:0.85rem;color:var(--muted2)">Kao osobna mirovina, ne direktno za dijete. Ali ako ti poslodavac uplaćuje do 804€/god neoporezivo — to je praktički besplatan prinos koji vrijedi iskoristiti.</p>
+      </div>
+      <div style="background:var(--surface2);border-radius:10px;padding:1rem;border-left:3px solid var(--border)">
+        <strong style="color:var(--muted2)">⚠️ Bonus savjet: Račun na djetetovo ime</strong>
+        <p style="margin:0.4rem 0 0;font-size:0.85rem;color:var(--muted2)">Neke platforme (ovisno o zakonodavstvu) omogućavaju otvaranje računa za maloljetnike uz pomoć roditelja kao skrbnika. Provjeri aktualnu mogućnost na odabranoj platformi.</p>
+      </div>
+    </div>
+  </div>
+
+  <p class="disclaimer">⚠️ Sve projekcije su ilustrativne i temeljene na povijesnim prosjecima. Inflacija, prinos i porezni propisi mogu se mijenjati. Nije financijski savjet.</p>
+</div>
+
+<!-- ========== KRIPTOVALUTE PAGE ========== -->
+<div class="page" id="kripto">
+  <div class="page-header">
+    <h2><span class="grad-cool" data-i18n="kripto-title">₿ Ulaganja u kriptovalute</span></h2>
+    <p data-i18n="kripto-desc">Osnove kriptovaluta kao klase imovine — mogućnosti, rizici i što treba znati prije nego uložiš.</p>
+  </div>
+
+  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1.5rem;text-align:center">
+    <div style="font-size:2.5rem;margin-bottom:0.5rem">₿</div>
+    <h3 style="margin:0 0 0.5rem">Sadržaj uskoro</h3>
+    <p style="font-size:0.85rem;color:var(--muted2);margin:0">Ova sekcija je u pripremi. Naš kolega specijalist za kriptovalute uskoro će dopuniti ovaj dio s detaljnim vodičem, strategijama i usporedbama.</p>
+  </div>
+
+  <!-- Placeholder osnovnih info -->
+  <div class="table-card" style="margin-bottom:1rem">
+    <h3>📌 Osnove — što je kriptovaluta?</h3>
+    <p style="font-size:0.87rem;color:var(--muted2);line-height:1.7">Kriptovaluta je digitalna imovina koja koristi kriptografiju za sigurnost transakcija i kontrolu stvaranja novih jedinica, a funkcionira na decentraliziranoj blockchain mreži bez posrednika poput banaka.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.75rem;margin-top:1rem">
+      <div style="background:var(--surface2);border-radius:10px;padding:0.9rem;text-align:center">
+        <div style="font-size:1.4rem">₿</div>
+        <div style="font-weight:700;margin:0.3rem 0 0.2rem">Bitcoin (BTC)</div>
+        <div style="font-size:0.75rem;color:var(--muted2)">Prva i najveća kripto</div>
+      </div>
+      <div style="background:var(--surface2);border-radius:10px;padding:0.9rem;text-align:center">
+        <div style="font-size:1.4rem">🔷</div>
+        <div style="font-weight:700;margin:0.3rem 0 0.2rem">Ethereum (ETH)</div>
+        <div style="font-size:0.75rem;color:var(--muted2)">Pametni ugovori, DeFi</div>
+      </div>
+      <div style="background:var(--surface2);border-radius:10px;padding:0.9rem;text-align:center">
+        <div style="font-size:1.4rem">💵</div>
+        <div style="font-weight:700;margin:0.3rem 0 0.2rem">Stablecoini</div>
+        <div style="font-size:0.75rem;color:var(--muted2)">USDC, USDT — 1:1 s USD</div>
+      </div>
+      <div style="background:var(--surface2);border-radius:10px;padding:0.9rem;text-align:center">
+        <div style="font-size:1.4rem">🎲</div>
+        <div style="font-weight:700;margin:0.3rem 0 0.2rem">Altcoini</div>
+        <div style="font-size:0.75rem;color:var(--muted2)">Tisuće ostalih projekata</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:rgba(220,60,60,0.07);border:1px solid rgba(220,60,60,0.2);border-radius:10px;padding:1rem 1.25rem;margin-bottom:1rem">
+    <strong style="color:var(--red)">⚠️ Važno upozorenje</strong>
+    <p style="margin:0.4rem 0 0;font-size:0.83rem;color:var(--muted2)">Kriptovalute su <strong>visokorizična</strong> klasa imovine s ekstremalnom volatilnošću. Vrijednost može pasti 80–90% u kratkom roku. Nikada ne ulaži više nego što možeš priuštiti izgubiti. Detalji i strategije dolaze uskoro.</p>
+  </div>
+
+  <p class="disclaimer">⚠️ Informativni pregled. Kriptovalute nisu regulirane u istoj mjeri kao tradicionalne investicije. Nije financijski savjet.</p>
+</div>
+
+<!-- ========== TRADING PAGE ========== -->
+<div class="page" id="trading">
+  <div class="page-header">
+    <h2><span class="grad-warm" data-i18n="trading-title">📈 Trading — aktivno trgovanje</span></h2>
+    <p data-i18n="trading-desc">Razumijevanje osnova tradinga — strategije, pojmovi i razlika od dugoročnog ulaganja.</p>
+  </div>
+
+  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1.5rem;text-align:center">
+    <div style="font-size:2.5rem;margin-bottom:0.5rem">📈</div>
+    <h3 style="margin:0 0 0.5rem">Detaljan sadržaj uskoro</h3>
+    <p style="font-size:0.85rem;color:var(--muted2);margin:0">Naš kolega trader dopunit će ovu sekciju s naprednim strategijama, primjerima i setupovima. Ispod su osnove da se snađeš u terminologiji.</p>
+  </div>
+
+  <!-- Osnovna terminologija -->
+  <div class="table-card" style="margin-bottom:1rem">
+    <h3>📖 Osnovna terminologija</h3>
+    <div style="display:grid;gap:0.65rem;margin-top:0.75rem">
+
+      <div style="display:grid;grid-template-columns:140px 1fr;gap:0.75rem;align-items:start;padding:0.75rem;background:var(--surface2);border-radius:8px">
+        <div style="font-weight:700;color:var(--etf-l)">🐂 Long (duga pozicija)</div>
+        <div style="font-size:0.85rem;color:var(--muted2)">Kupujem s očekivanjem da će cijena <strong style="color:var(--etf-l)">rasti</strong>. Zarađujem ako cijena poraste, gubim ako padne. Klasični način ulaganja.</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:140px 1fr;gap:0.75rem;align-items:start;padding:0.75rem;background:var(--surface2);border-radius:8px">
+        <div style="font-weight:700;color:var(--red)">🦅 Short (kratka pozicija)</div>
+        <div style="font-size:0.85rem;color:var(--muted2)">Posuđujem dionice i <strong style="color:var(--red)">prodajem ih sad</strong>, s planom da ih kupim jeftinije kad cijena padne i tako zaradim razliku. Rizično — gubitak je teorijski neograničen.</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:140px 1fr;gap:0.75rem;align-items:start;padding:0.75rem;background:var(--surface2);border-radius:8px">
+        <div style="font-weight:700;color:var(--etf-l)">🐂 Bull market</div>
+        <div style="font-size:0.85rem;color:var(--muted2)">Tržište u <strong style="color:var(--etf-l)">usponu</strong>. Bik bode rogovima <em>gore</em>. Optimizam, rast cijena, lako je zaraditi — teško je znati kad stati.</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:140px 1fr;gap:0.75rem;align-items:start;padding:0.75rem;background:var(--surface2);border-radius:8px">
+        <div style="font-weight:700;color:var(--red)">🐻 Bear market</div>
+        <div style="font-size:0.85rem;color:var(--muted2)">Tržište u <strong style="color:var(--red)">padu</strong>. Medvjed čapne šapom <em>prema dolje</em>. Pesimizam, pad cijena 20%+. Dugoročni ulagači kupuju, traderi shortaju.</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:140px 1fr;gap:0.75rem;align-items:start;padding:0.75rem;background:var(--surface2);border-radius:8px">
+        <div style="font-weight:700;color:var(--yellow)">⚡ Leverage (poluga)</div>
+        <div style="font-size:0.85rem;color:var(--muted2)">Trgujem s više novca nego što imam — npr. 10x leverage znači da kontroliram 10.000€ s 1.000€. Dobit se množi, ali i gubici. 10x leverage + 10% pad = <strong style="color:var(--red)">-100% kapitala.</strong></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:140px 1fr;gap:0.75rem;align-items:start;padding:0.75rem;background:var(--surface2);border-radius:8px">
+        <div style="font-weight:700;color:var(--muted2)">📊 Stop-loss</div>
+        <div style="font-size:0.85rem;color:var(--muted2)">Automatski nalog koji <strong>zatvara poziciju</strong> ako cijena padne do zadane razine. Osnovna zaštita od velikih gubitaka. Svaki ozbiljni trader ga koristi.</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:140px 1fr;gap:0.75rem;align-items:start;padding:0.75rem;background:var(--surface2);border-radius:8px">
+        <div style="font-weight:700;color:var(--muted2)">🎯 Take-profit</div>
+        <div style="font-size:0.85rem;color:var(--muted2)">Automatski nalog koji zatvara poziciju kad cijena dosegne <strong>ciljanu dobit</strong>. Disciplina — nećeš biti pohlepan i držati predugo.</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:140px 1fr;gap:0.75rem;align-items:start;padding:0.75rem;background:var(--surface2);border-radius:8px">
+        <div style="font-weight:700;color:var(--pepp-l)">📉 Margin call</div>
+        <div style="font-size:0.85rem;color:var(--muted2)">Broker te obavještava da ti je <strong style="color:var(--red)">nestalo pokrića</strong> za leveraged poziciju. Moraš dodati novac ili se pozicija automatski zatvara — obično s velikim gubitkom.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Trading vs ulaganje -->
+  <div class="table-card">
+    <h3>⚖️ Trading vs. dugoročno ulaganje</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Kriterij</th><th style="color:var(--yellow)">📈 Trading</th><th style="color:var(--etf-l)">🌱 Dugoročno ulaganje</th></tr></thead>
+        <tbody>
+          <tr><td>Horizont</td><td>Sekunde do tjedana</td><td>Godine do desetljeća</td></tr>
+          <tr><td>Aktivnost</td><td>Svakodnevno praćenje</td><td>Postavi i zaboravi</td></tr>
+          <tr><td>Rizik</td><td style="color:var(--red)">Visok do ekstreman</td><td style="color:var(--etf-l)">Umjeren (diverzificirano)</td></tr>
+          <tr><td>Prosječna uspješnost</td><td style="color:var(--red)">&lt;20% tradera profitabilno dugoročno</td><td style="color:var(--etf-l)">&gt;90% pozitivnih ishoda na 15g+</td></tr>
+          <tr><td>Potrebno znanje</td><td>Tehnička analiza, psihologija, risk mgmt</td><td>Osnove diverzifikacije</td></tr>
+          <tr><td>Porez (HR)</td><td style="color:var(--red)">12% na svaku realiziranu dobit</td><td style="color:var(--etf-l)">0% ako držiš 2+ godine</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:0.85rem;padding:0.75rem 1rem;background:rgba(220,60,60,0.07);border-radius:8px;font-size:0.8rem;color:var(--muted2);border-left:3px solid var(--red)">
+      📚 <strong style="color:var(--text)">Istraživanja pokazuju</strong> da više od 80% retail tradera gubi novac na duge staze. Profesionalni trading zahtijeva godine učenja, disciplinu i značajan kapital za upravljanje rizikom.
+    </div>
+  </div>
+
+  <p class="disclaimer">⚠️ Edukativni pregled osnova. Detaljni vodiči, strategije i primjeri dolaze uskoro. Nije financijski savjet.</p>
+</div>
+
+<!-- ========== FEEDBACK PAGE ========== -->
+<div class="page" id="feedback">
+  <div class="feedback-hero">
+    <h1 data-i18n="feedback-title">💬 Feedback & Prijedlozi</h1>
+    <p data-i18n="feedback-desc">Pomozi nam poboljšati MM Invest — ocijeni aplikaciju, pošalji prijedlog ili pitaj AI asistenta za pomoć.</p>
+  </div>
+
+  <!-- STAR RATING -->
+  <div class="rating-section">
+    <h3>Ocijeni MM Invest</h3>
+    <div class="stars-row" id="stars-row">
+      <button class="star-btn" data-val="1">⭐</button>
+      <button class="star-btn" data-val="2">⭐</button>
+      <button class="star-btn" data-val="3">⭐</button>
+      <button class="star-btn" data-val="4">⭐</button>
+      <button class="star-btn" data-val="5">⭐</button>
+    </div>
+    <div class="rating-label" id="rating-label">Klikni za ocjenu</div>
+    <div class="rating-stats" id="rating-stats"></div>
+  </div>
+
+  <!-- POLL 1: Nova funkcionalnost -->
+  <div class="poll-section" id="poll-feature">
+    <h3>📊 Koja nova funkcionalnost te zanima?</h3>
+    <p class="poll-subtitle">Odaberi jednu ili više opcija — rezultati se prikazuju odmah.</p>
+    <div class="poll-options" id="poll-feature-options">
+      <div class="poll-option" data-poll="feature" data-value="dijete" onclick="togglePollOption(this)">
+        <div class="poll-bar-bg"></div>
+        <span class="poll-icon">👶</span>
+        <span class="poll-label">Kalkulator za dijete / štednju</span>
+        <span class="poll-pct"></span>
+        <span class="poll-check">✓</span>
+      </div>
+      <div class="poll-option" data-poll="feature" data-value="inflacija" onclick="togglePollOption(this)">
+        <div class="poll-bar-bg"></div>
+        <span class="poll-icon">📉</span>
+        <span class="poll-label">Usporedba inflacije</span>
+        <span class="poll-pct"></span>
+        <span class="poll-check">✓</span>
+      </div>
+      <div class="poll-option" data-poll="feature" data-value="export" onclick="togglePollOption(this)">
+        <div class="poll-bar-bg"></div>
+        <span class="poll-icon">🖨️</span>
+        <span class="poll-label">Export / print izvještaja</span>
+        <span class="poll-pct"></span>
+        <span class="poll-check">✓</span>
+      </div>
+    </div>
+    <button class="poll-vote-btn" id="poll-feature-btn" onclick="submitPoll('feature')" disabled>Glasaj</button>
+    <div class="poll-total" id="poll-feature-total"></div>
+  </div>
+
+  <!-- POLL 2: Prioritet -->
+  <div class="poll-section" id="poll-priority">
+    <h3>🎯 Što je prioritet za nastavak?</h3>
+    <p class="poll-subtitle">Odaberi što ti je najvažnije — možeš odabrati jednu opciju.</p>
+    <div class="poll-options" id="poll-priority-options">
+      <div class="poll-option" data-poll="priority" data-value="bugovi" onclick="selectPollSingle(this)">
+        <div class="poll-bar-bg"></div>
+        <span class="poll-icon">🐛</span>
+        <span class="poll-label">Popraviti bugove (slideri / prazna polja)</span>
+        <span class="poll-pct"></span>
+        <span class="poll-check">✓</span>
+      </div>
+      <div class="poll-option" data-poll="priority" data-value="ai" onclick="selectPollSingle(this)">
+        <div class="poll-bar-bg"></div>
+        <span class="poll-icon">🤖</span>
+        <span class="poll-label">AI asistent u aplikaciji</span>
+        <span class="poll-pct"></span>
+        <span class="poll-check">✓</span>
+      </div>
+      <div class="poll-option" data-poll="priority" data-value="nova" onclick="selectPollSingle(this)">
+        <div class="poll-bar-bg"></div>
+        <span class="poll-icon">✨</span>
+        <span class="poll-label">Nova funkcionalnost</span>
+        <span class="poll-pct"></span>
+        <span class="poll-check">✓</span>
+      </div>
+    </div>
+    <button class="poll-vote-btn" id="poll-priority-btn" onclick="submitPoll('priority')" disabled>Glasaj</button>
+    <div class="poll-total" id="poll-priority-total"></div>
+  </div>
+
+  <!-- FEEDBACK FORM -->
+  <div class="feedback-form-card">
+    <h3>Pošalji povratnu informaciju</h3>
+    <div class="fb-type-row">
+      <button class="fb-type-btn active" data-type="prijedlog">💡 Prijedlog</button>
+      <button class="fb-type-btn" data-type="pohvala">👏 Pohvala</button>
+      <button class="fb-type-btn" data-type="greška">🐛 Greška</button>
+      <button class="fb-type-btn" data-type="pitanje">❓ Pitanje</button>
+    </div>
+    <textarea class="fb-textarea" id="fb-text" placeholder="Napiši svoju povratnu informaciju, prijedlog ili opis greške..."></textarea>
+    <input type="email" class="fb-email" id="fb-email" placeholder="📧 Tvoj email (opcionalno) — za odgovor admina">
+    <button class="fb-submit-btn" id="fb-submit-btn" onclick="submitFeedback()">Pošalji feedback ✉️</button>
+    <div class="feedback-sent" id="feedback-sent">✅ Hvala! Tvoj feedback je zabilježen.</div>
+  </div>
+
+  <div class="feedback-form-card" style="text-align:center; padding: 1.25rem;">
+    <h3>🤖 AI Asistent</h3>
+    <p style="font-size:0.82rem; color:var(--muted2); margin-bottom:0.75rem;">Trebate pomoć? Kliknite na chat ikonu dolje desno — MM Invest asistent dostupan je na svakoj stranici.</p>
+    <button class="fb-submit-btn" onclick="toggleAiChat()" style="margin-top:0;">Otvori AI chat 🤖</button>
+  </div>
+
+<p class="disclaimer">⚠️ AI asistent pruža općenite informacije u edukativne svrhe. Nije zamjena za profesionalni financijski savjet.</p>
+
+  <div class="donate-feedback">
+    <p>☕ MM Invest je besplatan i bez reklama. Ako ti je od pomoći, možeš podržati razvoj.</p>
+    <button class="donate-feedback-btn" disabled title="Dolazi uskoro">❤️ Podrži autora</button>
+  </div>
+
+</div>
+
+
+<!-- FLOATING AI CHAT -->
+<div class="ai-chat-float" id="ai-chat-float">
+  <div class="ai-chat-header">
+    <div class="ai-chat-avatar">🤖</div>
+    <div>
+      <div class="ai-chat-title">MM Invest Asistent</div>
+      <div class="ai-chat-sub">Pitaj me o fondovima, ETF-ovima ili kalkulatoru</div>
+    </div>
+    <div class="ai-online-dot"></div>
+  </div>
+  <div class="ai-messages" id="ai-messages">
+    <div class="ai-msg bot">
+      <div class="ai-msg-avatar">🤖</div>
+      <div class="ai-msg-bubble">Bok! Ja sam MM Invest asistent. 👋 Mogu ti pomoći razumjeti razliku između DMF-a i PEPP-a, objasniti ETF fondove, ili te voditi kroz kalkulator. Što te zanima?</div>
+    </div>
+  </div>
+  <div class="ai-quick-btns">
+    <button class="ai-quick-btn" onclick="sendQuickMsg('Što je razlika između DMF i PEPP?')">DMF vs PEPP</button>
+    <button class="ai-quick-btn" onclick="sendQuickMsg('Koji ETF preporučuješ za početnike?')">ETF za početnike</button>
+    <button class="ai-quick-btn" onclick="sendQuickMsg('Kako koristiti kalkulator?')">Kako koristiti?</button>
+    <button class="ai-quick-btn" onclick="sendQuickMsg('Što je državni poticaj na 3. stup?')">Državni poticaj</button>
+    <button class="ai-quick-btn" onclick="sendQuickMsg('Koje su naknade na IBKR vs Trading 212?')">IBKR vs T212</button>
+  </div>
+  <div id="ai-faq-wrap" class="ai-faq-wrap" style="display:none">
+    <p class="ai-faq-label">Često postavljana pitanja (AI je privremeno nedostupan):</p>
+    <!-- Gumbi se generiraju u script.js renderFaqButtons() -->
+  </div>
+  <div class="ai-input-row">
+    <input class="ai-input" id="ai-input" type="text" placeholder="Pitaj nešto o ulaganju..." 
+           onkeydown="if(event.key==='Enter') sendAiMsg()">
+    <button class="ai-send-btn" id="ai-send-btn" onclick="sendAiMsg()">➤</button>
+  </div>
+  <!-- Cloudflare Turnstile — invisible widget, token se šalje s API pozivom -->
+  <!-- ZAMIJENI data-sitekey s tvojim Turnstile Site Key-em iz Cloudflare dashboarda -->
+  <div id="ai-turnstile-container" style="display:none">
+    <div class="cf-turnstile"
+         id="ai-turnstile-widget"
+         data-sitekey="0x4AAAAAACnRnEJwxvINVx6G"
+         data-theme="dark"
+         data-size="invisible"
+         data-callback="onTurnstileSuccess"
+         data-expired-callback="onTurnstileExpired"
+         data-error-callback="onTurnstileError">
+    </div>
+  </div>
+  <div id="ai-rate-notice" style="display:none;font-size:0.72rem;color:#f56060;padding:0.3rem 0.75rem 0.5rem;text-align:center;"></div>
+</div>
+<button class="ai-fab" id="ai-fab" onclick="handleFabClick(event)">
+  <span class="fab-icon-chat">🤖</span>
+  <span class="fab-icon-close">✕</span>
+  <span class="fab-icon-minimize" id="ai-fab-minimize" onclick="event.stopPropagation(); toggleFabMinimize();" aria-label="Minimiziraj">−</span>
+</button>
+<button class="ai-fab-hide" id="ai-fab-hide" onclick="hideFabToggle()">👁️ sakrij AI</button>
+
+<!-- SITE FOOTER -->
 <footer class="site-footer">
   <div class="footer-grid">
     <div class="footer-brand">
@@ -1727,24 +3769,358 @@ tr:hover td { background: var(--surface2) !important; }
       <p>Besplatni kalkulator za usporedbu mirovinskih fondova i ETF ulaganja prilagođen hrvatskom tržištu.</p>
     </div>
     <div class="footer-col">
-      <h4>Stranice</h4>
-      <a href="index.html">Početna</a>
-      <a href="dmf.html">Hrvatski DMF</a>
-      <a href="pepp.html">PEPP</a>
-      <a href="etf.html">ETF Platforme</a>
-      <a href="strategije.html">Strategije</a>
-      <a href="blog.html">Blog</a>
+      <h4>Kalkulatori</h4>
+      <span onclick="document.querySelector('[data-page=kviz]').click()">🧭 Koji put?</span>
+      <span onclick="document.querySelector('[data-page=p0a]').click()">Hrvatski DMF</span>
+      <span onclick="document.querySelector('[data-page=p0b]').click()">ETF Platforme</span>
+      <span onclick="document.querySelector('[data-page=p1]').click()">3. Stup vs PEPP</span>
+      <span onclick="document.querySelector('[data-page=p2]').click()">DMF/PEPP vs ETF</span>
+      <span onclick="document.querySelector('[data-page=p3]').click()">Pension + ETF</span>
     </div>
     <div class="footer-col">
       <h4>Resursi</h4>
       <a href="https://mytetka.com/blog/" target="_blank">Tetka — mytetka.com</a>
-      <a href="https://tonivitali.com/svi-postovi/" target="_blank">Škrti Otočanin</a>
+      <a href="https://tonivitali.com/svi-postovi/" target="_blank">Škrti Otočanin — tonivitali.com</a>
+      <a href="https://www.reddit.com/r/financije/" target="_blank">Reddit r/financije</a>
+      <a href="https://www.europskamirovina.hr/" target="_blank">europskamirovina.hr</a>
       <a href="https://www.hanfa.hr" target="_blank">HANFA</a>
+      <a href="https://www.regos.hr" target="_blank">REGOS</a>
+      <a href="https://www.mirovinsko.hr" target="_blank">HZMO</a>
+      <a href="https://finax.eu/hr" target="_blank">Finax HR</a>
+    </div>
+    <div class="footer-col">
+      <h4>Aplikacija</h4>
+      <span onclick="document.querySelector('[data-page=home]').click()">Početna</span>
+      <span onclick="document.querySelector('[data-page=feedback]').click()">💬 Feedback</span>
+      <span onclick="toggleAiChat()">🤖 AI Asistent</span>
+      <span onclick="openAdminPanel()" style="opacity:0.35;font-size:0.65rem;margin-top:0.5rem">🔐 Admin</span>
     </div>
   </div>
+  <div class="footer-disclaimer">
+    <strong>⚠️ DISCLAIMER:</strong> MM Invest je informativni alat namijenjen isključivo u edukativne svrhe. Nije izrađen od strane licenciranog financijskog savjetnika niti predstavlja financijski savjet. Sve projekcije su temeljene na historijskim podacima i <strong>ne garantiraju buduće rezultate</strong>. Autor ne preuzima nikakvu odgovornost za financijske gubitke nastale na temelju informacija prikazanih u ovoj aplikaciji. Prije donošenja bilo kakve investicijske odluke obvezno konzultiraj licenciranog financijskog savjetnika.
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 MM Invest · Sva prava pridržana</span>
+    <span class="footer-version">v0.9.1-beta</span>
+    <span>Podaci: HANFA 2024 · ETF historijski prosjeci</span>
+  </div>
+</footer>
+
+<!-- App status notification bar (poruka iz admin panela) -->
+<div id="app-notification-bar" style="display:none; position:fixed; bottom:0; left:0; right:0; z-index:9999; background:linear-gradient(90deg,#1a2a3a,#1e2d40); border-top:1px solid rgba(74,158,232,0.4); padding:0.55rem 1.5rem; align-items:center; justify-content:center; gap:0.75rem; font-size:0.8rem; color:#a8d4f5;">
+  <span style="font-size:0.9rem;">ℹ️</span>
+  <span id="app-notification-text"></span>
+  <button type="button" id="app-notification-close" style="margin-left:auto; background:none; border:none; color:#7d8aaa; cursor:pointer; font-size:1rem; padding:0 0.25rem;">✕</button>
+</div>
+<!-- Minimizirana ikona obavijesti (dole lijevo, suprotno od chat bubblea) -->
+<button type="button" id="app-notification-icon" style="display:none; position:fixed; bottom:1.5rem; left:1.5rem; z-index:9999; width:2.75rem; height:2.75rem; border-radius:50%; background:linear-gradient(135deg,#1a2a3a,#1e2d40); border:1px solid rgba(74,158,232,0.4); cursor:pointer; align-items:center; justify-content:center; font-size:1.15rem; color:#a8d4f5; box-shadow:0 4px 12px rgba(0,0,0,0.3);" title="Obavijest">ℹ️</button>
+
+<!-- DONATE BAR - floating, fiksna (bez gumba za zatvaranje) -->
+<div class="donate-bar" id="donate-bar">
+  <span class="donate-bar-text">☕ MM Invest je besplatan i bez reklama. Ako ti je koristan, možeš podržati razvoj:</span>
+  <button class="donate-btn" disabled title="Donate opcija dolazi uskoro">❤️ Podrži autora</button>
+</div>
+
+<!-- ADMIN MODAL -->
+<div class="admin-overlay" id="admin-overlay" onclick="if(event.target===this)closeAdminPanel()">
+  <div class="admin-card" id="admin-card">
+    <button class="admin-close" onclick="closeAdminPanel()">✕</button>
+    
+    <!-- Login view -->
+    <div id="admin-login-view">
+      <h2>🔐 Admin</h2>
+      <p class="admin-sub">MM Invest upravljanje</p>
+      <div class="admin-err" id="admin-err"></div>
+      <label>Korisničko ime</label>
+      <input type="text" id="admin-user" autocomplete="username">
+      <label>Lozinka</label>
+      <input type="password" id="admin-pass" autocomplete="current-password" onkeydown="if(event.key==='Enter')adminLogin()">
+      <button class="admin-login-btn" onclick="adminLogin()" id="admin-login-btn">Prijavi se</button>
+    </div>
+    
+    <!-- Dashboard view -->
+    <div id="admin-dash-view" style="display:none">
+      <h2>🤖 MM Invest Admin</h2>
+      <p class="admin-sub">Upravljanje AI asistentom</p>
+
+      <!-- Tab navigacija -->
+      <div class="admin-tab-row">
+        <button class="admin-tab-btn active" id="admin-tab-ai">🤖 AI Bot</button>
+        <button class="admin-tab-btn" id="admin-tab-fb">💬 Feedback</button>
+        <button class="admin-tab-btn" id="admin-tab-mgmt">⚙️ Upravljanje</button>
+      </div>
+
+      <!-- Tab: AI toggle -->
+      <div class="admin-tab-content active" id="admin-tab-content-ai">
+        <div class="admin-status" id="admin-status"></div>
+        <button class="admin-toggle" id="admin-toggle-btn" onclick="adminToggle()"></button>
+      </div>
+
+      <!-- Tab: Feedback log -->
+      <div class="admin-tab-content" id="admin-tab-content-fb">
+
+        <!-- Poll rezultati -->
+        <div style="margin-bottom:1rem;">
+          <div style="font-size:0.78rem; font-weight:700; color:var(--muted2); margin-bottom:0.5rem;">📊 Poll rezultati (svi korisnici)</div>
+          <div id="admin-poll-results" style="font-size:0.75rem; color:var(--muted2); text-align:center; padding:0.75rem 0;">Učitavanje...</div>
+        </div>
+
+        <div style="border-top:1px solid var(--border); margin-bottom:0.75rem;"></div>
+
+        <!-- Feedback log -->
+        <div style="font-size:0.78rem; font-weight:700; color:var(--muted2); margin-bottom:0.5rem;">💬 Feedback unosi</div>
+        <div id="admin-feedback-log" class="admin-feedback-log">
+          <div class="fb-log-empty">Učitavanje...</div>
+        </div>
+        <button class="admin-toggle" style="margin-top:0.75rem; background:var(--surface2); color:var(--muted2); font-size:0.75rem; padding:0.5rem 1rem;" onclick="loadFeedbackLog(); loadPollResults();">🔄 Osvježi</button>
+      </div>
+
+      <!-- Tab: Upravljanje -->
+      <div class="admin-tab-content" id="admin-tab-content-mgmt">
+
+        <!-- Masovne operacije -->
+        <div style="margin-bottom:1rem;">
+          <div style="font-size:0.78rem; font-weight:700; color:var(--muted2); margin-bottom:0.5rem;">🗂️ Masovne operacije</div>
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <button id="admin-reset-polls-btn" onclick="adminResetPolls()"
+              style="flex:1; min-width:130px; padding:0.55rem 0.75rem; background:rgba(232,164,74,0.15); border:1px solid rgba(232,164,74,0.4); color:#e8a44a; border-radius:8px; font-size:0.75rem; font-weight:700; cursor:pointer;">
+              🗑️ Resetiraj ankete
+            </button>
+            <button id="admin-clear-fb-btn" onclick="adminClearFeedback()"
+              style="flex:1; min-width:130px; padding:0.55rem 0.75rem; background:rgba(245,96,96,0.12); border:1px solid rgba(245,96,96,0.35); color:#f56060; border-radius:8px; font-size:0.75rem; font-weight:700; cursor:pointer;">
+              🧹 Obriši sav feedback
+            </button>
+          </div>
+          <div id="admin-mgmt-msg" style="display:none; font-size:0.78rem; font-weight:600; padding:0.5rem 0; margin-top:0.25rem;"></div>
+        </div>
+
+        <div style="border-top:1px solid var(--border); margin-bottom:0.75rem;"></div>
+
+        <!-- KV stavke -->
+        <div>
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.5rem;">
+            <div style="font-size:0.78rem; font-weight:700; color:var(--muted2);">📦 KV stavke</div>
+            <button onclick="loadKvItems()"
+              style="font-size:0.7rem; color:var(--muted2); background:none; border:none; cursor:pointer; text-decoration:underline;">
+              ↻ Osvježi
+            </button>
+          </div>
+          <div id="admin-kv-list" style="max-height:260px; overflow-y:auto;">
+            <div style="color:var(--muted2); font-size:0.78rem; text-align:center; padding:1rem 0;">Učitavanje...</div>
+          </div>
+        </div>
+
+      </div>
+
+      <span class="admin-logout-link" onclick="adminLogout()">🔒 Odjavi se</span>
+    </div>
+  </div>
+</div>
+
 </footer>
 <script src="script.js"></script>
 <script src="script-ai-security-patch.js"></script>
+
+<script>
+// ── MM Invest Language System ──
+const TRANSLATIONS = {
+  // NAV
+  'nav-home':        { hr: 'Početna',              en: 'Home' },
+  'nav-p0a':         { hr: 'Hrvatski DMF',          en: 'Croatian VMF' },
+  'nav-pepp':        { hr: 'PEPP',                  en: 'PEPP' },
+  'nav-p0b':         { hr: 'ETF Platforme',         en: 'ETF Platforms' },
+  'nav-p1':          { hr: 'HR DMF (3.stup) vs PEPP', en: 'HR VMF vs PEPP' },
+  'nav-p2':          { hr: 'DMF/PEPP vs ETF',       en: 'VMF/PEPP vs ETF' },
+  'nav-p3':          { hr: 'Pension + ETF',          en: 'Pension + ETF' },
+  'nav-kviz':        { hr: '🧭 Koji put?',           en: '🧭 Which path?' },
+  'nav-stednja':     { hr: '👶 Štednja za dijete',   en: '👶 Saving for a child' },
+  'nav-kripto':      { hr: '₿ Kriptovalute',         en: '₿ Cryptocurrencies' },
+  'nav-trading':     { hr: '📈 Trading',              en: '📈 Trading' },
+  'nav-edukacija':   { hr: '📚 Edukacija',           en: '📚 Education' },
+  'nav-feedback':    { hr: '💬 Feedback',            en: '💬 Feedback' },
+
+  // HOME
+  'home-title':      { hr: 'Tvoj osobni kalkulator mirovinskog i investicijskog planiranja — usporedi fondove, ETF-ove i strategije na jednom mjestu.', en: 'Your personal retirement and investment planning calculator — compare funds, ETFs and strategies in one place.' },
+  'home-cta':        { hr: '▶ Pokreni kalkulator',   en: '▶ Launch calculator' },
+  'home-skip':       { hr: 'Preskoči &rarr; Kalkulatori', en: 'Skip &rarr; Calculators' },
+  'home-fc1-title':  { hr: 'Hrvatski DMF fondovi',   en: 'Croatian Voluntary Pension Funds' },
+  'home-fc1-desc':   { hr: 'Usporedi svih 8 dostupnih dobrovoljnih mirovinskih fondova u RH — prinosi, naknade, rizik. Kalkulator s državnim poticajem (15% godišnje).', en: 'Compare all 8 available voluntary pension funds in Croatia — returns, fees, risk. Calculator includes state subsidy (15% annually).' },
+  'home-fc2-title':  { hr: 'PEPP — Pan-europska mirovina', en: 'PEPP — Pan-European Pension' },
+  'home-fc2-desc':   { hr: 'Sve o PEPP-u — što je, kako funkcionira, tko ga nudi u HR, naknade i za koga je prikladan. Idealno za EU mobilne radnike.', en: 'Everything about PEPP — what it is, how it works, who offers it in Croatia, fees and who it\'s suitable for. Ideal for EU mobile workers.' },
+  'home-fc3-title':  { hr: 'ETF Platforme',           en: 'ETF Platforms' },
+  'home-fc3-desc':   { hr: 'VWCE, IWDA, S&P 500, Nasdaq i više — usporedi ETF fondove po riziku i prinosu. IBKR vs Trading 212 vs Finax — sve naknade uračunate.', en: 'VWCE, IWDA, S&P 500, Nasdaq and more — compare ETF funds by risk and return. IBKR vs Trading 212 vs Finax — all fees included.' },
+  'home-fc4-title':  { hr: 'HR DMF (3.stup) vs PEPP', en: 'Croatian VMF vs PEPP' },
+  'home-fc4-desc':   { hr: 'Direktna usporedba domaćeg DMF-a s Finaxovim PEPP-om. Je li europska mirovina bolja od državnog poticaja? Odgovor je ovdje.', en: 'Direct comparison of Croatian VMF with Finax PEPP. Is the European pension better than the state subsidy? The answer is here.' },
+  'home-fc5-title':  { hr: 'DMF/PEPP vs ETF',         en: 'VMF/PEPP vs ETF' },
+  'home-fc5-desc':   { hr: 'Što donosi više novca dugoročno — mirovinski fond ili ETF? Usporedi sve tri opcije paralelno s uključivanjem/isključivanjem pojedinih linija.', en: 'What brings more money long-term — pension fund or ETF? Compare all three options in parallel with toggle lines.' },
+  'home-fc6-title':  { hr: 'Pension + ETF strategija', en: 'Pension + ETF Strategy' },
+  'home-fc6-desc':   { hr: 'Kombiniraj mirovinski fond i ETF u jedan portfelj. Podesi alokaciju, vidi realnu vrijednost s inflacijom i izračunaj mjesečnu isplatu po 4% pravilu.', en: 'Combine a pension fund and ETF into one portfolio. Set allocation, see real value with inflation and calculate monthly payout using the 4% rule.' },
+  'home-fc7-title':  { hr: 'Koji put je za mene?',     en: 'Which path is right for me?' },
+  'home-fc7-desc':   { hr: 'Nisi siguran gdje početi? Odgovori na 5 pitanja i dobij preporuku — DMF, PEPP, ETF ili kombinacija — prilagođenu tvojoj situaciji.', en: 'Not sure where to start? Answer 5 questions and get a recommendation — VMF, PEPP, ETF or a combination — tailored to your situation.' },
+
+  // QUIZ home
+  'quiz-q0':         { hr: 'Koliko imaš godina?',     en: 'How old are you?' },
+  'quiz-q0-sub':     { hr: 'Dob određuje vremenski horizont i razinu rizika.', en: 'Age determines your investment horizon and risk level.' },
+  'quiz-q1':         { hr: 'Koliko možeš odvajati mjesečno?', en: 'How much can you set aside monthly?' },
+  'quiz-q1-sub':     { hr: 'Državni poticaj vrijedi do 66,36€/mj.', en: 'State subsidy applies up to €66.36/month.' },
+  'quiz-q2':         { hr: 'Koliko rizika možeš podnijeti?', en: 'How much risk can you tolerate?' },
+  'quiz-q2-sub':     { hr: 'Što kad ulaganje padne 30%?', en: 'What if your investment drops 30%?' },
+  'quiz-q3':         { hr: 'Koji ti je primarni cilj?', en: 'What is your primary goal?' },
+  'quiz-q3-sub':     { hr: 'Određuje omjer mirovinskih fondova i ETF-ova.', en: 'Determines the ratio of pension funds to ETFs.' },
+  'quiz-q4':         { hr: 'Kakvo je tvoje iskustvo?', en: 'What is your investment experience?' },
+  'quiz-q4-sub':     { hr: 'Pomaže nam preporučiti pravu razinu složenosti.', en: 'Helps us recommend the right level of complexity.' },
+
+  // DISCLAIMER / FOOTER
+  'disclaimer-main': { hr: 'MM Invest je informativni alat za edukacijske svrhe. Nije financijski savjet. Uvijek konzultiraj licenciranog financijskog savjetnika prije donošenja investicijskih odluka. Podaci su temeljeni na javno dostupnim historijskim prinosima.', en: 'MM Invest is an informational tool for educational purposes. Not financial advice. Always consult a licensed financial advisor before making investment decisions. Data based on publicly available historical returns.' },
+
+  // PAGE TITLES & DESCRIPTIONS
+  'p0a-title':       { hr: 'Hrvatski Dobrovoljni Mirovinski Fondovi', en: 'Croatian Voluntary Pension Funds' },
+  'p0a-desc':        { hr: 'Usporedi sve dostupne otvorene DMF fondove u Hrvatskoj prema prosječnim prinosima, razini rizika i projekciji rasta. Podaci HANFA 2024.', en: 'Compare all available open voluntary pension funds in Croatia by average returns, risk level and growth projection. HANFA 2024 data.' },
+  'pepp-title':      { hr: '🌍 PEPP — Pan-europska osobna mirovina', en: '🌍 PEPP — Pan-European Personal Pension' },
+  'pepp-desc':       { hr: 'Pan-European Personal Pension Product (PEPP) je EU-reguliran mirovinski proizvod dostupan građanima svih država članica.', en: 'The Pan-European Personal Pension Product (PEPP) is an EU-regulated pension product available to citizens of all member states.' },
+  'p0b-title':       { hr: 'ETF Ulaganje — Platforme & Projekcija', en: 'ETF Investing — Platforms & Projection' },
+  'p0b-desc':        { hr: 'Usporedi ulaganje u ETF fondove preko IBKR, Trading 212 i Finax. Sve naknade, osiguranje i projekcija rasta uračunati su automatski.', en: 'Compare ETF investing via IBKR, Trading 212 and Finax. All fees, insurance and growth projections calculated automatically.' },
+  'p1-title':        { hr: 'HR DMF (3.stup) vs PEPP', en: 'Croatian VMF (3rd pillar) vs PEPP' },
+  'p1-desc':         { hr: 'Usporedi domaći dobrovoljni mirovinski fond s državnim poticajem nasuprot pan-europske osobne mirovine.', en: 'Compare the domestic voluntary pension fund with state subsidy versus the pan-European personal pension.' },
+  'p2-title':        { hr: 'DMF/PEPP vs ETF', en: 'VMF/PEPP vs ETF' },
+  'p2-desc':         { hr: 'Usporedi mirovinske fondove s globalnim ETF-ovima. Uključi/isključi fondove i vidi koja strategija donosi više.', en: 'Compare pension funds with global ETFs. Toggle funds on/off and see which strategy delivers more.' },
+  'p3-title':        { hr: 'Pension + ETF', en: 'Pension + ETF' },
+  'p3-desc':         { hr: 'Simuliraj paralelnu strategiju — dio novca u sigurnost mirovinskog fonda, dio u rast ETF-a. Podesi alokaciju i vidi što dobivaš na kraju.', en: 'Simulate a parallel strategy — part of your money in the security of a pension fund, part in ETF growth. Set allocation and see your end result.' },
+  'stednja-title':   { hr: '👶 Štednja za dijete', en: '👶 Saving for a Child' },
+  'stednja-desc':    { hr: 'Kako mudro početi štedjeti i ulagati za djetetovu budućnost — i zašto većina popularnih metoda zapravo gubi novac.', en: 'How to wisely start saving and investing for your child\'s future — and why most popular methods actually lose money.' },
+  'kripto-title':    { hr: '₿ Ulaganja u kriptovalute', en: '₿ Cryptocurrency Investing' },
+  'kripto-desc':     { hr: 'Osnove kriptovaluta kao klase imovine — mogućnosti, rizici i što treba znati prije nego uložiš.', en: 'Cryptocurrency basics as an asset class — opportunities, risks and what to know before investing.' },
+  'trading-title':   { hr: '📈 Trading — aktivno trgovanje', en: '📈 Trading — Active Trading' },
+  'trading-desc':    { hr: 'Razumijevanje osnova tradinga — strategije, pojmovi i razlika od dugoročnog ulaganja.', en: 'Understanding trading basics — strategies, terminology and the difference from long-term investing.' },
+  'edu-title':       { hr: '📚 Edukacija', en: '📚 Education' },
+  'edu-desc':        { hr: 'Najbolji hrvatski i međunarodni resursi za financijsku pismenost, investiranje i mirovinsko planiranje.', en: 'The best Croatian and international resources for financial literacy, investing and retirement planning.' },
+  'feedback-title':  { hr: '💬 Feedback & Prijedlozi', en: '💬 Feedback & Suggestions' },
+  'feedback-desc':   { hr: 'Pomozi nam poboljšati MM Invest — ocijeni aplikaciju, pošalji prijedlog ili pitaj AI asistenta za pomoć.', en: 'Help us improve MM Invest — rate the app, send a suggestion or ask the AI assistant for help.' },
+};
+
+let currentLang = 'hr';
+
+// Data-i18n attribute elements
+const I18N_MAP = {
+  // Nav tabs (by data-page attribute)
+  '[data-page="home"]':          'nav-home',
+  '[data-page="p0a"]':           'nav-p0a',
+  '[data-page="pepp"]':          'nav-pepp',
+  '[data-page="p0b"]':           'nav-p0b',
+  '[data-page="p1"]':            'nav-p1',
+  '[data-page="p2"]':            'nav-p2',
+  '[data-page="p3"]':            'nav-p3',
+  '[data-page="kviz"]':          'nav-kviz',
+  '[data-page="stednja-dijete"]':'nav-stednja',
+  '[data-page="kripto"]':        'nav-kripto',
+  '[data-page="trading"]':       'nav-trading',
+  '[data-page="edukacija"]':     'nav-edukacija',
+  '[data-page="feedback"]':      'nav-feedback',
+};
+
+function setLang(lang) {
+  currentLang = lang;
+  document.documentElement.lang = lang;
+
+  // Toggle buttons
+  document.getElementById('btn-hr').classList.toggle('active', lang === 'hr');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+
+  // Translate nav tabs
+  Object.entries(I18N_MAP).forEach(([sel, key]) => {
+    const el = document.querySelector('.nav-tabs ' + sel);
+    if (el && TRANSLATIONS[key]) el.innerHTML = TRANSLATIONS[key][lang];
+  });
+
+  // Translate all [data-i18n] elements
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (TRANSLATIONS[key] && TRANSLATIONS[key][lang]) {
+      el.innerHTML = TRANSLATIONS[key][lang];
+    }
+  });
+
+  // Save to localStorage
+  try { localStorage.setItem('marsan-lang', lang); } catch(e) {}
+}
+
+// Apply saved lang on load
+(function() {
+  try {
+    const saved = localStorage.getItem('marsan-lang');
+    if (saved && saved !== 'hr') setLang(saved);
+  } catch(e) {}
+})();
+
+// ── Turnstile token management ──
+// Token se osvježava automatski. Kada sendAiMsg() zatraži token,
+// čeka da Turnstile izvrši challenge (obično nevidljivo <1s).
+let _turnstileToken = null;
+let _turnstilePending = null; // resolve callback dok čekamo token
+
+function onTurnstileSuccess(token) {
+  _turnstileToken = token;
+  if (_turnstilePending) {
+    _turnstilePending(token);
+    _turnstilePending = null;
+  }
+}
+function onTurnstileExpired() {
+  _turnstileToken = null;
+  // Resetiraj widget kako bi se mogao ponovo riješiti
+  try { turnstile.reset('#ai-turnstile-widget'); } catch(e) {}
+}
+function onTurnstileError() {
+  _turnstileToken = null;
+  try { turnstile.reset('#ai-turnstile-widget'); } catch(e) {}
+}
+
+// Vrati token — ako već postoji vraća odmah, inače čeka challenge
+function getTurnstileToken() {
+  return new Promise((resolve) => {
+    if (_turnstileToken) { resolve(_turnstileToken); return; }
+    _turnstilePending = resolve;
+    // Pokreni challenge
+    try { turnstile.execute('#ai-turnstile-widget'); } catch(e) { resolve(null); }
+    // Timeout fallback (5s) — nastavi bez tokena ako Turnstile nije učitan
+    setTimeout(() => {
+      if (_turnstilePending) { _turnstilePending = null; resolve(null); }
+    }, 5000);
+  });
+}
+
+// Patch sendAiMsg iz script.js da šalje Turnstile token
+// Ovo je wrapper — original sendAiMsg definiran je u script.js
+document.addEventListener('DOMContentLoaded', function() {
+  // Inject Turnstile header interceptor — preuzima originalnu funkciju iz script.js
+  // ako nije definirana (script.js se učitava ranije), odmah patchamo globalnu funkciju
+  const _origSendAiMsg = window.sendAiMsg;
+  if (typeof _origSendAiMsg === 'function') {
+    _patchSendAiMsg(_origSendAiMsg);
+  } else {
+    // script.js se možda učitava async — čekaj kratko
+    setTimeout(() => {
+      if (typeof window.sendAiMsg === 'function' && !window._marsanTurnstilePatched) {
+        _patchSendAiMsg(window.sendAiMsg);
+      }
+    }, 500);
+  }
+});
+
+function _patchSendAiMsg(original) {
+  window._marsanTurnstilePatched = true;
+  window._originalSendAiMsg = original;
+  // sendAiMsg se poziva direktno iz HTML-a (onclick), tako da patch mora biti na window
+  // Umjesto patchiranja same funkcije, Turnstile token dohvat je integriran
+  // u window.marsanGetTurnstileToken koji script.js treba koristiti
+}
+
+// Globalna helper funkcija za script.js
+// U script.js, kod koji šalje fetch na worker mora pozvati:
+//   const token = await window.marsanGetTurnstileToken?.() ?? null;
+// i zatim dodati u headers: 'X-Turnstile-Token': token
+window.marsanGetTurnstileToken = getTurnstileToken;
+</script>
 
 </body>
 </html>
