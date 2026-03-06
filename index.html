@@ -9,6 +9,7 @@
 <!-- DOMPurify — sanitizacija HTML-a prije upisivanja u DOM (zaštita od XSS) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
@@ -3199,7 +3200,7 @@ tr:hover td { background: var(--surface2) !important; }
       <h3>Unified rast portfelja</h3>
       <canvas id="strategy-chart"></canvas>
       <div style="margin-top:0.75rem;">
-        <button type="button" class="strategy-export-btn" id="strategy-export-pdf">⬇ Export usporedbe u PDF</button>
+        <button type="button" class="strategy-export-btn" id="strategy-export-pdf">⬇ Preuzmi PDF izvještaj</button>
       </div>
     </div>
 

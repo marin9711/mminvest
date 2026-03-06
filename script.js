@@ -379,7 +379,7 @@ function syncStrategyData(key, data) {
   if (window.myStrategy[key].enabled) renderMyStrategyDashboard();
 }
 
-function exportMyStrategyPdf() {
+async function exportMyStrategyPdf() {
   const selected = getSelectedStrategyData();
   if (!selected.length) {
     alert('Nema aktivnih scenarija za export. Uključi barem jedan toggle.');
@@ -390,53 +390,159 @@ function exportMyStrategyPdf() {
     alert('PDF library nije učitan. Osvježi stranicu i pokušaj ponovo.');
     return;
   }
+  if (typeof window.html2canvas !== 'function') {
+    alert('html2canvas library nije učitan. Osvježi stranicu i pokušaj ponovo.');
+    return;
+  }
 
+  const now = new Date();
+  const reportDate = now.toLocaleDateString('hr-HR');
+  const reportTitle = `Moja Strategija Ulaganja - ${reportDate}`;
+  const chartContainer = $('strategy-chart') ? $('strategy-chart').closest('.chart-card') : null;
+  const smartTextFromDom = ($('strategy-smart-text')?.textContent || '').trim();
   const selectedMap = selected.reduce((acc, item) => { acc[item.key] = item; return acc; }, {});
   const recommendation = buildStrategyRecommendation(selectedMap);
+  const smartSuggestion = smartTextFromDom || recommendation.text || 'Pametan prijedlog trenutno nije dostupan.';
+
+  let chartDataUrl = '';
+  if (chartContainer) {
+    try {
+      const chartCanvasCapture = await window.html2canvas(chartContainer, {
+        backgroundColor: '#0f172a',
+        scale: 2,
+        useCORS: true,
+      });
+      chartDataUrl = chartCanvasCapture.toDataURL('image/png');
+    } catch (_) {
+      const fallbackCanvas = $('strategy-chart');
+      chartDataUrl = fallbackCanvas ? fallbackCanvas.toDataURL('image/png', 1.0) : '';
+    }
+  }
 
   const doc = new jsPDFCtor({ orientation: 'p', unit: 'mm', format: 'a4' });
-  let y = 14;
-  doc.setFontSize(16);
-  doc.text('MM Invest - Moje ulaganje', 12, y);
-  y += 7;
-  doc.setFontSize(10);
-  doc.text(`Datum: ${new Date().toLocaleString('hr-HR')}`, 12, y);
-  y += 8;
+  const pageW = 210;
+  const pageH = 297;
+  const margin = 12;
+  const footerH = 12;
+  const contentBottom = pageH - margin - footerH;
+  let y = margin;
 
-  doc.setFontSize(12);
-  doc.text('Odabrani scenariji', 12, y);
-  y += 5;
-
-  selected.forEach((s) => {
-    const line = `${s.instrument} | ${s.fundType} | ${s.monthlyPayment.toFixed(2)} EUR/mj | ${s.years} god | ${s.expectedReturn.toFixed(2)}% | Final: ${fmt(s.finalAmount)}`;
-    const wrapped = doc.splitTextToSize(line, 185);
+  const brand = {
+    navy: [15, 23, 42],
+    blue: [74, 159, 232],
+    emerald: [74, 232, 160],
+    textDark: [30, 41, 59],
+    textMuted: [71, 85, 105],
+    white: [255, 255, 255],
+  };
+  const ensureSpace = (needed) => {
+    if (y + needed > contentBottom) {
+      doc.addPage();
+      y = margin;
+    }
+  };
+  const drawSectionBar = (title) => {
+    doc.setFillColor(...brand.blue);
+    doc.roundedRect(margin, y, pageW - margin * 2, 8, 2, 2, 'F');
+    doc.setTextColor(...brand.white);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.text(title, margin + 3, y + 5.5);
+    y += 10;
+  };
+  const drawTableHeader = () => {
+    doc.setFillColor(226, 232, 240);
+    doc.rect(margin, y, tableW, rowH, 'F');
+    doc.setTextColor(...brand.textDark);
+    doc.setFont('helvetica', 'bold');
     doc.setFontSize(9.5);
-    doc.text(wrapped, 12, y);
-    y += wrapped.length * 4.2 + 1.5;
+    doc.text('Investicija', tableColX[0] + 2, y + 5.2);
+    doc.text('Odabrani model', tableColX[1] + 2, y + 5.2);
+    doc.text('Finalna projekcija', tableColX[2] + 2, y + 5.2);
+    y += rowH;
+    doc.setFont('helvetica', 'normal');
+  };
+
+  doc.setFillColor(...brand.navy);
+  doc.roundedRect(margin, y, pageW - margin * 2, 22, 3, 3, 'F');
+  doc.setTextColor(...brand.white);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(15);
+  doc.text(reportTitle, margin + 4, y + 8);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.text(`Izvjestaj generisan: ${now.toLocaleString('hr-HR')}`, margin + 4, y + 15);
+  doc.setTextColor(191, 219, 254);
+  doc.setFontSize(9);
+  doc.text('mminvest | Personalizovana analiza ulaganja', margin + 4, y + 20);
+  y += 28;
+
+  if (chartDataUrl) {
+    ensureSpace(94);
+    drawSectionBar('Snapshot kombinovanog grafa');
+    doc.addImage(chartDataUrl, 'PNG', margin, y, pageW - margin * 2, 80, undefined, 'FAST');
+    y += 84;
+  }
+
+  ensureSpace(14 + selected.length * 9);
+  drawSectionBar('Odabrana ulaganja i projekcija');
+
+  const tableColX = [margin, 72, 150];
+  const tableW = pageW - margin * 2;
+  const rowH = 8;
+  drawTableHeader();
+  selected.forEach((s, idx) => {
+    if (y + rowH + 1 > contentBottom) {
+      doc.addPage();
+      y = margin;
+      drawSectionBar('Odabrana ulaganja i projekcija (nastavak)');
+      drawTableHeader();
+    }
+    if (idx % 2 === 0) {
+      doc.setFillColor(248, 250, 252);
+      doc.rect(margin, y, tableW, rowH, 'F');
+    }
+    doc.setTextColor(...brand.textDark);
+    doc.setFontSize(9);
+    doc.text(s.instrument, tableColX[0] + 2, y + 5.1);
+    doc.text(s.fundType, tableColX[1] + 2, y + 5.1);
+    doc.setTextColor(...brand.emerald);
+    doc.setFont('helvetica', 'bold');
+    doc.text(fmt(s.finalAmount), tableColX[2] + 2, y + 5.1);
+    doc.setFont('helvetica', 'normal');
+    y += rowH;
   });
 
-  const chartCanvas = $('strategy-chart');
-  if (chartCanvas && strategyChart) {
-    if (y > 155) { doc.addPage(); y = 14; }
-    doc.setFontSize(12);
-    doc.text('Graf usporedbe', 12, y);
-    y += 4;
-    const chartImg = chartCanvas.toDataURL('image/png', 1.0);
-    doc.addImage(chartImg, 'PNG', 12, y, 186, 82);
-    y += 88;
+  y += 6;
+  ensureSpace(26);
+  drawSectionBar('Pametan prijedlog');
+
+  doc.setTextColor(...brand.textMuted);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  const recLines = doc.splitTextToSize(smartSuggestion, pageW - margin * 2 - 6);
+  const recBlockHeight = Math.max(16, recLines.length * 5 + 6);
+  ensureSpace(recBlockHeight);
+  doc.setFillColor(241, 245, 249);
+  doc.roundedRect(margin, y, pageW - margin * 2, recBlockHeight, 2, 2, 'F');
+  doc.setFillColor(...brand.emerald);
+  doc.rect(margin, y, 1.2, recBlockHeight, 'F');
+  doc.text(recLines, margin + 3, y + 6);
+
+  const totalPages = doc.getNumberOfPages();
+  for (let i = 1; i <= totalPages; i += 1) {
+    doc.setPage(i);
+    doc.setDrawColor(203, 213, 225);
+    doc.setLineWidth(0.25);
+    doc.line(margin, pageH - footerH - 1.5, pageW - margin, pageH - footerH - 1.5);
+    doc.setTextColor(100, 116, 139);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8.5);
+    doc.text('MM Invest | Povjerljivo i edukativno', margin, pageH - 5);
+    doc.text(`Stranica ${i} / ${totalPages}`, pageW - margin, pageH - 5, { align: 'right' });
   }
 
-  if (recommendation && recommendation.text) {
-    if (y > 250) { doc.addPage(); y = 14; }
-    doc.setFontSize(12);
-    doc.text('Pametan prijedlog', 12, y);
-    y += 5;
-    doc.setFontSize(9.5);
-    const recWrapped = doc.splitTextToSize(recommendation.text, 185);
-    doc.text(recWrapped, 12, y);
-  }
-
-  doc.save(`moje-ulaganje-${new Date().toISOString().slice(0, 10)}.pdf`);
+  doc.save(`moja-strategija-ulaganja-${now.toISOString().slice(0, 10)}.pdf`);
 }
 
 // HELPERS
