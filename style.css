@@ -923,6 +923,22 @@ th, td, .tbl-wrap small, .tbl-wrap span, .liq-info-box span, .rate-note, .sc-row
   background: rgba(74, 158, 232, 0.24);
 }
 
+.donation-copy-toast {
+  margin-top: 0.5rem;
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.16s ease, transform 0.16s ease;
+  font-size: 0.74rem;
+  color: #86efac;
+  min-height: 1rem;
+}
+
+.donation-copy-toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .donation-modal-close {
   position: absolute;
   top: 0.65rem;

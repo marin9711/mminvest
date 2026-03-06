@@ -1330,10 +1330,20 @@ async function copyDonationAddress() {
   const address = (addressEl.textContent || '').trim();
   if (!address) return;
 
-  const original = btn.textContent;
+  const showCopyToast = (msg) => {
+    const toast = $('donation-copy-toast');
+    if (!toast) return;
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toast._hideTimer);
+    toast._hideTimer = setTimeout(() => {
+      toast.classList.remove('show');
+    }, 1400);
+  };
+
   try {
     await navigator.clipboard.writeText(address);
-    btn.textContent = 'Kopirano!';
+    showCopyToast('Kopirano!');
   } catch (_) {
     try {
       const ta = document.createElement('textarea');
@@ -1342,12 +1352,11 @@ async function copyDonationAddress() {
       ta.select();
       document.execCommand('copy');
       document.body.removeChild(ta);
-      btn.textContent = 'Kopirano!';
+      showCopyToast('Kopirano!');
     } catch (_) {
-      btn.textContent = 'Copy nije uspio';
+      showCopyToast('Copy nije uspio');
     }
   }
-  setTimeout(() => { btn.textContent = original; }, 1400);
 }
 
 function initDonationModal() {
