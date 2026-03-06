@@ -1504,9 +1504,9 @@ tr:hover td { background: var(--surface2) !important; }
 <nav>
   <a class="nav-brand" href="index.html">MM <span>Invest</span></a>
   <div class="nav-tabs">
-    <a class="nav-tab active" data-page="home" href="index.html">Početna</a>
+    <a class="nav-tab" data-page="home" href="index.html">Početna</a>
     <a class="nav-tab" data-page="p0a" href="dmf.html">Hrvatski DMF</a>
-    <a class="nav-tab" data-page="pepp" href="pepp.html">PEPP</a>
+    <a class="nav-tab active" data-page="pepp" href="pepp.html">PEPP</a>
     <a class="nav-tab" data-page="p0b" href="etf.html">ETF Platforme</a>
     <a class="nav-tab" data-page="p1" href="strategije.html">Strategije</a>
     <a class="nav-tab" data-page="edukacija" href="blog.html">📚 Edukacija</a>
@@ -1516,209 +1516,110 @@ tr:hover td { background: var(--surface2) !important; }
     <button class="lang-btn" id="btn-en" onclick="setLang('en')">🇬🇧 EN</button>
   </div>
 </nav>
-<div class="page active" id="home">
-  <div class="home-hero">
-    <div class="brand-big">MM Invest</div>
-    <p class="tagline"><span data-i18n="home-title">Tvoj osobni kalkulator mirovinskog i investicijskog planiranja — usporedi fondove, ETF-ove i strategije na jednom mjestu.</span></p>
-    <div class="hero-badges">
-      <span class="hero-badge b-gold">🏦 3. Mirovinski stup</span>
-      <span class="hero-badge b-blue">🌍 PEPP mirovina</span>
-      <span class="hero-badge b-green">📈 ETF fondovi</span>
-      <span class="hero-badge b-purple">⚖️ Kombinirane strategije</span>
-      <span class="hero-badge b-green">🇭🇷 Prilagođeno HR tržištu</span>
-    </div>
-    <button class="home-cta" onclick="startHomeQuiz()">
-      🧭 Otkrij svoju strategiju
-    </button>
-    <button class="home-cta-skip" onclick="skipHomeQuiz()">
-      Preskoči &rarr; Kalkulatori
-    </button>
+<div class="page active" id="pepp">
+  <div class="page-header">
+    <h2><span class="grad-cool" data-i18n="pepp-title">🌍 PEPP — Pan-europska osobna mirovina</span></h2>
+    <p data-i18n="pepp-desc">Pan-European Personal Pension Product (PEPP) je EU-reguliran mirovinski proizvod dostupan građanima svih država članica.</p>
   </div>
 
-  <!-- HOME ONBOARDING QUIZ -->
-  <div class="home-quiz-wrap" id="home-quiz-wrap" style="display:none">
-    <div class="home-quiz-inner">
-
-      <!-- Progress -->
-      <div class="home-quiz-progress" id="hq-progress">
-        <div class="hq-step active" id="hqs-0"></div>
-        <div class="hq-step" id="hqs-1"></div>
-        <div class="hq-step" id="hqs-2"></div>
-        <div class="hq-step" id="hqs-3"></div>
-        <div class="hq-step" id="hqs-4"></div>
-      </div>
-
-      <!-- Q0 -->
-      <div class="hq-card" id="hq-0">
-        <div class="hq-question">Koliko imaš godina?</div>
-        <div class="hq-sub">Dob određuje vremenski horizont i razinu rizika.</div>
-        <div class="hq-options">
-          <div class="hq-option" data-hq="0" data-val="young" onclick="hqSelect(this)"><span>🌱</span><div><strong>18–35</strong><small>Dugi horizont</small></div></div>
-          <div class="hq-option" data-hq="0" data-val="mid" onclick="hqSelect(this)"><span>📈</span><div><strong>36–50</strong><small>Srednji horizont</small></div></div>
-          <div class="hq-option" data-hq="0" data-val="senior" onclick="hqSelect(this)"><span>🏁</span><div><strong>51+</strong><small>Stabilnost</small></div></div>
-        </div>
-        <div class="hq-nav"><button class="hq-skip" onclick="skipHomeQuiz()">Preskoči kviz</button><button class="hq-next" id="hqn-0" onclick="hqNext(0)" disabled>Dalje →</button></div>
-      </div>
-
-      <!-- Q1 -->
-      <div class="hq-card" id="hq-1" style="display:none">
-        <div class="hq-question">Koliko možeš odvajati mjesečno?</div>
-        <div class="hq-sub">Državni poticaj vrijedi do 66€/mj.</div>
-        <div class="hq-options">
-          <div class="hq-option" data-hq="1" data-val="low" onclick="hqSelect(this)"><span>💶</span><div><strong>Do 50€</strong><small>Mali iznosi</small></div></div>
-          <div class="hq-option" data-hq="1" data-val="mid" onclick="hqSelect(this)"><span>💰</span><div><strong>50–150€</strong><small>Idealno za poticaj</small></div></div>
-          <div class="hq-option" data-hq="1" data-val="high" onclick="hqSelect(this)"><span>🏦</span><div><strong>150€+</strong><small>Kombinirani pristupi</small></div></div>
-        </div>
-        <div class="hq-nav"><button class="hq-back" onclick="hqBack(1)">← Natrag</button><button class="hq-next" id="hqn-1" onclick="hqNext(1)" disabled>Dalje →</button></div>
-      </div>
-
-      <!-- Q2 -->
-      <div class="hq-card" id="hq-2" style="display:none">
-        <div class="hq-question">Koliko rizika možeš podnijeti?</div>
-        <div class="hq-sub">Što kad ulaganje padne 30%?</div>
-        <div class="hq-options">
-          <div class="hq-option" data-hq="2" data-val="low" onclick="hqSelect(this)"><span>😰</span><div><strong>Nisam za rizik</strong><small>Preferiram sigurnost</small></div></div>
-          <div class="hq-option" data-hq="2" data-val="mid" onclick="hqSelect(this)"><span>😌</span><div><strong>Umjeren rizik</strong><small>Dugoročan sam</small></div></div>
-          <div class="hq-option" data-hq="2" data-val="high" onclick="hqSelect(this)"><span>😎</span><div><strong>Visok rizik</strong><small>Pad = prilika</small></div></div>
-        </div>
-        <div class="hq-nav"><button class="hq-back" onclick="hqBack(2)">← Natrag</button><button class="hq-next" id="hqn-2" onclick="hqNext(2)" disabled>Dalje →</button></div>
-      </div>
-
-      <!-- Q3 -->
-      <div class="hq-card" id="hq-3" style="display:none">
-        <div class="hq-question">Koji ti je primarni cilj?</div>
-        <div class="hq-sub">Određuje omjer mirovinskih fondova i ETF-ova.</div>
-        <div class="hq-options">
-          <div class="hq-option" data-hq="3" data-val="pension" onclick="hqSelect(this)"><span>🏖️</span><div><strong>Mirovina</strong><small>20+ godina horizont</small></div></div>
-          <div class="hq-option" data-hq="3" data-val="growth" onclick="hqSelect(this)"><span>🚀</span><div><strong>Rast imovine</strong><small>FIRE / ETF</small></div></div>
-          <div class="hq-option" data-hq="3" data-val="both" onclick="hqSelect(this)"><span>⚖️</span><div><strong>Oboje</strong><small>Poticaji + ETF</small></div></div>
-        </div>
-        <div class="hq-nav"><button class="hq-back" onclick="hqBack(3)">← Natrag</button><button class="hq-next" id="hqn-3" onclick="hqNext(3)" disabled>Dalje →</button></div>
-      </div>
-
-      <!-- Q4 -->
-      <div class="hq-card" id="hq-4" style="display:none">
-        <div class="hq-question">Kakvo je tvoje iskustvo?</div>
-        <div class="hq-sub">Pomaže nam preporučiti pravu razinu složenosti.</div>
-        <div class="hq-options">
-          <div class="hq-option" data-hq="4" data-val="none" onclick="hqSelect(this)"><span>🐣</span><div><strong>Početnik</strong><small>Nikad nisam ulagao/la</small></div></div>
-          <div class="hq-option" data-hq="4" data-val="some" onclick="hqSelect(this)"><span>📚</span><div><strong>Malo iskustva</strong><small>Razumijem osnove</small></div></div>
-          <div class="hq-option" data-hq="4" data-val="expert" onclick="hqSelect(this)"><span>🧠</span><div><strong>Iskusan</strong><small>Imam portfelj</small></div></div>
-        </div>
-        <div class="hq-nav"><button class="hq-back" onclick="hqBack(4)">← Natrag</button><button class="hq-next" id="hqn-4" onclick="hqShowResult()" disabled>Vidi preporuku ✓</button></div>
-      </div>
-
-      <!-- Result -->
-      <div class="hq-result" id="hq-result" style="display:none">
-        <div class="hq-result-emoji" id="hqr-emoji">🎯</div>
-        <div class="hq-result-title" id="hqr-title"></div>
-        <div class="hq-result-sub" id="hqr-sub"></div>
-        <div class="hq-result-btns" id="hqr-btns"></div>
-        <button class="hq-restart" onclick="hqRestart()">↩ Ponovi kviz</button>
-        <button class="hq-skip" style="margin-left:0.5rem" onclick="skipHomeQuiz()">Preskoči →</button>
-      </div>
-
+  <div class="stat-cards">
+    <div class="stat-card sc-pepp">
+      <div class="sc-label">Naknada</div>
+      <div class="sc-name">Max 1% godišnje</div>
+      <div class="sc-row"><div class="sr-lbl">Finax (jedini HR ponuđač)</div><div class="sr-val">1.0% / god</div></div>
+    </div>
+    <div class="stat-card sc-pepp">
+      <div class="sc-label">Portfelj</div>
+      <div class="sc-name">100% globalni ETF-ovi</div>
+      <div class="sc-row"><div class="sr-lbl">Strategija</div><div class="sr-val">Pasivni indeksni fond</div></div>
+    </div>
+    <div class="stat-card sc-pepp">
+      <div class="sc-label">Portabilnost</div>
+      <div class="sc-name">EU prenosivo</div>
+      <div class="sc-row"><div class="sr-lbl">Selidba unutar EU</div><div class="sr-val">✅ Zadržavaš račun</div></div>
     </div>
   </div>
 
-  <!-- Version / status row -->
-  <div class="version-row">
-    <span class="version-badge">v0.9.1 — beta</span>
-    <span class="version-desc">Podaci DMF fondova: HANFA 2024. | ETF prinosi: historijski prosjek 10–15g</span>
-    <div class="version-links">
-      <span class="vlink" onclick="document.querySelector('[data-page=p0a]').click()">DMF →</span>
-      <span class="vlink" onclick="document.querySelector('[data-page=p0b]').click()">ETF →</span>
-      <span class="vlink" onclick="document.querySelector('[data-page=p3]').click()">Strategija →</span>
+  <div class="table-card">
+    <h3>Ključne karakteristike PEPP-a</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Karakteristika</th><th>Detalji</th></tr></thead>
+        <tbody>
+          <tr><td>Puni naziv</td><td>Pan-European Personal Pension Product</td></tr>
+          <tr><td>Regulativa</td><td>EU Uredba 2019/1238 — vrijedi u svim EU državama</td></tr>
+          <tr><td>Ponuđač u HR</td><td>Finax (jedini trenutno registrirani u HR)</td></tr>
+          <tr><td>Naknada upravljanja</td><td>Max 1.0% godišnje (regulatorno ograničenje EU)</td></tr>
+          <tr><td>Minimalni ulog</td><td>20€/mj ili jednokratno</td></tr>
+          <tr><td>Investicijska strategija</td><td>Globalni ETF-ovi (MSCI World / All World)</td></tr>
+          <tr><td>Državni poticaj (HR)</td><td>❌ Nije dostupan (za razliku od DMF-a)</td></tr>
+          <tr><td>Porezna olakšica (HR)</td><td>❌ Trenutno nije izjednačena s DMF-om</td></tr>
+          <tr><td>EU portabilnost</td><td>✅ Selišeš se — zadržavaš isti račun</td></tr>
+          <tr><td>Isplata</td><td>Od mirovinske dobi ili prijevremeno uz uvjete</td></tr>
+          <tr><td>Likvidnost</td><td>🟡 <strong>Srednja</strong> — isplata od 55. god. ili ranije kod invalidnosti/terminalne bolesti; 100% jednokratno (za razliku od DMF-a)</td></tr>
+          <tr><td>Prijevremena isplata</td><td>Moguća uz penalizaciju (uvjeti variraju po ponuđaču)</td></tr>
+          <tr><td>Nasljeđivanje</td><td>✅ Prenosivo nasljednicima</td></tr>
+          <tr><td>Podkonti</td><td>Novi podkonto u svakoj novoj EU državi stanovanja</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
-  <!-- Feature cards -->
-  <div class="features-grid">
-    <div class="feature-card fc-dmf" onclick="window.location.href='dmf.html'">
-      <span class="fc-icon">🏛️</span>
-      <div class="fc-title">Hrvatski DMF fondovi</div>
-      <div class="fc-desc">Usporedi svih 8 dostupnih dobrovoljnih mirovinskih fondova u RH — prinosi, naknade, rizik. Kalkulator s državnim poticajem (15% godišnje).</div>
-      <span class="fc-tag" style="color:var(--dmf-l)">Mjesečno & godišnje</span>
+  <div class="table-card">
+    <h3>PEPP vs DMF — brza usporedba</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Kriterij</th><th style="color:var(--pepp-l)">🌍 PEPP (Finax)</th><th style="color:var(--dmf-l)">🏦 DMF (3. stup)</th></tr></thead>
+        <tbody>
+          <tr><td>Naknada</td><td>~1.0%/god</td><td>0.5–1.87%/god</td></tr>
+          <tr><td>Državni poticaj</td><td style="color:var(--red)">❌ Nema</td><td style="color:var(--etf-l)">✅ 15%, max 99.54€/god</td></tr>
+          <tr><td>Porezna olakšica HR</td><td style="color:var(--red)">❌ Nema</td><td style="color:var(--etf-l)">✅ Uplata poslodavca do 804€/god neoporezivo</td></tr>
+          <tr><td>Prinos (povijesni ~5g)</td><td style="color:var(--etf-l)">~7–9%/god (globalni ETF)</td><td style="color:var(--muted2)">~3–6%/god (ovisi o fondu)</td></tr>
+          <tr><td>Investicijska strategija</td><td>Pasivni globalni ETF indeks</td><td>Konzervativni / mješoviti fond</td></tr>
+          <tr>
+            <td>🔐 Likvidnost</td>
+            <td style="color:var(--yellow)">🟡 Srednja — od 55. god., <strong>100%</strong> jednokratno</td>
+            <td style="color:var(--red)">🔒 Niska — od 55. god., max <strong>30%</strong> jednokratno</td>
+          </tr>
+          <tr><td>Prijevremena isplata</td><td style="color:var(--yellow)">⚠️ Moguća uz penalizaciju</td><td style="color:var(--red)">❌ Nije moguća (bez iznimke)</td></tr>
+          <tr><td>EU portabilnost</td><td style="color:var(--etf-l)">✅ Zadržavaš račun pri selidbi</td><td style="color:var(--red)">❌ Vezano uz HR</td></tr>
+          <tr><td>Valuta</td><td>EUR</td><td>HRK/EUR (fond u EUR)</td></tr>
+          <tr><td>Nasljeđivanje</td><td style="color:var(--etf-l)">✅ Da</td><td style="color:var(--etf-l)">✅ Da</td></tr>
+        </tbody>
+      </table>
     </div>
-    <div class="feature-card fc-pepp" onclick="window.location.href='pepp.html'">
-      <span class="fc-icon">🌍</span>
-      <div class="fc-title">PEPP — Pan-europska mirovina</div>
-      <div class="fc-desc">Sve o PEPP-u — što je, kako funkcionira, tko ga nudi u HR, naknade i za koga je prikladan. Idealno za EU mobilne radnike.</div>
-      <span class="fc-tag" style="color:var(--pepp-l)">EU prenosivo · Finax</span>
-    </div>
-    <div class="feature-card fc-etf" onclick="window.location.href='etf.html'">
-      <span class="fc-icon">📊</span>
-      <div class="fc-title">ETF Platforme</div>
-      <div class="fc-desc">VWCE, IWDA, S&P 500, Nasdaq i više — usporedi ETF fondove po riziku i prinosu. IBKR vs Trading 212 vs Finax — sve naknade uračunate.</div>
-      <span class="fc-tag" style="color:var(--etf-l)">11 ETF fondova · 4 platforme</span>
-    </div>
-    <div class="feature-card fc-pepp" onclick="window.location.href='strategije.html'">
-      <span class="fc-icon">⚖️</span>
-      <div class="fc-title">HR DMF (3.stup) vs PEPP</div>
-      <div class="fc-desc">Direktna usporedba domaćeg DMF-a s Finaxovim PEPP-om. Je li europska mirovina bolja od državnog poticaja? Odgovor je ovdje.</div>
-      <span class="fc-tag" style="color:var(--dmf-l)">Projekcija 5–60 god</span>
-    </div>
-    <div class="feature-card fc-combo" onclick="window.location.href='strategije.html'">
-      <span class="fc-icon">📈</span>
-      <div class="fc-title">DMF/PEPP vs ETF</div>
-      <div class="fc-desc">Što donosi više novca dugoročno — mirovinski fond ili ETF? Usporedi sve tri opcije paralelno s uključivanjem/isključivanjem pojedinih linija.</div>
-      <span class="fc-tag" style="color:var(--combo-l)">Interaktivni grafovi</span>
-    </div>
-    <div class="feature-card fc-combo" onclick="window.location.href='strategije.html'">
-      <span class="fc-icon">🧩</span>
-      <div class="fc-title">Pension + ETF strategija</div>
-      <div class="fc-desc">Kombiniraj mirovinski fond i ETF u jedan portfelj. Podesi alokaciju, vidi realnu vrijednost s inflacijom i izračunaj mjesečnu isplatu po 4% pravilu.</div>
-      <span class="fc-tag" style="color:var(--combo-l)">4% pravilo · Inflacija</span>
-    </div>
-    <div class="feature-card fc-ai" style="cursor:pointer" onclick="window.location.href='strategije.html'">
-      <span class="fc-icon">🧭</span>
-      <div class="fc-title">Koji put je za mene?</div>
-      <div class="fc-desc">Nisi siguran gdje početi? Odgovori na 5 pitanja i dobij preporuku — DMF, PEPP, ETF ili kombinacija — prilagođenu tvojoj situaciji.</div>
-      <span class="fc-tag" style="color:var(--pepp-l)">Interaktivni kviz · 2 min</span>
+    <div style="margin-top:0.85rem;padding:0.75rem 1rem;background:var(--surface2);border-radius:8px;font-size:0.8rem;color:var(--muted2);border-left:3px solid var(--pepp)">
+      💡 <strong style="color:var(--text)">Ključna razlika:</strong> DMF nudi državni poticaj (+99.54€/god besplatno), ali PEPP nudi viši potencijalni prinos i više fleksibilnosti pri isplati. Koristi <a href="#" onclick="document.querySelector('[data-page=p1]').click();return false;" style="color:var(--pepp-l)">kalkulator DMF vs PEPP</a> za personaliziranu usporedbu.
     </div>
   </div>
 
-  <!-- How it works -->
-  <div class="how-section">
-    <h2>Kako koristiti MM Invest?</h2>
-    <div class="steps-row">
-      <div class="step-card"><div class="step-num">1</div><div class="step-title">Odaberi strategiju</div><div class="step-desc">Klikni na željeni tab — DMF, ETF, PEPP ili kombinirano ulaganje.</div></div>
-      <div class="step-card"><div class="step-num">2</div><div class="step-title">Postavi parametre</div><div class="step-desc">Upiši iznos uplate, broj godina i odaberi fond. Sve možeš ručno upisati ili koristiti slider.</div></div>
-      <div class="step-card"><div class="step-num">3</div><div class="step-title">Usporedi rezultate</div><div class="step-desc">Grafovi i tablice se ažuriraju trenutno. Uključuj/isključuj fondove i vidi razlike.</div></div>
-      <div class="step-card"><div class="step-num">4</div><div class="step-title">Provjeri isplatu</div><div class="step-desc">Na stranici "Pension + ETF" vidi koliko možeš isplaćivati mjesečno po završetku ulaganja.</div></div>
-      <div class="step-card"><div class="step-num">5</div><div class="step-title">Mobitel?</div><div class="step-desc">Tapni na graf za prošireni prikaz u landscape modu — za bolju preglednost na malim ekranima.</div></div>
+  <div class="table-card">
+    <h3>Za koga je PEPP idealan?</h3>
+    <div style="display:grid;gap:0.8rem;margin-top:0.5rem">
+      <div style="background:var(--surface2);border-radius:10px;padding:1rem;border-left:3px solid var(--pepp)">
+        <strong>🌍 EU mobilni radnici</strong>
+        <p style="margin:0.3rem 0 0;font-size:0.88rem;color:var(--muted)">Planiraš raditi u više EU država? PEPP ide s tobom — bez gubitka ulaganja pri selidbi.</p>
+      </div>
+      <div style="background:var(--surface2);border-radius:10px;padding:1rem;border-left:3px solid var(--pepp)">
+        <strong>📈 Investitori s dugim horizontom</strong>
+        <p style="margin:0.3rem 0 0;font-size:0.88rem;color:var(--muted)">10+ godina do mirovine? Viši potencijalni prinos ETF-ova može nadoknaditi izostanak državnog poticaja.</p>
+      </div>
+      <div style="background:var(--surface2);border-radius:10px;padding:1rem;border-left:3px solid var(--pepp)">
+        <strong>💼 Samozaposleni i freelanceri</strong>
+        <p style="margin:0.3rem 0 0;font-size:0.88rem;color:var(--muted)">Nemaš poslodavca koji bi uplaćivao u DMF? PEPP nudi alternativni put za mirovinsku štednju.</p>
+      </div>
+      <div style="background:var(--surface2);border-radius:10px;padding:1rem;border-left:3px solid var(--surface3,#333)">
+        <strong style="color:var(--muted)">⚠️ Nije optimalno za…</strong>
+        <p style="margin:0.3rem 0 0;font-size:0.88rem;color:var(--muted)">Kratkoročnu štednju (&lt;5 god), ili ako je DMF s državnim poticajem i poslodavčevom uplatom dostupan i iskoristiv.</p>
+      </div>
     </div>
   </div>
 
-  <!-- AI section -->
-  <div class="ai-section">
-    <div>
-      <h2>🤖 AI Asistent — planovi</h2>
-      <p>Integracija AI chat asistenta koji će odgovarati na pitanja o ulaganju, objašnjavati koncepte i pomagati korisnicima snalaziti se u kalkulatoru — nije komplicirana, ali ima nekoliko razina.</p>
-      <p style="color:var(--text);font-weight:600;font-size:0.85rem">Web aplikacija (ova stranica):</p>
-      <p>Najjednostavnija integracija — Anthropic Claude API ili OpenAI, chatbot widget ugrađen direktno u stranicu. Može biti spreman <strong style="color:var(--etf-l)">u par dana</strong>.</p>
-      <p style="color:var(--text);font-weight:600;font-size:0.85rem">Android / iOS aplikacija:</p>
-      <p>WebView wrapper (npr. Capacitor ili React Native) koji pakira ovu web app u nativnu aplikaciju — AI asistent funkcionira isto. <strong style="color:var(--yellow)">Tjedni do mjesec dana</strong> rada ovisno o zahtjevima.</p>
-    </div>
-    <div>
-      <p style="font-size:0.8rem;font-weight:600;color:var(--muted2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.75rem">Roadmap</p>
-      <ul class="ai-roadmap">
-        <li><span class="ri done">✓</span><span>5 kalkulatora s interaktivnim grafovima</span></li>
-        <li><span class="ri done">✓</span><span>8 hrvatskih DMF fondova s HANFA podacima</span></li>
-        <li><span class="ri done">✓</span><span>IBKR / Trading 212 / Finax naknade i osiguranje</span></li>
-        <li><span class="ri done">✓</span><span>Državni poticaj toggle s dinamičnim izračunom</span></li>
-        <li><span class="ri done">✓</span><span>Mobile tap-to-expand grafovi (landscape)</span></li>
-        <li><span class="ri soon">◎</span><span>AI chat asistent (Claude API) — <em>uskoro</em></span></li>
-        <li><span class="ri soon">◎</span><span>Spremanje scenarija u browser / export PDF</span></li>
-        <li><span class="ri soon">◎</span><span>Usporedba s realnim tržišnim podacima (live)</span></li>
-        <li><span class="ri plan">○</span><span>Android / iOS app (Capacitor wrapper)</span></li>
-        <li><span class="ri plan">○</span><span>Korisnički računi i portfelj praćenje</span></li>
-        <li><span class="ri plan">○</span><span>Push notifikacije — promjene prinosa fondova</span></li>
-      </ul>
-    </div>
+  <div class="liq-info-box">
+    <div class="liq-row"><span class="liq-icon">🟡</span><div class="liq-text"><strong>Srednja likvidnost — PEPP (Finax)</strong><span>Isplata je moguća od <strong>55. godine</strong> (ili ranije u posebnim slučajevima: trajna nesposobnost, terminal illness). Sav kapital možeš povući odjednom — bez ograničenja na 30% kao kod HR DMF-a.</span></div></div>
+    <div class="liq-row"><span class="liq-icon">ℹ️</span><div class="liq-text"><strong>Razlika od HR DMF-a</strong><span>Kod HR DMF-a max 30% jednokratno + ostatak u ratama. Kod PEPP-a (Finax) možeš povući <strong>100% odjednom</strong> od 55. god. Veća fleksibilnost pri isplati.</span></div></div>
   </div>
-
-  <p class="disclaimer">MM Invest je informativni alat za edukacijske svrhe. Nije financijski savjet. Uvijek konzultiraj licenciranog financijskog savjetnika prije donošenja investicijskih odluka. Podaci su temeljeni na javno dostupnim historijskim prinosima.</p>
+  <p class="disclaimer">⚠️ Informativni pregled. Finax je jedini PEPP ponuđač trenutno registriran u HR. Provjeri najnovije uvjete na finax.eu. Nije financijski savjet.</p>
 </div>
 <footer class="site-footer">
   <div class="footer-grid">
