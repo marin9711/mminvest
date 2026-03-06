@@ -1,5 +1,15 @@
 var $ = id => document.getElementById(id);
 const fmt = n => new Intl.NumberFormat('hr-HR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n);
+
+// DOMPurify helper za tbody fragmente — wrappa u <table> kontekst da se <tr>/<td> ne stripaju
+function sanitizeTbody(html) {
+  const table = document.createElement('table');
+  const tbody = document.createElement('tbody');
+  table.appendChild(tbody);
+  tbody.innerHTML = html;
+  DOMPurify.sanitize(table, { IN_PLACE: true, ALLOWED_TAGS: ['table','tbody','tr','td'], ALLOWED_ATTR: ['style'] });
+  return tbody.innerHTML;
+}
 const fmtX = (n,d=1) => n.toFixed(d)+'x';
 const fmtPct = n => (n>=0?'+':'')+n.toFixed(1)+'%';
 
@@ -91,12 +101,12 @@ function updateP1() {
 
   const milestones = [5,10,15,20,25,30,35,40,50,60].filter(y=>y<=god);
   if(!milestones.includes(god)) milestones.push(god);
-  $('p1-tbody').innerHTML = DOMPurify.sanitize(milestones.map(y=>{
+  $('p1-tbody').innerHTML = sanitizeTbody(milestones.map(y=>{
     const d=compoundFV(uplata+pot,dmfR,y);
     const p=compoundFV(uplata,peppR,y);
     const dif=p-d;
     return `<tr><td>${y}. god</td><td style="color:var(--dmf-l)">${fmt(d)}</td><td style="color:var(--pepp-l)">${fmt(p)}</td><td style="color:${dif>0?'var(--etf-l)':'var(--dmf-l)'}">${dif>0?'+':''}${fmt(dif)}</td></tr>`;
-  }).join(''), { ALLOWED_TAGS: ['tr','td'], ALLOWED_ATTR: ['style'] });
+  }).join(''));
 
   const labels=[], dmfArr=[], peppArr=[];
   for(let i=1;i<=god;i++){
@@ -203,7 +213,7 @@ function updateP2() {
 
   const milestones=[5,10,15,20,25,30,35,40].filter(y=>y<=god);
   if(!milestones.includes(god)) milestones.push(god);
-  $('p2-tbody').innerHTML=DOMPurify.sanitize(milestones.map(y=>{
+  $('p2-tbody').innerHTML=sanitizeTbody(milestones.map(y=>{
     const d=compoundFV(uplata+calcPoticaj(uplata,'p2-poticaj-toggle'),dmfR,y);
     const p=compoundFV(uplata,peppR,y);
     const e=compoundFV(uplata,etfR,y);
@@ -211,7 +221,7 @@ function updateP2() {
       <td style="color:var(--dmf-l);opacity:${p2vis.dmf?1:0.3}">${fmt(d)}</td>
       <td style="color:var(--pepp-l);opacity:${p2vis.pepp?1:0.3}">${fmt(p)}</td>
       <td style="color:var(--etf-l);opacity:${p2vis.etf?1:0.3}">${fmt(e)}</td></tr>`;
-  }).join(''), { ALLOWED_TAGS: ['tr','td'], ALLOWED_ATTR: ['style'] });
+  }).join(''));
 
   const labels=[];
   const dmfArr=[],peppArr=[],etfArr=[];
@@ -335,7 +345,7 @@ function updateP3() {
   // Chart + table
   const milestones=[5,10,15,20,25,30,35,40].filter(y=>y<=god);
   if(!milestones.includes(god)) milestones.push(god);
-  $('p3-tbody').innerHTML=DOMPurify.sanitize(milestones.map(y=>{
+  $('p3-tbody').innerHTML=sanitizeTbody(milestones.map(y=>{
     const pv=compoundFV(penUplata+penBonus,penR,y);
     const ev=compoundFV(etfUplata,etfR,y);
     const cv=pv+ev; const rf=Math.pow(1+inf/100,y);
@@ -344,7 +354,7 @@ function updateP3() {
       <td style="color:var(--etf-l)">${fmt(ev)}</td>
       <td style="color:var(--combo-l)">${fmt(cv)}</td>
       <td style="color:var(--muted2)">${fmt(cv/rf)}</td></tr>`;
-  }).join(''), { ALLOWED_TAGS: ['tr','td'], ALLOWED_ATTR: ['style'] });
+  }).join(''));
 
   const labels=[],penArr=[],etfArr2=[],comboArr=[],realArr=[];
   for(let i=1;i<=god;i++){
@@ -466,7 +476,7 @@ function updateP0a() {
   $('p0a-monthly').textContent = fmt(val*0.04/12)+'/mj';
   $('p0a-rate-used').textContent = rate.toFixed(2)+'%/god';
   $('p0a-info').innerHTML = DOMPurify.sanitize(`Korišten <strong>5-godišnji prosjek</strong> fonda (${r5y}%). Prinos 2024: <strong>${r2024}%</strong>. ${usePoticaj?`Godišnji poticaj: <strong>${fmt(poticajGod)}</strong>.`:''}`, { ALLOWED_TAGS: ['strong'], ALLOWED_ATTR: [] });
-  $('p0a-tbody').innerHTML = DOMPurify.sanitize(tbody.join(''), { ALLOWED_TAGS: ['tr','td'], ALLOWED_ATTR: ['style'] });
+  $('p0a-tbody').innerHTML = sanitizeTbody(tbody.join(''));
 
   // Chart single fund
   // Spremi full podatke za period filter (1Y,3Y,5Y,...,SVE)
@@ -587,13 +597,13 @@ function updateP0b() {
   // Table
   const mils=[2,5,10,15,20,25,30,35,40].filter(y=>y<=god);
   if(!mils.includes(god)) mils.push(god);
-  $('p0b-tbody').innerHTML=DOMPurify.sanitize(mils.map(y=>{
+  $('p0b-tbody').innerHTML=sanitizeTbody(mils.map(y=>{
     const a=arr[y-1];
     let b=initial; for(let i=0;i<y;i++) b=(b+uplata)*(1+etf.rate/100);
     const inp2=initial+uplata*y;
     const g2=a.val-inp2;
     return `<tr><td>${y}.</td><td style="color:var(--muted2)">${fmt(inp2)}</td><td style="color:var(--etf-l)">${fmt(Math.round(b))}</td><td style="color:var(--pepp-l)">${fmt(a.val)}</td><td style="color:var(--red)">${fmt(a.fees)}</td><td style="color:var(--etf-l)">${fmt(inp2+g2*(1-taxRate))}</td></tr>`;
-  }).join(''), { ALLOWED_TAGS: ['tr','td'], ALLOWED_ATTR: ['style'] });
+  }).join(''));
 
   // Chart single
   const labels=[];
