@@ -215,25 +215,3 @@
 
 .admin-tab-content { display: none; }
 .admin-tab-content.active { display: block; }
-
-/* ── Admin: 3 taba (Upravljanje) ── */
-/* Kada ima 3 taba, smanjimo font malo da stanu u red */
-.admin-tab-row {
-  flex-wrap: wrap;
-}
-
-.admin-tab-row .admin-tab-btn:nth-child(3) {
-  flex-basis: 100%;
-  flex: 1 1 auto;
-}
-
-@media (min-width: 380px) {
-  .admin-tab-row .admin-tab-btn:nth-child(3) {
-    flex-basis: auto;
-  }
-}
-
-/* ── Admin KV lista scrollbar ── */
-#admin-kv-list::-webkit-scrollbar { width: 4px; }
-#admin-kv-list::-webkit-scrollbar-track { background: transparent; }
-#admin-kv-list::-webkit-scrollbar-thumb { background: #2e3850; border-radius: 4px; }
