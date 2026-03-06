@@ -81,6 +81,7 @@ let quizOptionClickHandler = function() {
 };
 
 let handleInputChange = function() {
+  // Detektuj što je promijenilo se i pozovi odgovarajuću funkciju
   const id = this.id;
   if (id.startsWith('p1-')) {
     if (typeof updateP1 === 'function') updateP1();
@@ -135,6 +136,7 @@ const POTICAJ = 99.54;
 
 // ============ PAGE 1 ============
 let chart1;
+// Helper: compute dynamic poticaj based on annual amount and toggle state
 function calcPoticaj(uplata, toggleId) {
   const on = $(toggleId) ? $(toggleId).checked : true;
   if (!on) return 0;
@@ -155,13 +157,19 @@ function updatePoticajInfo(uplata, toggleId, lblId, infoId) {
 function updateP1() {
   const uplata = parseFloat($('p1-uplata').value) || 0;
   const god = parseInt($('p1-god-v').value) || parseInt($('p1-god').value) || 30;
+
+  // DMF: dohvati prinos iz odabranog fonda
   const selectedFundName = $('p1-dmf-select') ? $('p1-dmf-select').value : 'Erste Plavi Expert';
   const fund = DMF_FUNDS.find(f => f.name === selectedFundName) || DMF_FUNDS[1];
-  const dmfR = fund.r10y;
+  const dmfR = fund.r10y; // koristimo 10-godišnji prosjek
+
+  // PEPP: fiksni prinos (Finax ~8% bruto - 1% naknada)
   const peppR = PEPP_RATE;
+
   const pot = calcPoticaj(uplata, 'p1-poticaj-toggle');
   updatePoticajInfo(uplata, 'p1-poticaj-toggle', 'p1-poticaj-lbl', 'p1-poticaj-info');
 
+  // Ažuriraj info o prinosima
   if ($('p1-dmf-rate-note')) {
     $('p1-dmf-rate-note').textContent = `Prosječni prinos (10g): ${dmfR.toFixed(2)}% | 5g: ${fund.r5y.toFixed(2)}% | HANFA 2024: ${fund.r2024.toFixed(2)}%`;
   }
@@ -204,10 +212,13 @@ function updateP1() {
 function updateP1Chart(uplata, pot, dmfR, peppR, god) {
   const ctx = document.getElementById('chart1');
   if (!ctx) return;
+
   const dmfArr = compoundFVArr(uplata+pot, dmfR, god);
   const peppArr = compoundFVArr(uplata, peppR, god);
   const labels = Array.from({length: god}, (_, i) => `${i+1}. god`);
+
   if (chart1) chart1.destroy();
+  
   chart1 = new Chart(ctx, {
     type: 'line',
     data: {
@@ -239,31 +250,42 @@ const DMF_FUNDS = [
   { name: 'Istrabanka Razvoja', r10y: 6.9, r5y: 6.5, r2024: 7.3 },
   { name: 'Adriatic Plavi', r10y: 7.1, r5y: 6.7, r2024: 7.5 }
 ];
+
 const PEPP_RATE = 7.0;
 
+// PAGE 2
+let chart2;
 function updateP2() {
   const amounts = { dmf: parseFloat($('p2-dmf').value) || 0, pepp: parseFloat($('p2-pepp').value) || 0, etf: parseFloat($('p2-etf').value) || 0 };
   const years = parseInt($('p2-years').value) || 30;
+  
   const dmfTotal = compoundFV(amounts.dmf, 7.2, years);
   const peppTotal = compoundFV(amounts.pepp, 7.0, years);
   const etfTotal = compoundFV(amounts.etf, 8.5, years);
+  
   $('p2-dmf-result').textContent = fmt(dmfTotal);
   $('p2-pepp-result').textContent = fmt(peppTotal);
   $('p2-etf-result').textContent = fmt(etfTotal);
+  
   const total = dmfTotal + peppTotal + etfTotal;
   $('p2-total').textContent = fmt(total);
+  
   updateP2Chart(amounts, years);
 }
 
-let chart2;
 function updateP2Chart(amounts, years) {
   const ctx = document.getElementById('chart2');
   if (!ctx) return;
+  
   const dmfData = compoundFVArr(amounts.dmf, 7.2, years);
   const peppData = compoundFVArr(amounts.pepp, 7.0, years);
   const etfData = compoundFVArr(amounts.etf, 8.5, years);
+  
+  const combined = dmfData.map((d, i) => d + (peppData[i] || 0) + (etfData[i] || 0));
   const labels = Array.from({length: years}, (_, i) => `${i+1}`);
+  
   if (chart2) chart2.destroy();
+  
   chart2 = new Chart(ctx, {
     type: 'area',
     data: {
@@ -286,34 +308,43 @@ function updateP2Chart(amounts, years) {
   });
 }
 
+// PAGE 3 - Pension + ETF
+let chart3;
 function updateP3() {
   const alloc = parseFloat($('p3-alloc').value) || 50;
   const monthlyAmount = parseFloat($('p3-amount').value) || 500;
   const years = parseInt($('p3-years').value) || 30;
   const inflation = parseFloat($('p3-inflation').value) || 2.0;
+  
   const pensionAmount = monthlyAmount * (alloc / 100) * 12;
   const etfAmount = monthlyAmount * ((100 - alloc) / 100) * 12;
+  
   const pensionTotal = compoundFV(pensionAmount, 7.0, years);
   const etfTotal = compoundFV(etfAmount, 8.5, years);
   const combined = pensionTotal + etfTotal;
+  
   const realValue = combined / Math.pow(1 + inflation/100, years);
   const monthlyPayment = (combined * 0.04) / 12;
+  
   $('p3-pension-total').textContent = fmt(pensionTotal);
   $('p3-etf-total').textContent = fmt(etfTotal);
   $('p3-combined-total').textContent = fmt(combined);
   $('p3-real-value').textContent = fmt(realValue);
   $('p3-monthly').textContent = fmt(monthlyPayment);
+  
   updateP3Chart(pensionAmount, etfAmount, years);
 }
 
-let chart3;
 function updateP3Chart(pensionAmt, etfAmt, years) {
   const ctx = document.getElementById('chart3');
   if (!ctx) return;
+  
   const pensionData = compoundFVArr(pensionAmt, 7.0, years);
   const etfData = compoundFVArr(etfAmt, 8.5, years);
   const labels = Array.from({length: years}, (_, i) => `${i+1}`);
+  
   if (chart3) chart3.destroy();
+  
   chart3 = new Chart(ctx, {
     type: 'bar',
     data: {
@@ -334,13 +365,16 @@ function updateP3Chart(pensionAmt, etfAmt, years) {
   });
 }
 
+// PAGE 0A - DMF Funds
 function updateP0a() {
   const selectedFund = $('p0a-fund-select') ? $('p0a-fund-select').value : 'Erste Plavi Expert';
   const fund = DMF_FUNDS.find(f => f.name === selectedFund) || DMF_FUNDS[0];
   const amount = parseFloat($('p0a-amount').value) || 5000;
   const years = parseInt($('p0a-years').value) || 30;
+  
   const finalValue = compoundFV(amount, fund.r10y, years);
   const earned = finalValue - (amount * years);
+  
   $('p0a-fund-info').innerHTML = `
     <div style="margin-top: 1rem;">
       <p><strong>Odabrani fond:</strong> ${fund.name}</p>
@@ -354,19 +388,23 @@ function updateP0a() {
   `;
 }
 
+// PAGE 0B - ETF Platforms
 function updateP0b() {
   const amount = parseFloat($('p0b-amount').value) || 5000;
   const years = parseInt($('p0b-years').value) || 30;
+  
   const platforms = {
     ibkr: { name: 'IBKR', fee: 0.1 },
     trading212: { name: 'Trading 212', fee: 0.0 },
     finax: { name: 'Finax', fee: 0.5 }
   };
+  
   let html = '<div style="margin-top: 1rem;">';
   for (const [key, platform] of Object.entries(platforms)) {
     const netRate = 8.5 - platform.fee;
     const finalValue = compoundFV(amount, netRate, years);
     const feeCost = compoundFV(amount, 8.5, years) - finalValue;
+    
     html += `
       <div style="margin-bottom: 1.5rem; padding: 1rem; border: 1px solid var(--border); border-radius: 8px;">
         <p><strong>${platform.name}</strong></p>
@@ -378,6 +416,7 @@ function updateP0b() {
     `;
   }
   html += '</div>';
+  
   const target = $('p0b-comparison');
   if (target) target.innerHTML = html;
 }
@@ -396,11 +435,15 @@ let quizAnswers = {};
 function quizSelectOption(element) {
   const questionId = element.dataset.q;
   const value = element.dataset.value;
+  
   quizAnswers[questionId] = parseInt(value);
+  
   document.querySelectorAll(`.quiz-option[data-q="${questionId}"]`).forEach(o => o.classList.remove('selected'));
   element.classList.add('selected');
+  
   const nextBtn = document.getElementById(`qnext-${questionId}`);
   if (nextBtn) nextBtn.classList.add('ready');
+  
   if (Object.keys(quizAnswers).length === quizQuestions.length) {
     showQuizResult();
   }
@@ -409,6 +452,7 @@ function quizSelectOption(element) {
 function showQuizResult() {
   const score = Object.values(quizAnswers).reduce((a, b) => a + b, 0);
   let recommendation = '';
+  
   if (score <= -3) {
     recommendation = 'DMF (Dobrovoljni Mirovinski Fond) - Siguran pristup s državnim poticajem';
   } else if (score <= 2) {
@@ -418,6 +462,7 @@ function showQuizResult() {
   } else {
     recommendation = 'ETF Fondovi (VWCE, IWDA) - Agresivna strategija maksimalnog rasta';
   }
+  
   const resultDiv = document.getElementById('quiz-result');
   if (resultDiv) {
     resultDiv.innerHTML = `
@@ -445,10 +490,19 @@ function submitFeedback() {
   const type = $('feedback-type') ? $('feedback-type').value : 'pitanje';
   const text = $('feedback-text') ? $('feedback-text').value : '';
   const rating = $('feedback-rating') ? $('feedback-rating').value : 5;
+  
   if (!text.trim()) return;
-  const entry = { type, text, rating, timestamp: new Date().toLocaleString() };
+  
+  const entry = {
+    type,
+    text,
+    rating,
+    timestamp: new Date().toLocaleString()
+  };
+  
   feedbackLog.push(entry);
   localStorage.setItem('marsanFeedbackLog', JSON.stringify(feedbackLog));
+  
   $('feedback-text').value = '';
   updateFeedbackLog();
   alert('Hvala na povratnoj informaciji!');
@@ -457,6 +511,7 @@ function submitFeedback() {
 function updateFeedbackLog() {
   const container = document.getElementById('admin-feedback-log');
   if (!container) return;
+  
   container.innerHTML = feedbackLog.length > 0 ? feedbackLog.map((e, i) => `
     <div class="fb-log-item">
       <div class="fb-log-meta">
@@ -472,12 +527,15 @@ function updateFeedbackLog() {
 function switchAdminTab(tab) {
   document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.admin-tab-btn').forEach(el => el.classList.remove('active'));
+  
   const tabBtn = document.querySelector(`.admin-tab-btn[data-tab="${tab}"]`);
   const tabContent = document.getElementById(`admin-${tab}-content`);
+  
   if (tabBtn) tabBtn.classList.add('active');
   if (tabContent) tabContent.classList.add('active');
 }
 
+// Load feedback log on startup
 try {
   feedbackLog = JSON.parse(localStorage.getItem('marsanFeedbackLog')) || [];
 } catch (e) {
