@@ -469,8 +469,18 @@ function updateP0a() {
   $('p0a-tbody').innerHTML = DOMPurify.sanitize(tbody.join(''), { ALLOWED_TAGS: ['tr','td'], ALLOWED_ATTR: ['style'] });
 
   // Chart single fund
-  if(!chartP0a){ chartP0a=makeChart('p0a-chart',labels,[{label:fundName,data:vals,borderColor:'#e8a44a',backgroundColor:'rgba(232,164,74,0.08)',fill:true,borderWidth:2.5,pointRadius:0,tension:0.4}]); }
-  else{ chartP0a.data.labels=labels; chartP0a.data.datasets[0].data=vals; chartP0a.data.datasets[0].label=fundName; chartP0a.update(); }
+  // Spremi full podatke za period filter (1Y,3Y,5Y,...,SVE)
+  storeChartData('p0a-chart', labels, [
+    {label:fundName,data:vals,borderColor:'#e8a44a',backgroundColor:'rgba(232,164,74,0.08)',fill:true,borderWidth:2.5,pointRadius:0,tension:0.4}
+  ]);
+  if(!chartP0a){
+    chartP0a=makeChart('p0a-chart',labels,[{label:fundName,data:vals,borderColor:'#e8a44a',backgroundColor:'rgba(232,164,74,0.08)',fill:true,borderWidth:2.5,pointRadius:0,tension:0.4}]);
+  } else {
+    chartP0a.data.labels=labels;
+    chartP0a.data.datasets[0].data=vals;
+    chartP0a.data.datasets[0].label=fundName;
+    chartP0a.update();
+  }
 
   // All-funds comparison chart
   const allLabels=[];
@@ -624,8 +634,19 @@ function updateP0b() {
     }
     return {label:p.name,data:a,borderColor:plColors[idx],backgroundColor:'transparent',fill:false,borderWidth:plKey===pk?3:1.5,pointRadius:0,tension:0.4};
   });
-  if(!chartP0bPlatforms){ chartP0bPlatforms=makeChart('p0b-chart-platforms',plLabels,plDS); }
-  else{ chartP0bPlatforms.data.labels=plLabels; chartP0bPlatforms.data.datasets.forEach((d,i)=>{d.data=plDS[i].data;d.label=plDS[i].label;d.borderWidth=plDS[i].borderWidth;}); chartP0bPlatforms.update(); }
+  // Spremi full podatke za period filter i za usporedbu platformi
+  storeChartData('p0b-chart-platforms', plLabels, plDS);
+  if(!chartP0bPlatforms){
+    chartP0bPlatforms=makeChart('p0b-chart-platforms',plLabels,plDS);
+  } else {
+    chartP0bPlatforms.data.labels=plLabels;
+    chartP0bPlatforms.data.datasets.forEach((d,i)=>{
+      d.data=plDS[i].data;
+      d.label=plDS[i].label;
+      d.borderWidth=plDS[i].borderWidth;
+    });
+    chartP0bPlatforms.update();
+  }
 }
 
 ['p0b-uplata','p0b-initial','p0b-god','p0b-custom-r'].forEach(id => $(id).addEventListener('syncedInput', updateP0b));
