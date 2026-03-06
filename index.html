@@ -1935,6 +1935,14 @@ tr:hover td { background: var(--surface2) !important; }
         <option value="no">Ne / manje od 663.61€/god</option>
       </select>
     </div>
+    <div class="ctrl-group c-neutral">
+      <label for="p0a-infl-toggle">Inflacija</label>
+      <div class="toggle-switch-wrap">
+        <label class="toggle-switch"><input type="checkbox" id="p0a-infl-toggle"><span class="toggle-slider"></span></label>
+        <span class="toggle-label" id="p0a-infl-toggle-lbl">Prilagodi za inflaciju (3%)</span>
+      </div>
+      <div class="poticaj-info" id="p0a-infl-note">100.000€ za 20 godina vrijedi manje u današnjim eurima - uključi prilagodbu za realnu kupovnu moć.</div>
+    </div>
   </div>
   <div class="strategy-toggle-row" title="Uključi i rezultat ovog kalkulatora prikazat će se na tabu 'Moja ulaganja'." data-strategy-tip="Rezultat ovog kalkulatora prikazat će se na tabu 'Moja ulaganja'.">
     <label class="strategy-toggle">
@@ -2290,6 +2298,14 @@ tr:hover td { background: var(--surface2) !important; }
       <label for="p0b-god-v">Broj godina</label>
       <div class="row"><input type="range" id="p0b-god" min="1" max="60" step="1" value="20" aria-label="Broj godina (klizač)"><input type="number" class="ctrl-val-input" id="p0b-god-v" value="20" min="1" max="60" step="1" placeholder="25" aria-label="Broj godina"></div>
     </div>
+    <div class="ctrl-group c-neutral">
+      <label for="p0b-infl-toggle">Inflacija</label>
+      <div class="toggle-switch-wrap">
+        <label class="toggle-switch"><input type="checkbox" id="p0b-infl-toggle"><span class="toggle-slider"></span></label>
+        <span class="toggle-label" id="p0b-infl-toggle-lbl">Prilagodi za inflaciju (3%)</span>
+      </div>
+      <div class="poticaj-info" id="p0b-infl-note">100.000€ za 20 godina vrijedi manje u današnjim eurima - uključi prilagodbu za realnu kupovnu moć.</div>
+    </div>
   </div>
   <div class="strategy-toggle-row" title="Uključi i rezultat ovog kalkulatora prikazat će se na tabu 'Moja ulaganja'." data-strategy-tip="Rezultat ovog kalkulatora prikazat će se na tabu 'Moja ulaganja'.">
     <label class="strategy-toggle">
@@ -2453,6 +2469,14 @@ tr:hover td { background: var(--surface2) !important; }
       </div>
       <div class="rate-note" id="p1-pepp-rate-note" style="margin-top:0.25rem;font-size:0.82rem;color:var(--muted2)">Finax historijski: ~8%/god bruto → nakon 1% naknade: <strong id="p1-pepp-net" style="color:var(--pepp-l)">7.0%</strong>/god</div>
     </div>
+    <div class="ctrl-group c-neutral">
+      <label for="p1-infl-toggle">Inflacija</label>
+      <div class="toggle-switch-wrap">
+        <label class="toggle-switch"><input type="checkbox" id="p1-infl-toggle"><span class="toggle-slider"></span></label>
+        <span class="toggle-label" id="p1-infl-toggle-lbl">Prilagodi za inflaciju (3%)</span>
+      </div>
+      <div class="poticaj-info" id="p1-infl-note">100.000€ za 20 godina vrijedi manje u današnjim eurima - uključi prilagodbu za realnu kupovnu moć.</div>
+    </div>
   </div>
 
   <div class="stat-cards" id="p1-cards">
@@ -2559,6 +2583,14 @@ tr:hover td { background: var(--surface2) !important; }
     <div class="ctrl-group c-etf" id="p2-etf-custom-wrap" style="display:none">
       <label for="p2-etfr-custom-v">Vlastiti prinos ETF (%)</label>
       <div class="row"><input type="range" id="p2-etfr-custom" min="3" max="18" step="0.1" value="9.0" aria-label="Vlastiti prinos ETF (klizač)"><input type="number" class="ctrl-val-input" id="p2-etfr-custom-v" value="9.0" min="3" max="18" step="0.1" placeholder="8" aria-label="Vlastiti prinos ETF (%)"></div>
+    </div>
+    <div class="ctrl-group c-neutral">
+      <label for="p2-infl-toggle">Inflacija</label>
+      <div class="toggle-switch-wrap">
+        <label class="toggle-switch"><input type="checkbox" id="p2-infl-toggle"><span class="toggle-slider"></span></label>
+        <span class="toggle-label" id="p2-infl-toggle-lbl">Prilagodi za inflaciju (3%)</span>
+      </div>
+      <div class="poticaj-info" id="p2-infl-note">100.000€ za 20 godina vrijedi manje u današnjim eurima - uključi prilagodbu za realnu kupovnu moć.</div>
     </div>
   </div>
 
@@ -2723,8 +2755,12 @@ tr:hover td { background: var(--surface2) !important; }
       <div class="row"><input type="range" id="p3-etfr-custom" min="3" max="18" step="0.1" value="9.0" aria-label="Vlastiti prinos ETF (klizač)"><input type="number" class="ctrl-val-input" id="p3-etfr-custom-v" value="9.0" min="3" max="18" step="0.1" placeholder="8" aria-label="Vlastiti prinos ETF (%)"></div>
     </div>
     <div class="ctrl-group c-neutral">
-      <label for="p3-inf-v">Inflacija (%/god)</label>
-      <div class="row"><input type="range" id="p3-inf" min="0" max="5" step="0.1" value="2.5" aria-label="Inflacija (klizač)"><input type="number" class="ctrl-val-input" id="p3-inf-v" value="2.5" min="0" max="5" step="0.1" placeholder="8" aria-label="Inflacija (%/god)"></div>
+      <label for="p3-infl-toggle">Inflacija</label>
+      <div class="toggle-switch-wrap">
+        <label class="toggle-switch"><input type="checkbox" id="p3-infl-toggle"><span class="toggle-slider"></span></label>
+        <span class="toggle-label" id="p3-infl-toggle-lbl">Prilagodi za inflaciju (3%)</span>
+      </div>
+      <div class="poticaj-info" id="p3-infl-note">100.000€ za 20 godina vrijedi manje u današnjim eurima - uključi prilagodbu za realnu kupovnu moć.</div>
     </div>
   </div>
 

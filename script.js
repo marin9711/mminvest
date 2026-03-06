@@ -22,6 +22,28 @@ function sanitizeTbody(html) {
 }
 const fmtX = (n,d=1) => n.toFixed(d)+'x';
 const fmtPct = n => (n>=0?'+':'')+n.toFixed(1)+'%';
+const DEFAULT_INFLATION_RATE = 3;
+
+function getRealRatePct(nominalPct, inflationPct = DEFAULT_INFLATION_RATE) {
+  const nominal = (Number(nominalPct) || 0) / 100;
+  const inflation = (Number(inflationPct) || 0) / 100;
+  return (((1 + nominal) / (1 + inflation)) - 1) * 100;
+}
+
+function setInflationUiState(toggleId, labelId, noteId, years, nominalAmount) {
+  const enabled = !!($(toggleId) && $(toggleId).checked);
+  const labelEl = $(labelId);
+  const noteEl = $(noteId);
+  if (labelEl) labelEl.classList.toggle('active', enabled);
+  if (!noteEl) return enabled;
+  const y = Math.max(1, Number(years) || 20);
+  const baseNominal = Number(nominalAmount) > 0 ? Number(nominalAmount) : 100000;
+  const todayValue = baseNominal / Math.pow(1 + DEFAULT_INFLATION_RATE / 100, y);
+  noteEl.textContent = enabled
+    ? `${fmt(baseNominal)} za ${y} godina ima kupovnu moć od oko ${fmt(todayValue)} u današnjim eurima (inflacija ${DEFAULT_INFLATION_RATE}%).`
+    : `Uključi prilagodbu: ${fmt(baseNominal)} za ${y} godina vrijedi manje u današnjim eurima zbog inflacije ${DEFAULT_INFLATION_RATE}%/god.`;
+  return enabled;
+}
 
 // Chart.js global config (design system: grid, fonts, line thickness)
 if (typeof Chart !== 'undefined') {
@@ -453,6 +475,7 @@ function updatePoticajInfo(uplata, toggleId, lblId, infoId) {
 function updateP1() {
   const uplata = parseFloat($('p1-uplata').value) || 0;
   const god = parseInt($('p1-god-v').value) || parseInt($('p1-god').value) || 30;
+  const inflationOn = setInflationUiState('p1-infl-toggle', 'p1-infl-toggle-lbl', 'p1-infl-note', god, 100000);
 
   // DMF: dohvati prinos iz odabranog fonda
   const selectedFundName = $('p1-dmf-select') ? $('p1-dmf-select').value : 'Erste Plavi Expert';
@@ -473,8 +496,12 @@ function updateP1() {
     $('p1-pepp-net').textContent = `${peppR.toFixed(1)}%`;
   }
 
-  const dmfFinal = compoundFV(uplata+pot, dmfR, god);
-  const peppFinal = compoundFV(uplata, peppR, god);
+  const dmfRateUsed = inflationOn ? getRealRatePct(dmfR) : dmfR;
+  const peppRateUsed = inflationOn ? getRealRatePct(peppR) : peppR;
+  const dmfFinal = compoundFV(uplata+pot, dmfRateUsed, god);
+  const peppFinal = compoundFV(uplata, peppRateUsed, god);
+  const dmfFinalNominal = compoundFV(uplata+pot, dmfR, god);
+  const peppFinalNominal = compoundFV(uplata, peppR, god);
   const dmfIn = uplata*god;
 
   $('p1-dmf-total').textContent = fmt(dmfFinal);
@@ -491,13 +518,14 @@ function updateP1() {
   $('p1-diff').textContent = fmt(diff);
   $('p1-diff').style.color = winnerColor;
   const potTxt = pot>0 ? ` Godišnji poticaj: <strong>${fmt(pot)}</strong> (ukupno ${fmt(pot*god)}).` : ' Poticaj isključen.';
-  $('p1-desc').innerHTML = DOMPurify.sanitize(`<strong style="color:${winnerColor}">${winner}</strong> završava s više novca — ${((diff/Math.min(peppFinal,dmfFinal))*100).toFixed(1)}% razlika.${potTxt}`, { ALLOWED_TAGS: ['strong'], ALLOWED_ATTR: ['style'] });
+  const inflTxt = inflationOn ? ` U ovoj projekciji prinos je prilagođen inflaciji ${DEFAULT_INFLATION_RATE}% (realna kupovna moć).` : '';
+  $('p1-desc').innerHTML = DOMPurify.sanitize(`<strong style="color:${winnerColor}">${winner}</strong> završava s više novca — ${((diff/Math.min(peppFinal,dmfFinal))*100).toFixed(1)}% razlika.${potTxt}${inflTxt}`, { ALLOWED_TAGS: ['strong'], ALLOWED_ATTR: ['style'] });
 
   const milestones = [5,10,15,20,25,30,35,40,50,60].filter(y=>y<=god);
   if(!milestones.includes(god)) milestones.push(god);
   $('p1-tbody').innerHTML = sanitizeTbody(milestones.map(y=>{
-    const d=compoundFV(uplata+pot,dmfR,y);
-    const p=compoundFV(uplata,peppR,y);
+    const d=compoundFV(uplata+pot,dmfRateUsed,y);
+    const p=compoundFV(uplata,peppRateUsed,y);
     const dif=p-d;
     return `<tr><td>${y}. god</td><td style="color:var(--dmf-l)">${fmt(d)}</td><td style="color:var(--pepp-l)">${fmt(p)}</td><td style="color:${dif>0?'var(--etf-l)':'var(--dmf-l)'}">${dif>0?'+':''}${fmt(dif)}</td></tr>`;
   }).join(''));
@@ -505,19 +533,36 @@ function updateP1() {
   const labels=[], dmfArr=[], peppArr=[];
   for(let i=1;i<=god;i++){
     labels.push(i);
-    dmfArr.push(Math.round(compoundFV(uplata+pot,dmfR,i)));
-    peppArr.push(Math.round(compoundFV(uplata,peppR,i)));
+    dmfArr.push(Math.round(compoundFV(uplata+pot,dmfRateUsed,i)));
+    peppArr.push(Math.round(compoundFV(uplata,peppRateUsed,i)));
   }
   const ds = [
     {label:'3. Stup (DMF)',data:dmfArr,borderColor:'#e8a44a',backgroundColor:'rgba(232,164,74,0.07)',fill:true,borderWidth:2.5,pointRadius:0,tension:0.4},
     {label:'PEPP',data:peppArr,borderColor:'#4a9fe8',backgroundColor:'rgba(74,159,232,0.07)',fill:true,borderWidth:2.5,pointRadius:0,tension:0.4},
   ];
+  if (inflationOn) {
+    const dmfNomArr = [];
+    const peppNomArr = [];
+    for (let i = 1; i <= god; i++) {
+      dmfNomArr.push(Math.round(compoundFV(uplata + pot, dmfR, i)));
+      peppNomArr.push(Math.round(compoundFV(uplata, peppR, i)));
+    }
+    ds.unshift(
+      {label:'Nominalno DMF',data:dmfNomArr,borderColor:'#f5c87a',backgroundColor:'transparent',fill:false,borderWidth:1.4,pointRadius:0,tension:0.4,borderDash:[4,3]},
+      {label:'Nominalno PEPP',data:peppNomArr,borderColor:'#7abff5',backgroundColor:'transparent',fill:false,borderWidth:1.4,pointRadius:0,tension:0.4,borderDash:[4,3]},
+    );
+    $('p1-dmf-total').textContent = `${fmt(dmfFinal)} (${fmt(dmfFinalNominal)} nominalno)`;
+    $('p1-pepp-total').textContent = `${fmt(peppFinal)} (${fmt(peppFinalNominal)} nominalno)`;
+  }
   storeChartData('p1-chart', labels, ds);
   if(!chart1){ chart1=makeChart('p1-chart',labels,ds); }
-  else { chart1.data.labels=labels; chart1.data.datasets.forEach((d,i)=>{ d.data=ds[i].data; }); chart1.update(); }
+  else { chart1.data.labels=labels; chart1.data.datasets=ds; chart1.update(); }
 }
 ['p1-uplata','p1-god'].forEach(id => $(id).addEventListener('syncedInput', updateP1));
 $('p1-poticaj-toggle').addEventListener('change', updateP1);
+if ($('p1-infl-toggle')) {
+  $('p1-infl-toggle').addEventListener('change', updateP1);
+}
 
 // ============ PAGE 2 ============
 let chart2;
@@ -559,6 +604,10 @@ function updateP2() {
   const peppGrossR=+$('p2-peppr').value;
   const peppR=Math.max(peppGrossR-1,0); // 1% Finax naknada
   const etfR=getP2EtfRate();
+  const inflationOn = setInflationUiState('p2-infl-toggle', 'p2-infl-toggle-lbl', 'p2-infl-note', god, 100000);
+  const dmfRateUsed = inflationOn ? getRealRatePct(dmfR) : dmfR;
+  const peppRateUsed = inflationOn ? getRealRatePct(peppR) : peppR;
+  const etfRateUsed = inflationOn ? getRealRatePct(etfR) : etfR;
 
 
 
@@ -568,15 +617,20 @@ function updateP2() {
 
 
   const pot2=calcPoticaj(uplata,'p2-poticaj-toggle'); updatePoticajInfo(uplata,'p2-poticaj-toggle','p2-poticaj-lbl','p2-poticaj-info');
-  const dmfFinal=compoundFV(uplata+pot2,dmfR,god);
-  const peppFinal=compoundFV(uplata,peppR,god);
-  const etfFinal=compoundFV(uplata,etfR,god);
+  const dmfFinal=compoundFV(uplata+pot2,dmfRateUsed,god);
+  const peppFinal=compoundFV(uplata,peppRateUsed,god);
+  const etfFinal=compoundFV(uplata,etfRateUsed,god);
+  const dmfFinalNominal=compoundFV(uplata+pot2,dmfR,god);
+  const peppFinalNominal=compoundFV(uplata,peppR,god);
+  const etfFinalNominal=compoundFV(uplata,etfR,god);
   const inp=uplata*god;
   const etfName=getP2EtfName();
   $('p2-etf-name').textContent=etfName;
 
   if ($('p2-pepp-rate-note')) {
-    $('p2-pepp-rate-note').textContent = `Nakon 1% Finax naknade: ${peppR.toFixed(2)}%/god`;
+    $('p2-pepp-rate-note').textContent = inflationOn
+      ? `Nakon 1% Finax naknade i inflacije ${DEFAULT_INFLATION_RATE}%: ${peppRateUsed.toFixed(2)}%/god realno`
+      : `Nakon 1% Finax naknade: ${peppR.toFixed(2)}%/god`;
   }
 
   $('p2-dmf-total').textContent=fmt(dmfFinal);
@@ -588,6 +642,11 @@ function updateP2() {
   $('p2-etf-total').textContent=fmt(etfFinal);
   $('p2-etf-earn').textContent=fmt(etfFinal-inp);
   $('p2-etf-multi').textContent=fmtX(etfFinal/inp);
+  if (inflationOn) {
+    $('p2-dmf-total').textContent=`${fmt(dmfFinal)} (${fmt(dmfFinalNominal)} nominalno)`;
+    $('p2-pepp-total').textContent=`${fmt(peppFinal)} (${fmt(peppFinalNominal)} nominalno)`;
+    $('p2-etf-total').textContent=`${fmt(etfFinal)} (${fmt(etfFinalNominal)} nominalno)`;
+  }
 
   $('p2-sc-dmf').classList.toggle('hidden',!p2vis.dmf);
   $('p2-sc-pepp').classList.toggle('hidden',!p2vis.pepp);
@@ -608,9 +667,9 @@ function updateP2() {
   const milestones=[5,10,15,20,25,30,35,40].filter(y=>y<=god);
   if(!milestones.includes(god)) milestones.push(god);
   $('p2-tbody').innerHTML=sanitizeTbody(milestones.map(y=>{
-    const d=compoundFV(uplata+calcPoticaj(uplata,'p2-poticaj-toggle'),dmfR,y);
-    const p=compoundFV(uplata,peppR,y);
-    const e=compoundFV(uplata,etfR,y);
+    const d=compoundFV(uplata+calcPoticaj(uplata,'p2-poticaj-toggle'),dmfRateUsed,y);
+    const p=compoundFV(uplata,peppRateUsed,y);
+    const e=compoundFV(uplata,etfRateUsed,y);
     return `<tr><td>${y}.</td>
       <td style="color:var(--dmf-l);opacity:${p2vis.dmf?1:0.3}">${fmt(d)}</td>
       <td style="color:var(--pepp-l);opacity:${p2vis.pepp?1:0.3}">${fmt(p)}</td>
@@ -621,25 +680,41 @@ function updateP2() {
   const dmfArr=[],peppArr=[],etfArr=[];
   for(let i=1;i<=god;i++){
     labels.push(i);
-    dmfArr.push(Math.round(compoundFV(uplata+calcPoticaj(uplata,'p2-poticaj-toggle'),dmfR,i)));
-    peppArr.push(Math.round(compoundFV(uplata,peppR,i)));
-    etfArr.push(Math.round(compoundFV(uplata,etfR,i)));
+    dmfArr.push(Math.round(compoundFV(uplata+calcPoticaj(uplata,'p2-poticaj-toggle'),dmfRateUsed,i)));
+    peppArr.push(Math.round(compoundFV(uplata,peppRateUsed,i)));
+    etfArr.push(Math.round(compoundFV(uplata,etfRateUsed,i)));
   }
   const ds=[
     {label:'3. Stup',data:dmfArr,borderColor:'#e8a44a',backgroundColor:'rgba(232,164,74,0.06)',fill:true,borderWidth:p2vis.dmf?2.5:0,pointRadius:0,tension:0.4,hidden:!p2vis.dmf},
     {label:'PEPP',data:peppArr,borderColor:'#4a9fe8',backgroundColor:'rgba(74,159,232,0.06)',fill:true,borderWidth:p2vis.pepp?2.5:0,pointRadius:0,tension:0.4,hidden:!p2vis.pepp},
     {label:getP2EtfName(),data:etfArr,borderColor:'#4ae8a0',backgroundColor:'rgba(74,232,160,0.06)',fill:true,borderWidth:p2vis.etf?2.5:0,pointRadius:0,tension:0.4,hidden:!p2vis.etf},
   ];
+  if (inflationOn) {
+    const dmfNomArr=[], peppNomArr=[], etfNomArr=[];
+    for(let i=1;i<=god;i++){
+      dmfNomArr.push(Math.round(compoundFV(uplata+calcPoticaj(uplata,'p2-poticaj-toggle'),dmfR,i)));
+      peppNomArr.push(Math.round(compoundFV(uplata,peppR,i)));
+      etfNomArr.push(Math.round(compoundFV(uplata,etfR,i)));
+    }
+    ds.unshift(
+      {label:'Nominalno 3. Stup',data:dmfNomArr,borderColor:'#f5c87a',backgroundColor:'transparent',fill:false,borderWidth:p2vis.dmf?1.2:0,pointRadius:0,tension:0.4,borderDash:[4,3],hidden:!p2vis.dmf},
+      {label:'Nominalno PEPP',data:peppNomArr,borderColor:'#7abff5',backgroundColor:'transparent',fill:false,borderWidth:p2vis.pepp?1.2:0,pointRadius:0,tension:0.4,borderDash:[4,3],hidden:!p2vis.pepp},
+      {label:`Nominalno ${getP2EtfName()}`,data:etfNomArr,borderColor:'#8ef5c8',backgroundColor:'transparent',fill:false,borderWidth:p2vis.etf?1.2:0,pointRadius:0,tension:0.4,borderDash:[4,3],hidden:!p2vis.etf},
+    );
+  }
   storeChartData('p2-chart', labels, ds);
   if(!chart2){ chart2=makeChart('p2-chart',labels,ds); }
   else {
     chart2.data.labels=labels;
-    chart2.data.datasets.forEach((d,i)=>{ d.data=ds[i].data; d.label=ds[i].label; d.hidden=ds[i].hidden; d.borderWidth=ds[i].borderWidth; });
+    chart2.data.datasets=ds;
     chart2.update();
   }
 }
 ['p2-uplata','p2-god','p2-dmfr','p2-peppr'].forEach(id => $(id).addEventListener('syncedInput', updateP2));
 $('p2-poticaj-toggle').addEventListener('change', updateP2);
+if ($('p2-infl-toggle')) {
+  $('p2-infl-toggle').addEventListener('change', updateP2);
+}
 
 // ============ PAGE 3 ============
 let chart3;
@@ -663,7 +738,10 @@ function updateP3() {
   const penType=$('p3-pension-type').value;
   const penR=parseFloat($('p3-penr-v').value)||parseFloat($('p3-penr').value)||8.0;
   const etfR=getP3EtfRate();
-  const inf=parseFloat($('p3-inf-v').value)||parseFloat($('p3-inf').value)||2.5;
+  const inflationOn = setInflationUiState('p3-infl-toggle', 'p3-infl-toggle-lbl', 'p3-infl-note', god, 100000);
+  const inf = DEFAULT_INFLATION_RATE;
+  const penRateUsed = inflationOn ? getRealRatePct(penR, inf) : penR;
+  const etfRateUsed = inflationOn ? getRealRatePct(etfR, inf) : etfR;
   const etfName=getP3EtfName();
 
 
@@ -701,18 +779,20 @@ function updateP3() {
   $('p3-th-pen').textContent=penLabel;
   $('p3-sc-pension').className='stat-card '+(penType==='dmf'?'sc-dmf':'sc-pepp');
 
-  const penFinal=compoundFV(penUplata+penBonus,penR,god);
-  const etfFinal=compoundFV(etfUplata,etfR,god);
+  const penFinal=compoundFV(penUplata+penBonus,penRateUsed,god);
+  const etfFinal=compoundFV(etfUplata,etfRateUsed,god);
   const combined=penFinal+etfFinal;
+  const penFinalNominal=compoundFV(penUplata+penBonus,penR,god);
+  const etfFinalNominal=compoundFV(etfUplata,etfR,god);
+  const combinedNominal=penFinalNominal+etfFinalNominal;
   const inp=uplata*god;
-  const realFactor=Math.pow(1+inf/100,god);
-  const realVal=combined/realFactor;
+  const realVal=inflationOn ? combined : combined/Math.pow(1+inf/100,god);
 
   $('p3-pen-total').textContent=fmt(penFinal);
   $('p3-pen-earn').textContent=fmt(penFinal-penUplata*god);
   $('p3-etf-total').textContent=fmt(etfFinal);
   $('p3-etf-earn').textContent=fmt(etfFinal-etfUplata*god);
-  $('p3-total').textContent=fmt(combined);
+  $('p3-total').textContent=inflationOn ? `${fmt(combined)} (${fmt(combinedNominal)} nominalno)` : fmt(combined);
   $('p3-real').textContent=fmt(realVal);
   $('p3-in').textContent=fmt(inp);
   $('p3-payout-total').textContent=fmt(combined);
@@ -723,8 +803,8 @@ function updateP3() {
   $('p3-monthly-real').textContent=fmt(monthlyReal)+'/mj';
 
   // Compare: all pension
-  const onlyPen=compoundFV(uplata+(penType==='dmf'?POTICAJ:0),penR,god);
-  const onlyEtf=compoundFV(uplata,etfR,god);
+  const onlyPen=compoundFV(uplata+(penType==='dmf'?POTICAJ:0),penRateUsed,god);
+  const onlyEtf=compoundFV(uplata,etfRateUsed,god);
   $('p3-only-pen').textContent=fmt(onlyPen);
   $('p3-pen-monthly').textContent=fmt(onlyPen*0.04/12)+'/mj';
   const penDiff=onlyPen-combined;
@@ -740,25 +820,25 @@ function updateP3() {
   const milestones=[5,10,15,20,25,30,35,40].filter(y=>y<=god);
   if(!milestones.includes(god)) milestones.push(god);
   $('p3-tbody').innerHTML=sanitizeTbody(milestones.map(y=>{
-    const pv=compoundFV(penUplata+penBonus,penR,y);
-    const ev=compoundFV(etfUplata,etfR,y);
+    const pv=compoundFV(penUplata+penBonus,penRateUsed,y);
+    const ev=compoundFV(etfUplata,etfRateUsed,y);
     const cv=pv+ev; const rf=Math.pow(1+inf/100,y);
     return `<tr><td>${y}.</td>
       <td style="color:${penColor}">${fmt(pv)}</td>
       <td style="color:var(--etf-l)">${fmt(ev)}</td>
       <td style="color:var(--combo-l)">${fmt(cv)}</td>
-      <td style="color:var(--muted2)">${fmt(cv/rf)}</td></tr>`;
+      <td style="color:var(--muted2)">${fmt(inflationOn ? cv : cv/rf)}</td></tr>`;
   }).join(''));
 
   const labels=[],penArr=[],etfArr2=[],comboArr=[],realArr=[];
   for(let i=1;i<=god;i++){
     labels.push(i);
-    const pv=compoundFV(penUplata+penBonus,penR,i);
-    const ev=compoundFV(etfUplata,etfR,i);
+    const pv=compoundFV(penUplata+penBonus,penRateUsed,i);
+    const ev=compoundFV(etfUplata,etfRateUsed,i);
     penArr.push(Math.round(pv));
     etfArr2.push(Math.round(ev));
     comboArr.push(Math.round(pv+ev));
-    realArr.push(Math.round((pv+ev)/Math.pow(1+inf/100,i)));
+    realArr.push(Math.round(inflationOn ? compoundFV(penUplata+penBonus,penR,i)+compoundFV(etfUplata,etfR,i) : (pv+ev)/Math.pow(1+inf/100,i)));
   }
   const penC=penType==='dmf'?'#e8a44a':'#4a9fe8';
   const penBg=penType==='dmf'?'rgba(232,164,74,0.06)':'rgba(74,159,232,0.06)';
@@ -768,15 +848,21 @@ function updateP3() {
     {label:'Kombinirano',data:comboArr,borderColor:'#c77af5',backgroundColor:'rgba(199,122,245,0.08)',fill:true,borderWidth:2.5,pointRadius:0,tension:0.4},
     {label:'Realna vrijednost',data:realArr,borderColor:'#5a6180',backgroundColor:'transparent',fill:false,borderWidth:1.5,pointRadius:0,tension:0.4,borderDash:[5,4]},
   ];
+  if (inflationOn) {
+    ds[3].label = 'Nominalna vrijednost';
+  }
   storeChartData('p3-chart', labels, ds);
   if(!chart3){ chart3=makeChart('p3-chart',labels,ds); }
   else{
     chart3.data.labels=labels;
-    chart3.data.datasets.forEach((d,i)=>{ d.data=ds[i].data; d.label=ds[i].label; d.borderColor=ds[i].borderColor; d.backgroundColor=ds[i].backgroundColor; if(ds[i].borderDash) d.borderDash=ds[i].borderDash; });
+    chart3.data.datasets=ds;
     chart3.update();
   }
 }
-['p3-uplata','p3-god','p3-etf-share','p3-penr','p3-inf'].forEach(id => $(id).addEventListener('syncedInput', updateP3));
+['p3-uplata','p3-god','p3-etf-share','p3-penr'].forEach(id => $(id).addEventListener('syncedInput', updateP3));
+if ($('p3-infl-toggle')) {
+  $('p3-infl-toggle').addEventListener('change', updateP3);
+}
 
 // ============ CHART FACTORY ============
 function makeChart(canvasId, labels, datasets) {
@@ -844,6 +930,7 @@ function updateP0a() {
   const god = parseInt($('p0a-god-v').value) || parseInt($('p0a-god').value) || 25;
   const showTaxNet = $('p0a-net-toggle') ? $('p0a-net-toggle').checked : false;
   const usePoticaj = $('p0a-poticaj').value === 'yes';
+  const inflationOn = setInflationUiState('p0a-infl-toggle', 'p0a-infl-toggle-lbl', 'p0a-infl-note', god, 100000);
 
   // Annual amount
   const annualUplata = period === 'mjesecno' ? inputAmt * 12 : inputAmt;
@@ -854,7 +941,8 @@ function updateP0a() {
   $('p0a-fund-name').textContent = fundName;
 
   const poticajGod = usePoticaj && annualUplata >= 663.61 ? 99.54 : (usePoticaj ? annualUplata*0.15 : 0);
-  const rate = r5y; // use 5y average as projection
+  const rateNominal = r5y; // use 5y average as projection
+  const rate = inflationOn ? getRealRatePct(rateNominal) : rateNominal;
 
   // Compute growth
   let val = initial;
@@ -862,10 +950,15 @@ function updateP0a() {
   const milestones = [5,10,15,20,25,30,35,40].filter(y=>y<=god);
   if(!milestones.includes(god)) milestones.push(god);
   const labels=[], vals=[], tbody=[];
+  const nominalVals = [];
   let totalPoticaj=0;
 
   for(let i=1;i<=god;i++){
     val = (val + annualUplata + poticajGod) * (1 + rate/100);
+    if (inflationOn) {
+      const nominalValueAtPoint = compoundFV(annualUplata + poticajGod, rateNominal, i) + (initial * Math.pow(1 + rateNominal / 100, i));
+      nominalVals.push(Math.round(nominalValueAtPoint));
+    }
     totalIn += annualUplata;
     totalPoticaj += poticajGod;
     labels.push(i);
@@ -881,7 +974,8 @@ function updateP0a() {
   const afterTaxVal = val - taxMeta.taxAmount;
   const afterTaxProfit = afterTaxVal - totalIn;
 
-  $('p0a-total').textContent = fmt(afterTaxVal);
+  const nominalFinalVal = inflationOn ? (nominalVals[nominalVals.length - 1] || 0) : afterTaxVal;
+  $('p0a-total').textContent = inflationOn ? `${fmt(afterTaxVal)} (${fmt(nominalFinalVal)} nominalno)` : fmt(afterTaxVal);
   $('p0a-earn').textContent = fmt(afterTaxProfit);
   $('p0a-multi').textContent = (afterTaxVal/totalIn).toFixed(2)+'x';
   $('p0a-in').textContent = fmt(totalIn);
@@ -890,7 +984,7 @@ function updateP0a() {
   $('p0a-lump').textContent = fmt(afterTaxVal);
   $('p0a-monthly').textContent = fmt(afterTaxVal*0.04/12)+'/mj';
   $('p0a-rate-used').textContent = rate.toFixed(2)+'%/god';
-  $('p0a-info').innerHTML = DOMPurify.sanitize(`Korišten <strong>5-godišnji prosjek</strong> fonda (${r5y}%). Prinos 2024: <strong>${r2024}%</strong>. ${usePoticaj?`Godišnji poticaj: <strong>${fmt(poticajGod)}</strong>.`:''}`, { ALLOWED_TAGS: ['strong'], ALLOWED_ATTR: [] });
+  $('p0a-info').innerHTML = DOMPurify.sanitize(`Korišten <strong>5-godišnji prosjek</strong> fonda (${r5y}%). Prinos 2024: <strong>${r2024}%</strong>. ${usePoticaj?`Godišnji poticaj: <strong>${fmt(poticajGod)}</strong>.`:''}${inflationOn?` Prinos je realni (nakon inflacije ${DEFAULT_INFLATION_RATE}%).`:''}`, { ALLOWED_TAGS: ['strong'], ALLOWED_ATTR: [] });
   if (taxMeta.isExempt) {
     $('p0a-tax-main').textContent = 'Porez: 0€ (Oslobođeno nakon 2 god.)';
     $('p0a-tax-sub').textContent = 'Horizon ulaganja je 2+ godine, pa se kapitalna dobit ne oporezuje.';
@@ -912,6 +1006,10 @@ function updateP0a() {
   const p0aDs = [
     {label:fundName,data:vals,borderColor:'#e8a44a',backgroundColor:'rgba(232,164,74,0.08)',fill:true,borderWidth:2.5,pointRadius:0,tension:0.4},
   ];
+  if (inflationOn) {
+    p0aDs.unshift({label:`Nominalno (${fundName})`,data:nominalVals,borderColor:'#f5c87a',backgroundColor:'transparent',fill:false,borderWidth:1.5,pointRadius:0,tension:0.4,borderDash:[4,3]});
+    p0aDs[1].label = `${fundName} (kupovna moć danas)`;
+  }
   if (showTaxNet) {
     p0aDs.push({label:'Neto (nakon poreza)',data:valsAfterTax,borderColor:'#4ae8a0',backgroundColor:'transparent',fill:false,borderWidth:1.6,pointRadius:0,tension:0.4,borderDash:[4,3]});
   }
@@ -930,8 +1028,9 @@ function updateP0a() {
   const allDS = DMF_FUNDS.map(f=>{
     let v=initial;
     const pot=usePoticaj&&annualUplata>=663.61?99.54:(usePoticaj?annualUplata*0.15:0);
+    const fRate = inflationOn ? getRealRatePct(f.r5y) : f.r5y;
     const arr=[];
-    for(let i=1;i<=god;i++){ v=(v+annualUplata+pot)*(1+f.r5y/100); arr.push(Math.round(v)); }
+    for(let i=1;i<=god;i++){ v=(v+annualUplata+pot)*(1+fRate/100); arr.push(Math.round(v)); }
     return {label:f.name,data:arr,borderColor:f.color,backgroundColor:'transparent',fill:false,borderWidth:1.8,pointRadius:0,tension:0.4};
   });
   // Spremi full podatke za period filter (1Y,3Y,5Y,...,SVE)
@@ -955,6 +1054,9 @@ function updateP0a() {
 
 ['p0a-uplata','p0a-initial','p0a-god'].forEach(id => $(id).addEventListener('syncedInput', updateP0a));
 ['p0a-fund-select','p0a-period','p0a-poticaj'].forEach(id=>$(id).addEventListener('change',updateP0a));
+if ($('p0a-infl-toggle')) {
+  $('p0a-infl-toggle').addEventListener('change', updateP0a);
+}
 if ($('p0a-net-toggle')) {
   $('p0a-net-toggle').addEventListener('change', () => {
     const lbl = $('p0a-net-toggle-lbl');
@@ -1005,6 +1107,8 @@ function updateP0b() {
   const initial=parseFloat($('p0b-initial-v').value)||parseFloat($('p0b-initial').value)||1000;
   const god=parseInt($('p0b-god-v').value)||parseInt($('p0b-god').value)||20;
   const showTaxNet = $('p0b-net-toggle') ? $('p0b-net-toggle').checked : false;
+  const inflationOn = setInflationUiState('p0b-infl-toggle', 'p0b-infl-toggle-lbl', 'p0b-infl-note', god, 100000);
+  const rateUsed = inflationOn ? getRealRatePct(etf.rate) : etf.rate;
 
 
 
@@ -1017,7 +1121,7 @@ function updateP0b() {
   $('p0b-etf-custom-wrap').style.display=sel.value.startsWith('custom')?'flex':'none';
 
   $('p0b-etf-name').textContent=etf.name;
-  $('p0b-gross-rate').textContent=etf.rate+'% bruto/god';
+  $('p0b-gross-rate').textContent=inflationOn ? `${rateUsed.toFixed(2)}% realno/god (nominalno ${etf.rate}%)` : etf.rate+'% bruto/god';
   $('p0b-fee-display').textContent=((pl.annualFee+pl.txFee)*100).toFixed(2)+'%/god eff.';
   $('p0b-insurance').textContent=pl.insurance;
 
@@ -1026,10 +1130,11 @@ function updateP0b() {
 
   // Bruto (no fees)
   let brutoVal=initial;
-  for(let i=0;i<god;i++) brutoVal=(brutoVal+uplata)*(1+etf.rate/100);
+  for(let i=0;i<god;i++) brutoVal=(brutoVal+uplata)*(1+rateUsed/100);
 
   // Neto with fees
-  const arr=calcP0bGrowth(uplata,initial,etf.rate,pl.annualFee,pl.txFee,god);
+  const arr=calcP0bGrowth(uplata,initial,rateUsed,pl.annualFee,pl.txFee,god);
+  const nominalArr=inflationOn?calcP0bGrowth(uplata,initial,etf.rate,pl.annualFee,pl.txFee,god):arr;
   const netoVal=arr[arr.length-1].val;
   const totalFees=arr[arr.length-1].fees;
   const totalIn=initial+uplata*god;
@@ -1039,7 +1144,8 @@ function updateP0b() {
 
   $('p0b-gross').textContent=fmt(Math.round(brutoVal));
   $('p0b-net').textContent=fmt(netoVal);
-  $('p0b-after-tax').textContent=fmt(afterTax);
+  const nominalAfterTax = inflationOn ? (nominalArr[nominalArr.length-1].val - calcCroatiaCapitalTax(nominalArr[nominalArr.length-1].val-totalIn, god).taxAmount) : afterTax;
+  $('p0b-after-tax').textContent=inflationOn ? `${fmt(afterTax)} (${fmt(Math.round(nominalAfterTax))} nominalno)` : fmt(afterTax);
   $('p0b-in').textContent=fmt(totalIn);
   $('p0b-earn').textContent=fmt(netoVal-totalIn);
   $('p0b-multi').textContent=(netoVal/totalIn).toFixed(2)+'x';
@@ -1059,7 +1165,7 @@ function updateP0b() {
   if(!mils.includes(god)) mils.push(god);
   $('p0b-tbody').innerHTML=sanitizeTbody(mils.map(y=>{
     const a=arr[y-1];
-    let b=initial; for(let i=0;i<y;i++) b=(b+uplata)*(1+etf.rate/100);
+    let b=initial; for(let i=0;i<y;i++) b=(b+uplata)*(1+rateUsed/100);
     const inp2=initial+uplata*y;
     const g2=a.val-inp2;
     const rowTax = y < 2 ? Math.max(0, g2) * 0.12 : 0;
@@ -1072,7 +1178,7 @@ function updateP0b() {
   let bv=initial;
   for(let i=1;i<=god;i++){
     labels.push(i);
-    bv=(bv+uplata)*(1+etf.rate/100);
+    bv=(bv+uplata)*(1+rateUsed/100);
     brutoArr.push(Math.round(bv));
     netoArr.push(arr[i-1].val);
     const ii=initial+uplata*i;
@@ -1084,6 +1190,12 @@ function updateP0b() {
     {label:'Bruto',data:brutoArr,borderColor:'#4ae8a0',backgroundColor:'rgba(74,232,160,0.06)',fill:true,borderWidth:2,pointRadius:0,tension:0.4},
     {label:'Neto (naknade)',data:netoArr,borderColor:'#4a9fe8',backgroundColor:'rgba(74,159,232,0.06)',fill:true,borderWidth:2,pointRadius:0,tension:0.4},
   ];
+  if (inflationOn) {
+    const nominalLine = nominalArr.map(x => x.val);
+    ds.unshift({label:'Nominalna vrijednost',data:nominalLine,borderColor:'#7abff5',backgroundColor:'transparent',fill:false,borderWidth:1.5,pointRadius:0,tension:0.4,borderDash:[4,3]});
+    ds[1].label = 'Kupovna moć danas (bruto)';
+    ds[2].label = 'Kupovna moć danas (neto)';
+  }
   if (showTaxNet) {
     ds.push({label:'Neto (nakon poreza)',data:afterArr,borderColor:'#e8a44a',backgroundColor:'transparent',fill:false,borderWidth:1.5,pointRadius:0,tension:0.4,borderDash:[4,3]});
   }
@@ -1103,7 +1215,7 @@ function updateP0b() {
     const initTx=Math.max(p.minTx,initial*p.txFee); v-=initTx;
     for(let i=0;i<god;i++){
       const tx=Math.max(p.minTx,uplata*p.txFee);
-      v=(v+uplata-tx)*(1+etf.rate/100);
+      v=(v+uplata-tx)*(1+rateUsed/100);
       v-=v*p.annualFee;
       a.push(Math.round(v));
     }
@@ -1139,6 +1251,9 @@ function updateP0b() {
 
 ['p0b-uplata','p0b-initial','p0b-god','p0b-custom-r'].forEach(id => $(id).addEventListener('syncedInput', updateP0b));
 ['p0b-etf-select','p0b-platform'].forEach(id=>$(id).addEventListener('change',updateP0b));
+if ($('p0b-infl-toggle')) {
+  $('p0b-infl-toggle').addEventListener('change', updateP0b);
+}
 if ($('p0b-net-toggle')) {
   $('p0b-net-toggle').addEventListener('change', () => {
     const lbl = $('p0b-net-toggle-lbl');
@@ -1205,7 +1320,6 @@ const SLIDER_PAIRS = [
   ['p3-god','p3-god-v',5,60,1],
   ['p3-etf-share','p3-etf-share-v',0,100,1],
   ['p3-penr','p3-penr-v',1,12,0.1],
-  ['p3-inf','p3-inf-v',0,5,0.1],
   ['p3-etfr-custom','p3-etfr-custom-v',3,18,0.1],
 ];
 
