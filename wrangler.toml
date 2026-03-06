@@ -6,3 +6,7 @@ account_id = "3e7eaa415aad36e91ce03732b88c3992"
 [[kv_namespaces]]
 binding = "AI_CONFIG"
 id = "9948ef6dccd047b59c91c3440f36abdd"
+
+[[kv_namespaces]]
+binding = "ANKETE_DATA"
+id = "f73d09f5b1fa4e70b62214778704492d"
