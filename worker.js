@@ -379,19 +379,6 @@ function sanitizeInput(str) {
   return s;
 }
 
-// HTML entity encoding za interpolaciju u email HTML/subject (INJ-VULN-02, INJ-VULN-03)
-function escapeHtml(str) {
-  if (!str) return '';
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#x27;')
-    .replace(/\r/g, '')
-    .replace(/\n/g, ' ');
-}
-
 // ── Sigurno upravljanje sesijama (KV-based UUID tokeni) ──
 // Sesijski token je kriptografski random UUID pohranjen u KV-u s TTL-om.
 // Nije deterministički deriviran iz lozinke — kompromitacija tokena ne otkriva credentials.
