@@ -312,8 +312,12 @@ function parseCookies(cookieHeader) {
   const cookies = {};
   if (!cookieHeader) return cookies;
   cookieHeader.split(';').forEach(c => {
-    const [k, v] = c.trim().split('=');
-    if (k && v) cookies[k] = v;
+    const part = c.trim();
+    const i = part.indexOf('=');
+    if (i === -1) return;
+    const k = part.slice(0, i);
+    const v = part.slice(i + 1);
+    if (k && v) cookies[k] = decodeURIComponent(v);
   });
   return cookies;
 }
@@ -565,7 +569,7 @@ async function handleRequest(request, env) {
           status: 302,
           headers: {
             'Location': '/admin',
-            'Set-Cookie': 'marsanai_session=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Strict',
+            'Set-Cookie': 'marsanai_session=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax',
           },
         });
       }
@@ -597,7 +601,7 @@ async function handleRequest(request, env) {
             status: 302,
             headers: {
               'Location': '/admin',
-              'Set-Cookie': `marsanai_session=${newToken}; Path=/; Max-Age=${SESSION_TTL}; HttpOnly; Secure; SameSite=Strict`,
+              'Set-Cookie': `marsanai_session=${encodeURIComponent(newToken)}; Path=/; Max-Age=${SESSION_TTL}; HttpOnly; Secure; SameSite=Lax`,
             },
           });
         }
@@ -680,7 +684,7 @@ async function handleRequest(request, env) {
 
       // API Status
       if (path === '/admin/api/status') {
-        if (!isApiAuthed) {
+        if (!isAuthed) {
           return new Response(JSON.stringify({ error: 'unauthorized' }), {
             status: 401,
             headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
@@ -694,7 +698,7 @@ async function handleRequest(request, env) {
 
       // API Toggle
       if (path === '/admin/api/toggle' && request.method === 'POST') {
-        if (!isApiAuthed) {
+        if (!isAuthed) {
           return new Response(JSON.stringify({ error: 'unauthorized' }), {
             status: 401,
             headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
@@ -761,7 +765,7 @@ async function handleRequest(request, env) {
 
       // ── API Ankete list (za Admin tab) ──
       if (path === '/admin/api/ankete' && request.method === 'GET') {
-        if (!isApiAuthed) {
+        if (!isAuthed) {
           return new Response(JSON.stringify({ error: 'unauthorized' }), {
             status: 401, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
           });
@@ -785,7 +789,7 @@ async function handleRequest(request, env) {
 
       // ── API Ankete Export CSV ──
       if (path === '/admin/api/ankete/export' && request.method === 'GET') {
-        if (!isApiAuthed) {
+        if (!isAuthed) {
           return new Response(JSON.stringify({ error: 'unauthorized' }), {
             status: 401, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
           });
@@ -863,7 +867,7 @@ async function handleRequest(request, env) {
 
       // ── API Reset Polls ──
       if (path === '/admin/api/reset-polls' && request.method === 'POST') {
-        if (!isApiAuthed) {
+        if (!isAuthed) {
           return new Response(JSON.stringify({ error: 'unauthorized' }), {
             status: 401, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
           });
@@ -883,7 +887,7 @@ async function handleRequest(request, env) {
 
       // ── API Clear Feedback ──
       if (path === '/admin/api/clear-feedback' && request.method === 'POST') {
-        if (!isApiAuthed) {
+        if (!isAuthed) {
           return new Response(JSON.stringify({ error: 'unauthorized' }), {
             status: 401, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
           });
@@ -902,7 +906,7 @@ async function handleRequest(request, env) {
 
       // ── API Delete Item ──
       if (path === '/admin/api/delete-item' && request.method === 'POST') {
-        if (!isApiAuthed) {
+        if (!isAuthed) {
           return new Response(JSON.stringify({ error: 'unauthorized' }), {
             status: 401, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
           });
@@ -936,7 +940,7 @@ async function handleRequest(request, env) {
 
       // ── API List Items ──
       if (path === '/admin/api/list-items' && request.method === 'GET') {
-        if (!isApiAuthed) {
+        if (!isAuthed) {
           return new Response(JSON.stringify({ error: 'unauthorized' }), {
             status: 401, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
           });
@@ -962,7 +966,7 @@ async function handleRequest(request, env) {
 
       // ── API Feedback list (Mini Mail) ──
       if (path === '/admin/api/feedback' && request.method === 'GET') {
-        if (!isApiAuthed) {
+        if (!isAuthed) {
           return new Response(JSON.stringify({ error: 'unauthorized' }), {
             status: 401, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
           });
@@ -982,8 +986,8 @@ async function handleRequest(request, env) {
 
       // ── API Feedback Reply ──
       if (path === '/admin/api/feedback/reply' && request.method === 'POST') {
-        // Dodatna zaštita: već imamo isLoggedIn guard iznad, ovdje tražimo i valjani API token.
-        if (!isApiAuthed) {
+        // Dodatna zaštita: dopuštamo valjanu cookie ili Bearer sesiju (isAuthed).
+        if (!isAuthed) {
           return new Response(JSON.stringify({ error: 'unauthorized' }), {
             status: 401, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
           });
