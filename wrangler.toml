@@ -1,6 +1,6 @@
 name = "empty-pine-8e64"
 main = "worker.js"
-compatibility_date = "2024-01-01"
+compatibility_date = "2024-09-23"
 account_id = "3e7eaa415aad36e91ce03732b88c3992"
 
 [[kv_namespaces]]
