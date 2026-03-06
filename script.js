@@ -1181,14 +1181,23 @@ function updateChatUI() {
 function renderFaqButtons() {
   const wrap = document.getElementById('ai-faq-wrap');
   if (!wrap) return;
-  wrap.innerHTML = '';
-  AI_FAQ.forEach((faq) => {
-    const btn = document.createElement('button');
-    btn.className = 'ai-faq-btn';
-    btn.textContent = faq.q;
-    btn.onclick = () => showFaqReply(faq.q, faq.a);
-    wrap.appendChild(btn);
-  });
+  const render = (items) => {
+    wrap.innerHTML = '';
+    (items || AI_FAQ).forEach((faq) => {
+      const btn = document.createElement('button');
+      btn.className = 'ai-faq-btn';
+      btn.textContent = faq.q;
+      btn.onclick = () => showFaqReply(faq.q, faq.a);
+      wrap.appendChild(btn);
+    });
+  };
+  render(AI_FAQ);
+  fetch(AI_WORKER_URL + '/faq-data')
+    .then((r) => r.json())
+    .then((d) => {
+      if (Array.isArray(d.items) && d.items.length > 0) render(d.items);
+    })
+    .catch(() => {});
 }
 
 // Ispiši pitanje i predefinirani odgovor u chat (bez poziva Workeru)

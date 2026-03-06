@@ -35,8 +35,15 @@ function addSecHeaders(response) {
   });
 }
 
-// ── Admin HTML stranica ──
-function adminPage(isOn, msg = '') {
+function escapeHtml(s) {
+  if (s == null) return '';
+  const t = String(s);
+  return t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+// ── Admin Dashboard (glassmorphism, tabovi) ──
+function adminDashboardPage(isOn, systemPromptOverride = '', appStatus = '', msg = '') {
+  const esc = escapeHtml;
   return `<!DOCTYPE html>
 <html lang="hr">
 <head>
@@ -45,41 +52,212 @@ function adminPage(isOn, msg = '') {
 <title>MM Invest Admin</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:#181d28; color:#e2e5f0; font-family:'Segoe UI',system-ui,sans-serif; min-height:100vh; display:flex; align-items:center; justify-content:center; }
-  .card { background:#1e2433; border:1px solid #2e3850; border-radius:16px; padding:2.5rem; width:360px; text-align:center; }
-  h1 { font-size:1.5rem; margin-bottom:0.5rem; }
-  .sub { color:#7d8aaa; font-size:0.85rem; margin-bottom:2rem; }
-  .status { font-size:1.1rem; margin-bottom:1.5rem; padding:1rem; border-radius:10px; }
-  .status.on { background:rgba(74,232,160,0.1); border:1px solid rgba(74,232,160,0.3); color:#4ae8a0; }
-  .status.off { background:rgba(245,96,96,0.1); border:1px solid rgba(245,96,96,0.3); color:#f56060; }
-  .toggle-btn { padding:0.75rem 2rem; border:none; border-radius:999px; font-size:0.95rem; font-weight:700; cursor:pointer; transition:opacity 0.2s; width:100%; }
-  .toggle-btn.turn-off { background:linear-gradient(135deg,#f56060,#d44); color:#fff; }
-  .toggle-btn.turn-on { background:linear-gradient(135deg,#4a9fe8,#4ae8a0); color:#0b0d12; }
-  .toggle-btn:hover { opacity:0.85; }
-  .msg { margin-top:1rem; font-size:0.8rem; color:#4ae8a0; }
-  .logout { margin-top:1.5rem; display:inline-block; font-size:0.78rem; color:#7d8aaa; cursor:pointer; text-decoration:underline; }
+  body { background: linear-gradient(135deg, #0f1219 0%, #181d28 50%, #1a1f2e 100%); color:#e2e5f0; font-family:'Segoe UI',system-ui,sans-serif; min-height:100vh; padding:1rem; }
+  .wrap { max-width:900px; margin:0 auto; }
+  .header { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem; }
+  .header h1 { font-size:1.5rem; }
+  .header .sub { color:#7d8aaa; font-size:0.85rem; }
+  .glass { background: rgba(30,36,51,0.65); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(74,158,232,0.15); border-radius:16px; padding:1.5rem; margin-bottom:1rem; }
+  .tabs { display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1rem; }
+  .tabs button { padding:0.6rem 1rem; border:1px solid rgba(46,56,80,0.8); background:rgba(30,36,51,0.6); color:#9aa2c0; border-radius:10px; cursor:pointer; font-size:0.9rem; }
+  .tabs button:hover { background:rgba(46,56,80,0.5); color:#e2e5f0; }
+  .tabs button.active { background:rgba(74,158,232,0.2); border-color:rgba(74,158,232,0.4); color:#4a9fe8; }
+  .tab-panel { display:none; }
+  .tab-panel.active { display:block; }
+  .status-badge { display:inline-block; padding:0.35rem 0.75rem; border-radius:999px; font-size:0.85rem; font-weight:700; }
+  .status-badge.on { background:rgba(74,232,160,0.2); border:1px solid rgba(74,232,160,0.4); color:#4ae8a0; }
+  .status-badge.off { background:rgba(245,96,96,0.2); border:1px solid rgba(245,96,96,0.4); color:#f56060; }
+  label { display:block; font-size:0.8rem; color:#9aa2c0; margin-bottom:0.35rem; }
+  input[type=text], input[type=email], textarea { width:100%; padding:0.6rem 0.9rem; background:rgba(36,43,61,0.8); border:1px solid #2e3850; border-radius:8px; color:#e2e5f0; font-size:0.9rem; margin-bottom:1rem; outline:none; }
+  textarea { min-height:100px; resize:vertical; }
+  input:focus, textarea:focus { border-color:#4a9fe8; }
+  .btn { padding:0.6rem 1.2rem; border:none; border-radius:10px; font-size:0.9rem; font-weight:600; cursor:pointer; transition:opacity 0.2s; }
+  .btn-primary { background: linear-gradient(135deg,#4a9fe8,#4ae8a0); color:#0b0d12; }
+  .btn-danger { background: linear-gradient(135deg,#f56060,#d44); color:#fff; }
+  .btn-secondary { background: rgba(46,56,80,0.8); color:#e2e5f0; border:1px solid #2e3850; }
+  .btn:hover { opacity:0.9; }
+  .msg { margin-bottom:1rem; padding:0.6rem; border-radius:8px; font-size:0.85rem; background:rgba(74,232,160,0.1); border:1px solid rgba(74,232,160,0.3); color:#4ae8a0; }
+  .err { background:rgba(245,96,96,0.1); border:1px solid rgba(245,96,96,0.3); color:#f56060; }
+  .logout { font-size:0.8rem; color:#7d8aaa; text-decoration:underline; cursor:pointer; }
+  table { width:100%; border-collapse:collapse; font-size:0.85rem; }
+  th, td { text-align:left; padding:0.5rem 0.75rem; border-bottom:1px solid #2e3850; }
+  th { color:#9aa2c0; font-weight:600; }
+  .log-line { font-family:monospace; font-size:0.8rem; padding:0.35rem 0; border-bottom:1px solid rgba(46,56,80,0.5); }
+  .faq-row { margin-bottom:1rem; padding:1rem; background:rgba(36,43,61,0.5); border-radius:10px; }
+  .inquiry-card { padding:1rem; background:rgba(36,43,61,0.5); border-radius:10px; margin-bottom:1rem; }
+  .inquiry-card .quick-reply { margin-top:0.75rem; display:flex; gap:0.5rem; flex-wrap:wrap; align-items:flex-start; }
+  .inquiry-card textarea { min-height:60px; margin-bottom:0.5rem; }
 </style>
 </head>
 <body>
-<div class="card">
-  <h1>🤖 MM Invest Admin</h1>
-  <p class="sub">Upravljanje AI asistentom</p>
-  
-  <div class="status ${isOn ? 'on' : 'off'}">
-    AI Bot je trenutno: <strong>${isOn ? '✅ UKLJUČEN' : '⛔ ISKLJUČEN'}</strong>
+<div class="wrap">
+  <header class="glass header">
+    <div>
+      <h1>🤖 MM Invest Admin</h1>
+      <p class="sub">Upravljanje aplikacijom</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:1rem;">
+      <span class="status-badge ${isOn ? 'on' : 'off'}" id="globalStatusBadge">${isOn ? '✅ Bot uključen' : '⛔ Bot isključen'}</span>
+      <a class="logout" href="/admin/logout">🔒 Odjavi se</a>
+    </div>
+  </header>
+  ${msg ? '<div class="msg">' + esc(msg) + '</div>' : ''}
+  <div class="glass">
+    <div class="tabs">
+      <button type="button" class="active" data-tab="general">General & AI</button>
+      <button type="button" data-tab="ankete">Ankete & Analytics</button>
+      <button type="button" data-tab="mail">Mini Mail</button>
+      <button type="button" data-tab="faq">FAQ Builder</button>
+      <button type="button" data-tab="logs">System Logs</button>
+    </div>
+    <div id="tab-general" class="tab-panel active">
+      <h2 style="margin-bottom:1rem;font-size:1.1rem;">General & AI</h2>
+      <form id="formGeneral">
+        <p style="margin-bottom:1rem;">Status bota: <span class="status-badge ${isOn ? 'on' : 'off'}" id="badgeGeneral">${isOn ? 'Uključen' : 'Isključen'}</span></p>
+        <label>Uključi / Isključi AI bota</label>
+        <div style="display:flex;gap:0.5rem;margin-bottom:1rem;">
+          <button type="button" class="btn btn-primary" data-set-bot="on">▶ Uključi</button>
+          <button type="button" class="btn btn-danger" data-set-bot="off">⏸ Isključi</button>
+        </div>
+        <label>System prompt override (ostavi prazno za default)</label>
+        <textarea name="system_prompt_override" id="systemPromptOverride" maxlength="2000">${esc(systemPromptOverride)}</textarea>
+        <label>Globalni status (npr. održavanje, obavijesti)</label>
+        <input type="text" name="app_status" id="appStatus" value="${esc(appStatus)}" placeholder="npr. Održavanje u tijeku" maxlength="500">
+        <div id="msgGeneral" class="msg" style="display:none;"></div>
+        <button type="submit" class="btn btn-primary">Spremi</button>
+      </form>
+    </div>
+    <div id="tab-ankete" class="tab-panel">
+      <h2 style="margin-bottom:1rem;font-size:1.1rem;">Ankete & Analytics</h2>
+      <div id="msgAnkete" class="msg" style="display:none;"></div>
+      <div id="anketeList"></div>
+      <div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
+        <a href="/admin/api/ankete/export" class="btn btn-secondary" download>Export CSV</a>
+        <button type="button" class="btn btn-danger" id="btnClearAnkete">Clear Data</button>
+      </div>
+    </div>
+    <div id="tab-mail" class="tab-panel">
+      <h2 style="margin-bottom:1rem;font-size:1.1rem;">Mini Mail — Upiti</h2>
+      <div id="feedbackList"></div>
+    </div>
+    <div id="tab-faq" class="tab-panel">
+      <h2 style="margin-bottom:1rem;font-size:1.1rem;">FAQ Builder</h2>
+      <div id="msgFaq" class="msg" style="display:none;"></div>
+      <div id="faqList"></div>
+      <button type="button" class="btn btn-primary" id="btnAddFaq">+ Dodaj pitanje</button>
+      <button type="button" class="btn btn-primary" style="margin-left:0.5rem;" id="btnSaveFaq">Spremi FAQ</button>
+    </div>
+    <div id="tab-logs" class="tab-panel">
+      <h2 style="margin-bottom:1rem;font-size:1.1rem;">System Logs</h2>
+      <div id="logsList"></div>
+    </div>
   </div>
-  
-  <form method="POST" action="/admin">
-    <input type="hidden" name="action" value="${isOn ? 'off' : 'on'}">
-    <button type="submit" class="toggle-btn ${isOn ? 'turn-off' : 'turn-on'}">
-      ${isOn ? '⏸️ Isključi AI bota' : '▶️ Uključi AI bota'}
-    </button>
-  </form>
-  
-  ${msg ? '<div class="msg">' + msg + '</div>' : ''}
-  
-  <a class="logout" href="/admin/logout">🔒 Odjavi se</a>
 </div>
+<script>
+(function(){
+  const cred = 'same-origin';
+  function api(path, opts) { return fetch(path, { ...opts, credentials: cred }); }
+  function showMsg(elId, text, isErr) {
+    const el = document.getElementById(elId);
+    if (!el) return;
+    el.textContent = text; el.className = 'msg ' + (isErr ? 'err' : ''); el.style.display = text ? 'block' : 'none';
+  }
+  document.querySelectorAll('.tabs button').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.tabs button').forEach(function(b){ b.classList.remove('active'); });
+      document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+      btn.classList.add('active');
+      const id = 'tab-' + btn.getAttribute('data-tab');
+      const panel = document.getElementById(id);
+      if (panel) panel.classList.add('active');
+      if (btn.getAttribute('data-tab') === 'ankete') loadAnkete();
+      if (btn.getAttribute('data-tab') === 'mail') loadFeedback();
+      if (btn.getAttribute('data-tab') === 'faq') loadFaq();
+      if (btn.getAttribute('data-tab') === 'logs') loadLogs();
+    });
+  });
+  document.getElementById('formGeneral').addEventListener('submit', function(e){
+    e.preventDefault();
+    const system_prompt_override = document.getElementById('systemPromptOverride').value;
+    const app_status = document.getElementById('appStatus').value;
+    api('/admin/api/config', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ system_prompt_override, app_status }) })
+      .then(function(r){ return r.json().then(function(d){ return { ok: r.ok, d }; }); })
+      .then(function({ ok, d }){
+        if (ok) { showMsg('msgGeneral', 'Spremljeno.'); } else { showMsg('msgGeneral', d.error || 'Greška', true); }
+      })
+      .catch(function(){ showMsg('msgGeneral', 'Greška mreže', true); });
+  });
+  document.querySelectorAll('[data-set-bot]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      const v = btn.getAttribute('data-set-bot');
+      api('/admin/api/config', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ai_enabled: v }) })
+        .then(function(r){ return r.json().then(function(d){ return { ok: r.ok, d }; }); })
+        .then(function({ ok }){
+          if (ok) { document.getElementById('globalStatusBadge').textContent = v === 'on' ? '✅ Bot uključen' : '⛔ Bot isključen'; document.getElementById('globalStatusBadge').className = 'status-badge ' + (v === 'on' ? 'on' : 'off'); document.getElementById('badgeGeneral').textContent = v === 'on' ? 'Uključen' : 'Isključen'; document.getElementById('badgeGeneral').className = 'status-badge ' + (v === 'on' ? 'on' : 'off'); }
+        });
+    });
+  });
+  function loadAnkete(){
+    api('/admin/api/ankete').then(function(r){ return r.json(); }).then(function(d){
+      const div = document.getElementById('anketeList');
+      if (!d.items || !d.items.length) { div.innerHTML = '<p style="color:#9aa2c0;">Nema podataka.</p>'; return; }
+      div.innerHTML = '<table><thead><tr><th>Key</th><th>Value</th></tr></thead><tbody>' + d.items.map(function(it){ return '<tr><td>' + escapeHtml(it.key) + '</td><td>' + escapeHtml(String(it.value).slice(0,200)) + (String(it.value).length > 200 ? '…' : '') + '</td></tr>'; }).join('') + '</tbody></table>';
+    }).catch(function(){ document.getElementById('anketeList').innerHTML = '<p class="err">Greška učitavanja</p>'; });
+  }
+  document.getElementById('btnClearAnkete').addEventListener('click', function(){
+    if (!confirm('Jesi li siguran da želiš obrisati sve podatke anketa?')) return;
+    api('/admin/api/reset-polls', { method: 'POST' }).then(function(r){ return r.json(); }).then(function(d){ if (d.ok) { loadAnkete(); showMsg('msgAnkete', 'Podaci obrisani.'); } else { showMsg('msgAnkete', d.error || 'Greška', true); } }).catch(function(){ showMsg('msgAnkete', 'Greška', true); });
+  });
+  function loadFeedback(){
+    api('/admin/api/feedback').then(function(r){ return r.json(); }).then(function(d){
+      const div = document.getElementById('feedbackList');
+      if (!d.items || !d.items.length) { div.innerHTML = '<p style="color:#9aa2c0;">Nema upita.</p>'; return; }
+      div.innerHTML = d.items.map(function(it, idx){
+        var email = (it.email || '').trim();
+        var text = escapeHtml((it.text || it.message || '').slice(0,300));
+        var replied = it.reply ? '<p style="font-size:0.8rem;color:#4ae8a0;">Odgovoreno: ' + escapeHtml(it.reply).slice(0,150) + '</p>' : '';
+        var replyBlock = it.reply ? '' : '<div class="quick-reply"><textarea placeholder="Quick reply" data-idx="' + idx + '" rows="2"></textarea><button type="button" class="btn btn-primary btn-reply" data-idx="' + idx + '">Pošalji odgovor</button></div>';
+        return '<div class="inquiry-card"><p><strong>' + escapeHtml(email || 'Nema email') + '</strong> ' + (it.type ? escapeHtml(it.type) : '') + '</p><p>' + text + '</p>' + replied + replyBlock + '</div>';
+      }).join('');
+      document.getElementById('feedbackList').querySelectorAll('.btn-reply').forEach(function(b){
+        b.addEventListener('click', function(){ var idx = parseInt(b.getAttribute('data-idx'),10); var ta = document.querySelector('textarea[data-idx="' + idx + '"]'); var reply = ta && ta.value ? ta.value.trim() : ''; if (!reply) return; api('/admin/api/feedback/reply', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idx, reply }) }).then(function(r){ return r.json(); }).then(function(d){ if (!d.error) { loadFeedback(); } else { alert(d.error); } }); });
+      });
+    }).catch(function(){ document.getElementById('feedbackList').innerHTML = '<p class="err">Greška učitavanja</p>'; });
+  }
+  function escapeHtml(s){ var t = String(s); return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function loadFaq(){
+    api('/admin/api/faq').then(function(r){ return r.json(); }).then(function(d){
+      var items = d.items || [];
+      var div = document.getElementById('faqList');
+      div.innerHTML = items.map(function(it, i){ return '<div class="faq-row" data-i="' + i + '"><label>Pitanje</label><input type="text" class="faq-q" value="' + escapeHtml(it.q || '') + '" maxlength="300"><label>Odgovor</label><textarea class="faq-a" maxlength="2000">' + escapeHtml(it.a || '') + '</textarea><button type="button" class="btn btn-secondary btn-remove-faq" data-i="' + i + '">Ukloni</button></div>'; }).join('');
+      div.querySelectorAll('.btn-remove-faq').forEach(function(btn){ btn.addEventListener('click', function(){ var row = btn.closest('.faq-row'); if (row) row.remove(); }); });
+    }).catch(function(){ document.getElementById('faqList').innerHTML = '<p class="err">Greška učitavanja</p>'; });
+  }
+  document.getElementById('btnAddFaq').addEventListener('click', function(){
+    var div = document.getElementById('faqList');
+    var n = div.querySelectorAll('.faq-row').length;
+    div.insertAdjacentHTML('beforeend', '<div class="faq-row" data-i="' + n + '"><label>Pitanje</label><input type="text" class="faq-q" maxlength="300"><label>Odgovor</label><textarea class="faq-a" maxlength="2000"></textarea><button type="button" class="btn btn-secondary btn-remove-faq">Ukloni</button></div>');
+    div.querySelectorAll('.faq-row').slice(-1)[0].querySelector('.btn-remove-faq').addEventListener('click', function(){ this.closest('.faq-row').remove(); });
+  });
+  document.getElementById('btnSaveFaq').addEventListener('click', function(){
+    var items = [];
+    document.getElementById('faqList').querySelectorAll('.faq-row').forEach(function(row){
+      var q = (row.querySelector('.faq-q') || {}).value;
+      var a = (row.querySelector('.faq-a') || {}).value;
+      if (q || a) items.push({ q: q || '', a: a || '' });
+    });
+    api('/admin/api/faq', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items }) }).then(function(r){ return r.json(); }).then(function(d){ if (d.ok) { showMsg('msgFaq', 'FAQ spremljen.'); } else { showMsg('msgFaq', d.error || 'Greška', true); } }).catch(function(){ showMsg('msgFaq', 'Greška', true); });
+  });
+  function loadLogs(){
+    api('/admin/api/logs').then(function(r){ return r.json(); }).then(function(d){
+      var logs = (d.logs || []).slice(-30).reverse();
+      var div = document.getElementById('logsList');
+      if (!logs.length) { div.innerHTML = '<p style="color:#9aa2c0;">Nema zapisa.</p>'; return; }
+      div.innerHTML = logs.map(function(l){ return '<div class="log-line">' + escapeHtml(l.ts || '') + ' | ' + escapeHtml(l.type || '') + ' | ' + escapeHtml(l.status || '') + '</div>'; }).join('');
+    }).catch(function(){ document.getElementById('logsList').innerHTML = '<p class="err">Greška učitavanja</p>'; });
+  }
+})();
+</script>
 </body>
 </html>`;
 }
@@ -150,6 +328,38 @@ function parseFormData(body) {
   const obj = {};
   for (const [k, v] of params) obj[k] = v;
   return obj;
+}
+
+// ── Basic Auth (za zaštitu /admin kada nema sesije) ──
+function parseBasicAuth(request) {
+  const h = request.headers.get('Authorization');
+  if (!h || !h.startsWith('Basic ')) return null;
+  try {
+    const b64 = h.slice(6).trim();
+    const decoded = atob(b64);
+    const i = decoded.indexOf(':');
+    if (i === -1) return null;
+    return { user: decoded.slice(0, i), pass: decoded.slice(i + 1) };
+  } catch (_) { return null; }
+}
+
+function checkBasicAuth(request, env) {
+  const cred = parseBasicAuth(request);
+  return cred && cred.user === env.ADMIN_USER && cred.pass === env.ADMIN_PASS;
+}
+
+const BASIC_AUTH_HEADERS = { 'WWW-Authenticate': 'Basic realm="MM Invest Admin", charset="UTF-8"' };
+
+const SYSTEM_LOGS_MAX = 30;
+
+async function appendSystemLog(env, entry) {
+  try {
+    const raw = await env.AI_CONFIG.get('system_logs');
+    const logs = raw ? JSON.parse(raw) : [];
+    logs.push({ ts: new Date().toISOString(), ...entry });
+    if (logs.length > SYSTEM_LOGS_MAX) logs.splice(0, logs.length - SYSTEM_LOGS_MAX);
+    await env.AI_CONFIG.put('system_logs', JSON.stringify(logs));
+  } catch (_) {}
 }
 
 // Jednostavna sanitizacija stringova prije spremanja u KV (zaštita od XSS payloadova)
@@ -459,24 +669,24 @@ async function handleRequest(request, env) {
         }
       }
 
-      // API auth check helper (Bearer token = UUID sesija pohranjena u KV-u)
+      // API auth: Bearer (sesija) ili Basic Auth (ADMIN_USER/ADMIN_PASS)
       const authHeader = request.headers.get('Authorization') || '';
       const bearerToken = authHeader.replace('Bearer ', '').trim();
       const isApiAuthed = await validateSession(bearerToken, env);
+      const isBasicAuthed = checkBasicAuth(request, env);
 
-      // Sve /admin/* rute (osim /admin/login, /admin/api/login i /admin/logout)
-      // moraju imati valjanu sesiju — cookie (HTML panel) ILI Bearer token (JS frontend).
-      // API rute vraćaju JSON 401, HTML rute prikazuju login.
-      const isAuthed = isLoggedIn || isApiAuthed;
+      // Sve /admin/* rute moraju imati sesiju (cookie/Bearer) ILI valjani Basic Auth.
+      const isAuthed = isLoggedIn || isApiAuthed || isBasicAuthed;
       if (!isAuthed) {
         if (path.startsWith('/admin/api/')) {
           return new Response(JSON.stringify({ error: 'unauthorized' }), {
             status: 401,
-            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json', ...BASIC_AUTH_HEADERS },
           });
         }
         return new Response(loginPage(), {
-          headers: { ...CORS_HEADERS, 'Content-Type': 'text/html;charset=UTF-8' },
+          status: 401,
+          headers: { ...CORS_HEADERS, 'Content-Type': 'text/html;charset=UTF-8', ...BASIC_AUTH_HEADERS },
         });
       }
 
@@ -513,6 +723,152 @@ async function handleRequest(request, env) {
           return new Response(JSON.stringify({ error: 'Bad request' }), {
             status: 400,
             headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+      }
+
+      // ── API Config (General & AI: ai_enabled, system_prompt_override, app_status) ──
+      if (path === '/admin/api/config' && request.method === 'GET') {
+        try {
+          const [aiEnabled, systemPrompt, appStatus] = await Promise.all([
+            env.AI_CONFIG.get('ai_enabled'),
+            env.AI_CONFIG.get('system_prompt_override'),
+            env.AI_CONFIG.get('app_status'),
+          ]);
+          return new Response(JSON.stringify({
+            ai_enabled: aiEnabled !== 'off',
+            system_prompt_override: systemPrompt || '',
+            app_status: appStatus || '{}',
+          }), { headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } });
+        } catch(e) {
+          return new Response(JSON.stringify({ error: e.message }), {
+            status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+      }
+      if (path === '/admin/api/config' && request.method === 'POST') {
+        try {
+          const body = await request.json();
+          if (body.ai_enabled === 'on' || body.ai_enabled === 'off') {
+            await env.AI_CONFIG.put('ai_enabled', body.ai_enabled);
+          } else if (typeof body.ai_enabled === 'boolean') {
+            await env.AI_CONFIG.put('ai_enabled', body.ai_enabled ? 'on' : 'off');
+          }
+          if (typeof body.system_prompt_override === 'string') {
+            await env.AI_CONFIG.put('system_prompt_override', body.system_prompt_override.slice(0, 8000));
+          }
+          if (body.app_status !== undefined) {
+            const s = typeof body.app_status === 'string' ? body.app_status : JSON.stringify(body.app_status || {});
+            await env.AI_CONFIG.put('app_status', s.slice(0, 2000));
+          }
+          return new Response(JSON.stringify({ ok: true }), {
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        } catch(e) {
+          return new Response(JSON.stringify({ error: e.message }), {
+            status: 400, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+      }
+
+      // ── API Ankete list (za Admin tab) ──
+      if (path === '/admin/api/ankete' && request.method === 'GET') {
+        if (!isApiAuthed) {
+          return new Response(JSON.stringify({ error: 'unauthorized' }), {
+            status: 401, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+        try {
+          const listResult = await env.ANKETE_DATA.list();
+          const items = [];
+          for (const k of listResult.keys) {
+            const v = await env.ANKETE_DATA.get(k.name);
+            items.push({ key: k.name, value: v || '' });
+          }
+          return new Response(JSON.stringify({ items }), {
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        } catch(e) {
+          return new Response(JSON.stringify({ error: e.message }), {
+            status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+      }
+
+      // ── API Ankete Export CSV ──
+      if (path === '/admin/api/ankete/export' && request.method === 'GET') {
+        if (!isApiAuthed) {
+          return new Response(JSON.stringify({ error: 'unauthorized' }), {
+            status: 401, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+        try {
+          const listResult = await env.ANKETE_DATA.list();
+          const rows = ['key,value'];
+          for (const k of listResult.keys) {
+            const v = await env.ANKETE_DATA.get(k.name);
+            const esc = (x) => '"' + String(x).replace(/"/g, '""') + '"';
+            rows.push(esc(k.name) + ',' + esc(v || ''));
+          }
+          const csv = rows.join('\n');
+          return new Response(csv, {
+            headers: {
+              ...CORS_HEADERS,
+              'Content-Type': 'text/csv; charset=utf-8',
+              'Content-Disposition': 'attachment; filename="ankete-export.csv"',
+            },
+          });
+        } catch(e) {
+          return new Response(JSON.stringify({ error: e.message }), {
+            status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+      }
+
+      // ── API FAQ ──
+      if (path === '/admin/api/faq' && request.method === 'GET') {
+        try {
+          const raw = await env.AI_CONFIG.get('faq_data');
+          const items = raw ? JSON.parse(raw) : [];
+          return new Response(JSON.stringify({ items }), {
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        } catch(e) {
+          return new Response(JSON.stringify({ error: e.message }), {
+            status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+      }
+      if (path === '/admin/api/faq' && request.method === 'POST') {
+        try {
+          const body = await request.json();
+          const items = Array.isArray(body.items) ? body.items : [];
+          const sanitized = items.slice(0, 20).map((it) => ({
+            q: String(it.q || '').slice(0, 300),
+            a: String(it.a || '').slice(0, 2000),
+          }));
+          await env.AI_CONFIG.put('faq_data', JSON.stringify(sanitized));
+          return new Response(JSON.stringify({ ok: true, count: sanitized.length }), {
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        } catch(e) {
+          return new Response(JSON.stringify({ error: e.message }), {
+            status: 400, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+      }
+
+      // ── API System Logs ──
+      if (path === '/admin/api/logs' && request.method === 'GET') {
+        try {
+          const raw = await env.AI_CONFIG.get('system_logs');
+          const logs = raw ? JSON.parse(raw) : [];
+          return new Response(JSON.stringify({ logs }), {
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        } catch(e) {
+          return new Response(JSON.stringify({ error: e.message }), {
+            status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
           });
         }
       }
@@ -616,6 +972,26 @@ async function handleRequest(request, env) {
         }
       }
 
+      // ── API Feedback list (Mini Mail) ──
+      if (path === '/admin/api/feedback' && request.method === 'GET') {
+        if (!isApiAuthed) {
+          return new Response(JSON.stringify({ error: 'unauthorized' }), {
+            status: 401, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+        try {
+          const raw = await env.AI_CONFIG.get('feedback_log');
+          const items = raw ? JSON.parse(raw) : [];
+          return new Response(JSON.stringify({ items }), {
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        } catch (_) {
+          return new Response(JSON.stringify({ items: [] }), {
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+      }
+
       // ── API Feedback Reply ──
       if (path === '/admin/api/feedback/reply' && request.method === 'POST') {
         // Dodatna zaštita: već imamo isLoggedIn guard iznad, ovdje tražimo i valjani API token.
@@ -689,22 +1065,30 @@ async function handleRequest(request, env) {
         }
       }
 
-      // Admin toggle POST
+      // Admin toggle POST (legacy form, preusmjerava na dashboard)
       if (path === '/admin' && request.method === 'POST') {
         const body = await request.text();
         const form = parseFormData(body);
         const newState = form.action === 'on' ? 'on' : 'off';
         await env.AI_CONFIG.put('ai_enabled', newState);
         const msg = newState === 'on' ? '✅ AI bot je uključen!' : '⏸️ AI bot je isključen.';
-        return new Response(adminPage(newState === 'on', msg), {
+        const [systemPromptOverride, appStatus] = await Promise.all([
+          env.AI_CONFIG.get('system_prompt_override'),
+          env.AI_CONFIG.get('app_status'),
+        ]);
+        return new Response(adminDashboardPage(newState === 'on', systemPromptOverride || '', appStatus || '', msg), {
           headers: { 'Content-Type': 'text/html;charset=UTF-8' },
         });
       }
 
       // Admin dashboard GET
-      const state = await env.AI_CONFIG.get('ai_enabled');
-      const isOn = state !== 'off'; // default = on
-      return new Response(adminPage(isOn), {
+      const [state, systemPromptOverride, appStatus] = await Promise.all([
+        env.AI_CONFIG.get('ai_enabled'),
+        env.AI_CONFIG.get('system_prompt_override'),
+        env.AI_CONFIG.get('app_status'),
+      ]);
+      const isOn = state !== 'off';
+      return new Response(adminDashboardPage(isOn, systemPromptOverride || '', appStatus || '', ''), {
         headers: { 'Content-Type': 'text/html;charset=UTF-8' },
       });
     }
@@ -980,6 +1364,20 @@ async function handleRequest(request, env) {
       });
     }
 
+    if (path === '/faq-data' && request.method === 'GET') {
+      try {
+        const raw = await env.AI_CONFIG.get('faq_data');
+        const items = raw ? JSON.parse(raw) : [];
+        return new Response(JSON.stringify({ items }), {
+          headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+        });
+      } catch (_) {
+        return new Response(JSON.stringify({ items: [] }), {
+          headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+        });
+      }
+    }
+
     // ── AI CHAT ENDPOINT ──
     if (request.method !== 'POST') {
       return new Response(JSON.stringify({ error: 'Method not allowed' }), {
@@ -1053,7 +1451,8 @@ async function handleRequest(request, env) {
 
       const messages = body.messages.slice(-10);
 
-      const systemPrompt = `Ti si MM Invest, prijateljski financijski asistent unutar MM Invest web aplikacije za hrvatsko tržište.
+      let systemPromptOverride = await env.AI_CONFIG.get('system_prompt_override');
+      const systemPromptDefault = `Ti si MM Invest, prijateljski financijski asistent unutar MM Invest web aplikacije za hrvatsko tržište.
 Pomažeš korisnicima razumjeti:
 - Hrvatski 3. mirovinski stup (DMF fondovi) i državni poticaj (15% do 99.54€/god za uplate ≥663.61€)
 - PEPP (Pan-European Personal Pension Product) - npr. Finax PEPP
@@ -1064,6 +1463,7 @@ Pomažeš korisnicima razumjeti:
 
 Uvijek naglasi da nisu financijski savjet i predloži konzultaciju s licenciranim savjetnikom za konkretne odluke.
 Odgovaraj kratko, jasno i na hrvatskom jeziku. Koristi emoji umjereno.`;
+      const systemPrompt = (systemPromptOverride && systemPromptOverride.trim()) ? systemPromptOverride.trim() : systemPromptDefault;
 
       const apiResponse = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
@@ -1081,6 +1481,7 @@ Odgovaraj kratko, jasno i na hrvatskom jeziku. Koristi emoji umjereno.`;
       });
 
       const data = await apiResponse.json();
+      await appendSystemLog(env, { type: 'ai', status: apiResponse.ok ? 'ok' : 'err' });
 
       return new Response(JSON.stringify(data), {
         status: apiResponse.status,
@@ -1093,6 +1494,7 @@ Odgovaraj kratko, jasno i na hrvatskom jeziku. Koristi emoji umjereno.`;
       });
 
     } catch (err) {
+      await appendSystemLog(env, { type: 'ai', status: 'err' });
       return new Response(JSON.stringify({ error: 'Internal error' }), {
         status: 500,
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
