@@ -441,6 +441,37 @@ header,
   font-weight: 800 !important;
 }
 
+/* Gradient spans inside page-header h2 use light (*-l) color variants that
+   disappear on the light SVG background — override to darker shades */
+.page-header h2 .grad-warm {
+  background: linear-gradient(135deg, #c47a1e, #1a7fd4) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+.page-header h2 .grad-cool {
+  background: linear-gradient(135deg, #1a7fd4, #0a9168) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+.page-header h2 .grad-combo {
+  background: linear-gradient(135deg, #0a9168, #7c3ab8) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+
+/* Toggle buttons live on SVG background — use darker shades for visibility */
+.toggle-btn.t-dmf  { color: #b8760a !important; }
+.toggle-btn.t-pepp { color: #1d6fbc !important; }
+.toggle-btn.t-etf  { color: #0a8a5a !important; }
+.toggle-btn.t-combo { color: #7c3ab8 !important; }
+.toggle-btn.t-dmf.active  { background: rgba(184, 118, 10, 0.1) !important; border-color: #b8760a !important; }
+.toggle-btn.t-pepp.active { background: rgba(29, 111, 188, 0.1) !important; border-color: #1d6fbc !important; }
+.toggle-btn.t-etf.active  { background: rgba(10, 138, 90, 0.1) !important;  border-color: #0a8a5a !important; }
+.toggle-btn.t-combo.active { background: rgba(124, 58, 184, 0.1) !important; border-color: #7c3ab8 !important; }
+
 /* Dark cards / dark containers */
 .dark-card,
 .dark-box,
