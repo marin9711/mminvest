@@ -726,6 +726,119 @@ export default {
       }
     }
 
+    // ── API/VOTE ENDPOINT (ankete i rejtinzi — zaštita od duplikata po IP-u, 24h) ──
+    if (path === '/api/vote' && request.method === 'POST') {
+      const clientIP =
+        request.headers.get('CF-Connecting-IP') ||
+        request.headers.get('X-Forwarded-For')?.split(',')[0]?.trim() ||
+        null;
+
+      try {
+        const body = await request.json();
+        const voteType = body.type; // 'poll' | 'rating'
+
+        if (!voteType || !['poll', 'rating'].includes(voteType)) {
+          return new Response(JSON.stringify({ error: 'Nevažeći tip glasanja.' }), {
+            status: 400, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+
+        // ── Provjera duplikata po IP-u i tipu glasanja (24h TTL) ──
+        const VOTE_TTL = 86400; // 24 sata
+        let voteKey = null;
+
+        if (voteType === 'poll') {
+          const pollId = body.pollId;
+          if (!pollId || typeof pollId !== 'string' || !/^[a-zA-Z0-9_-]{1,50}$/.test(pollId)) {
+            return new Response(JSON.stringify({ error: 'Nevažeći pollId.' }), {
+              status: 400, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+            });
+          }
+          voteKey = clientIP ? `vote_lock:poll:${pollId}:${clientIP}` : null;
+        } else if (voteType === 'rating') {
+          voteKey = clientIP ? `vote_lock:rating:${clientIP}` : null;
+        }
+
+        // Provjeri je li već glasao (samo ako imamo IP)
+        if (voteKey) {
+          let existingVote = null;
+          try {
+            existingVote = await env.AI_CONFIG.get(voteKey);
+          } catch (_) {}
+
+          if (existingVote) {
+            return new Response(JSON.stringify({
+              error: 'Već si glasao u zadnjih 24 sata.',
+              alreadyVoted: true,
+            }), {
+              status: 429, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+            });
+          }
+        }
+
+        // ── Obradi glasanje ovisno o tipu ──
+        if (voteType === 'poll') {
+          const pollId = body.pollId;
+          const votes = body.votes;
+
+          if (!votes || typeof votes !== 'object' || Array.isArray(votes)) {
+            return new Response(JSON.stringify({ error: 'Nevažeći podaci glasanja.' }), {
+              status: 400, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+            });
+          }
+
+          // Sanacija: vrijednosti moraju biti nenegativni integeri, max 10 opcija
+          const sanitizedVotes = {};
+          const entries = Object.entries(votes).slice(0, 10);
+          for (const [k, v] of entries) {
+            if (typeof k === 'string' && k.length <= 100 && Number.isInteger(v) && v >= 0 && v <= 100000) {
+              sanitizedVotes[k] = v;
+            }
+          }
+
+          const pollKvKey = 'poll_votes';
+          const raw = await env.AI_CONFIG.get(pollKvKey);
+          const allPolls = raw ? JSON.parse(raw) : {};
+          allPolls[pollId] = sanitizedVotes;
+          await env.AI_CONFIG.put(pollKvKey, JSON.stringify(allPolls));
+
+        } else if (voteType === 'rating') {
+          const rating = parseInt(body.rating);
+          if (!rating || rating < 1 || rating > 5) {
+            return new Response(JSON.stringify({ error: 'Nevažeća ocjena (1–5).' }), {
+              status: 400, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+            });
+          }
+          const prevRating = parseInt(body.prevRating) || 0;
+          const raw = await env.AI_CONFIG.get('ratings');
+          const ratings = raw ? JSON.parse(raw) : [];
+          if (prevRating >= 1 && prevRating <= 5) {
+            const idx = ratings.findLastIndex(r => r.rating === prevRating);
+            if (idx !== -1) ratings.splice(idx, 1);
+          }
+          ratings.push({ rating, ts: new Date().toISOString() });
+          if (ratings.length > 10000) ratings.splice(0, ratings.length - 10000);
+          await env.AI_CONFIG.put('ratings', JSON.stringify(ratings));
+        }
+
+        // ── Pohrani lock (IP + tip + pollId) na 24h ──
+        if (voteKey) {
+          try {
+            await env.AI_CONFIG.put(voteKey, '1', { expirationTtl: VOTE_TTL });
+          } catch (_) {}
+        }
+
+        return new Response(JSON.stringify({ ok: true }), {
+          headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+        });
+
+      } catch (e) {
+        return new Response(JSON.stringify({ error: 'Bad request', detail: e.message }), {
+          status: 400, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+        });
+      }
+    }
+
     // ── RATING ENDPOINT ──
     if (path === '/rating' && request.method === 'POST') {
       try {

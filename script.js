@@ -905,16 +905,47 @@ document.querySelectorAll('.star-btn').forEach(btn => {
     document.querySelectorAll('.star-btn').forEach((b,i) => b.classList.toggle('active', i < selectedRating));
     $('rating-label').textContent = selectedRating ? ratingLabels[selectedRating] : 'Klikni za ocjenu';
   });
-  btn.addEventListener('click', () => {
-    selectedRating = +btn.dataset.val;
-    $('rating-label').textContent = '✅ Ocjena ' + selectedRating + '/5 zabilježena — ' + ratingLabels[selectedRating];
+  btn.addEventListener('click', async () => {
+    const newRating = +btn.dataset.val;
     const prevRating = parseInt(localStorage.getItem('miv_rating')) || 0;
-    try { localStorage.setItem('miv_rating', selectedRating); } catch(e){}
-    fetch(AI_WORKER_URL + '/rating', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ rating: selectedRating, prevRating })
-    }).then(() => loadRatingStats()).catch(() => {});
+
+    // Privremeno pokaži "šaljem..." stanje
+    const labelEl = $('rating-label');
+    const originalLabel = labelEl ? labelEl.textContent : '';
+    if (labelEl) labelEl.textContent = '⏳ Bilježim ocjenu...';
+    document.querySelectorAll('.star-btn').forEach(b => b.style.pointerEvents = 'none');
+
+    try {
+      const resp = await fetch(AI_WORKER_URL + '/api/vote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'rating', rating: newRating, prevRating })
+      });
+      const data = await resp.json();
+
+      if (!resp.ok) {
+        // Server odbio (npr. već ocjenjivao)
+        if (labelEl) labelEl.textContent = data.alreadyVoted
+          ? '⛔ Već si dao ocjenu danas — pokušaj sutra!'
+          : '⚠️ Greška pri slanju — pokušaj ponovo.';
+        document.querySelectorAll('.star-btn').forEach(b => b.style.pointerEvents = '');
+        return;
+      }
+
+      // ── Server potvrdio — ažuriraj UI ──
+      selectedRating = newRating;
+      document.querySelectorAll('.star-btn').forEach((b, i) => {
+        b.classList.toggle('active', i < selectedRating);
+        b.style.pointerEvents = '';
+      });
+      if (labelEl) labelEl.textContent = '✅ Ocjena ' + selectedRating + '/5 zabilježena — ' + ratingLabels[selectedRating];
+      try { localStorage.setItem('miv_rating', selectedRating); } catch(e){}
+      loadRatingStats();
+
+    } catch(e) {
+      if (labelEl) labelEl.textContent = '⚠️ Greška mreže — pokušaj ponovo.';
+      document.querySelectorAll('.star-btn').forEach(b => b.style.pointerEvents = '');
+    }
   });
 });
 
@@ -1129,37 +1160,58 @@ async function submitPoll(pollId) {
   const selected = document.querySelectorAll(`[data-poll="${pollId}"].selected`);
   if (!selected.length) return;
 
+  // Onemogući gumb dok čekamo odgovor servera
+  const btn = document.getElementById(`poll-${pollId}-btn`);
+  const originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = '⏳ Šaljem...';
+
   const state = pollState[pollId];
-  let votes = state.votes;
+  let votes = { ...state.votes };
   const allOptions = document.querySelectorAll(`[data-poll="${pollId}"]`);
   allOptions.forEach(o => { if (!votes[o.dataset.value]) votes[o.dataset.value] = 0; });
 
-  // Oduzmi prethodni glas
+  // Pripremi novi glas
   state.prevSelected.forEach(v => { if (votes[v] > 0) votes[v]--; });
-  // Dodaj novi glas
   const newSelected = [];
   selected.forEach(o => { votes[o.dataset.value]++; newSelected.push(o.dataset.value); });
 
-  state.votes = votes;
-  state.voted = true;
-  state.prevSelected = newSelected;
-
+  // ── Pošalji na server (zaštićeni /api/vote endpoint) ──
   try {
-    const saved = JSON.parse(localStorage.getItem('miv_polls') || '{}');
-    saved[pollId] = { votes, prevSelected: newSelected, ts: new Date().toISOString() };
-    localStorage.setItem('miv_polls', JSON.stringify(saved));
-  } catch(e){}
-
-  // Pošalji na server
-  try {
-    await fetch(AI_WORKER_URL + '/polls', {
+    const resp = await fetch(AI_WORKER_URL + '/api/vote', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ pollId, votes })
+      body: JSON.stringify({ type: 'poll', pollId, votes })
     });
-  } catch(e) { console.error('Poll send error:', e); }
+    const data = await resp.json();
 
-  showPollResults(pollId);
+    if (!resp.ok) {
+      // Server je odbio glas (npr. već glasao)
+      btn.textContent = data.alreadyVoted ? '⛔ Već si glasao danas' : '⚠️ Greška — pokušaj ponovo';
+      btn.disabled = data.alreadyVoted; // zadrži disabled samo ako je duplikat
+      if (!data.alreadyVoted) setTimeout(() => { btn.textContent = originalText; btn.disabled = false; }, 3000);
+      return;
+    }
+
+    // ── Server potvrdio — sad ažuriraj UI i lokalno stanje ──
+    state.votes = votes;
+    state.voted = true;
+    state.prevSelected = newSelected;
+
+    try {
+      const saved = JSON.parse(localStorage.getItem('miv_polls') || '{}');
+      saved[pollId] = { votes, prevSelected: newSelected, ts: new Date().toISOString() };
+      localStorage.setItem('miv_polls', JSON.stringify(saved));
+    } catch(e){}
+
+    showPollResults(pollId);
+
+  } catch(e) {
+    console.error('Poll send error:', e);
+    btn.textContent = '⚠️ Greška mreže — pokušaj ponovo';
+    btn.disabled = false;
+    setTimeout(() => { btn.textContent = originalText; }, 3000);
+  }
 }
 
 function showPollResults(pollId) {
