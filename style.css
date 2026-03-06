@@ -150,10 +150,27 @@
   border-color: var(--muted) !important;
 }
 
+/* Disclaimers and fee notes on SVG/open background: dark and clearly readable */
+.disclaimer,
+.fee-note {
+  color: #1e293b !important;
+  font-weight: 500 !important;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8) !important;
+  opacity: 1 !important;
+}
+/* Disclaimers inside dark containers: lighter tone, no SVG glow */
 .quiz-result .disclaimer,
 #feedback .disclaimer,
-.disclaimer {
+.glass-card .disclaimer,
+.table-card .disclaimer,
+.chart-card .disclaimer,
+.quiz-card .disclaimer,
+.plan-card .disclaimer,
+.plan-result .disclaimer,
+.step-card .disclaimer,
+.ai-section .disclaimer {
   color: var(--muted-card) !important;
+  text-shadow: none !important;
 }
 
 /* Version row is a dark container; keep text high contrast */
@@ -409,9 +426,19 @@ header,
 .home-hero .tagline,
 .home-hero p,
 .home-hero span,
-.how-section h2 {
+.how-section h2,
+.page-header h2 {
   color: #0f172a !important;
   opacity: 1 !important;
+}
+
+/* H2 on SVG background: bold to stand out */
+.home-hero h2,
+.hero-section h2,
+.hero h2,
+.how-section h2,
+.page-header h2 {
+  font-weight: 800 !important;
 }
 
 /* Dark cards / dark containers */
