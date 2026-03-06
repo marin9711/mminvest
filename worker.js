@@ -168,6 +168,19 @@ function sanitizeInput(str) {
   return s;
 }
 
+// HTML entity encoding za interpolaciju u email HTML/subject (INJ-VULN-02, INJ-VULN-03)
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+    .replace(/\r/g, '')
+    .replace(/\n/g, ' ');
+}
+
 // ── Sigurno upravljanje sesijama (KV-based UUID tokeni) ──
 // Sesijski token je kriptografski random UUID pohranjen u KV-u s TTL-om.
 // Nije deterministički deriviran iz lozinke — kompromitacija tokena ne otkriva credentials.
@@ -653,11 +666,11 @@ async function handleRequest(request, env) {
                     <p style="color:#7d8aaa;font-size:0.85rem;margin-bottom:1.5rem">Zahvaljujemo na povratnoj informaciji!</p>
                     <div style="background:#1e2433;border-radius:8px;padding:1rem;margin-bottom:1rem;">
                       <div style="font-size:0.75rem;color:#7d8aaa;margin-bottom:0.4rem">Tvoj feedback:</div>
-                      <div style="color:#9aa2c0;font-size:0.9rem">${items[idx].text.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+                      <div style="color:#9aa2c0;font-size:0.9rem">${escapeHtml(items[idx].text)}</div>
                     </div>
                     <div style="background:#1a2a1e;border-left:3px solid #4ae8a0;border-radius:8px;padding:1rem;">
                       <div style="font-size:0.75rem;color:#4ae8a0;margin-bottom:0.4rem">💬 Odgovor admina:</div>
-                      <div style="color:#e2e5f0;font-size:0.95rem">${replyText.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+                      <div style="color:#e2e5f0;font-size:0.95rem">${escapeHtml(replyText)}</div>
                     </div>
                     <p style="margin-top:1.5rem;font-size:0.75rem;color:#5a6180;">MarsanInvest &middot; <a href="https://mminvest.pages.dev" style="color:#4a9fe8">mminvest.pages.dev</a></p>
                   </div>
@@ -758,14 +771,14 @@ async function handleRequest(request, env) {
             body: JSON.stringify({
               from: 'MarsanInvest <onboarding@resend.dev>',
               to: ['marin.marsan@gmail.com'],
-              subject: `📬 Novi feedback: ${entry.type} — MarsanInvest`,
+              subject: `📬 Novi feedback: ${escapeHtml(entry.type)} — MarsanInvest`,
               html: `
                 <div style="font-family:sans-serif;max-width:520px;margin:0 auto;background:#181d28;color:#e2e5f0;padding:2rem;border-radius:12px;">
                   <h2 style="color:#4a9fe8;margin-bottom:0.5rem">📬 Novi feedback</h2>
                   <p style="color:#7d8aaa;font-size:0.85rem;margin-bottom:1.5rem">Korisnik je ostavio povratnu informaciju i čeka odgovor.</p>
                   <div style="background:#1e2433;border-radius:8px;padding:1rem;margin-bottom:1rem;">
-                    <div style="font-size:0.75rem;color:#7d8aaa;margin-bottom:0.25rem">Tip: <strong style="color:#e2e5f0">${entry.type}</strong>${entry.rating ? ' · Ocjena: ' + '⭐'.repeat(entry.rating) : ''}</div>
-                    <div style="font-size:0.75rem;color:#4a9fe8;margin-bottom:0.5rem">📧 ${entry.email}</div>
+                    <div style="font-size:0.75rem;color:#7d8aaa;margin-bottom:0.25rem">Tip: <strong style="color:#e2e5f0">${escapeHtml(entry.type)}</strong>${entry.rating ? ' · Ocjena: ' + '⭐'.repeat(entry.rating) : ''}</div>
+                    <div style="font-size:0.75rem;color:#4a9fe8;margin-bottom:0.5rem">📧 ${escapeHtml(entry.email)}</div>
                     <div style="color:#e2e5f0;font-size:0.95rem">${entry.text.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
                   </div>
                   <a href="https://mminvest.pages.dev/#admin" style="display:inline-block;padding:0.6rem 1.25rem;background:#4a9fe8;color:#0b0d12;border-radius:8px;text-decoration:none;font-weight:700;font-size:0.85rem;">Otvori Admin Panel →</a>
