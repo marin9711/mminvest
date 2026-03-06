@@ -313,6 +313,31 @@
 .admin-tab-content { display: none; }
 .admin-tab-content.active { display: block; }
 
+.admin-tools-row {
+  margin-bottom: 0.8rem;
+}
+
+.admin-worker-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.48rem 0.72rem;
+  border-radius: 9px;
+  border: 1px solid rgba(74, 159, 232, 0.42);
+  background: rgba(74, 159, 232, 0.16);
+  color: #a8d4f5;
+  text-decoration: none;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.admin-worker-link:hover {
+  background: rgba(74, 159, 232, 0.24);
+  border-color: rgba(74, 159, 232, 0.6);
+  color: #d9eeff;
+}
+
 /* ── Admin: 3 taba (Upravljanje) ── */
 /* Kada ima 3 taba, smanjimo font malo da stanu u red */
 .admin-tab-row {
