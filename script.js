@@ -3371,6 +3371,208 @@ function showMgmtMsg(text, type) {
 
 // ========== QUIZ LOGIC ==========
 const quizAnswers = {};
+let quizLastFinderResult = null;
+
+function getEtfFinderRate(keyword, fallbackRate) {
+  const sel = $('p0b-etf-select');
+  if (!sel) return fallbackRate;
+  const opt = Array.from(sel.options).find((o) => o.textContent.includes(keyword));
+  if (!opt) return fallbackRate;
+  const rate = Number(String(opt.value || '').split(',')[0]);
+  return Number.isFinite(rate) ? rate : fallbackRate;
+}
+
+function getFinderFundCatalog() {
+  const dmfByName = (name) => DMF_FUNDS.find((f) => f.name === name);
+  const dmfRate = (name, fallbackRate) => Number(dmfByName(name)?.r5y || fallbackRate);
+
+  return {
+    dmf_croatia_1000c: {
+      id: 'dmf_croatia_1000c',
+      name: 'Croatia 1000C',
+      typeLabel: 'DMF kategorija C',
+      riskLabel: 'Nizak rizik',
+      avgReturn: dmfRate('Croatia 1000C', 2.5),
+      feeHint: 'Konzervativni DMF profil, naknade su automatski uključene u DMF kalkulatoru.',
+      apply: { page: 'p0a', fundName: 'Croatia 1000C' },
+    },
+    dmf_erste_protect: {
+      id: 'dmf_erste_protect',
+      name: 'Erste Plavi Protect',
+      typeLabel: 'DMF kategorija C',
+      riskLabel: 'Nizak rizik',
+      avgReturn: dmfRate('Erste Plavi Protect', 2.8),
+      feeHint: 'Konzervativni DMF profil, naknade su automatski uključene u DMF kalkulatoru.',
+      apply: { page: 'p0a', fundName: 'Erste Plavi Protect' },
+    },
+    dmf_az_benefit: {
+      id: 'dmf_az_benefit',
+      name: 'AZ Benefit',
+      typeLabel: 'DMF kategorija C',
+      riskLabel: 'Nizak rizik',
+      avgReturn: dmfRate('AZ Benefit', 3.2),
+      feeHint: 'Konzervativni DMF profil, naknade su automatski uključene u DMF kalkulatoru.',
+      apply: { page: 'p0a', fundName: 'AZ Benefit' },
+    },
+    etf_vwce_ibkr: {
+      id: 'etf_vwce_ibkr',
+      name: 'VWCE - Vanguard All World',
+      typeLabel: 'ETF',
+      riskLabel: 'Visok rizik / dugi rok',
+      avgReturn: getEtfFinderRate('VWCE', 9.5),
+      feeHint: 'Primjenjuje ETF + platformu IBKR (najčešće niže efektivne naknade).',
+      apply: { page: 'p0b', etfKeyword: 'VWCE', platform: 'ibkr' },
+    },
+    etf_cspx_ibkr: {
+      id: 'etf_cspx_ibkr',
+      name: 'CSPX - iShares S&P 500',
+      typeLabel: 'ETF',
+      riskLabel: 'Visok rizik / dugi rok',
+      avgReturn: getEtfFinderRate('CSPX', 11.0),
+      feeHint: 'Primjenjuje ETF + platformu IBKR (najčešće niže efektivne naknade).',
+      apply: { page: 'p0b', etfKeyword: 'CSPX', platform: 'ibkr' },
+    },
+    dmf_croatia_1000a: {
+      id: 'dmf_croatia_1000a',
+      name: 'Croatia 1000A',
+      typeLabel: 'DMF kategorija A',
+      riskLabel: 'Viši rizik',
+      avgReturn: dmfRate('Croatia 1000A', 5.35),
+      feeHint: 'DMF kategorija A s višim potencijalom rasta i većom volatilnošću.',
+      apply: { page: 'p0a', fundName: 'Croatia 1000A' },
+    },
+    dmf_az_profit: {
+      id: 'dmf_az_profit',
+      name: 'AZ Profit',
+      typeLabel: 'DMF (umjereni profil)',
+      riskLabel: 'Umjeren rizik',
+      avgReturn: dmfRate('AZ Profit', 4.51),
+      feeHint: 'Uravnoteženiji DMF profil, naknade su automatski uključene u DMF kalkulatoru.',
+      apply: { page: 'p0a', fundName: 'AZ Profit' },
+    },
+    dmf_erste_expert: {
+      id: 'dmf_erste_expert',
+      name: 'Erste Plavi Expert',
+      typeLabel: 'DMF kategorija A',
+      riskLabel: 'Viši rizik',
+      avgReturn: dmfRate('Erste Plavi Expert', 6.62),
+      feeHint: 'DMF kategorija A s višim potencijalom rasta i većom volatilnošću.',
+      apply: { page: 'p0a', fundName: 'Erste Plavi Expert' },
+    },
+  };
+}
+
+function buildFondFinderRecommendations() {
+  const age = quizAnswers[0];
+  const risk = quizAnswers[2];
+  const goal = quizAnswers[3];
+  const longTerm = age === 'young' || (age === 'mid' && goal !== 'pension');
+  const catalog = getFinderFundCatalog();
+
+  let title = '🎯 Fond Finder preporuka';
+  let subtitle = 'Na temelju odgovora, ovo su 3 fonda koja najbolje odgovaraju tvom profilu.';
+  let picks = ['dmf_erste_expert', 'etf_vwce_ibkr', 'dmf_az_profit'];
+
+  if (risk === 'low') {
+    title = '🛡️ Konzervativni profil - DMF kategorija C';
+    subtitle = 'Odabrao/la si niži rizik pa Fond Finder predlaže konzervativne DMF fondove (kategorija C).';
+    picks = ['dmf_croatia_1000c', 'dmf_erste_protect', 'dmf_az_benefit'];
+  } else if (risk === 'high' && longTerm) {
+    title = '🚀 Rast profil - ETF + DMF kategorija A';
+    subtitle = 'Za visoki rizik i dugi rok preporuka ide prema ETF-ovima (VWCE/S&P 500) uz opciju DMF kategorije A.';
+    picks = ['etf_vwce_ibkr', 'etf_cspx_ibkr', 'dmf_croatia_1000a'];
+  } else if (goal === 'both') {
+    title = '⚖️ Balansirani profil - kombinacija DMF i ETF';
+    subtitle = 'Želiš balans sigurnosti i rasta, zato preporučujemo kombinaciju DMF-a i globalnih ETF-ova.';
+    picks = ['dmf_erste_expert', 'etf_vwce_ibkr', 'dmf_az_profit'];
+  }
+
+  const recommendations = picks.map((id) => catalog[id]).filter(Boolean).slice(0, 3);
+  while (recommendations.length < 3) {
+    recommendations.push(catalog.dmf_az_profit);
+  }
+
+  return { title, subtitle, recommendations };
+}
+
+function applyFinderFund(fundId) {
+  const catalog = getFinderFundCatalog();
+  const fund = catalog[fundId];
+  if (!fund || !fund.apply) return;
+
+  if (fund.apply.page === 'p0a') {
+    const sel = $('p0a-fund-select');
+    if (sel) {
+      const target = Array.from(sel.options).find((o) => o.textContent.includes(fund.apply.fundName));
+      if (target) sel.value = target.value;
+      sel.dispatchEvent(new Event('change'));
+    }
+    try { updateP0a(); } catch (_) {}
+  }
+
+  if (fund.apply.page === 'p0b') {
+    const etfSel = $('p0b-etf-select');
+    if (etfSel) {
+      const targetEtf = Array.from(etfSel.options).find((o) => o.textContent.includes(fund.apply.etfKeyword));
+      if (targetEtf) etfSel.value = targetEtf.value;
+      etfSel.dispatchEvent(new Event('change'));
+    }
+    const plSel = $('p0b-platform');
+    if (plSel && fund.apply.platform) {
+      plSel.value = fund.apply.platform;
+      plSel.dispatchEvent(new Event('change'));
+    }
+    try { updateP0b(); } catch (_) {}
+  }
+
+  const tab = document.querySelector(`[data-page="${fund.apply.page}"]`);
+  if (tab) tab.click();
+}
+
+function exportQuizFinderPdf() {
+  if (!quizLastFinderResult || !Array.isArray(quizLastFinderResult.recommendations) || !quizLastFinderResult.recommendations.length) {
+    alert('Prvo riješi kviz da bi mogao/la exportati fond preporuke.');
+    return;
+  }
+  const jsPDFCtor = window.jspdf && window.jspdf.jsPDF;
+  if (!jsPDFCtor) {
+    alert('PDF library nije učitan. Osvježi stranicu i pokušaj ponovo.');
+    return;
+  }
+
+  const doc = new jsPDFCtor({ orientation: 'p', unit: 'mm', format: 'a4' });
+  let y = 14;
+  doc.setFontSize(16);
+  doc.text('MM Invest - Fond Finder', 12, y);
+  y += 7;
+  doc.setFontSize(10);
+  doc.text(`Datum: ${new Date().toLocaleString('hr-HR')}`, 12, y);
+  y += 8;
+  doc.setFontSize(12);
+  doc.text(quizLastFinderResult.title, 12, y);
+  y += 6;
+  doc.setFontSize(9.5);
+  const subtitleWrapped = doc.splitTextToSize(quizLastFinderResult.subtitle, 185);
+  doc.text(subtitleWrapped, 12, y);
+  y += subtitleWrapped.length * 4.2 + 3;
+
+  quizLastFinderResult.recommendations.forEach((item, idx) => {
+    if (y > 265) { doc.addPage(); y = 14; }
+    doc.setFontSize(11);
+    doc.text(`${idx + 1}. ${item.name} (${item.typeLabel})`, 12, y);
+    y += 5;
+    doc.setFontSize(9.5);
+    doc.text(`Rizik: ${item.riskLabel}`, 12, y);
+    y += 4.5;
+    doc.text(`Ovaj fond je u prosjeku imao ${item.avgReturn.toFixed(2)}% prinosa.`, 12, y);
+    y += 4.5;
+    const feeWrapped = doc.splitTextToSize(`Naknade: ${item.feeHint}`, 185);
+    doc.text(feeWrapped, 12, y);
+    y += feeWrapped.length * 4.2 + 3;
+  });
+
+  doc.save(`fond-finder-${new Date().toISOString().slice(0, 10)}.pdf`);
+}
 
 function quizSelectOption(el) {
   const q = el.dataset.q;
@@ -3417,122 +3619,31 @@ function quizShowResult() {
   document.getElementById(`qstep-4`).classList.add('done');
   document.getElementById('quizProgress').style.display = 'none';
 
-  const age = quizAnswers[0];
-  const amount = quizAnswers[1];
-  const risk = quizAnswers[2];
-  const goal = quizAnswers[3];
-  const exp = quizAnswers[4];
+  const resultData = buildFondFinderRecommendations();
+  quizLastFinderResult = resultData;
 
-  // Scoring logic
-  // Duljina horizonta: mladi = 20+ god, srednji = 10-20, senior = <10
-  const longHorizon = age === 'young';
-  const midHorizon  = age === 'mid';
+  document.getElementById('qr-emoji').textContent = '🧭';
+  document.getElementById('qr-title').textContent = resultData.title;
+  document.getElementById('qr-subtitle').textContent = resultData.subtitle;
 
-  let score = { dmf: 0, pepp: 0, etf: 0, combo: 0 };
-
-  // Age / horizont
-  // PEPP > DMF na dug horizont jer nema cap-a na prinos
-  if (age === 'young') { score.etf += 3; score.pepp += 3; score.combo += 2; }
-  if (age === 'mid')   { score.combo += 3; score.pepp += 2; score.dmf += 2; }
-  if (age === 'senior'){ score.dmf += 4; score.pepp += 1; }
-
-  // Amount
-  if (amount === 'low')  { score.etf += 3; score.pepp += 1; }
-  if (amount === 'mid')  { score.combo += 3; score.dmf += 2; score.pepp += 2; }
-  if (amount === 'high') { score.combo += 3; score.etf += 2; score.pepp += 1; }
-
-  // Risk
-  if (risk === 'low')  { score.dmf += 3; score.pepp += 1; }
-  if (risk === 'mid')  { score.combo += 2; score.pepp += 2; score.dmf += 1; }
-  if (risk === 'high') { score.etf += 3; score.combo += 2; score.pepp += 1; }
-
-  // Goal
-  if (goal === 'pension') { score.dmf += 3; score.pepp += 2; }
-  if (goal === 'growth')  { score.etf += 3; score.pepp += 1; }
-  if (goal === 'both')    { score.combo += 4; score.pepp += 1; }
-
-  // Experience
-  if (exp === 'none')   { score.dmf += 2; score.pepp += 1; }
-  if (exp === 'some')   { score.combo += 2; score.etf += 1; score.pepp += 1; }
-  if (exp === 'expert') { score.etf += 2; score.combo += 2; }
-
-  // Dugoročni bonus za PEPP: mlad + rast/oba cilja = PEPP dobiva ekstra bod
-  // (reflektira matematičku prednost PEPP-a na 10+ god zbog višeg prinosa)
-  if (longHorizon && (goal === 'growth' || goal === 'both')) { score.pepp += 2; }
-  if (midHorizon  && (goal === 'growth' || goal === 'both')) { score.pepp += 1; }
-
-  const sorted = Object.entries(score).sort((a,b) => b[1]-a[1]);
-  const top = sorted[0][0];
-  const second = sorted[1][0];
-
-  const strategies = {
-    dmf: {
-      emoji: '🏛️', title: 'Hrvatski DMF (3. stup)',
-      subtitle: 'Temeljena na sigurnosti i državnom poticaju — idealno za konzervativne ulagače koji žele mirovinski standard.',
-      icon: '🏛️', label: 'PRIMARNA PREPORUKA', color: 'var(--dmf)',
-      desc: 'Dobrovoljni mirovinski fond s državnim poticajem od 15% (do 99.54€/god). Najprikladniji za one koji cijene sigurnost i porezne benefite.',
-      pros: ['Državni poticaj 15% (do 99.54€/god)', 'Neoporeziva uplata poslodavca do 804€/god', 'Regulirano, nadzor HANFA-e', 'Niske naknade (0.4–0.8%/god)'],
-      page: 'p0a', cta: 'Otvori DMF kalkulator'
-    },
-    pepp: {
-      emoji: '🌍', title: 'PEPP — Pan-europska mirovina',
-      subtitle: 'Europski mirovinski račun s pristupom globalnim ETF tržištima — dobra alternativa domaćem fondu.',
-      icon: '🌍', label: 'PRIMARNA PREPORUKA', color: 'var(--pepp)',
-      desc: 'Finaxov PEPP omogućava investiranje u ETF portfelje uz mirovinski okvir. Naknada 1% godišnje uz veću fleksibilnost od domaćeg DMF-a.',
-      pros: ['Investicija u globalne ETF-ove', 'Dostupno u svim EU zemljama', 'Portfelji 100% dionice do 60/40', 'Veća dugoročna povratnost od DMF-a'],
-      page: 'p1', cta: 'Usporedi s DMF-om'
-    },
-    etf: {
-      emoji: '📈', title: 'ETF fondovi (IBKR / T212)',
-      subtitle: 'Maksimalni rast kroz globalno diverzificirane ETF-ove — za ulagače koji razumiju tržišta i gledaju dugoročno.',
-      icon: '📈', label: 'PRIMARNA PREPORUKA', color: 'var(--etf)',
-      desc: 'VWCE, IWDA ili S&P 500 ETF kroz IBKR ili Trading 212. Nema ograničenja isplate, najniže naknade, prinos slobodan od poreza ≥2 god u HR.',
-      pros: ['Najniže naknade (0.07–0.22%/god)', 'Prinos bez poreza ≥2 god u HR', 'Osiguranje do 20.000€', 'Potpuna likvidnost'],
-      page: 'p0b', cta: 'Usporedi ETF platforme'
-    },
-    combo: {
-      emoji: '🧩', title: 'Kombinirani pristup',
-      subtitle: 'Iskoristi državni poticaj za DMF + slobodni rast ETF-ova — optimalna strategija za većinu ulagača.',
-      icon: '🧩', label: 'PRIMARNA PREPORUKA', color: 'var(--combo)',
-      desc: 'Stavi ~66€/mj u DMF za poticaj (max korist), ostatak u ETF. Tako kombiniraš sigurnost i prinos. Employer bonus do 804€/god na vrh.',
-      pros: ['66€/mj u DMF → 99€/god poticaja (besplatan prinos)', 'ETF za slobodni rast bez ograničenja', 'Diverzifikacija rizika', 'Optimizacija poreznih benefita'],
-      page: 'p3', cta: 'Otvori kombinirani kalkulator'
-    }
-  };
-
-  const primary = strategies[top];
-  const secondary = strategies[second];
-
-  document.getElementById('qr-emoji').textContent = primary.emoji;
-  document.getElementById('qr-title').textContent = primary.title;
-  document.getElementById('qr-subtitle').textContent = primary.subtitle;
-
-  let cardsHtml = `
-    <div class="quiz-result-card primary">
+  let cardsHtml = resultData.recommendations.map((item, idx) => `
+    <div class="quiz-result-card ${idx === 0 ? 'primary' : ''}">
       <div class="qrc-head">
-        <span class="qrc-icon">${primary.icon}</span>
+        <span class="qrc-icon">${item.typeLabel.includes('ETF') ? '📈' : '🏛️'}</span>
         <div>
-          <div class="qrc-label" style="color:${primary.color}">${primary.label}</div>
-          <div class="qrc-title">${primary.title}</div>
+          <div class="qrc-label" style="color:${idx === 0 ? 'var(--pepp)' : 'var(--muted)'}">${idx === 0 ? 'PRIMARNA PREPORUKA' : 'ALTERNATIVA'}</div>
+          <div class="qrc-title">${item.name}</div>
         </div>
       </div>
-      <div class="qrc-desc">${primary.desc}</div>
-      <ul class="qrc-pros">${primary.pros.map(p=>`<li>${p}</li>`).join('')}</ul>
-      <button class="qrc-cta" onclick="document.querySelector('[data-page=${primary.page}]').click()">${primary.cta}</button>
+      <div class="qrc-desc">${item.typeLabel} · ${item.riskLabel}</div>
+      <ul class="qrc-pros">
+        <li>Ovaj fond je u prosjeku imao <strong>${item.avgReturn.toFixed(2)}%</strong> prinosa.</li>
+        <li>${item.feeHint}</li>
+      </ul>
+      <button class="qrc-cta" onclick="applyFinderFund('${item.id}')">Primijeni ovaj fond u kalkulator</button>
     </div>
-    <div class="quiz-result-card">
-      <div class="qrc-head">
-        <span class="qrc-icon">${secondary.icon}</span>
-        <div>
-          <div class="qrc-label">TAKOĐER RAZMOTRI</div>
-          <div class="qrc-title">${secondary.title}</div>
-        </div>
-      </div>
-      <div class="qrc-desc">${secondary.desc}</div>
-      <ul class="qrc-pros">${secondary.pros.map(p=>`<li>${p}</li>`).join('')}</ul>
-      <button class="qrc-cta" onclick="document.querySelector('[data-page=${secondary.page}]').click()">${secondary.cta}</button>
-    </div>
-  `;
+  `).join('');
+
   document.getElementById('qr-cards').innerHTML = DOMPurify.sanitize(cardsHtml, {
     ALLOWED_TAGS: ['div','ul','li','button','span','strong'],
     ALLOWED_ATTR: ['class','style','onclick']
@@ -3544,6 +3655,7 @@ function quizShowResult() {
 
 function quizRestart() {
   // Reset all
+  quizLastFinderResult = null;
   Object.keys(quizAnswers).forEach(k => delete quizAnswers[k]);
   for (let i = 0; i <= 4; i++) {
     const card = document.getElementById(`qq-${i}`);
