@@ -958,14 +958,25 @@ const AI_WORKER_URL = 'https://empty-pine-8e64.marin-marsan.workers.dev';
 let aiHistory = [];
 let aiTyping = false;
 
+function sanitizeText(text) {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;');
+}
+
 function addAiMsg(role, text) {
   const msgs = $('ai-messages');
   const isBot = role === 'bot';
   const div = document.createElement('div');
   div.className = 'ai-msg ' + role;
-  let html = text.split('\n').join('<br>');
-  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-  div.innerHTML = `<div class="ai-msg-avatar">${isBot ? '🤖' : '👤'}</div><div class="ai-msg-bubble">${html}</div>`;
+  // Sanitiziraj tekst prije upisivanja u DOM (sprječava XSS)
+  let safe = sanitizeText(text);
+  safe = safe.split('\n').join('<br>');
+  safe = safe.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  div.innerHTML = `<div class="ai-msg-avatar">${isBot ? '\u{1F916}' : '\u{1F464}'}</div><div class="ai-msg-bubble">${safe}</div>`;
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
 }
