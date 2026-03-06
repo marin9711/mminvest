@@ -1251,6 +1251,21 @@ tr:hover td { background:var(--surface2); }
   color: var(--muted2); cursor: pointer; transition: all 0.15s; white-space: nowrap;
 }
 .ai-quick-btn:hover { color: var(--etf-l); border-color: rgba(74,232,160,0.4); background: var(--surface3); }
+.ai-faq-wrap {
+  padding: 0.6rem 1rem 0.85rem; border-top: 1px solid var(--border);
+  background: var(--surface2); flex-shrink: 0;
+  display: flex; flex-wrap: wrap; gap: 0.45rem; align-items: center;
+}
+.ai-faq-label {
+  width: 100%; font-size: 0.7rem; color: var(--muted); margin: 0 0 0.35rem 0;
+}
+.ai-faq-btn {
+  font-size: 0.75rem; padding: 0.4rem 0.7rem; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--surface3);
+  color: var(--text); cursor: pointer; transition: all 0.15s;
+  white-space: nowrap; font-family: 'DM Sans', sans-serif;
+}
+.ai-faq-btn:hover { color: var(--etf-l); border-color: rgba(74,232,160,0.4); background: var(--surface); }
 .ai-input-row {
   display: flex; gap: 0.5rem; padding: 0.7rem 1rem;
   border-top: 1px solid var(--border); background: var(--surface2); flex-shrink: 0;
@@ -3469,6 +3484,10 @@ tr:hover td { background:var(--surface2); }
     <button class="ai-quick-btn" onclick="sendQuickMsg('Kako koristiti kalkulator?')">Kako koristiti?</button>
     <button class="ai-quick-btn" onclick="sendQuickMsg('Što je državni poticaj na 3. stup?')">Državni poticaj</button>
     <button class="ai-quick-btn" onclick="sendQuickMsg('Koje su naknade na IBKR vs Trading 212?')">IBKR vs T212</button>
+  </div>
+  <div id="ai-faq-wrap" class="ai-faq-wrap" style="display:none">
+    <p class="ai-faq-label">Često postavljana pitanja (AI je privremeno nedostupan):</p>
+    <!-- Gumbi se generiraju u script.js renderFaqButtons() -->
   </div>
   <div class="ai-input-row">
     <input class="ai-input" id="ai-input" type="text" placeholder="Pitaj nešto o ulaganju..." 

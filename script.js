@@ -1021,6 +1021,17 @@ const AI_WORKER_URL = 'https://empty-pine-8e64.marin-marsan.workers.dev';
 
 let aiHistory = [];
 let aiTyping = false;
+let aiBotEnabled = true; // ažurira se iz /status
+
+// FAQ fallback kad je AI isključen — pitanja i predefinirani odgovori (bez poziva Workeru)
+const AI_FAQ = [
+  { q: 'Što je PEPP?', a: 'PEPP (Pan-European Personal Pension Product) je europska osobna mirovina dostupna u cijeloj EU. Omogućuje ulaganje u ETF portfelje s mirovinskim beneficijama i poreznim olakšicama. U Hrvatskoj ga nudi npr. Finax — pogledaj tab "PEPP" u aplikaciji.' },
+  { q: 'ETF ili DMF?', a: 'Ovisi o cilju i riziku. DMF donosi državni poticaj (15% do 99,54€/god) i manji rizik. ETF obično daje veći dugoročni prinos i veću fleksibilnost. Za većinu je dobra kombinacija: dio u DMF (poticaj), dio u ETF — vidi "Pension + ETF" kalkulator.' },
+  { q: 'Kako početi s 50€?', a: 'S 50€ mjesečno možeš početi s DMF-om (50€/mj = 600€/god, država doplaćuje 90€) ili s ETF platformom (Trading 212, Finax). Otvori "Hrvatski DMF" ili "ETF Platforme" u navigaciji i unesi iznose — kalkulator pokazuje projekciju.' },
+  { q: 'Što je državni poticaj?', a: 'Država doplaćuje 15% tvoje godišnje uplate na 3. mirovinski stup, najviše 99,54€/god (ako uplatiš najmanje 663,61€ godišnje). To je besplatan novac — iskoristi ga. U kalkulatoru uključi opciju "Poticaj" da vidiš utjecaj.' },
+  { q: 'IBKR ili Trading 212?', a: 'IBKR: niže naknade, više za iskusnije. Trading 212: jednostavniji, 0€ naknade za kupnju dionica/ETF-ova. Oboje osigurano do 20.000€. Usporedi sve platforme u tabu "ETF Platforme" — naknade i projekcija su uračunati.' },
+  { q: 'Kako koristiti kalkulator?', a: 'Odaberi tab (Hrvatski DMF, PEPP, ETF Platforme ili usporedbe), unesi mjesečnu/godišnju uplatu i broj godina. Graf i tablica pokazuju projekciju. Kviz "Koji put?" preporučuje strategiju na temelju tvojih odgovora.' },
+];
 
 function sanitizeText(text) {
   return text
@@ -1091,6 +1102,10 @@ function removeTyping() {
 
 async function sendAiMsg() {
   if (aiTyping) return;
+  if (!aiBotEnabled) {
+    addAiMsg('bot', 'AI asistent je privremeno isključen. Odaberi jedno od čestih pitanja ispod.');
+    return;
+  }
   const input = $('ai-input');
   const text = input.value.trim();
   if (!text) return;
@@ -1133,13 +1148,64 @@ function sendQuickMsg(text) {
   sendAiMsg();
 }
 
+// Dohvati status AI bota s Workera; ažurira aiBotEnabled i UI (FAQ vs input)
+async function checkAiStatus() {
+  try {
+    const resp = await fetch(AI_WORKER_URL + '/status');
+    const data = await resp.json();
+    aiBotEnabled = data.ai_enabled === true;
+  } catch (e) {
+    aiBotEnabled = false;
+  }
+  updateChatUI();
+}
+
+// Prikaži FAQ sučelje kad je AI isključen, inače normalan input
+function updateChatUI() {
+  const faqWrap = document.getElementById('ai-faq-wrap');
+  const inputRow = document.querySelector('.ai-input-row');
+  const quickBtns = document.querySelector('.ai-quick-btns');
+  if (!faqWrap || !inputRow) return;
+  if (aiBotEnabled) {
+    faqWrap.style.display = 'none';
+    inputRow.style.display = '';
+    if (quickBtns) quickBtns.style.display = '';
+  } else {
+    faqWrap.style.display = 'block';
+    inputRow.style.display = 'none';
+    if (quickBtns) quickBtns.style.display = 'none';
+    renderFaqButtons();
+  }
+}
+
+function renderFaqButtons() {
+  const wrap = document.getElementById('ai-faq-wrap');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  AI_FAQ.forEach((faq) => {
+    const btn = document.createElement('button');
+    btn.className = 'ai-faq-btn';
+    btn.textContent = faq.q;
+    btn.onclick = () => showFaqReply(faq.q, faq.a);
+    wrap.appendChild(btn);
+  });
+}
+
+// Ispiši pitanje i predefinirani odgovor u chat (bez poziva Workeru)
+function showFaqReply(question, answer) {
+  addAiMsg('user', question);
+  addAiMsg('bot', answer);
+}
+
 function toggleAiChat() {
   const chatEl = document.getElementById('ai-chat-float');
   const fabEl = document.getElementById('ai-fab');
   chatEl.classList.toggle('open');
   fabEl.classList.toggle('open');
   if (chatEl.classList.contains('open')) {
-    setTimeout(() => $('ai-input')?.focus(), 300);
+    checkAiStatus().then(() => {
+      setTimeout(() => (aiBotEnabled ? $('ai-input')?.focus() : null), 300);
+    });
   }
 }
 
