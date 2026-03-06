@@ -234,3 +234,29 @@
 #admin-kv-list::-webkit-scrollbar { width: 4px; }
 #admin-kv-list::-webkit-scrollbar-track { background: transparent; }
 #admin-kv-list::-webkit-scrollbar-thumb { background: #2e3850; border-radius: 4px; }
+
+/* ── Landing contrast contexts ── */
+/* Context A: hero tekst na svjetlijoj SVG/gradient pozadini */
+#home .home-hero .brand-big {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 55%, #334155 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+#home .home-hero .tagline {
+  color: #334155 !important;
+}
+#home .home-hero .home-cta-skip {
+  color: #334155;
+  border-color: rgba(51, 65, 85, 0.35);
+  background: rgba(255, 255, 255, 0.55);
+}
+#home .home-hero .home-cta-skip:hover {
+  color: #0f172a;
+  border-color: #334155;
+  background: rgba(255, 255, 255, 0.75);
+}
+
+/* Context B: tekst unutar tamnih kartica ostaje svijetao */
+#home .feature-card .fc-title { color: var(--text) !important; }
+#home .feature-card .fc-desc { color: var(--muted2) !important; }
