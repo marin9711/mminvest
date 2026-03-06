@@ -1234,13 +1234,13 @@ function applyGlobalContrastClasses() {
     '.glass-card', '.table-card', '.chart-card', '.stat-card', '.feature-card',
     '.quiz-card', '.plan-card', '.split-scenario', '.payout-card', '.rating-section',
     '.feedback-form-card', '.controls', '.winner-banner', '.ai-section', '.step-card',
-    '.home-quiz-inner', '.edu-card', '.edu-book-highlight', '.site-footer',
+    '.home-quiz-inner', '.edu-card', '.edu-book-highlight', '.site-footer', '.version-row',
     '.donate-bar', '.admin-card', '.ai-chat-float', '.table-focus-panel',
     '.chart-modal-inner', '.poll-section', '.fb-log-item', '.plan-result'
   ].join(', ');
   const lightContainers = [
     '.home-hero', '.quiz-hero', '.feedback-hero', '.edu-hero',
-    '.page-header', '.version-row'
+    '.page-header', '.how-section'
   ].join(', ');
 
   const shouldSkip = (el) => {
