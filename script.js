@@ -1227,6 +1227,105 @@ function expandNotificationBar() {
   if (icon) icon.style.display = 'none';
 }
 
+// ===== Table Focus Mode =====
+let tableFocusOverlay = null;
+
+function ensureTableFocusOverlay() {
+  if (tableFocusOverlay) return tableFocusOverlay;
+  const overlay = document.createElement('div');
+  overlay.className = 'table-focus-overlay';
+  overlay.innerHTML = DOMPurify.sanitize(`
+    <div class="table-focus-panel">
+      <div class="table-focus-header">
+        <div class="table-focus-title" id="table-focus-title">Tablica</div>
+        <button type="button" class="table-focus-close" id="table-focus-close" aria-label="Zatvori">✕</button>
+      </div>
+      <div class="table-focus-content" id="table-focus-content"></div>
+    </div>
+  `, { ALLOWED_TAGS: ['div', 'button'], ALLOWED_ATTR: ['class', 'id', 'type', 'aria-label'] });
+  document.body.appendChild(overlay);
+
+  const closeBtn = overlay.querySelector('#table-focus-close');
+  if (closeBtn) closeBtn.addEventListener('click', closeTableFocus);
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) closeTableFocus();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && overlay.classList.contains('open')) closeTableFocus();
+  });
+
+  tableFocusOverlay = overlay;
+  return overlay;
+}
+
+function closeTableFocus() {
+  if (!tableFocusOverlay) return;
+  tableFocusOverlay.classList.remove('open');
+  const content = tableFocusOverlay.querySelector('#table-focus-content');
+  if (content) content.innerHTML = '';
+}
+
+function openTableFocus(table) {
+  if (!table) return;
+  const overlay = ensureTableFocusOverlay();
+  const content = overlay.querySelector('#table-focus-content');
+  const titleEl = overlay.querySelector('#table-focus-title');
+  if (!content || !titleEl) return;
+
+  const hostCard = table.closest('.table-card');
+  const title = hostCard?.querySelector('h3')?.textContent?.trim() || 'Tablica';
+  titleEl.textContent = title;
+
+  const clone = table.cloneNode(true);
+  if (clone.id) clone.id = `${clone.id}-focus`;
+  content.innerHTML = '';
+  content.appendChild(clone);
+  overlay.classList.add('open');
+}
+
+function initTableFocusMode() {
+  if (window.__tableFocusModeInit) return;
+  window.__tableFocusModeInit = true;
+
+  const tables = Array.from(document.querySelectorAll('table'))
+    .filter((t) => !t.closest('.table-focus-overlay'));
+
+  tables.forEach((table, idx) => {
+    // Ensure horizontal overflow wrapper exists
+    if (!table.closest('.tbl-wrap') && table.parentElement) {
+      const wrap = document.createElement('div');
+      wrap.className = 'tbl-wrap';
+      table.parentElement.insertBefore(wrap, table);
+      wrap.appendChild(table);
+    }
+
+    const focusId = table.dataset.focusId || `table-focus-${idx}`;
+    table.dataset.focusId = focusId;
+    table.classList.add('table-focus-target');
+
+    const host = table.closest('.table-card') || table.parentElement;
+    if (host && !host.querySelector(`.table-focus-trigger[data-focus-for="${focusId}"]`)) {
+      host.classList.add('table-focus-host');
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'table-focus-trigger';
+      btn.dataset.focusFor = focusId;
+      btn.setAttribute('aria-label', 'Focus mode tablice');
+      btn.textContent = '🔍';
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openTableFocus(table);
+      });
+      host.appendChild(btn);
+    }
+
+    if (!table.dataset.focusBound) {
+      table.dataset.focusBound = '1';
+      table.addEventListener('click', () => openTableFocus(table));
+    }
+  });
+}
+
 // Prikaži FAQ sučelje kad je AI isključen, inače normalan input
 function updateChatUI() {
   const faqWrap = document.getElementById('ai-faq-wrap');
@@ -2586,6 +2685,8 @@ function resetPlanResult() {
 
 // Attach click listeners to quiz options (run on DOM ready)
 document.addEventListener('DOMContentLoaded', () => {
+  initTableFocusMode();
+
   document.querySelectorAll('.quiz-option').forEach(opt => {
     opt.addEventListener('click', () => quizSelectOption(opt));
   });

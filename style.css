@@ -233,3 +233,108 @@
 #admin-kv-list::-webkit-scrollbar-track { background: transparent; }
 #admin-kv-list::-webkit-scrollbar-thumb { background: #2e3850; border-radius: 4px; }
 
+/* ===== Table identity + focus mode ===== */
+.table-card {
+  position: relative;
+}
+
+.table-card > h3:first-child {
+  margin: 0 0 0.9rem 0 !important;
+  padding: 1rem 1.35rem 0.5rem 1.35rem !important;
+  border-bottom: 1px solid var(--border) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.01em;
+  text-align: left;
+}
+
+.table-card .tbl-wrap,
+.tbl-wrap {
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-focus-target {
+  cursor: zoom-in;
+}
+
+.table-focus-trigger {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.9rem;
+  z-index: 2;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(15, 23, 42, 0.75);
+  color: var(--muted-card, #cbd5e1);
+  cursor: pointer;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.table-focus-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 12000;
+  background: rgba(2, 6, 23, 0.72);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+}
+
+.table-focus-overlay.open {
+  display: flex;
+}
+
+.table-focus-panel {
+  width: min(1240px, 96vw);
+  max-height: 92vh;
+  background: var(--surface, #1e293b);
+  border: 1px solid var(--border, #334155);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+}
+
+.table-focus-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--border, #334155);
+}
+
+.table-focus-title {
+  font-family: 'DM Serif Display', serif;
+  color: var(--text-card, #f1f5f9);
+  font-size: 1rem;
+}
+
+.table-focus-close {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 8px;
+  border: 1px solid var(--border, #334155);
+  background: var(--surface2, #334155);
+  color: var(--muted-card, #cbd5e1);
+  cursor: pointer;
+}
+
+.table-focus-content {
+  overflow: auto;
+  padding: 1rem;
+}
+
+.table-focus-content table {
+  min-width: 760px;
+}
+
