@@ -152,6 +152,22 @@ function parseFormData(body) {
   return obj;
 }
 
+// Jednostavna sanitizacija stringova prije spremanja u KV (zaštita od XSS payloadova)
+function sanitizeInput(str) {
+  if (!str) return '';
+  let s = String(str);
+  // Ukloni osnovne HTML tag injekcije
+  s = s.replace(/[<>]/g, '');
+  // Ukloni tipične JS/XSS pattern-e
+  s = s.replace(/javascript:/gi, '');
+  s = s.replace(/onerror\s*=/gi, '');
+  s = s.replace(/onload\s*=/gi, '');
+  s = s.replace(/onmouseover\s*=/gi, '');
+  s = s.replace(/onfocus\s*=/gi, '');
+  s = s.replace(/onclick\s*=/gi, '');
+  return s;
+}
+
 // ── Sigurno upravljanje sesijama (KV-based UUID tokeni) ──
 // Sesijski token je kriptografski random UUID pohranjen u KV-u s TTL-om.
 // Nije deterministički deriviran iz lozinke — kompromitacija tokena ne otkriva credentials.
@@ -717,10 +733,10 @@ async function handleRequest(request, env) {
         const body = await request.json();
         console.log('Feedback body:', JSON.stringify({ type: body.type, email: body.email, hasText: !!body.text }));
         const entry = {
-          type: String(body.type || 'prijedlog').slice(0, 30),
+          type: sanitizeInput(String(body.type || 'prijedlog').slice(0, 30)),
           text: String(body.text || '').slice(0, 1000),
           rating: Number(body.rating) || 0,
-          email: String(body.email || '').slice(0, 200),
+          email: sanitizeInput(String(body.email || '').slice(0, 200)),
           ts: new Date().toISOString(),
         };
         // Dohvati postojeći log, dodaj novi unos, spremi (max 200 unosa)
