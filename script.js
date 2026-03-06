@@ -1465,7 +1465,8 @@ function updatePeppStrategyModel() {
   const rateEl = $('pepp-strategy-rate');
   const finalEl = $('pepp-strategy-final');
   const infoEl = $('pepp-strategy-info');
-  if (!fundSel || !monthlyEl || !yearsEl || !rateEl || !finalEl || !infoEl) return;
+  const costDelayAmountEl = $('pepp-cost-delay-amount');
+  if (!fundSel || !monthlyEl || !yearsEl || !rateEl || !finalEl || !infoEl || !costDelayAmountEl) return;
 
   const [baseRate, fundName] = String(fundSel.value || '').split(',');
   if (document.activeElement !== rateEl && baseRate) rateEl.value = Number(baseRate).toFixed(1);
@@ -1476,9 +1477,14 @@ function updatePeppStrategyModel() {
   const annual = monthly * 12;
   const curve = computeCompoundCurve(0, annual, years, rate);
   const finalAmount = curve[curve.length - 1] || 0;
+  const delayedYears = Math.max(1, years - 1);
+  const delayedCurve = computeCompoundCurve(0, annual, delayedYears, rate);
+  const delayedFinalAmount = delayedCurve[delayedCurve.length - 1] || 0;
+  const costOfDelay = Math.max(0, finalAmount - delayedFinalAmount);
 
   finalEl.textContent = fmt(finalAmount);
   infoEl.textContent = `${monthly.toFixed(2)}€/mj · ${years} god · ${rate.toFixed(1)}% očekivani neto prinos`;
+  costDelayAmountEl.textContent = fmt(Math.round(costOfDelay));
 
   syncStrategyData('pepp', {
     key: 'pepp',
@@ -1823,10 +1829,12 @@ function initMyStrategyFeature() {
   const peppMonthly = $('pepp-strategy-monthly');
   const peppYears = $('pepp-strategy-years');
   const peppRate = $('pepp-strategy-rate');
+  const peppCalcBtn = $('pepp-strategy-calc-btn');
   if (peppFund) peppFund.addEventListener('change', updatePeppStrategyModel);
   if (peppMonthly) peppMonthly.addEventListener('input', updatePeppStrategyModel);
   if (peppYears) peppYears.addEventListener('input', updatePeppStrategyModel);
   if (peppRate) peppRate.addEventListener('input', updatePeppStrategyModel);
+  if (peppCalcBtn) peppCalcBtn.addEventListener('click', updatePeppStrategyModel);
 }
 
 // ============ INIT ============

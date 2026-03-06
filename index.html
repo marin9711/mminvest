@@ -2065,6 +2065,13 @@ tr:hover td { background: var(--surface2) !important; }
         <input type="number" id="pepp-strategy-rate" class="ctrl-val-input" min="2" max="15" step="0.1" value="7.0">
       </div>
     </div>
+    <div class="pepp-calc-row">
+      <button type="button" class="plan-btn-submit pepp-calc-btn" id="pepp-strategy-calc-btn">Izračunaj</button>
+      <div class="cost-delay-widget" id="pepp-cost-delay-widget" aria-live="polite">
+        <div class="cost-delay-title">Cijena čekanja</div>
+        <div class="cost-delay-message">Ako kreneš tek iduće godine, gubiš <span id="pepp-cost-delay-amount" class="cost-delay-amount">—</span> u konačnici.</div>
+      </div>
+    </div>
     <div class="winner-banner" style="margin-top:0.4rem;">
       <div><div class="wb-label">Projekcija PEPP</div><div class="wb-val" id="pepp-strategy-final" style="color:var(--pepp-l)">—</div></div>
       <div class="wb-desc" id="pepp-strategy-info">Unesi iznos i broj godina da vidiš projekciju.</div>
