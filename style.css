@@ -6,6 +6,53 @@
   --muted-card: #cbd5e1;
 }
 
+/* ===== Global readability utilities ===== */
+.text-on-light {
+  color: #1a1a1a !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.text-on-dark {
+  color: #f8f9fa !important;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+}
+
+.text-on-light small,
+.text-on-light span,
+.text-on-light p,
+.text-on-light label {
+  color: #2b2b2b !important;
+}
+
+.text-on-dark small,
+.text-on-dark span,
+.text-on-dark p,
+.text-on-dark label {
+  color: #e9edf2 !important;
+}
+
+/* CTA/readability: keep explicit high contrast on button text */
+.home-cta,
+.fb-submit-btn,
+.quiz-btn-next,
+.plan-btn-submit,
+.qrc-cta,
+.hq-result-btn.primary,
+.admin-login-btn,
+.admin-toggle.turn-on {
+  color: #0b0d12 !important;
+  font-weight: 700;
+}
+
+.home-cta-skip,
+.quiz-btn-back,
+.hq-back,
+.quiz-restart-btn,
+.admin-toggle.turn-off,
+.table-focus-close {
+  color: #f8f9fa !important;
+}
+
 /* ── Global contrast system ── */
 /* Context A: tekst na otvorenim/svjetlijim podlogama */
 #home .home-hero .brand-big {

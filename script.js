@@ -1227,6 +1227,49 @@ function expandNotificationBar() {
   if (icon) icon.style.display = 'none';
 }
 
+// ===== Global contrast auto-correction =====
+function applyGlobalContrastClasses() {
+  const textSelector = 'h1,h2,h3,p,span,small,strong,label,li,a,button,th,td';
+  const darkContainers = [
+    '.glass-card', '.table-card', '.chart-card', '.stat-card', '.feature-card',
+    '.quiz-card', '.plan-card', '.split-scenario', '.payout-card', '.rating-section',
+    '.feedback-form-card', '.controls', '.winner-banner', '.ai-section', '.step-card',
+    '.home-quiz-inner', '.edu-card', '.edu-book-highlight', '.site-footer',
+    '.donate-bar', '.admin-card', '.ai-chat-float', '.table-focus-panel',
+    '.chart-modal-inner', '.poll-section', '.fb-log-item', '.plan-result'
+  ].join(', ');
+  const lightContainers = [
+    '.home-hero', '.quiz-hero', '.feedback-hero', '.edu-hero',
+    '.page-header', '.version-row'
+  ].join(', ');
+
+  const shouldSkip = (el) => {
+    if (!el || !(el instanceof HTMLElement)) return true;
+    // Keep semantic/accent colors where explicitly defined
+    if (el.className && /grad-|sc-|sr-|fc-tag|hero-badge|dot|ri|liq-tag|status-badge/.test(el.className)) return true;
+    if (el.hasAttribute('data-keep-color')) return true;
+    if (el.style && el.style.color) return true;
+    return false;
+  };
+
+  document.querySelectorAll(darkContainers).forEach((container) => {
+    container.querySelectorAll(textSelector).forEach((el) => {
+      if (shouldSkip(el)) return;
+      el.classList.remove('text-on-light');
+      el.classList.add('text-on-dark');
+    });
+  });
+
+  document.querySelectorAll(lightContainers).forEach((container) => {
+    container.querySelectorAll(textSelector).forEach((el) => {
+      if (shouldSkip(el)) return;
+      if (el.closest(darkContainers)) return;
+      el.classList.remove('text-on-dark');
+      el.classList.add('text-on-light');
+    });
+  });
+}
+
 // ===== Table Focus Mode =====
 let tableFocusOverlay = null;
 
@@ -2685,6 +2728,7 @@ function resetPlanResult() {
 
 // Attach click listeners to quiz options (run on DOM ready)
 document.addEventListener('DOMContentLoaded', () => {
+  applyGlobalContrastClasses();
   initTableFocusMode();
 
   document.querySelectorAll('.quiz-option').forEach(opt => {
