@@ -3,17 +3,17 @@
   --muted2: #c5cfe9;
 }
 
-/* Edukacija naslov i podnaslovi – ispravljeno: bili su gotovo nevidljivi (#23304f na tamnoj pozadini) */
+/* Edukacija — tamna pozadina: svijetli tekst za čitljivost */
 .edu-hero h1 {
-  color: #1a2035;
+  color: var(--text);
 }
 
 .edu-hero p {
-  color: #3a4a6b !important;
+  color: var(--muted2) !important;
 }
 
 .edu-section-title {
-  color: #1a2035;
+  color: var(--text);
 }
 
 /* Naslovi u feedback / AI karticama — ove kartice imaju tamnu pozadinu, trebaju svijetli tekst */
@@ -24,32 +24,29 @@
   color: var(--text);
 }
 
-/* Feedback hero naslov */
+/* Feedback hero — tamna pozadina: svijetli tekst */
 .feedback-hero h1 {
-  color: #1a2035;
+  color: var(--text);
 }
 
-/* Feedback hero podnaslov */
 .feedback-hero p {
-  color: #3a4a6b !important;
+  color: var(--muted2) !important;
 }
 
-/* Quiz hero naslov */
+/* Quiz (Koji put?) hero i pitanja — tamna pozadina: svijetli tekst */
 .quiz-hero h1 {
-  color: #1a2035;
+  color: var(--text);
 }
 
-/* Quiz hero podnaslov */
 .quiz-hero p {
-  color: #3a4a6b !important;
+  color: var(--muted2) !important;
 }
 
-/* Quiz pitanje i podnaslov */
 .quiz-question {
-  color: #1a2035 !important;
+  color: var(--text) !important;
 }
 .quiz-sub {
-  color: #3a4a6b !important;
+  color: var(--muted2) !important;
 }
 
 /* Quiz opcije tekst */
@@ -60,25 +57,25 @@
   color: var(--muted2) !important;
 }
 
-/* Quiz result kartice */
+/* Quiz result kartice — tamna pozadina: svijetli tekst */
 .qrc-title {
-  color: #1a2035 !important;
+  color: var(--text) !important;
 }
 .qrc-desc {
-  color: #3a4a6b !important;
+  color: var(--muted2) !important;
 }
 .qrc-label {
-  color: #5a6a90 !important;
+  color: var(--muted) !important;
 }
 
 /* Quiz result restart gumb */
 .quiz-restart-btn {
-  color: #3a4a6b !important;
-  border-color: #b0bcd0 !important;
+  color: var(--muted2) !important;
+  border-color: var(--border) !important;
 }
 .quiz-restart-btn:hover {
-  color: #1a2035 !important;
-  border-color: #5a6a90 !important;
+  color: var(--text) !important;
+  border-color: var(--muted) !important;
 }
 
 /* Poll tekst — samo izvan tamnih kartica (light pozadina) */
@@ -97,10 +94,10 @@
   color: var(--muted2);
 }
 
-/* Disclaimer na quiz/feedback stranici */
+/* Disclaimer na quiz/feedback stranici — čitljiv na tamnoj pozadini */
 .quiz-result .disclaimer,
 #feedback .disclaimer {
-  color: #4a5a7a !important;
+  color: var(--muted2) !important;
 }
 
 /* Napomena o neto stopi nakon naknade */
