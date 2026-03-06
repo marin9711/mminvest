@@ -482,6 +482,8 @@ function updateP0a() {
     for(let i=1;i<=god;i++){ v=(v+annualUplata+pot)*(1+f.r5y/100); arr.push(Math.round(v)); }
     return {label:f.name,data:arr,borderColor:f.color,backgroundColor:'transparent',fill:false,borderWidth:1.8,pointRadius:0,tension:0.4};
   });
+  // Spremi full podatke za period filter (1Y,3Y,5Y,...,SVE)
+  storeChartData('p0a-chart-all', allLabels, allDS);
   if(!chartP0aAll){ chartP0aAll=makeChart('p0a-chart-all',allLabels,allDS); }
   else{ chartP0aAll.data.labels=allLabels; chartP0aAll.data.datasets.forEach((d,i)=>{d.data=allDS[i].data;}); chartP0aAll.update(); }
 }
