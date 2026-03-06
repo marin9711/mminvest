@@ -3529,6 +3529,14 @@ function applyFinderFund(fundId) {
   if (tab) tab.click();
 }
 
+function openFinderFundTab(fundId) {
+  const catalog = getFinderFundCatalog();
+  const fund = catalog[fundId];
+  if (!fund || !fund.apply) return;
+  const tab = document.querySelector(`[data-page="${fund.apply.page}"]`);
+  if (tab) tab.click();
+}
+
 function exportQuizFinderPdf() {
   if (!quizLastFinderResult || !Array.isArray(quizLastFinderResult.recommendations) || !quizLastFinderResult.recommendations.length) {
     alert('Prvo riješi kviz da bi mogao/la exportati fond preporuke.');
@@ -3640,7 +3648,10 @@ function quizShowResult() {
         <li>Ovaj fond je u prosjeku imao <strong>${item.avgReturn.toFixed(2)}%</strong> prinosa.</li>
         <li>${item.feeHint}</li>
       </ul>
-      <button class="qrc-cta" onclick="applyFinderFund('${item.id}')">Primijeni ovaj fond u kalkulator</button>
+      <div class="qrc-actions">
+        <button class="qrc-cta" onclick="applyFinderFund('${item.id}')">Primijeni ovaj fond u kalkulator</button>
+        <button class="qrc-cta secondary" onclick="openFinderFundTab('${item.id}')">Otvori odgovarajući tab</button>
+      </div>
     </div>
   `).join('');
 

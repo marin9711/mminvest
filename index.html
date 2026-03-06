@@ -918,6 +918,22 @@ tr:hover td { background: var(--surface2) !important; }
 }
 .qrc-cta:hover { opacity:0.85; }
 
+.qrc-actions {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.qrc-cta.secondary {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted-card);
+}
+
+.qrc-cta.secondary:hover {
+  border-color: var(--muted);
+  color: var(--text-card);
+}
+
 .quiz-result-actions {
   display: grid;
   grid-template-columns: 1fr;
