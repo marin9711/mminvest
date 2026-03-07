@@ -287,6 +287,260 @@ document.querySelectorAll('.nav-tab').forEach(tab => {
   });
 });
 
+function openPageTab(page) {
+  const tab = document.querySelector(`[data-page="${page}"]`);
+  if (!tab) return false;
+  tab.click();
+  return true;
+}
+
+function openIntroTab() {
+  openPageTab('p_intro');
+}
+
+function goToIntroCalculator(page = 'p0a') {
+  openPageTab(page);
+}
+
+const INTRO_INFLATION_RATE = 3;
+const INTRO_MONTHLY_CONTRIBUTION = 100;
+const INTRO_SAVINGS_RATE = 0.5;
+const INTRO_INVEST_RATE = 7;
+const INTRO_COPY = {
+  hr: {
+    tooltipLabel: '💡 Znaš li?',
+    tooltips: {
+      inflation: 'Znaš li? Uz inflaciju od 3%, 100€ za 10 godina vrijedi oko 74€ u današnjoj kupovnoj moći.',
+      growth: 'Znaš li? Razlika od nekoliko postotnih bodova godišnje kroz 20+ godina postaje ogromna.',
+      dmf: 'Znaš li? Kod većih uplata poticaj je i dalje koristan kao stabilan dio strategije.',
+      pepp: 'Znaš li? PEPP je praktičan ako planiraš rad ili život u više EU država.',
+      etf: 'Znaš li? ETF ti daje široku diversifikaciju bez biranja pojedinačnih dionica.',
+    },
+    inflationNote: (futureAmount, years) => `Uz inflaciju od ${INTRO_INFLATION_RATE}% godišnje, kupovna moć 100€ pada na oko ${fmt(futureAmount)} nakon ${years} godina.`,
+    growthNote: (advantage) => `U ovom scenariju dugoročno investiranje daje oko ${fmt(advantage)} više od štednog računa.`,
+  },
+  en: {
+    tooltipLabel: '💡 Did you know?',
+    tooltips: {
+      inflation: 'Did you know? With 3% inflation, €100 in 10 years is worth about €74 in today’s purchasing power.',
+      growth: 'Did you know? A few percentage points per year become a huge difference over 20+ years.',
+      dmf: 'Did you know? Even with larger contributions, the state subsidy can still be a useful stable part of the strategy.',
+      pepp: 'Did you know? PEPP is practical if you plan to work or live in multiple EU countries.',
+      etf: 'Did you know? ETFs give broad diversification without picking individual stocks.',
+    },
+    inflationNote: (futureAmount, years) => `With ${INTRO_INFLATION_RATE}% annual inflation, the purchasing power of €100 drops to about ${fmt(futureAmount)} after ${years} years.`,
+    growthNote: (advantage) => `In this scenario, long-term investing ends up about ${fmt(advantage)} higher than a savings account.`,
+  },
+};
+
+function getIntroLang() {
+  const lang = (document.documentElement.lang || '').toLowerCase();
+  return lang === 'en' ? 'en' : 'hr';
+}
+
+let introLastFocusEl = null;
+
+function computeYearlyContributionFutureValue(annualContribution, years, annualRatePct) {
+  let value = 0;
+  const contribution = Math.max(0, Number(annualContribution) || 0);
+  const horizon = Math.max(0, Number(years) || 0);
+  const rate = Math.max(-99.9, Number(annualRatePct) || 0) / 100;
+  for (let i = 0; i < horizon; i++) {
+    value = (value + contribution) * (1 + rate);
+  }
+  return value;
+}
+
+function updateIntroInflationVisuals() {
+  const yearsEl = $('intro-inflation-years');
+  if (!yearsEl) return;
+  const years = Math.max(0, Number(yearsEl.value) || 0);
+  const todayAmount = 100;
+  const futureAmount = todayAmount / Math.pow(1 + INTRO_INFLATION_RATE / 100, years);
+
+  const yearLabel = $('intro-inflation-years-label');
+  const yearLabel2 = $('intro-inflation-years-label-2');
+  const futureValue = $('intro-future-value');
+  const groceriesFuture = $('intro-groceries-future');
+  const note = $('intro-inflation-note');
+
+  if (yearLabel) yearLabel.textContent = String(years);
+  if (yearLabel2) yearLabel2.textContent = String(years);
+  if (futureValue) futureValue.textContent = fmt(futureAmount);
+
+  const groceryIcons = ['🛒', '🥖', '🥛', '🧀', '🍎', '🍅', '🥚', '🍗', '☕', '🍫'];
+  const ratio = Math.max(0.1, Math.min(1, futureAmount / todayAmount));
+  const visibleCount = Math.max(1, Math.round(groceryIcons.length * ratio));
+  if (groceriesFuture) groceriesFuture.textContent = groceryIcons.slice(0, visibleCount).join(' ');
+
+  if (note) {
+    note.textContent = INTRO_COPY[getIntroLang()].inflationNote(futureAmount, years);
+  }
+}
+
+function updateIntroGrowthComparison() {
+  const yearsEl = $('intro-growth-years');
+  if (!yearsEl) return;
+  const years = Math.max(1, Number(yearsEl.value) || 20);
+  const annualContribution = INTRO_MONTHLY_CONTRIBUTION * 12;
+  const savingsFinal = computeYearlyContributionFutureValue(annualContribution, years, INTRO_SAVINGS_RATE);
+  const investFinal = computeYearlyContributionFutureValue(annualContribution, years, INTRO_INVEST_RATE);
+  const advantage = investFinal - savingsFinal;
+
+  const yearsLabel = $('intro-growth-years-label');
+  const savingsValue = $('intro-savings-value');
+  const investValue = $('intro-invest-value');
+  const note = $('intro-growth-note');
+
+  if (yearsLabel) yearsLabel.textContent = String(years);
+  if (savingsValue) savingsValue.textContent = fmt(savingsFinal);
+  if (investValue) investValue.textContent = fmt(investFinal);
+  if (note) {
+    note.textContent = INTRO_COPY[getIntroLang()].growthNote(advantage);
+  }
+}
+
+function setupIntroRevealAnimations() {
+  const cards = Array.from(document.querySelectorAll('#p_intro .intro-reveal'));
+  if (!cards.length) return;
+
+  if (!('IntersectionObserver' in window)) {
+    cards.forEach((card) => card.classList.add('is-visible'));
+    return;
+  }
+
+  const observer = new IntersectionObserver((entries, obs) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('is-visible');
+      obs.unobserve(entry.target);
+    });
+  }, { threshold: 0.18 });
+
+  cards.forEach((card) => observer.observe(card));
+}
+
+function setActiveIntroStepper(targetId) {
+  const buttons = Array.from(document.querySelectorAll('.intro-stepper-btn'));
+  buttons.forEach((btn) => {
+    btn.classList.toggle('active', btn.dataset.introTarget === targetId);
+  });
+  const activeIndex = Math.max(0, buttons.findIndex((btn) => btn.dataset.introTarget === targetId));
+  const total = buttons.length || 5;
+  const pct = Math.round(((activeIndex + 1) / total) * 100);
+  const fill = $('intro-progress-fill');
+  const text = $('intro-progress-text');
+  const track = document.querySelector('.intro-progress-track');
+  if (fill) fill.style.width = `${pct}%`;
+  if (text) text.textContent = `${pct}%`;
+  if (track) track.setAttribute('aria-valuenow', String(pct));
+}
+
+function initIntroStepper() {
+  if (window._introStepperInitDone) return;
+  const buttons = Array.from(document.querySelectorAll('.intro-stepper-btn'));
+  if (!buttons.length) return;
+  window._introStepperInitDone = true;
+
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.dataset.introTarget;
+      const target = targetId ? document.getElementById(targetId) : null;
+      if (!target) return;
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setActiveIntroStepper(targetId);
+    });
+  });
+
+  if (!('IntersectionObserver' in window)) return;
+  const lessons = Array.from(document.querySelectorAll('#p_intro .intro-lesson[id]'));
+  const stepObserver = new IntersectionObserver((entries) => {
+    const visible = entries
+      .filter((entry) => entry.isIntersecting)
+      .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+    if (!visible.length) return;
+    setActiveIntroStepper(visible[0].target.id);
+  }, { threshold: [0.35, 0.5, 0.7] });
+  lessons.forEach((lesson) => stepObserver.observe(lesson));
+}
+
+function openIntroCalculatorChoice() {
+  const overlay = $('intro-choice-overlay');
+  if (!overlay) return;
+  introLastFocusEl = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+  overlay.classList.add('open');
+  overlay.setAttribute('aria-hidden', 'false');
+  const firstAction = overlay.querySelector('.intro-choice-btn');
+  if (firstAction instanceof HTMLElement) firstAction.focus();
+}
+
+function closeIntroCalculatorChoice() {
+  const overlay = $('intro-choice-overlay');
+  if (!overlay) return;
+  overlay.classList.remove('open');
+  overlay.setAttribute('aria-hidden', 'true');
+  if (introLastFocusEl && typeof introLastFocusEl.focus === 'function') {
+    introLastFocusEl.focus();
+  }
+  introLastFocusEl = null;
+}
+
+function selectIntroCalculator(page) {
+  closeIntroCalculatorChoice();
+  goToIntroCalculator(page);
+}
+
+function setupIntroChoiceModal() {
+  if (window._introChoiceModalInitDone) return;
+  const overlay = $('intro-choice-overlay');
+  if (!overlay) return;
+  window._introChoiceModalInitDone = true;
+
+  const closeBtn = $('intro-choice-close-btn');
+  if (closeBtn) closeBtn.addEventListener('click', closeIntroCalculatorChoice);
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) closeIntroCalculatorChoice();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && overlay.classList.contains('open')) closeIntroCalculatorChoice();
+  });
+}
+
+function updateIntroCopy(lang = getIntroLang()) {
+  const key = lang === 'en' ? 'en' : 'hr';
+  const copy = INTRO_COPY[key];
+  document.querySelectorAll('[data-intro-tooltip]').forEach((el) => {
+    const tooltipKey = el.getAttribute('data-intro-tooltip');
+    const text = copy.tooltips[tooltipKey];
+    if (text) el.setAttribute('data-tooltip', text);
+    el.textContent = copy.tooltipLabel;
+  });
+  updateIntroInflationVisuals();
+  updateIntroGrowthComparison();
+}
+
+window.updateIntroCopy = updateIntroCopy;
+
+function setupIntroExperience() {
+  if (window._introExperienceInitDone) return;
+  const introPage = $('p_intro');
+  if (!introPage) return;
+  window._introExperienceInitDone = true;
+
+  const inflationSlider = $('intro-inflation-years');
+  const growthSlider = $('intro-growth-years');
+
+  if (inflationSlider) inflationSlider.addEventListener('input', updateIntroInflationVisuals);
+  if (growthSlider) growthSlider.addEventListener('input', updateIntroGrowthComparison);
+
+  updateIntroInflationVisuals();
+  updateIntroGrowthComparison();
+  updateIntroCopy(getIntroLang());
+  setupIntroRevealAnimations();
+  initIntroStepper();
+  setupIntroChoiceModal();
+}
+
 // ============ MOJE ULAGANJE (GLOBAL STATE) ============
 window.myStrategy = window.myStrategy || {
   p0a: { enabled: false, data: null },
@@ -2274,6 +2528,7 @@ function initMyStrategyFeature() {
 // Ensure DOM is fully ready before init
 function initApp() {
   initDonationModal();
+  setupIntroExperience();
   initMyStrategyFeature();
   ensureP0aFireUi();
   setupSyncPairs();

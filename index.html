@@ -1656,6 +1656,7 @@ tr:hover td { background: var(--surface2) !important; }
   <div class="nav-brand">MM <span>Invest</span></div>
   <div class="nav-tabs">
     <div class="nav-tab active" data-page="home">Početna</div>
+    <div class="nav-tab" data-page="p_intro">🚀 Uvod</div>
     <div class="nav-tab" data-page="p0a">Hrvatski DMF</div>
     <div class="nav-tab" data-page="pepp">PEPP</div>
     <div class="nav-tab" data-page="p0b">ETF Platforme</div>
@@ -1688,6 +1689,11 @@ tr:hover td { background: var(--surface2) !important; }
       <span class="hero-badge b-purple">⚖️ Kombinirane strategije</span>
       <span class="hero-badge b-green">🇭🇷 Prilagođeno HR tržištu</span>
     </div>
+    <button class="intro-entry-card" onclick="openIntroTab()">
+      <span class="intro-entry-badge" data-i18n="home-intro-badge">NOVA ZNAČAJKA</span>
+      <strong data-i18n="home-intro-title">🚀 Prvi put ovdje? Nauči osnove u 2 minute</strong>
+      <small data-i18n="home-intro-desc">5 kratkih lekcija: inflacija, investiranje, DMF/PEPP/ETF i kako koristiti kalkulatore.</small>
+    </button>
     <button class="home-cta" onclick="startHomeQuiz()">
       🧭 Otkrij svoju strategiju
     </button>
@@ -1880,6 +1886,193 @@ tr:hover td { background: var(--surface2) !important; }
   </div>
 
   <p class="disclaimer">MM Invest je informativni alat za edukacijske svrhe. Nije financijski savjet. Uvijek konzultiraj licenciranog financijskog savjetnika prije donošenja investicijskih odluka. Podaci su temeljeni na javno dostupnim historijskim prinosima.</p>
+</div>
+
+<!-- ========== PAGE INTRO: UVOD ========== -->
+<div class="page" id="p_intro">
+  <div class="intro-hero intro-reveal">
+    <span class="intro-pill" data-i18n="intro-pill">Uvod za početnike</span>
+    <h2 data-i18n="intro-hero-title">Ulaganje bez stresa: osnove u 2 minute</h2>
+    <p data-i18n="intro-hero-desc">Ako tek krećeš, ovo je tvoj kratki vodič. Jasno i bez kompliciranih izraza — samo ono što ti treba za dobar prvi korak.</p>
+  </div>
+
+  <div class="intro-stepper intro-reveal" id="intro-stepper">
+    <div class="intro-progress-wrap">
+      <div class="intro-progress-top">
+        <span data-i18n="intro-progress-label">Napredak kroz uvod</span>
+        <strong id="intro-progress-text">20%</strong>
+      </div>
+      <div class="intro-progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="20" aria-label="Napredak kroz uvod">
+        <div class="intro-progress-fill" id="intro-progress-fill"></div>
+      </div>
+    </div>
+    <button type="button" class="intro-stepper-btn active" data-intro-target="intro-lesson-1">
+      <span>1/5</span>
+      <small data-i18n="intro-stepper-1">Problem</small>
+    </button>
+    <button type="button" class="intro-stepper-btn" data-intro-target="intro-lesson-2">
+      <span>2/5</span>
+      <small data-i18n="intro-stepper-2">Rješenje</small>
+    </button>
+    <button type="button" class="intro-stepper-btn" data-intro-target="intro-lesson-3">
+      <span>3/5</span>
+      <small data-i18n="intro-stepper-3">Alati</small>
+    </button>
+    <button type="button" class="intro-stepper-btn" data-intro-target="intro-lesson-4">
+      <span>4/5</span>
+      <small data-i18n="intro-stepper-4">Kako radi</small>
+    </button>
+    <button type="button" class="intro-stepper-btn" data-intro-target="intro-lesson-5">
+      <span>5/5</span>
+      <small data-i18n="intro-stepper-5">Kreni</small>
+    </button>
+  </div>
+
+  <div class="intro-layout">
+    <article class="intro-lesson intro-reveal" id="intro-lesson-1">
+      <div class="intro-lesson-head">
+        <span class="intro-step" data-i18n="intro-lesson1-step">Lekcija 1</span>
+        <h3 data-i18n="intro-lesson1-title">Problem: Inflacija polako jede vrijednost novca</h3>
+      </div>
+      <p data-i18n="intro-lesson1-desc">100€ danas i 100€ za 10 godina nisu ista stvar. Iznos je isti, ali kupovna moć pada kroz vrijeme.</p>
+
+      <div class="intro-inflation-card">
+        <div class="intro-inflation-title-row">
+          <strong><span data-i18n="intro-infl-title-prefix">100€ danas vs 100€ kroz</span> <span id="intro-inflation-years-label">10</span> <span data-i18n="intro-years-label">godina</span></strong>
+          <span class="dk-tooltip" tabindex="0" data-intro-tooltip="inflation">💡 Did you know?</span>
+        </div>
+        <input
+          type="range"
+          id="intro-inflation-years"
+          min="0"
+          max="30"
+          step="1"
+          value="10"
+          aria-label="Odaberi broj godina za prikaz utjecaja inflacije"
+        >
+        <div class="intro-inflation-grid">
+          <div class="intro-money-box today">
+            <div class="label" data-i18n="intro-today-label">Danas</div>
+            <div class="amount">100€</div>
+            <div class="groceries" id="intro-groceries-today">🛒 🥖 🥛 🧀 🍎 🍅 🥚 🍗 ☕ 🍫</div>
+          </div>
+          <div class="intro-money-box future">
+            <div class="label"><span data-i18n="intro-future-prefix">Za</span> <span id="intro-inflation-years-label-2">10</span> <span data-i18n="intro-years-label">godina</span></div>
+            <div class="amount" id="intro-future-value">74€</div>
+            <div class="groceries" id="intro-groceries-future">🛒 🥖 🥛 🧀 🍎 🍅 🥚</div>
+          </div>
+        </div>
+        <p class="intro-note" id="intro-inflation-note">Vrijednost pada, iako broj na računu izgleda isti.</p>
+      </div>
+    </article>
+
+    <article class="intro-lesson intro-reveal" id="intro-lesson-2">
+      <div class="intro-lesson-head">
+        <span class="intro-step" data-i18n="intro-lesson2-step">Lekcija 2</span>
+        <h3 data-i18n="intro-lesson2-title">Rješenje: Investiranje kupuje vrijeme i produktivnost</h3>
+      </div>
+      <p data-i18n="intro-lesson2-desc">Investiranje nije kockanje kad ulažeš dugoročno i diversificirano. U praksi kupuješ udio u ekonomiji koja kroz vrijeme raste.</p>
+
+      <div class="intro-compare-card">
+        <div class="intro-compare-title-row">
+          <strong><span data-i18n="intro-growth-title-prefix">Usporedba: 100€/mj kroz</span> <span id="intro-growth-years-label">20</span> <span data-i18n="intro-years-label">godina</span></strong>
+          <span class="dk-tooltip" tabindex="0" data-intro-tooltip="growth">💡 Did you know?</span>
+        </div>
+        <input
+          type="range"
+          id="intro-growth-years"
+          min="5"
+          max="40"
+          step="1"
+          value="20"
+          aria-label="Odaberi broj godina za usporedbu štednje i investiranja"
+        >
+        <div class="intro-growth-results">
+          <div class="intro-growth-col">
+            <div class="label" data-i18n="intro-savings-label">Štedni račun (0.5%)</div>
+            <div class="value" id="intro-savings-value">25.200€</div>
+          </div>
+          <div class="intro-growth-col highlight">
+            <div class="label" data-i18n="intro-investing-label">Dugoročno investiranje (7%)</div>
+            <div class="value" id="intro-invest-value">52.000€</div>
+          </div>
+        </div>
+        <p class="intro-note" id="intro-growth-note">Dugoročno, vrijeme i složena kamata rade za tebe.</p>
+      </div>
+    </article>
+
+    <article class="intro-lesson intro-reveal" id="intro-lesson-3">
+      <div class="intro-lesson-head">
+        <span class="intro-step" data-i18n="intro-lesson3-step">Lekcija 3</span>
+        <h3 data-i18n="intro-lesson3-title">Alati: DMF, PEPP i ETF</h3>
+      </div>
+      <p data-i18n="intro-lesson3-desc">Ne moraš birati samo jedan alat. Mnogi investitori koriste kombinaciju ovisno o ciljevima i horizontu.</p>
+      <div class="intro-tool-grid">
+        <div class="intro-tool-card">
+          <div class="icon">🏛️</div>
+          <h4 data-i18n="intro-tool-dmf-title">DMF (3. stup)</h4>
+          <p data-i18n="intro-tool-dmf-desc">Država ti daje 15% odmah (poticaj), do godišnjeg limita.</p>
+          <span class="dk-tooltip" tabindex="0" data-intro-tooltip="dmf">💡 Did you know?</span>
+        </div>
+        <div class="intro-tool-card">
+          <div class="icon">🌍</div>
+          <h4 data-i18n="intro-tool-pepp-title">PEPP</h4>
+          <p data-i18n="intro-tool-pepp-desc">Europska mirovina bez poreza (prema trenutnom okviru) i s EU portabilnošću.</p>
+          <span class="dk-tooltip" tabindex="0" data-intro-tooltip="pepp">💡 Did you know?</span>
+        </div>
+        <div class="intro-tool-card">
+          <div class="icon">📊</div>
+          <h4 data-i18n="intro-tool-etf-title">ETF</h4>
+          <p data-i18n="intro-tool-etf-desc">Vlasnik si najvećih svjetskih firmi (Apple, Google...) kroz jedan fond.</p>
+          <span class="dk-tooltip" tabindex="0" data-intro-tooltip="etf">💡 Did you know?</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="intro-lesson intro-reveal" id="intro-lesson-4">
+      <div class="intro-lesson-head">
+        <span class="intro-step" data-i18n="intro-lesson4-step">Lekcija 4</span>
+        <h3 data-i18n="intro-lesson4-title">Čemu služi ovaj sajt?</h3>
+      </div>
+      <p data-i18n="intro-lesson4-desc">Ovdje možeš izračunati matematiku koju si upravo vidio: usporediti naknade, scenarije i izgraditi strategiju koja ima smisla za tvoj život.</p>
+      <ul class="intro-checklist">
+        <li data-i18n="intro-list-1">Usporedi DMF, PEPP i ETF u istim uvjetima.</li>
+        <li data-i18n="intro-list-2">Vidi utjecaj naknada i inflacije na konačni rezultat.</li>
+        <li data-i18n="intro-list-3">Složi svoju kombinaciju i usporedi scenarije.</li>
+      </ul>
+    </article>
+
+    <article class="intro-lesson intro-cta-block intro-reveal" id="intro-lesson-5">
+      <h3 data-i18n="intro-lesson5-title">Spreman/spremna za svoj prvi izračun?</h3>
+      <p data-i18n="intro-lesson5-desc">Nema savršenog trenutka, ali postoji dobar prvi korak. Kreni od kalkulatora i vidi realne brojke za svoju situaciju.</p>
+      <button class="intro-main-cta" onclick="openIntroCalculatorChoice()">
+        <span data-i18n="intro-main-cta">Sada sam spreman — Izračunaj moju mirovinu</span>
+      </button>
+      <div class="intro-mini-hint" data-i18n="intro-main-cta-hint">Odabrat ćeš DMF, ETF ili kratki kviz u sljedećem koraku.</div>
+    </article>
+  </div>
+
+  <div class="intro-choice-overlay" id="intro-choice-overlay" aria-hidden="true">
+    <div class="intro-choice-modal">
+      <button class="intro-choice-close" type="button" id="intro-choice-close-btn" aria-label="Zatvori">✕</button>
+      <h3 data-i18n="intro-modal-title">Odaberi gdje želiš krenuti</h3>
+      <p data-i18n="intro-modal-desc">Nema krivog izbora. Kreni od kalkulatora koji ti je trenutno najbliži.</p>
+      <div class="intro-choice-grid">
+        <button type="button" class="intro-choice-btn dmf" onclick="selectIntroCalculator('p0a')">
+          <strong data-i18n="intro-modal-dmf-title">🏛️ DMF kalkulator</strong>
+          <small data-i18n="intro-modal-dmf-desc">Ako želiš iskoristiti državni poticaj.</small>
+        </button>
+        <button type="button" class="intro-choice-btn etf" onclick="selectIntroCalculator('p0b')">
+          <strong data-i18n="intro-modal-etf-title">📊 ETF kalkulator</strong>
+          <small data-i18n="intro-modal-etf-desc">Ako želiš fokus na dugoročni tržišni rast.</small>
+        </button>
+        <button type="button" class="intro-choice-btn quiz" onclick="selectIntroCalculator('kviz')">
+          <strong data-i18n="intro-modal-quiz-title">🧭 Treba mi preporuka</strong>
+          <small data-i18n="intro-modal-quiz-desc">Riješi kviz i dobij personalizirani smjer.</small>
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- ========== PAGE 0A: HRVATSKI DMF ========== -->
@@ -4369,6 +4562,7 @@ tr:hover td { background: var(--surface2) !important; }
 const TRANSLATIONS = {
   // NAV
   'nav-home':        { hr: 'Početna',              en: 'Home' },
+  'nav-intro':       { hr: '🚀 Uvod',              en: '🚀 Intro' },
   'nav-p0a':         { hr: 'Hrvatski DMF',          en: 'Croatian VMF' },
   'nav-pepp':        { hr: 'PEPP',                  en: 'PEPP' },
   'nav-p0b':         { hr: 'ETF Platforme',         en: 'ETF Platforms' },
@@ -4385,6 +4579,9 @@ const TRANSLATIONS = {
 
   // HOME
   'home-title':      { hr: 'Tvoj osobni kalkulator mirovinskog i investicijskog planiranja — usporedi fondove, ETF-ove i strategije na jednom mjestu.', en: 'Your personal retirement and investment planning calculator — compare funds, ETFs and strategies in one place.' },
+  'home-intro-badge':{ hr: 'NOVA ZNAČAJKA', en: 'NEW FEATURE' },
+  'home-intro-title':{ hr: '🚀 Prvi put ovdje? Nauči osnove u 2 minute', en: '🚀 New here? Learn the basics in 2 minutes' },
+  'home-intro-desc': { hr: '5 kratkih lekcija: inflacija, investiranje, DMF/PEPP/ETF i kako koristiti kalkulatore.', en: '5 short lessons: inflation, investing, DMF/PEPP/ETF and how to use the calculators.' },
   'home-cta':        { hr: '▶ Pokreni kalkulator',   en: '▶ Launch calculator' },
   'home-skip':       { hr: 'Preskoči &rarr; Kalkulatori', en: 'Skip &rarr; Calculators' },
   'home-fc1-title':  { hr: 'Hrvatski DMF fondovi',   en: 'Croatian Voluntary Pension Funds' },
@@ -4413,6 +4610,57 @@ const TRANSLATIONS = {
   'quiz-q3-sub':     { hr: 'Određuje omjer mirovinskih fondova i ETF-ova.', en: 'Determines the ratio of pension funds to ETFs.' },
   'quiz-q4':         { hr: 'Kakvo je tvoje iskustvo?', en: 'What is your investment experience?' },
   'quiz-q4-sub':     { hr: 'Pomaže nam preporučiti pravu razinu složenosti.', en: 'Helps us recommend the right level of complexity.' },
+
+  // INTRO
+  'intro-pill':                { hr: 'Uvod za početnike', en: 'Beginner introduction' },
+  'intro-hero-title':          { hr: 'Ulaganje bez stresa: osnove u 2 minute', en: 'Investing without stress: basics in 2 minutes' },
+  'intro-hero-desc':           { hr: 'Ako tek krećeš, ovo je tvoj kratki vodič. Jasno i bez kompliciranih izraza — samo ono što ti treba za dobar prvi korak.', en: 'If you are just starting, this is your quick guide. Clear and simple — only what you need for a strong first step.' },
+  'intro-stepper-1':           { hr: 'Problem', en: 'Problem' },
+  'intro-stepper-2':           { hr: 'Rješenje', en: 'Solution' },
+  'intro-stepper-3':           { hr: 'Alati', en: 'Tools' },
+  'intro-stepper-4':           { hr: 'Kako radi', en: 'How it works' },
+  'intro-stepper-5':           { hr: 'Kreni', en: 'Start' },
+  'intro-progress-label':      { hr: 'Napredak kroz uvod', en: 'Intro progress' },
+  'intro-lesson1-step':        { hr: 'Lekcija 1', en: 'Lesson 1' },
+  'intro-lesson1-title':       { hr: 'Problem: Inflacija polako jede vrijednost novca', en: 'Problem: Inflation slowly eats your money value' },
+  'intro-lesson1-desc':        { hr: '100€ danas i 100€ za 10 godina nisu ista stvar. Iznos je isti, ali kupovna moć pada kroz vrijeme.', en: '€100 today and €100 in 10 years are not the same thing. The number is the same, but purchasing power drops over time.' },
+  'intro-infl-title-prefix':   { hr: '100€ danas vs 100€ kroz', en: '€100 today vs €100 in' },
+  'intro-years-label':         { hr: 'godina', en: 'years' },
+  'intro-today-label':         { hr: 'Danas', en: 'Today' },
+  'intro-future-prefix':       { hr: 'Za', en: 'In' },
+  'intro-lesson2-step':        { hr: 'Lekcija 2', en: 'Lesson 2' },
+  'intro-lesson2-title':       { hr: 'Rješenje: Investiranje kupuje vrijeme i produktivnost', en: 'Solution: Investing buys time and productivity' },
+  'intro-lesson2-desc':        { hr: 'Investiranje nije kockanje kad ulažeš dugoročno i diversificirano. U praksi kupuješ udio u ekonomiji koja kroz vrijeme raste.', en: 'Investing is not gambling when you invest long-term and diversified. In practice, you buy a share of an economy that grows over time.' },
+  'intro-growth-title-prefix': { hr: 'Usporedba: 100€/mj kroz', en: 'Comparison: €100/month for' },
+  'intro-savings-label':       { hr: 'Štedni račun (0.5%)', en: 'Savings account (0.5%)' },
+  'intro-investing-label':     { hr: 'Dugoročno investiranje (7%)', en: 'Long-term investing (7%)' },
+  'intro-lesson3-step':        { hr: 'Lekcija 3', en: 'Lesson 3' },
+  'intro-lesson3-title':       { hr: 'Alati: DMF, PEPP i ETF', en: 'Tools: DMF, PEPP and ETF' },
+  'intro-lesson3-desc':        { hr: 'Ne moraš birati samo jedan alat. Mnogi investitori koriste kombinaciju ovisno o ciljevima i horizontu.', en: 'You do not have to choose only one tool. Many investors use a combination based on goals and time horizon.' },
+  'intro-tool-dmf-title':      { hr: 'DMF (3. stup)', en: 'DMF (3rd pillar)' },
+  'intro-tool-dmf-desc':       { hr: 'Država ti daje 15% odmah (poticaj), do godišnjeg limita.', en: 'The state gives you 15% immediately (subsidy), up to the annual cap.' },
+  'intro-tool-pepp-title':     { hr: 'PEPP', en: 'PEPP' },
+  'intro-tool-pepp-desc':      { hr: 'Europska mirovina bez poreza (prema trenutnom okviru) i s EU portabilnošću.', en: 'European pension with tax benefits (under the current framework) and EU portability.' },
+  'intro-tool-etf-title':      { hr: 'ETF', en: 'ETF' },
+  'intro-tool-etf-desc':       { hr: 'Vlasnik si najvećih svjetskih firmi (Apple, Google...) kroz jedan fond.', en: 'You own shares of the world’s biggest companies (Apple, Google...) through one fund.' },
+  'intro-lesson4-step':        { hr: 'Lekcija 4', en: 'Lesson 4' },
+  'intro-lesson4-title':       { hr: 'Čemu služi ovaj sajt?', en: 'What is this site for?' },
+  'intro-lesson4-desc':        { hr: 'Ovdje možeš izračunati matematiku koju si upravo vidio: usporediti naknade, scenarije i izgraditi strategiju koja ima smisla za tvoj život.', en: 'Here you can calculate the math you just learned: compare fees, scenarios, and build a strategy that fits your life.' },
+  'intro-list-1':              { hr: 'Usporedi DMF, PEPP i ETF u istim uvjetima.', en: 'Compare DMF, PEPP and ETF under the same assumptions.' },
+  'intro-list-2':              { hr: 'Vidi utjecaj naknada i inflacije na konačni rezultat.', en: 'See the impact of fees and inflation on the final outcome.' },
+  'intro-list-3':              { hr: 'Složi svoju kombinaciju i usporedi scenarije.', en: 'Build your own combination and compare scenarios.' },
+  'intro-lesson5-title':       { hr: 'Spreman/spremna za svoj prvi izračun?', en: 'Ready for your first calculation?' },
+  'intro-lesson5-desc':        { hr: 'Nema savršenog trenutka, ali postoji dobar prvi korak. Kreni od kalkulatora i vidi realne brojke za svoju situaciju.', en: 'There is no perfect moment, but there is a good first step. Start with a calculator and see real numbers for your case.' },
+  'intro-main-cta':            { hr: 'Sada sam spreman — Izračunaj moju mirovinu', en: 'I am ready now — Calculate my retirement' },
+  'intro-main-cta-hint':       { hr: 'Odabrat ćeš DMF, ETF ili kratki kviz u sljedećem koraku.', en: 'Choose DMF, ETF, or a quick quiz in the next step.' },
+  'intro-modal-title':         { hr: 'Odaberi gdje želiš krenuti', en: 'Choose where you want to start' },
+  'intro-modal-desc':          { hr: 'Nema krivog izbora. Kreni od kalkulatora koji ti je trenutno najbliži.', en: 'There is no wrong choice. Start with the calculator that feels best right now.' },
+  'intro-modal-dmf-title':     { hr: '🏛️ DMF kalkulator', en: '🏛️ DMF calculator' },
+  'intro-modal-dmf-desc':      { hr: 'Ako želiš iskoristiti državni poticaj.', en: 'If you want to use the state subsidy.' },
+  'intro-modal-etf-title':     { hr: '📊 ETF kalkulator', en: '📊 ETF calculator' },
+  'intro-modal-etf-desc':      { hr: 'Ako želiš fokus na dugoročni tržišni rast.', en: 'If you want to focus on long-term market growth.' },
+  'intro-modal-quiz-title':    { hr: '🧭 Treba mi preporuka', en: '🧭 I need a recommendation' },
+  'intro-modal-quiz-desc':     { hr: 'Riješi kviz i dobij personalizirani smjer.', en: 'Take the quiz and get a personalized direction.' },
 
   // DISCLAIMER / FOOTER
   'disclaimer-main': { hr: 'MM Invest je informativni alat za edukacijske svrhe. Nije financijski savjet. Uvijek konzultiraj licenciranog financijskog savjetnika prije donošenja investicijskih odluka. Podaci su temeljeni na javno dostupnim historijskim prinosima.', en: 'MM Invest is an informational tool for educational purposes. Not financial advice. Always consult a licensed financial advisor before making investment decisions. Data based on publicly available historical returns.' },
@@ -4448,6 +4696,7 @@ let currentLang = 'hr';
 const I18N_MAP = {
   // Nav tabs (by data-page attribute)
   '[data-page="home"]':          'nav-home',
+  '[data-page="p_intro"]':       'nav-intro',
   '[data-page="p0a"]':           'nav-p0a',
   '[data-page="pepp"]':          'nav-pepp',
   '[data-page="p0b"]':           'nav-p0b',
@@ -4487,6 +4736,7 @@ function setLang(lang) {
 
   // Save to localStorage
   try { localStorage.setItem('marsan-lang', lang); } catch(e) {}
+  if (window.updateIntroCopy) window.updateIntroCopy(lang);
 }
 
 // Apply saved lang on load
