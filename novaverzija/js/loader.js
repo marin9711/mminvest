@@ -7,8 +7,13 @@
   }
 
   function resolveComponentUrl(src) {
-    // Resolve component paths from the current page URL.
-    return new URL(src, window.location.href).toString();
+    // Resolve relative to the page directory so "components/foo.html" works for
+    // .../novaverzija, .../novaverzija/, and .../novaverzija/index.html.
+    var path = window.location.pathname;
+    var dir = path.match(/^(.*\/)/);
+    dir = dir ? dir[1] : (path ? path + '/' : '/');
+    var base = window.location.origin + dir;
+    return new URL(src, base).toString();
   }
 
   async function fetchComponentHtml(src) {
