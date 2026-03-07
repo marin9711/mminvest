@@ -62,6 +62,7 @@ let liveStats = loadLiveStats();
 let liveStatsSyncTimer = null;
 let liveStatsSyncInFlight = false;
 let liveStatsRemoteLoaded = false;
+let adminToken = typeof sessionStorage !== 'undefined' ? (sessionStorage.getItem('marsanai_admin') || null) : null;
 
 function saveLiveStats() {
   try { localStorage.setItem(ADMIN_LIVE_STATS_KEY, JSON.stringify(liveStats)); } catch (_) {}
@@ -1169,8 +1170,8 @@ function updateP1() {
   if(!chart1){ chart1=makeChart('p1-chart',labels,ds); }
   else { chart1.data.labels=labels; chart1.data.datasets=ds; chart1.update(); }
 }
-['p1-uplata','p1-god'].forEach(id => $(id).addEventListener('syncedInput', updateP1));
-$('p1-poticaj-toggle').addEventListener('change', updateP1);
+['p1-uplata','p1-god'].forEach(id => { const el = $(id); if (el) el.addEventListener('syncedInput', updateP1); });
+const p1Poticaj = $('p1-poticaj-toggle'); if (p1Poticaj) p1Poticaj.addEventListener('change', updateP1);
 if ($('p1-infl-toggle')) {
   $('p1-infl-toggle').addEventListener('change', updateP1);
 }
@@ -1178,7 +1179,8 @@ if ($('p1-infl-toggle')) {
 // ============ PAGE 2 ============
 let chart2;
 const p2vis = {dmf:true, pepp:true, etf:true};
-document.querySelectorAll('#p2-toggles .toggle-btn').forEach(btn=>{
+const p2Toggles = document.querySelectorAll('#p2-toggles .toggle-btn');
+if (p2Toggles.length) p2Toggles.forEach(btn=>{
   btn.addEventListener('click',()=>{
     const k=btn.dataset.key;
     p2vis[k]=!p2vis[k];
@@ -1187,13 +1189,13 @@ document.querySelectorAll('#p2-toggles .toggle-btn').forEach(btn=>{
   });
 });
 
-$('p2-etf-select').addEventListener('change', ()=>{
+const p2EtfSelect = $('p2-etf-select'); if (p2EtfSelect) p2EtfSelect.addEventListener('change', ()=>{
   const isCustom = $('p2-etf-select').value==='9.0' && $('p2-etf-select').selectedIndex===8;
   const sel = $('p2-etf-select');
-  $('p2-etf-custom-wrap').style.display = sel.options[sel.selectedIndex].text.includes('Vlastiti') ? 'flex' : 'none';
+  const wrap = $('p2-etf-custom-wrap'); if (wrap) wrap.style.display = sel && sel.options[sel.selectedIndex] && sel.options[sel.selectedIndex].text.includes('Vlastiti') ? 'flex' : 'none';
   updateP2();
 });
-$('p2-etfr-custom').addEventListener('syncedInput',()=>{
+const p2EtfrCustom = $('p2-etfr-custom'); if (p2EtfrCustom) p2EtfrCustom.addEventListener('syncedInput',()=>{
 
 
   updateP2();
@@ -1321,8 +1323,8 @@ function updateP2() {
     chart2.update();
   }
 }
-['p2-uplata','p2-god','p2-dmfr','p2-peppr'].forEach(id => $(id).addEventListener('syncedInput', updateP2));
-$('p2-poticaj-toggle').addEventListener('change', updateP2);
+['p2-uplata','p2-god','p2-dmfr','p2-peppr'].forEach(id => { const el = $(id); if (el) el.addEventListener('syncedInput', updateP2); });
+const p2Poticaj = $('p2-poticaj-toggle'); if (p2Poticaj) p2Poticaj.addEventListener('change', updateP2);
 if ($('p2-infl-toggle')) {
   $('p2-infl-toggle').addEventListener('change', updateP2);
 }
@@ -1507,8 +1509,8 @@ if ($('p4-reit-select')) {
 if ($('p4-reitr-custom')) {
   $('p4-reitr-custom').addEventListener('syncedInput', updateP4);
 }
-['p4-uplata', 'p4-god', 'p4-dmfr', 'p4-etfr', 'p4-goldr', 'p4-bondr'].forEach((id) => $(id).addEventListener('syncedInput', updateP4));
-$('p4-poticaj-toggle').addEventListener('change', updateP4);
+['p4-uplata', 'p4-god', 'p4-dmfr', 'p4-etfr', 'p4-goldr', 'p4-bondr'].forEach((id) => { const el = $(id); if (el) el.addEventListener('syncedInput', updateP4); });
+const p4Poticaj = $('p4-poticaj-toggle'); if (p4Poticaj) p4Poticaj.addEventListener('change', updateP4);
 if ($('p4-infl-toggle')) {
   $('p4-infl-toggle').addEventListener('change', updateP4);
 }
@@ -1516,14 +1518,13 @@ if ($('p4-infl-toggle')) {
 // ============ PAGE 3 ============
 let chart3;
 
-$('p3-etf-select').addEventListener('change',()=>{
+const p3EtfSelect = $('p3-etf-select'); if (p3EtfSelect) p3EtfSelect.addEventListener('change',()=>{
   const sel=$('p3-etf-select');
-  $('p3-etf-custom-wrap').style.display=sel.value==='custom'?'flex':'none';
+  const wrap = $('p3-etf-custom-wrap'); if (wrap) wrap.style.display=sel && sel.value==='custom'?'flex':'none';
   updateP3();
 });
-$('p3-etfr-custom').addEventListener('syncedInput',()=>{
- updateP3(); });
-$('p3-pension-type').addEventListener('change',updateP3);
+const p3EtfrCustom = $('p3-etfr-custom'); if (p3EtfrCustom) p3EtfrCustom.addEventListener('syncedInput',()=>{ updateP3(); });
+const p3PensionType = $('p3-pension-type'); if (p3PensionType) p3PensionType.addEventListener('change',updateP3);
 
 function getP3EtfRate(){ const sel=$('p3-etf-select'); return sel.value==='custom'?+$('p3-etfr-custom').value:+sel.value; }
 function getP3EtfName(){ const sel=$('p3-etf-select'); return sel.options[sel.selectedIndex].text.split(' (')[0]; }
@@ -1656,7 +1657,7 @@ function updateP3() {
     chart3.update();
   }
 }
-['p3-uplata','p3-god','p3-etf-share','p3-penr'].forEach(id => $(id).addEventListener('syncedInput', updateP3));
+['p3-uplata','p3-god','p3-etf-share','p3-penr'].forEach(id => { const el = $(id); if (el) el.addEventListener('syncedInput', updateP3); });
 if ($('p3-infl-toggle')) {
   $('p3-infl-toggle').addEventListener('change', updateP3);
 }
@@ -2109,8 +2110,8 @@ function updateP0a() {
   });
 }
 
-['p0a-uplata','p0a-initial','p0a-god'].forEach(id => $(id).addEventListener('syncedInput', updateP0a));
-['p0a-fund-select','p0a-period','p0a-poticaj'].forEach(id=>$(id).addEventListener('change',updateP0a));
+['p0a-uplata','p0a-initial','p0a-god'].forEach(id => { const el = $(id); if (el) el.addEventListener('syncedInput', updateP0a); });
+['p0a-fund-select','p0a-period','p0a-poticaj'].forEach(id=>{ const el = $(id); if (el) el.addEventListener('change',updateP0a); });
 if ($('p0a-infl-toggle')) {
   $('p0a-infl-toggle').addEventListener('change', updateP0a);
 }
@@ -2373,8 +2374,8 @@ function updateP0b() {
   });
 }
 
-['p0b-uplata','p0b-initial','p0b-god','p0b-custom-r'].forEach(id => $(id).addEventListener('syncedInput', updateP0b));
-['p0b-etf-select','p0b-platform'].forEach(id=>$(id).addEventListener('change',updateP0b));
+['p0b-uplata','p0b-initial','p0b-god','p0b-custom-r'].forEach(id => { const el = $(id); if (el) el.addEventListener('syncedInput', updateP0b); });
+['p0b-etf-select','p0b-platform'].forEach(id=>{ const el = $(id); if (el) el.addEventListener('change',updateP0b); });
 if ($('p0b-available-v')) {
   $('p0b-available-v').addEventListener('input', updateP0b);
   $('p0b-available-v').addEventListener('change', updateP0b);
@@ -3885,7 +3886,7 @@ if (window.location.hash === '#admin') {
 
 // === ADMIN PANEL ===
 const WORKER_URL = 'https://empty-pine-8e64.marin-marsan.workers.dev';
-let adminToken = sessionStorage.getItem('marsanai_admin') || null;
+// adminToken declared at top of file (TDZ fix)
 let adminAiOn = true;
 let adminFeedbackItems = [];
 let adminFeedbackFilter = '';
