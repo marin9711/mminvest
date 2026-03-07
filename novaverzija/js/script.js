@@ -278,14 +278,17 @@ function preventFocusJumpOnPageChange() {
 
 document.querySelectorAll('.nav-tab').forEach(tab => {
   tab.addEventListener('click', (e) => {
+    var pageId = tab.dataset.page;
+    var pageEl = pageId ? $(pageId) : null;
+    if (!pageEl) return;
     document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     tab.classList.add('active');
-    $(tab.dataset.page).classList.add('active');
-    trackCalculatorVisit(tab.dataset.page, e.isTrusted);
+    pageEl.classList.add('active');
+    trackCalculatorVisit(pageId, e.isTrusted);
     preventFocusJumpOnPageChange();
     scrollToTopInstant();
-    if (tab.dataset.page === 'p_intro') {
+    if (pageId === 'p_intro') {
       requestAnimationFrame(syncIntroStepperProgressFromScroll);
     }
   });
@@ -1170,36 +1173,12 @@ function updateP1() {
   if(!chart1){ chart1=makeChart('p1-chart',labels,ds); }
   else { chart1.data.labels=labels; chart1.data.datasets=ds; chart1.update(); }
 }
-['p1-uplata','p1-god'].forEach(id => { const el = $(id); if (el) el.addEventListener('syncedInput', updateP1); });
-const p1Poticaj = $('p1-poticaj-toggle'); if (p1Poticaj) p1Poticaj.addEventListener('change', updateP1);
-if ($('p1-infl-toggle')) {
-  $('p1-infl-toggle').addEventListener('change', updateP1);
-}
+// P1 listeners attached in attachComponentListeners() after components load.
 
 // ============ PAGE 2 ============
 let chart2;
 const p2vis = {dmf:true, pepp:true, etf:true};
-const p2Toggles = document.querySelectorAll('#p2-toggles .toggle-btn');
-if (p2Toggles.length) p2Toggles.forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    const k=btn.dataset.key;
-    p2vis[k]=!p2vis[k];
-    btn.classList.toggle('active',p2vis[k]);
-    updateP2();
-  });
-});
-
-const p2EtfSelect = $('p2-etf-select'); if (p2EtfSelect) p2EtfSelect.addEventListener('change', ()=>{
-  const isCustom = $('p2-etf-select').value==='9.0' && $('p2-etf-select').selectedIndex===8;
-  const sel = $('p2-etf-select');
-  const wrap = $('p2-etf-custom-wrap'); if (wrap) wrap.style.display = sel && sel.options[sel.selectedIndex] && sel.options[sel.selectedIndex].text.includes('Vlastiti') ? 'flex' : 'none';
-  updateP2();
-});
-const p2EtfrCustom = $('p2-etfr-custom'); if (p2EtfrCustom) p2EtfrCustom.addEventListener('syncedInput',()=>{
-
-
-  updateP2();
-});
+// P2 listeners attached in attachComponentListeners() after components load.
 
 function getP2EtfRate() {
   const sel = $('p2-etf-select');
@@ -1323,23 +1302,12 @@ function updateP2() {
     chart2.update();
   }
 }
-['p2-uplata','p2-god','p2-dmfr','p2-peppr'].forEach(id => { const el = $(id); if (el) el.addEventListener('syncedInput', updateP2); });
-const p2Poticaj = $('p2-poticaj-toggle'); if (p2Poticaj) p2Poticaj.addEventListener('change', updateP2);
-if ($('p2-infl-toggle')) {
-  $('p2-infl-toggle').addEventListener('change', updateP2);
-}
+// P2 remaining listeners in attachComponentListeners().
 
 // ============ PAGE 4 ============
 let chart4;
 const p4vis = { dmf: true, etf: true, gold: true, bond: true, reit: false };
-document.querySelectorAll('#p4-toggles .toggle-btn').forEach((btn) => {
-  btn.addEventListener('click', () => {
-    const key = btn.dataset.key;
-    p4vis[key] = !p4vis[key];
-    btn.classList.toggle('active', p4vis[key]);
-    updateP4();
-  });
-});
+// P4 toggle/listeners attached in attachComponentListeners() after components load.
 
 function getP4ReitRate() {
   const sel = $('p4-reit-select');
@@ -1499,32 +1467,12 @@ function updateP4() {
     chart4.update();
   }
 }
-if ($('p4-reit-select')) {
-  $('p4-reit-select').addEventListener('change', () => {
-    const sel = $('p4-reit-select');
-    $('p4-reit-custom-wrap').style.display = sel.value === 'custom' ? 'flex' : 'none';
-    updateP4();
-  });
-}
-if ($('p4-reitr-custom')) {
-  $('p4-reitr-custom').addEventListener('syncedInput', updateP4);
-}
-['p4-uplata', 'p4-god', 'p4-dmfr', 'p4-etfr', 'p4-goldr', 'p4-bondr'].forEach((id) => { const el = $(id); if (el) el.addEventListener('syncedInput', updateP4); });
-const p4Poticaj = $('p4-poticaj-toggle'); if (p4Poticaj) p4Poticaj.addEventListener('change', updateP4);
-if ($('p4-infl-toggle')) {
-  $('p4-infl-toggle').addEventListener('change', updateP4);
-}
+// P4 reit/uplata/poticaj/infl listeners in attachComponentListeners().
 
 // ============ PAGE 3 ============
 let chart3;
 
-const p3EtfSelect = $('p3-etf-select'); if (p3EtfSelect) p3EtfSelect.addEventListener('change',()=>{
-  const sel=$('p3-etf-select');
-  const wrap = $('p3-etf-custom-wrap'); if (wrap) wrap.style.display=sel && sel.value==='custom'?'flex':'none';
-  updateP3();
-});
-const p3EtfrCustom = $('p3-etfr-custom'); if (p3EtfrCustom) p3EtfrCustom.addEventListener('syncedInput',()=>{ updateP3(); });
-const p3PensionType = $('p3-pension-type'); if (p3PensionType) p3PensionType.addEventListener('change',updateP3);
+// P3 etf/etfr/pension listeners in attachComponentListeners().
 
 function getP3EtfRate(){ const sel=$('p3-etf-select'); return sel.value==='custom'?+$('p3-etfr-custom').value:+sel.value; }
 function getP3EtfName(){ const sel=$('p3-etf-select'); return sel.options[sel.selectedIndex].text.split(' (')[0]; }
@@ -1657,10 +1605,7 @@ function updateP3() {
     chart3.update();
   }
 }
-['p3-uplata','p3-god','p3-etf-share','p3-penr'].forEach(id => { const el = $(id); if (el) el.addEventListener('syncedInput', updateP3); });
-if ($('p3-infl-toggle')) {
-  $('p3-infl-toggle').addEventListener('change', updateP3);
-}
+// P3 uplata/infl listeners in attachComponentListeners().
 
 // ============ CHART FACTORY ============
 const FIRE_WITHDRAWAL_MULTIPLIER = 25; // 4% rule => 25x annual expenses
@@ -2110,18 +2055,7 @@ function updateP0a() {
   });
 }
 
-['p0a-uplata','p0a-initial','p0a-god'].forEach(id => { const el = $(id); if (el) el.addEventListener('syncedInput', updateP0a); });
-['p0a-fund-select','p0a-period','p0a-poticaj'].forEach(id=>{ const el = $(id); if (el) el.addEventListener('change',updateP0a); });
-if ($('p0a-infl-toggle')) {
-  $('p0a-infl-toggle').addEventListener('change', updateP0a);
-}
-if ($('p0a-net-toggle')) {
-  $('p0a-net-toggle').addEventListener('change', () => {
-    const lbl = $('p0a-net-toggle-lbl');
-    if (lbl) lbl.classList.toggle('active', $('p0a-net-toggle').checked);
-    updateP0a();
-  });
-}
+// P0a listeners in attachComponentListeners().
 
 // ============ PAGE 0B: ETF PLATFORME ============
 let chartP0b, chartP0bPlatforms;
@@ -2374,22 +2308,7 @@ function updateP0b() {
   });
 }
 
-['p0b-uplata','p0b-initial','p0b-god','p0b-custom-r'].forEach(id => { const el = $(id); if (el) el.addEventListener('syncedInput', updateP0b); });
-['p0b-etf-select','p0b-platform'].forEach(id=>{ const el = $(id); if (el) el.addEventListener('change',updateP0b); });
-if ($('p0b-available-v')) {
-  $('p0b-available-v').addEventListener('input', updateP0b);
-  $('p0b-available-v').addEventListener('change', updateP0b);
-}
-if ($('p0b-infl-toggle')) {
-  $('p0b-infl-toggle').addEventListener('change', updateP0b);
-}
-if ($('p0b-net-toggle')) {
-  $('p0b-net-toggle').addEventListener('change', () => {
-    const lbl = $('p0b-net-toggle-lbl');
-    if (lbl) lbl.classList.toggle('active', $('p0b-net-toggle').checked);
-    updateP0b();
-  });
-}
+// P0b listeners in attachComponentListeners().
 
 function updatePeppStrategyModel() {
   const fundSel = $('pepp-strategy-fund');
@@ -2784,6 +2703,82 @@ function initMyStrategyFeature() {
 }
 
 // ============ INIT ============
+// Attach all event listeners that target elements inside loaded components.
+// Must run only after mmComponentsReady so those elements exist in the DOM.
+function attachComponentListeners() {
+  ['p1-uplata','p1-god'].forEach(id => { var el = $(id); if (el) el.addEventListener('syncedInput', updateP1); });
+  var p1Poticaj = $('p1-poticaj-toggle'); if (p1Poticaj) p1Poticaj.addEventListener('change', updateP1);
+  if ($('p1-infl-toggle')) $('p1-infl-toggle').addEventListener('change', updateP1);
+
+  var p2Toggles = document.querySelectorAll('#p2-toggles .toggle-btn');
+  if (p2Toggles.length) p2Toggles.forEach(btn => {
+    btn.addEventListener('click', () => {
+      var k = btn.dataset.key;
+      p2vis[k] = !p2vis[k];
+      btn.classList.toggle('active', p2vis[k]);
+      updateP2();
+    });
+  });
+  var p2EtfSelect = $('p2-etf-select'); if (p2EtfSelect) p2EtfSelect.addEventListener('change', () => {
+    var sel = $('p2-etf-select');
+    var wrap = $('p2-etf-custom-wrap'); if (wrap) wrap.style.display = sel && sel.options[sel.selectedIndex] && sel.options[sel.selectedIndex].text.includes('Vlastiti') ? 'flex' : 'none';
+    updateP2();
+  });
+  var p2EtfrCustom = $('p2-etfr-custom'); if (p2EtfrCustom) p2EtfrCustom.addEventListener('syncedInput', () => { updateP2(); });
+  ['p2-uplata','p2-god','p2-dmfr','p2-peppr'].forEach(id => { var el = $(id); if (el) el.addEventListener('syncedInput', updateP2); });
+  var p2Poticaj = $('p2-poticaj-toggle'); if (p2Poticaj) p2Poticaj.addEventListener('change', updateP2);
+  if ($('p2-infl-toggle')) $('p2-infl-toggle').addEventListener('change', updateP2);
+
+  var p4Toggles = document.querySelectorAll('#p4-toggles .toggle-btn');
+  if (p4Toggles.length) p4Toggles.forEach(btn => {
+    btn.addEventListener('click', () => {
+      var key = btn.dataset.key;
+      p4vis[key] = !p4vis[key];
+      btn.classList.toggle('active', p4vis[key]);
+      updateP4();
+    });
+  });
+  if ($('p4-reit-select')) $('p4-reit-select').addEventListener('change', () => {
+    var sel = $('p4-reit-select');
+    var w = $('p4-reit-custom-wrap'); if (w) w.style.display = sel && sel.value === 'custom' ? 'flex' : 'none';
+    updateP4();
+  });
+  if ($('p4-reitr-custom')) $('p4-reitr-custom').addEventListener('syncedInput', updateP4);
+  ['p4-uplata', 'p4-god', 'p4-dmfr', 'p4-etfr', 'p4-goldr', 'p4-bondr'].forEach(id => { var el = $(id); if (el) el.addEventListener('syncedInput', updateP4); });
+  var p4Poticaj = $('p4-poticaj-toggle'); if (p4Poticaj) p4Poticaj.addEventListener('change', updateP4);
+  if ($('p4-infl-toggle')) $('p4-infl-toggle').addEventListener('change', updateP4);
+
+  var p3EtfSelect = $('p3-etf-select'); if (p3EtfSelect) p3EtfSelect.addEventListener('change', () => {
+    var sel = $('p3-etf-select');
+    var wrap = $('p3-etf-custom-wrap'); if (wrap) wrap.style.display = sel && sel.value === 'custom' ? 'flex' : 'none';
+    updateP3();
+  });
+  var p3EtfrCustom = $('p3-etfr-custom'); if (p3EtfrCustom) p3EtfrCustom.addEventListener('syncedInput', () => { updateP3(); });
+  var p3PensionType = $('p3-pension-type'); if (p3PensionType) p3PensionType.addEventListener('change', updateP3);
+  ['p3-uplata','p3-god','p3-etf-share','p3-penr'].forEach(id => { var el = $(id); if (el) el.addEventListener('syncedInput', updateP3); });
+  if ($('p3-infl-toggle')) $('p3-infl-toggle').addEventListener('change', updateP3);
+
+  ['p0a-uplata','p0a-initial','p0a-god'].forEach(id => { var el = $(id); if (el) el.addEventListener('syncedInput', updateP0a); });
+  ['p0a-fund-select','p0a-period','p0a-poticaj'].forEach(id => { var el = $(id); if (el) el.addEventListener('change', updateP0a); });
+  if ($('p0a-infl-toggle')) $('p0a-infl-toggle').addEventListener('change', updateP0a);
+  if ($('p0a-net-toggle')) $('p0a-net-toggle').addEventListener('change', () => {
+    var lbl = $('p0a-net-toggle-lbl'); if (lbl) lbl.classList.toggle('active', $('p0a-net-toggle').checked);
+    updateP0a();
+  });
+
+  ['p0b-uplata','p0b-initial','p0b-god','p0b-custom-r'].forEach(id => { var el = $(id); if (el) el.addEventListener('syncedInput', updateP0b); });
+  ['p0b-etf-select','p0b-platform'].forEach(id => { var el = $(id); if (el) el.addEventListener('change', updateP0b); });
+  if ($('p0b-available-v')) {
+    $('p0b-available-v').addEventListener('input', updateP0b);
+    $('p0b-available-v').addEventListener('change', updateP0b);
+  }
+  if ($('p0b-infl-toggle')) $('p0b-infl-toggle').addEventListener('change', updateP0b);
+  if ($('p0b-net-toggle')) $('p0b-net-toggle').addEventListener('change', () => {
+    var lbl = $('p0b-net-toggle-lbl'); if (lbl) lbl.classList.toggle('active', $('p0b-net-toggle').checked);
+    updateP0b();
+  });
+}
+
 // Ensure bootstrap waits for both DOM and component loader.
 function whenAppBootstrapReady() {
   const domReadyPromise = document.readyState === 'loading'
@@ -2850,82 +2845,72 @@ function safeInitApp() {
     try { updateP3(); } catch(e2) {}
   }
 }
-runWhenAppReady(safeInitApp);
+runWhenAppReady(function () {
+  attachComponentListeners();
 
-// Save to localStorage on change
-SLIDER_PAIRS.forEach(([,numId]) => {
-  const el = $(numId);
-  if (el) el.addEventListener('change', () => {
-    localStorage.setItem('miv_' + numId, el.value);
+  SLIDER_PAIRS.forEach(([, numId]) => {
+    var el = $(numId);
+    if (el) el.addEventListener('change', function () { localStorage.setItem('miv_' + numId, el.value); });
   });
+
+  document.querySelectorAll('.star-btn').forEach(function (btn) {
+    btn.addEventListener('mouseenter', function () {
+      var v = +btn.dataset.val;
+      document.querySelectorAll('.star-btn').forEach(function (b, i) { b.classList.toggle('active', i < v); });
+      var rl = $('rating-label'); if (rl) rl.textContent = ratingLabels[v];
+    });
+    btn.addEventListener('mouseleave', function () {
+      document.querySelectorAll('.star-btn').forEach(function (b, i) { b.classList.toggle('active', i < selectedRating); });
+      var rl = $('rating-label'); if (rl) rl.textContent = selectedRating ? ratingLabels[selectedRating] : 'Klikni za ocjenu';
+    });
+    btn.addEventListener('click', async function () {
+      var newRating = +btn.dataset.val;
+      var prevRating = parseInt(localStorage.getItem('miv_rating')) || 0;
+      var labelEl = $('rating-label');
+      if (labelEl) labelEl.textContent = '⏳ Bilježim ocjenu...';
+      document.querySelectorAll('.star-btn').forEach(function (b) { b.style.pointerEvents = 'none'; });
+      try {
+        var resp = await fetch(AI_WORKER_URL + '/api/vote', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'rating', rating: newRating, prevRating: prevRating })
+        });
+        var data = await resp.json();
+        if (!resp.ok) {
+          if (labelEl) labelEl.textContent = data.alreadyVoted ? '⛔ Već si dao ocjenu danas — pokušaj sutra!' : '⚠️ Greška pri slanju — pokušaj ponovo.';
+          document.querySelectorAll('.star-btn').forEach(function (b) { b.style.pointerEvents = ''; });
+          return;
+        }
+        selectedRating = newRating;
+        document.querySelectorAll('.star-btn').forEach(function (b, i) {
+          b.classList.toggle('active', i < selectedRating);
+          b.style.pointerEvents = '';
+        });
+        if (labelEl) labelEl.textContent = '✅ Ocjena ' + selectedRating + '/5 zabilježena — ' + ratingLabels[selectedRating];
+        try { localStorage.setItem('miv_rating', selectedRating); } catch (e) {}
+        loadRatingStats();
+      } catch (e) {
+        if (labelEl) labelEl.textContent = '⚠️ Greška mreže — pokušaj ponovo.';
+        document.querySelectorAll('.star-btn').forEach(function (b) { b.style.pointerEvents = ''; });
+      }
+    });
+  });
+
+  document.querySelectorAll('.fb-type-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      document.querySelectorAll('.fb-type-btn').forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+    });
+  });
+
+  safeInitApp();
 });
 
 // ============ FEEDBACK & AI CHAT ============
 
-// Star rating
+// Star rating (state; listeners bound in runWhenAppReady above)
 let selectedRating = 0;
 const ratingLabels = ['','😞 Loše','😐 Može biti bolje','🙂 Solidno','😊 Dobro','🤩 Odlično!'];
-document.querySelectorAll('.star-btn').forEach(btn => {
-  btn.addEventListener('mouseenter', () => {
-    const v = +btn.dataset.val;
-    document.querySelectorAll('.star-btn').forEach((b,i) => b.classList.toggle('active', i < v));
-    $('rating-label').textContent = ratingLabels[v];
-  });
-  btn.addEventListener('mouseleave', () => {
-    document.querySelectorAll('.star-btn').forEach((b,i) => b.classList.toggle('active', i < selectedRating));
-    $('rating-label').textContent = selectedRating ? ratingLabels[selectedRating] : 'Klikni za ocjenu';
-  });
-  btn.addEventListener('click', async () => {
-    const newRating = +btn.dataset.val;
-    const prevRating = parseInt(localStorage.getItem('miv_rating')) || 0;
-
-    // Privremeno pokaži "šaljem..." stanje
-    const labelEl = $('rating-label');
-    const originalLabel = labelEl ? labelEl.textContent : '';
-    if (labelEl) labelEl.textContent = '⏳ Bilježim ocjenu...';
-    document.querySelectorAll('.star-btn').forEach(b => b.style.pointerEvents = 'none');
-
-    try {
-      const resp = await fetch(AI_WORKER_URL + '/api/vote', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'rating', rating: newRating, prevRating })
-      });
-      const data = await resp.json();
-
-      if (!resp.ok) {
-        // Server odbio (npr. već ocjenjivao)
-        if (labelEl) labelEl.textContent = data.alreadyVoted
-          ? '⛔ Već si dao ocjenu danas — pokušaj sutra!'
-          : '⚠️ Greška pri slanju — pokušaj ponovo.';
-        document.querySelectorAll('.star-btn').forEach(b => b.style.pointerEvents = '');
-        return;
-      }
-
-      // ── Server potvrdio — ažuriraj UI ──
-      selectedRating = newRating;
-      document.querySelectorAll('.star-btn').forEach((b, i) => {
-        b.classList.toggle('active', i < selectedRating);
-        b.style.pointerEvents = '';
-      });
-      if (labelEl) labelEl.textContent = '✅ Ocjena ' + selectedRating + '/5 zabilježena — ' + ratingLabels[selectedRating];
-      try { localStorage.setItem('miv_rating', selectedRating); } catch(e){}
-      loadRatingStats();
-
-    } catch(e) {
-      if (labelEl) labelEl.textContent = '⚠️ Greška mreže — pokušaj ponovo.';
-      document.querySelectorAll('.star-btn').forEach(b => b.style.pointerEvents = '');
-    }
-  });
-});
-
-// Feedback type toggle
-document.querySelectorAll('.fb-type-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.fb-type-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-  });
-});
 
 // Submit feedback
 async function submitFeedback() {

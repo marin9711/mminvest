@@ -62,14 +62,19 @@
     return results;
   }
 
+  // Promise resolves only after all components are fetched and injected into the DOM.
   window.mmComponentsReady = loadAllComponents()
     .then(function (results) {
+      var ok = results.filter(function (r) { return r.ok; }).length;
+      var total = results.length;
+      if (ok < total) {
+        console.warn('[Loader] Only ' + ok + '/' + total + ' components loaded. Check network and paths.');
+      }
       window.dispatchEvent(new CustomEvent('mm:components-ready', { detail: { results: results } }));
       return results;
     })
     .catch(function (err) {
       console.error('Component loader fatal error:', err);
-      // Keep bootstrap moving even on fatal loader errors.
       return [];
     });
 })();
