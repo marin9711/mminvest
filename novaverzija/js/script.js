@@ -2788,7 +2788,16 @@ function whenAppBootstrapReady() {
   const domReadyPromise = document.readyState === 'loading'
     ? new Promise((resolve) => document.addEventListener('DOMContentLoaded', resolve, { once: true }))
     : Promise.resolve();
-  const componentsReadyPromise = window.mmComponentsReady || Promise.resolve();
+  const rawComponentsPromise = window.mmComponentsReady || Promise.resolve();
+  const componentsReadyPromise = Promise.race([
+    rawComponentsPromise,
+    new Promise((resolve) => {
+      setTimeout(() => {
+        console.warn('mmComponentsReady timeout exceeded, continuing bootstrap.');
+        resolve();
+      }, 7000);
+    }),
+  ]);
   return Promise.all([domReadyPromise, componentsReadyPromise]).then(() => undefined);
 }
 

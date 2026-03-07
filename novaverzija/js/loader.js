@@ -6,50 +6,65 @@
     return template.content;
   }
 
-  function fetchComponentHtmlSync(src) {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', src, false);
-    xhr.send(null);
-    if (xhr.status < 200 || xhr.status >= 300) {
-      throw new Error('Failed to load component: ' + src + ' (' + xhr.status + ')');
-    }
-    return xhr.responseText;
+  function resolveComponentUrl(src) {
+    // Resolve component paths from the current page URL.
+    return new URL(src, window.location.href).toString();
   }
 
-  function loadComponentSync(el) {
+  async function fetchComponentHtml(src) {
+    var url = resolveComponentUrl(src);
+    var response = await fetch(url, { cache: 'no-cache' });
+    if (!response.ok) {
+      throw new Error('Failed to load component: ' + src + ' (' + response.status + ')');
+    }
+    return response.text();
+  }
+
+  async function loadComponent(el) {
     var src = el.getAttribute('data-component');
-    if (!src) return;
-    var html = fetchComponentHtmlSync(src);
-    var mode = el.getAttribute('data-component-mode') || 'inner';
-    var fragment = parseFragment(html);
+    if (!src) return { ok: true, src: '(empty)' };
 
-    if (mode === 'replace') {
-      var first = fragment.firstElementChild;
-      if (!first) {
-        el.remove();
-        return;
-      }
-      el.replaceWith(fragment);
-      return;
-    }
-
-    el.innerHTML = '';
-    el.appendChild(fragment);
-  }
-
-  function loadAllComponentsSync() {
-    var placeholders = Array.from(document.querySelectorAll('[data-component]'));
-    placeholders.forEach(loadComponentSync);
-  }
-
-  window.mmComponentsReady = new Promise(function (resolve, reject) {
     try {
-      loadAllComponentsSync();
-      window.dispatchEvent(new CustomEvent('mm:components-ready'));
-      resolve();
+      var html = await fetchComponentHtml(src);
+      var mode = el.getAttribute('data-component-mode') || 'inner';
+      var fragment = parseFragment(html);
+
+      if (mode === 'replace') {
+        if (!fragment.firstElementChild) {
+          el.remove();
+          return { ok: true, src: src };
+        }
+        el.replaceWith(fragment);
+        return { ok: true, src: src };
+      }
+
+      el.innerHTML = '';
+      el.appendChild(fragment);
+      return { ok: true, src: src };
     } catch (err) {
-      console.error('Component loader failed:', err);
-      reject(err);
+      console.error('Component loader error for', src, err);
+      return { ok: false, src: src, error: err };
     }
-  });
+  }
+
+  async function loadAllComponents() {
+    var placeholders = Array.from(document.querySelectorAll('[data-component]'));
+    var results = await Promise.all(placeholders.map(loadComponent));
+    var failed = results.filter(function (r) { return !r.ok; });
+    if (failed.length) {
+      console.error('Some components failed to load:', failed.map(function (r) { return r.src; }));
+    }
+    return results;
+  }
+
+  window.mmComponentsReady = loadAllComponents()
+    .then(function (results) {
+      window.dispatchEvent(new CustomEvent('mm:components-ready', { detail: { results: results } }));
+      return results;
+    })
+    .catch(function (err) {
+      console.error('Component loader fatal error:', err);
+      // Keep bootstrap moving even on fatal loader errors.
+      return [];
+    });
 })();
