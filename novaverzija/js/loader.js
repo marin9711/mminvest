@@ -7,7 +7,7 @@
   }
 
   function resolveComponentUrl(src) {
-    // Resolve relative to the page directory so "components/foo.html" works for
+    // Resolve relative to the page directory so "components/foo" works for
     // .../novaverzija, .../novaverzija/, and .../novaverzija/index.html.
     var path = window.location.pathname;
     var dir = path.match(/^(.*\/)/);
