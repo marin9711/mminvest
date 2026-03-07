@@ -1,0 +1,176 @@
+<div class="page" id="p2">
+  <div class="page-header">
+    <h2><span class="grad-cool" data-i18n="p2-title">DMF/PEPP vs ETF</span></h2>
+    <p data-i18n="p2-desc">Usporedi mirovinske fondove s globalnim ETF-ovima. UkljuÃƒâ€žÃ‚Âi/iskljuÃƒâ€žÃ‚Âi fondove i vidi koja strategija donosi viÃƒâ€¦Ã‚Â¡e.</p>
+  </div>
+
+  <div style="font-size:0.68rem;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--muted);margin:0.2rem 0 0.65rem;">1) Unos parametara</div>
+  <div class="controls">
+    <div class="ctrl-group c-neutral">
+      <label for="p2-uplata-v">GodiÃƒâ€¦Ã‚Â¡nja uplata (ukupno)</label>
+      <div class="row"><input type="range" id="p2-uplata" min="0" max="5000" step="50" value="1200" aria-label="GodiÃƒâ€¦Ã‚Â¡nja uplata (klizaÃƒâ€žÃ‚Â)"><input type="number" class="ctrl-val-input" id="p2-uplata-v" value="1200.00" data-decimals="2" min="0" max="5000" step="any" placeholder="1200" aria-label="GodiÃƒâ€¦Ã‚Â¡nja uplata (ukupno)"></div>
+    </div>
+    <div class="ctrl-group c-neutral">
+      <label for="p2-poticaj-toggle">DrÃƒâ€¦Ã‚Â¾avni poticaj (DMF)</label>
+      <div class="toggle-switch-wrap">
+        <label class="toggle-switch"><input type="checkbox" id="p2-poticaj-toggle" checked><span class="toggle-slider"></span></label>
+        <span class="toggle-label active" id="p2-poticaj-lbl">UkljuÃƒâ€žÃ‚Âen</span>
+      </div>
+      <div class="poticaj-info" id="p2-poticaj-info">15% od osobne uplate, max 99.54ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬/god. Neoporeziva uplata poslodavca do 804ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬/god nije ukljuÃƒâ€žÃ‚Âena ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â dodaj je u iznos uplate ako je koristiÃƒâ€¦Ã‚Â¡.</div>
+    </div>
+    <div class="ctrl-group c-neutral">
+      <label for="p2-god-v">Broj godina</label>
+      <div class="row"><input type="range" id="p2-god" min="5" max="60" step="1" value="25" aria-label="Broj godina (klizaÃƒâ€žÃ‚Â)"><input type="number" class="ctrl-val-input" id="p2-god-v" value="25" min="5" max="60" step="1" placeholder="25" aria-label="Broj godina"></div>
+    </div>
+    <div class="ctrl-group c-dmf">
+      <label for="p2-dmfr-v">Prinos DMF (%/god)</label>
+      <div class="row"><input type="range" id="p2-dmfr" min="1" max="8" step="0.1" value="3.5" aria-label="Prinos DMF (klizaÃƒâ€žÃ‚Â)"><input type="number" class="ctrl-val-input" id="p2-dmfr-v" value="3.5" min="1" max="8" step="0.1" placeholder="8" aria-label="Prinos DMF (%/god)"></div>
+    </div>
+    <div class="ctrl-group c-pepp">
+      <label for="p2-peppr-v">Prinos PEPP (%/god)</label>
+      <div class="row"><input type="range" id="p2-peppr" min="3" max="14" step="0.1" value="8.0" aria-label="Prinos PEPP (klizaÃƒâ€žÃ‚Â)"><input type="number" class="ctrl-val-input" id="p2-peppr-v" value="8.0" min="3" max="14" step="0.1" placeholder="8" aria-label="Prinos PEPP (%/god)"></div>
+      <div class="rate-note" id="p2-pepp-rate-note">Nakon 1% Finax naknade: ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</div>
+    </div>
+    <div class="ctrl-group c-etf">
+      <label for="p2-etf-select">Odaberi ETF</label>
+      <select id="p2-etf-select">
+        <option value="9.5">VWCE ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Vanguard All World (9.5%)</option>
+        <option value="10.2">IWDA ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â iShares MSCI World (10.2%)</option>
+        <option value="11.0">CSPX ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â iShares S&P 500 (11.0%)</option>
+        <option value="8.8">VEUR ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Vanguard Europe (8.8%)</option>
+        <option value="7.5">AGGH ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Global Bonds (7.5%)</option>
+        <option value="12.5">QQQ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Nasdaq-100 (12.5%)</option>
+        <option value="9.0" id="custom-etf-opt">Vlastiti prinos...</option>
+      </select>
+    </div>
+    <div class="ctrl-group c-etf" id="p2-etf-custom-wrap" style="display:none">
+      <label for="p2-etfr-custom-v">Vlastiti prinos ETF (%)</label>
+      <div class="row"><input type="range" id="p2-etfr-custom" min="3" max="18" step="0.1" value="9.0" aria-label="Vlastiti prinos ETF (klizaÃƒâ€žÃ‚Â)"><input type="number" class="ctrl-val-input" id="p2-etfr-custom-v" value="9.0" min="3" max="18" step="0.1" placeholder="8" aria-label="Vlastiti prinos ETF (%)"></div>
+    </div>
+    <div class="ctrl-group c-neutral">
+      <label for="p2-infl-toggle">Inflacija</label>
+      <div class="toggle-switch-wrap">
+        <label class="toggle-switch"><input type="checkbox" id="p2-infl-toggle"><span class="toggle-slider"></span></label>
+        <span class="toggle-label" id="p2-infl-toggle-lbl">Prilagodi za inflaciju (3%)</span>
+      </div>
+      <div class="poticaj-info" id="p2-infl-note">100.000ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ za 20 godina vrijedi manje u danaÃƒâ€¦Ã‚Â¡njim eurima - ukljuÃƒâ€žÃ‚Âi prilagodbu za realnu kupovnu moÃƒâ€žÃ¢â‚¬Â¡.</div>
+    </div>
+  </div>
+
+  <div style="font-size:0.68rem;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--muted);margin:0.3rem 0 0.65rem;">2) Rezultati</div>
+  <div class="toggles-row" id="p2-toggles">
+    <div class="toggle-btn t-dmf active" data-key="dmf"><span class="dot" style="background:var(--dmf)"></span>3. Stup DMF</div>
+    <div class="toggle-btn t-pepp active" data-key="pepp"><span class="dot" style="background:var(--pepp)"></span>PEPP</div>
+    <div class="toggle-btn t-etf active" data-key="etf"><span class="dot" style="background:var(--etf)"></span>ETF</div>
+  </div>
+
+  <div class="stat-cards" id="p2-cards">
+    <div class="stat-card sc-dmf" id="p2-sc-dmf">
+      <div class="sc-label">3. Stup</div>
+      <div class="sc-name">DMF + Poticaj</div>
+      <div class="sc-row"><div class="sr-lbl">Krajnja vrijednost</div><div class="sr-val" id="p2-dmf-total">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</div></div>
+      <div class="sc-row"><div class="sr-lbl">Zarada</div><div class="sr-val" id="p2-dmf-earn" style="font-size:.9rem">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</div></div>
+      <div class="sc-row"><div class="sr-lbl">Multiplikator</div><div class="sr-val" id="p2-dmf-multi" style="font-size:.9rem">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</div></div>
+    </div>
+    <div class="stat-card sc-pepp" id="p2-sc-pepp">
+      <div class="sc-label">PEPP</div>
+      <div class="sc-name">Pan-europska mirovina</div>
+      <div class="sc-row"><div class="sr-lbl">Krajnja vrijednost</div><div class="sr-val" id="p2-pepp-total">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</div></div>
+      <div class="sc-row"><div class="sr-lbl">Zarada</div><div class="sr-val" id="p2-pepp-earn" style="font-size:.9rem">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</div></div>
+      <div class="sc-row"><div class="sr-lbl">Multiplikator</div><div class="sr-val" id="p2-pepp-multi" style="font-size:.9rem">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</div></div>
+    </div>
+    <div class="stat-card sc-etf" id="p2-sc-etf">
+      <div class="sc-label">ETF</div>
+      <div class="sc-name" id="p2-etf-name">VWCE</div>
+      <div class="sc-row"><div class="sr-lbl">Krajnja vrijednost</div><div class="sr-val" id="p2-etf-total">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</div></div>
+      <div class="sc-row"><div class="sr-lbl">Zarada</div><div class="sr-val" id="p2-etf-earn" style="font-size:.9rem">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</div></div>
+      <div class="sc-row"><div class="sr-lbl">Multiplikator</div><div class="sr-val" id="p2-etf-multi" style="font-size:.9rem">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</div></div>
+    </div>
+  </div>
+
+  <div class="winner-banner">
+    <div><div class="wb-label">Pobjednik</div><div class="wb-val" id="p2-winner">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</div></div>
+    <div class="wb-desc" id="p2-desc">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</div>
+  </div>
+
+  <div style="font-size:0.68rem;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--muted);margin:0.35rem 0 0.65rem;">3) Analiza i detalji</div>
+  <div class="chart-card">
+    <h3>Rast vrijednosti ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â usporedba strategija</h3>
+    <canvas id="p2-chart"></canvas>
+    <div class="chart-controls">
+      <div class="period-btns" id="p2-chart-periods">
+        <span style="font-size:0.62rem;color:var(--muted);margin-right:0.2rem">Period:</span>
+        <button class="period-btn" data-years="1" data-chart="p2-chart">1Y</button><button class="period-btn" data-years="3" data-chart="p2-chart">3Y</button><button class="period-btn" data-years="5" data-chart="p2-chart">5Y</button><button class="period-btn" data-years="10" data-chart="p2-chart">10Y</button><button class="period-btn" data-years="15" data-chart="p2-chart">15Y</button><button class="period-btn" data-years="20" data-chart="p2-chart">20Y</button><button class="period-btn" data-years="25" data-chart="p2-chart">25Y</button><button class="period-btn" data-years="30" data-chart="p2-chart">30Y</button>
+        <button class="period-btn active" data-years="all" data-chart="p2-chart">SVE</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem">
+
+      </div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <h3>Pregled po periodima</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr>
+        <th>Godina</th>
+        <th id="p2-th-dmf" style="color:var(--dmf-l)">3. Stup</th>
+        <th id="p2-th-pepp" style="color:var(--pepp-l)">PEPP</th>
+        <th id="p2-th-etf" style="color:var(--etf-l)">ETF</th>
+      </tr></thead>
+      <tbody id="p2-tbody"></tbody>
+    </table></div>
+  </div>
+  <div class="table-card fee-compare-card">
+    <h3>Usporedba naknada (okvirno)</h3>
+    <div class="tbl-wrap"><table>
+      <thead>
+        <tr>
+          <th>Opcija</th>
+          <th>GodiÃƒâ€¦Ã‚Â¡nja naknada</th>
+          <th>Transakcije</th>
+          <th>DrÃƒâ€¦Ã‚Â¾avni poticaj</th>
+          <th>Porez na isplatu</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>3. Stup (DMF)</td>
+          <td>~1.5ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“2.0% / god</td>
+          <td>0 ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬</td>
+          <td>ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ 15% do 99.54 ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬/god</td>
+          <td>Ne oporezuje se</td>
+        </tr>
+        <tr>
+          <td>PEPP (Finax)</td>
+          <td>1.0% upravljanje + TER ETF-a</td>
+          <td>0 ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬</td>
+          <td>ÃƒÂ¢Ã‚ÂÃ…â€™ Nema</td>
+          <td>Ovisi o poreznim pravilima i modelu isplate</td>
+        </tr>
+        <tr>
+          <td>ETF preko IBKR</td>
+          <td>TER ETF-a (~0.20ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“0.25%)</td>
+          <td>~1ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“2 ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ po kupnji</td>
+          <td>ÃƒÂ¢Ã‚ÂÃ…â€™ Nema</td>
+          <td>12% kapitalna dobit</td>
+        </tr>
+        <tr>
+          <td>ETF preko T212</td>
+          <td>TER ETF-a (~0.20ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“0.25%)</td>
+          <td>0 ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ (bez provizije)</td>
+          <td>ÃƒÂ¢Ã‚ÂÃ…â€™ Nema</td>
+          <td>12% kapitalna dobit</td>
+        </tr>
+      </tbody>
+    </table></div>
+    <p class="fee-note">Stope su okvirne i pojednostavljene. Prije ulaganja provjeri aktualne cjenike fondova, brokera i porezna pravila.</p>
+  </div>
+  <div class="liq-info-box">
+    <div class="liq-row"><span class="liq-icon">ÃƒÂ°Ã…Â¸Ã…Â¸Ã‚Â¢</span><div class="liq-text"><strong>ETF ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Visoka likvidnost</strong><span>ProdajeÃƒâ€¦Ã‚Â¡ kad hoÃƒâ€žÃ¢â‚¬Â¡eÃƒâ€¦Ã‚Â¡, novac za 2ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“3 dana. Bez dobnih ili vremenskih ograniÃƒâ€žÃ‚Âenja. Idealno kao <strong>nuÃƒâ€¦Ã‚Â¾na priÃƒâ€žÃ‚Âuva ili fleksibilni kapital</strong>.</span></div></div>
+    <div class="liq-row"><span class="liq-icon">ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ¢â‚¬â„¢</span><div class="liq-text"><strong>DMF/PEPP ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â ZakljuÃƒâ€žÃ‚Âano do 55. god.</strong><span>Nema pristupa prije mirovine. Ovo je kljuÃƒâ€žÃ‚Âna razlika ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â ETF moÃƒâ€¦Ã‚Â¾eÃƒâ€¦Ã‚Â¡ koristiti i prije umirovljenja, DMF/PEPP ne moÃƒâ€¦Ã‚Â¾eÃƒâ€¦Ã‚Â¡.</span></div></div>
+  </div>
+  <p class="disclaimer">ÃƒÂ¢Ã…Â¡Ã‚Â ÃƒÂ¯Ã‚Â¸Ã‚Â ETF prinosi su historijski prosjeci zadnjih 10ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“15 godina i ne ukljuÃƒâ€žÃ‚Âuju poreze na kapitalnu dobit (u HR: 12% za drÃƒâ€¦Ã‚Â¾anje kraÃƒâ€žÃ¢â‚¬Â¡e od 2 godine). Investiranje u ETF nosi rizik gubitka. Nije financijski savjet.</p>
+</div>
+
+<!-- ========== PAGE 4 ========== -->

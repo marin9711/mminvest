@@ -1,0 +1,54 @@
+<div class="ai-chat-float" id="ai-chat-float">
+  <div class="ai-chat-header">
+    <div class="ai-chat-avatar">ÃƒÂ°Ã…Â¸Ã‚Â¤Ã¢â‚¬â€œ</div>
+    <div>
+      <div class="ai-chat-title">MM Invest Asistent</div>
+      <div class="ai-chat-sub">Pitaj me o fondovima, ETF-ovima ili kalkulatoru</div>
+    </div>
+    <div class="ai-online-dot"></div>
+  </div>
+  <div class="ai-messages" id="ai-messages">
+    <div class="ai-msg bot">
+      <div class="ai-msg-avatar">ÃƒÂ°Ã…Â¸Ã‚Â¤Ã¢â‚¬â€œ</div>
+      <div class="ai-msg-bubble">Bok! Ja sam MM Invest asistent. ÃƒÂ°Ã…Â¸Ã¢â‚¬ËœÃ¢â‚¬Â¹ Mogu ti pomoÃƒâ€žÃ¢â‚¬Â¡i razumjeti razliku izmeÃƒâ€žÃ¢â‚¬Ëœu DMF-a i PEPP-a, objasniti ETF fondove, ili te voditi kroz kalkulator. Ãƒâ€¦Ã‚Â to te zanima?</div>
+    </div>
+  </div>
+  <div class="ai-quick-btns">
+    <button class="ai-quick-btn" onclick="sendQuickMsg('Ãƒâ€¦Ã‚Â to je razlika izmeÃƒâ€žÃ¢â‚¬Ëœu DMF i PEPP?')">DMF vs PEPP</button>
+    <button class="ai-quick-btn" onclick="sendQuickMsg('Koji ETF preporuÃƒâ€žÃ‚ÂujeÃƒâ€¦Ã‚Â¡ za poÃƒâ€žÃ‚Âetnike?')">ETF za poÃƒâ€žÃ‚Âetnike</button>
+    <button class="ai-quick-btn" onclick="sendQuickMsg('Kako koristiti kalkulator?')">Kako koristiti?</button>
+    <button class="ai-quick-btn" onclick="sendQuickMsg('Ãƒâ€¦Ã‚Â to je drÃƒâ€¦Ã‚Â¾avni poticaj na 3. stup?')">DrÃƒâ€¦Ã‚Â¾avni poticaj</button>
+    <button class="ai-quick-btn" onclick="sendQuickMsg('Koje su naknade na IBKR vs Trading 212?')">IBKR vs T212</button>
+  </div>
+  <div id="ai-faq-wrap" class="ai-faq-wrap" style="display:none">
+    <p class="ai-faq-label">Ãƒâ€žÃ…â€™esto postavljana pitanja (AI je privremeno nedostupan):</p>
+    <!-- Gumbi se generiraju u script.js renderFaqButtons() -->
+  </div>
+  <div class="ai-input-row">
+    <label for="ai-input" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">Pitanje za MM Invest asistenta</label>
+    <input class="ai-input" id="ai-input" type="text" placeholder="Pitaj neÃƒâ€¦Ã‚Â¡to o ulaganju..."
+           aria-label="Pitanje za MM Invest asistenta"
+           onkeydown="if(event.key==='Enter') sendAiMsg()">
+    <button class="ai-send-btn" id="ai-send-btn" onclick="sendAiMsg()">ÃƒÂ¢Ã…Â¾Ã‚Â¤</button>
+  </div>
+  <!-- Cloudflare Turnstile ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â visible widget (managed mode) -->
+  <!-- ZAMIJENI data-sitekey s tvojim Turnstile Site Key-em iz Cloudflare dashboarda -->
+  <div id="ai-turnstile-container" style="display:flex;justify-content:center;padding:0.35rem 0.75rem 0.55rem;">
+    <div class="cf-turnstile"
+         id="ai-turnstile-widget"
+         data-sitekey="0x4AAAAAACnRnEJwxvINVx6G"
+         data-theme="dark"
+         data-size="normal"
+         data-callback="onTurnstileSuccess"
+         data-expired-callback="onTurnstileExpired"
+         data-error-callback="onTurnstileError">
+    </div>
+  </div>
+  <div id="ai-rate-notice" style="display:none;font-size:0.72rem;color:#f56060;padding:0.3rem 0.75rem 0.5rem;text-align:center;"></div>
+</div>
+<button class="ai-fab" id="ai-fab" onclick="handleFabClick(event)" aria-label="Otvori MM Invest AI asistenta" aria-expanded="false">
+  <span class="fab-icon-chat" aria-hidden="true">ÃƒÂ°Ã…Â¸Ã‚Â¤Ã¢â‚¬â€œ</span>
+  <span class="fab-icon-close" aria-hidden="true">ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¢</span>
+  <span class="fab-icon-minimize" id="ai-fab-minimize" onclick="event.stopPropagation(); toggleFabMinimize();" aria-label="Minimiziraj">ÃƒÂ¢Ã‹â€ Ã¢â‚¬â„¢</span>
+</button>
+<button class="ai-fab-hide" id="ai-fab-hide" onclick="hideFabToggle()">ÃƒÂ°Ã…Â¸Ã¢â‚¬ËœÃ‚ÂÃƒÂ¯Ã‚Â¸Ã‚Â sakrij AI</button>

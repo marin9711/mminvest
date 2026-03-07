@@ -1,0 +1,147 @@
+<div class="page" id="p4">
+  <div class="page-header">
+    <h2><span class="grad-combo">ETF/DMF vs ostalo</span></h2>
+    <p>Usporedi klasiÃƒâ€žÃ‚Âno dugoroÃƒâ€žÃ‚Âno ulaganje (ETF i mirovinski fond) sa zlatom i konzervativnim opcijama poput obveznica/novÃƒâ€žÃ‚Âanog trÃƒâ€¦Ã‚Â¾iÃƒâ€¦Ã‚Â¡ta.</p>
+  </div>
+
+  <div style="font-size:0.68rem;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--muted);margin:0.2rem 0 0.65rem;">1) Unos parametara</div>
+  <div class="controls">
+    <div class="ctrl-group c-neutral">
+      <label for="p4-uplata-v">GodiÃƒâ€¦Ã‚Â¡nja uplata (ukupno)</label>
+      <div class="row"><input type="range" id="p4-uplata" min="0" max="8000" step="50" value="1800" aria-label="GodiÃƒâ€¦Ã‚Â¡nja uplata (klizaÃƒâ€žÃ‚Â)"><input type="number" class="ctrl-val-input" id="p4-uplata-v" value="1800.00" data-decimals="2" min="0" max="8000" step="any" placeholder="1800" aria-label="GodiÃƒâ€¦Ã‚Â¡nja uplata (ukupno)"></div>
+    </div>
+    <div class="ctrl-group c-neutral">
+      <label for="p4-poticaj-toggle">DrÃƒâ€¦Ã‚Â¾avni poticaj (DMF)</label>
+      <div class="toggle-switch-wrap">
+        <label class="toggle-switch"><input type="checkbox" id="p4-poticaj-toggle" checked><span class="toggle-slider"></span></label>
+        <span class="toggle-label active" id="p4-poticaj-lbl">UkljuÃƒâ€žÃ‚Âen</span>
+      </div>
+      <div class="poticaj-info" id="p4-poticaj-info">15% od osobne uplate, max 99.54ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬/god. Usporedba je ilustrativna i ne ukljuÃƒâ€žÃ‚Âuje porezne detalje svih instrumenata.</div>
+    </div>
+    <div class="ctrl-group c-neutral">
+      <label for="p4-god-v">Broj godina</label>
+      <div class="row"><input type="range" id="p4-god" min="5" max="60" step="1" value="25" aria-label="Broj godina (klizaÃƒâ€žÃ‚Â)"><input type="number" class="ctrl-val-input" id="p4-god-v" value="25" min="5" max="60" step="1" placeholder="25" aria-label="Broj godina"></div>
+    </div>
+    <div class="ctrl-group c-dmf">
+      <label for="p4-dmfr-v">Prinos DMF (%/god)</label>
+      <div class="row"><input type="range" id="p4-dmfr" min="1" max="8" step="0.1" value="3.5" aria-label="Prinos DMF (klizaÃƒâ€žÃ‚Â)"><input type="number" class="ctrl-val-input" id="p4-dmfr-v" value="3.5" min="1" max="8" step="0.1" placeholder="3.5" aria-label="Prinos DMF (%/god)"></div>
+    </div>
+    <div class="ctrl-group c-etf">
+      <label for="p4-etfr-v">Prinos ETF (%/god)</label>
+      <div class="row"><input type="range" id="p4-etfr" min="3" max="16" step="0.1" value="9.5" aria-label="Prinos ETF (klizaÃƒâ€žÃ‚Â)"><input type="number" class="ctrl-val-input" id="p4-etfr-v" value="9.5" min="3" max="16" step="0.1" placeholder="9.5" aria-label="Prinos ETF (%/god)"></div>
+    </div>
+    <div class="ctrl-group c-gold">
+      <label for="p4-goldr-v">Prinos zlata (%/god)</label>
+      <div class="row"><input type="range" id="p4-goldr" min="0" max="12" step="0.1" value="6.0" aria-label="Prinos zlata (klizaÃƒâ€žÃ‚Â)"><input type="number" class="ctrl-val-input" id="p4-goldr-v" value="6.0" min="0" max="12" step="0.1" placeholder="6.0" aria-label="Prinos zlata (%/god)"></div>
+    </div>
+    <div class="ctrl-group c-bond">
+      <label for="p4-bondr-v">Prinos obveznica/novca (%/god)</label>
+      <div class="row"><input type="range" id="p4-bondr" min="0" max="8" step="0.1" value="3.0" aria-label="Prinos obveznica (klizaÃƒâ€žÃ‚Â)"><input type="number" class="ctrl-val-input" id="p4-bondr-v" value="3.0" min="0" max="8" step="0.1" placeholder="3.0" aria-label="Prinos obveznica/novca (%/god)"></div>
+    </div>
+    <div class="ctrl-group c-reit">
+      <label for="p4-reit-select">REIT preset</label>
+      <select id="p4-reit-select">
+        <option value="7.8">Global REIT (7.8%)</option>
+        <option value="7.1">US REIT (7.1%)</option>
+        <option value="6.6">EU REIT (6.6%)</option>
+        <option value="7.5">Developed ex-US REIT (7.5%)</option>
+        <option value="custom">Vlastiti prinos...</option>
+      </select>
+    </div>
+    <div class="ctrl-group c-reit" id="p4-reit-custom-wrap" style="display:none">
+      <label for="p4-reitr-custom-v">Vlastiti prinos REIT (%/god)</label>
+      <div class="row"><input type="range" id="p4-reitr-custom" min="1" max="14" step="0.1" value="7.5" aria-label="Vlastiti prinos REIT (klizaÃƒâ€žÃ‚Â)"><input type="number" class="ctrl-val-input" id="p4-reitr-custom-v" value="7.5" min="1" max="14" step="0.1" placeholder="7.5" aria-label="Vlastiti prinos REIT (%/god)"></div>
+    </div>
+    <div class="ctrl-group c-neutral">
+      <label for="p4-infl-toggle">Inflacija</label>
+      <div class="toggle-switch-wrap">
+        <label class="toggle-switch"><input type="checkbox" id="p4-infl-toggle"><span class="toggle-slider"></span></label>
+        <span class="toggle-label" id="p4-infl-toggle-lbl">Prilagodi za inflaciju (3%)</span>
+      </div>
+      <div class="poticaj-info" id="p4-infl-note">Prikaz realne kupovne moÃƒâ€žÃ¢â‚¬Â¡i pomaÃƒâ€¦Ã‚Â¾e kod usporedbe rasta i zaÃƒâ€¦Ã‚Â¡tite od inflacije.</div>
+    </div>
+  </div>
+
+  <div style="font-size:0.68rem;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--muted);margin:0.3rem 0 0.65rem;">2) Rezultati</div>
+  <div class="toggles-row" id="p4-toggles">
+    <div class="toggle-btn t-dmf active" data-key="dmf"><span class="dot" style="background:var(--dmf)"></span>DMF</div>
+    <div class="toggle-btn t-etf active" data-key="etf"><span class="dot" style="background:var(--etf)"></span>ETF</div>
+    <div class="toggle-btn t-gold active" data-key="gold"><span class="dot" style="background:#f59e0b"></span>Zlato</div>
+    <div class="toggle-btn t-bond active" data-key="bond"><span class="dot" style="background:#60a5fa"></span>Obveznice/novac</div>
+    <div class="toggle-btn t-reit" data-key="reit"><span class="dot" style="background:#c77af5"></span>REIT (opcionalno)</div>
+  </div>
+
+  <div class="stat-cards" id="p4-cards">
+    <div class="stat-card sc-dmf" id="p4-sc-dmf">
+      <div class="sc-label">DMF</div>
+      <div class="sc-name">3. stup (uz poticaj)</div>
+      <div class="sc-row"><div class="sr-lbl">Krajnja vrijednost</div><div class="sr-val" id="p4-dmf-total">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</div></div>
+      <div class="sc-row"><div class="sr-lbl">Zarada</div><div class="sr-val" id="p4-dmf-earn" style="font-size:.9rem">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</div></div>
+      <div class="sc-row"><div class="sr-lbl">Multiplikator</div><div class="sr-val" id="p4-dmf-multi" style="font-size:.9rem">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</div></div>
+    </div>
+    <div class="stat-card sc-etf" id="p4-sc-etf">
+      <div class="sc-label">ETF</div>
+      <div class="sc-name">Globalno dioniÃƒâ€žÃ‚Âko trÃƒâ€¦Ã‚Â¾iÃƒâ€¦Ã‚Â¡te</div>
+      <div class="sc-row"><div class="sr-lbl">Krajnja vrijednost</div><div class="sr-val" id="p4-etf-total">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</div></div>
+      <div class="sc-row"><div class="sr-lbl">Zarada</div><div class="sr-val" id="p4-etf-earn" style="font-size:.9rem">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</div></div>
+      <div class="sc-row"><div class="sr-lbl">Multiplikator</div><div class="sr-val" id="p4-etf-multi" style="font-size:.9rem">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</div></div>
+    </div>
+    <div class="stat-card sc-gold" id="p4-sc-gold">
+      <div class="sc-label">Zlato</div>
+      <div class="sc-name">Plemeniti metali</div>
+      <div class="sc-row"><div class="sr-lbl">Krajnja vrijednost</div><div class="sr-val" id="p4-gold-total">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</div></div>
+      <div class="sc-row"><div class="sr-lbl">Zarada</div><div class="sr-val" id="p4-gold-earn" style="font-size:.9rem">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</div></div>
+      <div class="sc-row"><div class="sr-lbl">Multiplikator</div><div class="sr-val" id="p4-gold-multi" style="font-size:.9rem">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</div></div>
+    </div>
+    <div class="stat-card sc-bond" id="p4-sc-bond">
+      <div class="sc-label">Obveznice</div>
+      <div class="sc-name">Obveznice / MMF / cash-like</div>
+      <div class="sc-row"><div class="sr-lbl">Krajnja vrijednost</div><div class="sr-val" id="p4-bond-total">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</div></div>
+      <div class="sc-row"><div class="sr-lbl">Zarada</div><div class="sr-val" id="p4-bond-earn" style="font-size:.9rem">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</div></div>
+      <div class="sc-row"><div class="sr-lbl">Multiplikator</div><div class="sr-val" id="p4-bond-multi" style="font-size:.9rem">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</div></div>
+    </div>
+    <div class="stat-card sc-reit hidden" id="p4-sc-reit">
+      <div class="sc-label">REIT</div>
+      <div class="sc-name" id="p4-reit-name">Global REIT</div>
+      <div class="sc-row"><div class="sr-lbl">Krajnja vrijednost</div><div class="sr-val" id="p4-reit-total">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</div></div>
+      <div class="sc-row"><div class="sr-lbl">Zarada</div><div class="sr-val" id="p4-reit-earn" style="font-size:.9rem">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</div></div>
+      <div class="sc-row"><div class="sr-lbl">Multiplikator</div><div class="sr-val" id="p4-reit-multi" style="font-size:.9rem">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</div></div>
+    </div>
+  </div>
+
+  <div class="winner-banner">
+    <div><div class="wb-label">NajviÃƒâ€¦Ã‚Â¡i rezultat</div><div class="wb-val" id="p4-winner">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</div></div>
+    <div class="wb-desc" id="p4-desc">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</div>
+  </div>
+
+  <div style="font-size:0.68rem;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--muted);margin:0.35rem 0 0.65rem;">3) Analiza i detalji</div>
+  <div class="chart-card">
+    <h3>Rast vrijednosti po tipovima imovine</h3>
+    <canvas id="p4-chart"></canvas>
+    <div class="chart-controls">
+      <div class="period-btns" id="p4-chart-periods">
+        <span style="font-size:0.62rem;color:var(--muted);margin-right:0.2rem">Period:</span>
+        <button class="period-btn" data-years="1" data-chart="p4-chart">1Y</button><button class="period-btn" data-years="3" data-chart="p4-chart">3Y</button><button class="period-btn" data-years="5" data-chart="p4-chart">5Y</button><button class="period-btn" data-years="10" data-chart="p4-chart">10Y</button><button class="period-btn" data-years="15" data-chart="p4-chart">15Y</button><button class="period-btn" data-years="20" data-chart="p4-chart">20Y</button><button class="period-btn" data-years="25" data-chart="p4-chart">25Y</button><button class="period-btn" data-years="30" data-chart="p4-chart">30Y</button>
+        <button class="period-btn active" data-years="all" data-chart="p4-chart">SVE</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <h3>Pregled po periodima</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr>
+        <th>Godina</th>
+        <th style="color:var(--dmf-l)">DMF</th>
+        <th style="color:var(--etf-l)">ETF</th>
+        <th style="color:#fcd34d">Zlato</th>
+        <th style="color:#93c5fd">Obveznice/novac</th>
+        <th style="color:var(--combo-l)">REIT</th>
+      </tr></thead>
+      <tbody id="p4-tbody"></tbody>
+    </table></div>
+  </div>
+  <p class="disclaimer">ÃƒÂ¢Ã…Â¡Ã‚Â ÃƒÂ¯Ã‚Â¸Ã‚Â Prinosi su pojednostavljeni scenariji i ne ukljuÃƒâ€žÃ‚Âuju sve naknade, poreze, spreadove i valutne efekte. Zlato i obveznice mogu imati duÃƒâ€¦Ã‚Â¾a razdoblja slabijeg prinosa. Koristi kao edukativni alat, ne kao financijski savjet.</p>
+</div>
+
+<!-- ========== PAGE 3 ========== -->

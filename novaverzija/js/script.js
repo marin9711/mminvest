@@ -2616,10 +2616,14 @@ function closeChartModal() {
   if (modalChart) { modalChart.destroy(); modalChart = null; }
 }
 
-$('chart-modal-close').addEventListener('click', closeChartModal);
-$('chart-modal').addEventListener('click', (e) => {
-  if (e.target === $('chart-modal')) closeChartModal();
-});
+const chartModalCloseBtn = $('chart-modal-close');
+if (chartModalCloseBtn) chartModalCloseBtn.addEventListener('click', closeChartModal);
+const chartModalEl = $('chart-modal');
+if (chartModalEl) {
+  chartModalEl.addEventListener('click', (e) => {
+    if (e.target === chartModalEl) closeChartModal();
+  });
+}
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closeChartModal();
 });
@@ -2779,6 +2783,21 @@ function initMyStrategyFeature() {
 }
 
 // ============ INIT ============
+// Ensure bootstrap waits for both DOM and component loader.
+function whenAppBootstrapReady() {
+  const domReadyPromise = document.readyState === 'loading'
+    ? new Promise((resolve) => document.addEventListener('DOMContentLoaded', resolve, { once: true }))
+    : Promise.resolve();
+  const componentsReadyPromise = window.mmComponentsReady || Promise.resolve();
+  return Promise.all([domReadyPromise, componentsReadyPromise]).then(() => undefined);
+}
+
+function runWhenAppReady(callback) {
+  whenAppBootstrapReady()
+    .then(() => callback())
+    .catch((err) => console.error('Bootstrap gate failed:', err));
+}
+
 // Ensure DOM is fully ready before init
 function initApp() {
   initDonationModal();
@@ -2821,11 +2840,7 @@ function safeInitApp() {
     try { updateP3(); } catch(e2) {}
   }
 }
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', safeInitApp);
-} else {
-  safeInitApp();
-}
+runWhenAppReady(safeInitApp);
 
 // Save to localStorage on change
 SLIDER_PAIRS.forEach(([,numId]) => {
@@ -3531,13 +3546,9 @@ function initFabDrag() {
   });
 }
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', function () {
-    setTimeout(initFabDrag, 100);
-  });
-} else {
+runWhenAppReady(function () {
   setTimeout(initFabDrag, 100);
-}
+});
 
 // Dohvati statistiku ocjena sa servera
 async function loadRatingStats() {
@@ -5065,8 +5076,8 @@ function resetPlanResult() {
   if (resultEl) resultEl.classList.remove('show');
 }
 
-// Attach click listeners to quiz options (run on DOM ready)
-document.addEventListener('DOMContentLoaded', () => {
+// Attach click listeners after DOM + dynamic components are ready.
+runWhenAppReady(() => {
   initTableFocusMode();
   renderAdminLiveStats();
 
