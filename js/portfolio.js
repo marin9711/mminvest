@@ -111,40 +111,40 @@ function getAssetRowTemplate(asset) {
   }).join('');
 
   return `
-    <div class="rounded-xl border border-slate-700 bg-slate-800/55 p-3 md:p-4 space-y-3" data-asset-id="${asset.id}">
-      <div class="flex items-center justify-between gap-2">
-        <div class="flex items-center gap-2">
-          <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-slate-700 text-slate-200">
-            <i data-lucide="${asset.icon}" class="h-4 w-4"></i>
+    <div class="apt-asset-row" data-asset-id="${asset.id}">
+      <div class="apt-asset-head">
+        <div class="apt-asset-title">
+          <span class="apt-asset-icon">
+            <i data-lucide="${asset.icon}"></i>
           </span>
           <div>
-            <p class="text-sm font-semibold text-slate-100">${asset.label}</p>
-            <p class="text-xs text-slate-400">${getPresetByKey(asset.key).notes}</p>
+            <p class="apt-asset-name">${asset.label}</p>
+            <p class="apt-asset-note">${getPresetByKey(asset.key).notes}</p>
           </div>
         </div>
-        <button type="button" class="remove-asset rounded-md border border-rose-400/50 px-2 py-1 text-xs font-semibold text-rose-300 hover:bg-rose-500/10">
+        <button type="button" class="remove-asset apt-remove-btn">
           Ukloni
         </button>
       </div>
 
-      <div class="grid gap-3 md:grid-cols-4">
-        <label class="text-xs text-slate-300">
-          Klasa imovine
-          <select class="asset-field mt-1 w-full rounded-md border border-slate-600 bg-slate-900/70 px-2 py-2 text-sm text-slate-100" data-field="key">
+      <div class="apt-asset-fields">
+        <label class="apt-field apt-field-sm">
+          <span>Klasa imovine</span>
+          <select class="asset-field apt-input" data-field="key">
             ${classOptions}
           </select>
         </label>
-        <label class="text-xs text-slate-300">
-          Trenutna vrijednost (€)
-          <input class="asset-field mt-1 w-full rounded-md border border-slate-600 bg-slate-900/70 px-2 py-2 text-sm text-slate-100" data-field="currentValue" type="number" min="0" step="100" value="${asset.currentValue}">
+        <label class="apt-field apt-field-sm">
+          <span>Trenutna vrijednost (EUR)</span>
+          <input class="asset-field apt-input" data-field="currentValue" type="number" min="0" step="100" value="${asset.currentValue}">
         </label>
-        <label class="text-xs text-slate-300">
-          Mjesecna uplata (€)
-          <input class="asset-field mt-1 w-full rounded-md border border-slate-600 bg-slate-900/70 px-2 py-2 text-sm text-slate-100" data-field="monthlyContribution" type="number" min="0" step="10" value="${asset.monthlyContribution}">
+        <label class="apt-field apt-field-sm">
+          <span>Mjesecna uplata (EUR)</span>
+          <input class="asset-field apt-input" data-field="monthlyContribution" type="number" min="0" step="10" value="${asset.monthlyContribution}">
         </label>
-        <label class="text-xs text-slate-300">
-          Ocekivani prinos (% godisnje)
-          <input class="asset-field mt-1 w-full rounded-md border border-slate-600 bg-slate-900/70 px-2 py-2 text-sm text-slate-100" data-field="expectedReturnPct" type="number" min="0" max="50" step="0.1" value="${asset.expectedReturnPct}">
+        <label class="apt-field apt-field-sm">
+          <span>Ocekivani prinos (% godisnje)</span>
+          <input class="asset-field apt-input" data-field="expectedReturnPct" type="number" min="0" max="50" step="0.1" value="${asset.expectedReturnPct}">
         </label>
       </div>
     </div>
@@ -196,9 +196,9 @@ function initAdvancedPortfolioTracker() {
     const cards = [10, 20, 30].map((years) => {
       const amount = projectionByYears[years] || 0;
       return `
-        <div class="rounded-lg border border-slate-700 bg-slate-800/45 p-3">
-          <p class="text-xs uppercase tracking-wide text-slate-400">${years} godina</p>
-          <p class="mt-1 text-lg font-bold text-emerald-300">${formatCurrency(amount)}</p>
+        <div class="apt-horizon-card">
+          <p class="apt-horizon-label">${years} godina</p>
+          <p class="apt-horizon-value">${formatCurrency(amount)}</p>
         </div>
       `;
     }).join('');
@@ -208,7 +208,7 @@ function initAdvancedPortfolioTracker() {
   function renderAdvisor(analysis) {
     warningsEl.innerHTML = '';
     if (!analysis.warnings.length) {
-      warningsEl.innerHTML = '<li class="text-emerald-300">Nema znacajnih koncentracijskih rizika prema postavljenim pragovima.</li>';
+      warningsEl.innerHTML = '<li class="apt-success-item">Nema znacajnih koncentracijskih rizika prema postavljenim pragovima.</li>';
     } else {
       warningsEl.innerHTML = analysis.warnings.map((warning) => `<li>${warning}</li>`).join('');
     }
@@ -217,7 +217,7 @@ function initAdvancedPortfolioTracker() {
     gapEl.textContent = analysis.metrics.wealthGapLabel;
     driftEl.innerHTML = analysis.driftMessages.length
       ? analysis.driftMessages.map((msg) => `<li>${msg}</li>`).join('')
-      : '<li>Alokacija je u prihvatljivom rasponu za trenutnu dob.</li>';
+      : '<li class="apt-success-item">Alokacija je u prihvatljivom rasponu za trenutnu dob.</li>';
   }
 
   function recalcAndRender() {
