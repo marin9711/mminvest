@@ -11,7 +11,7 @@
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Turnstile-Token',
 };
 
@@ -86,10 +86,17 @@ function adminDashboardPage(isOn, systemPromptOverride = '', appStatus = '', msg
   .section-title { font-size:0.79rem; font-weight:700; color:#c8d2ec; margin:0.25rem 0 0.45rem; }
   .soft-sep { height:1px; background:#2e3850; margin:0.8rem 0; }
   .fb-list { max-height:360px; overflow:auto; padding-right:0.2rem; }
+  .fb-tools { display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center; margin:0.15rem 0 0.65rem; }
+  .fb-tools input[type=text] { flex:1; min-width:220px; margin:0; }
+  .fb-export { white-space:nowrap; }
+  .fb-toast { display:none; margin:0.35rem 0 0.15rem; padding:0.45rem 0.65rem; border-radius:8px; font-size:0.74rem; font-weight:600; }
+  .fb-toast.ok { display:block; background:rgba(74,232,160,0.1); border:1px solid rgba(74,232,160,0.3); color:#4ae8a0; }
+  .fb-toast.err { display:block; background:rgba(245,96,96,0.1); border:1px solid rgba(245,96,96,0.3); color:#f56060; }
   .inquiry-card { padding:0.7rem; background:rgba(36,43,61,0.5); border-radius:10px; margin-bottom:0.55rem; border:1px solid rgba(46,56,80,0.7); }
   .inquiry-card .quick-reply { margin-top:0.55rem; display:flex; gap:0.45rem; align-items:flex-start; }
   .inquiry-card .quick-reply textarea { margin:0; min-height:55px; }
   .inquiry-card p { font-size:0.78rem; line-height:1.45; margin-bottom:0.25rem; color:#c9d3ec; }
+  .fb-delete { margin-top:0.5rem; }
   .poll-box { background:rgba(255,255,255,0.03); border:1px solid #2e3850; border-radius:8px; padding:0.55rem 0.65rem; margin-bottom:0.55rem; }
   .poll-row { display:flex; align-items:center; gap:0.4rem; margin:0.2rem 0; }
   .poll-bar { flex:0 0 90px; height:5px; background:#2a3248; border-radius:999px; overflow:hidden; }
@@ -147,6 +154,11 @@ function adminDashboardPage(isOn, systemPromptOverride = '', appStatus = '', msg
       <div id="pollsList"></div>
       <div class="soft-sep"></div>
       <div class="section-title">💬 Feedback unosi</div>
+      <div class="fb-tools">
+        <input type="text" id="feedbackSearch" placeholder="Pretraži feedback (tip, email, poruka)...">
+        <button type="button" class="btn btn-secondary fb-export" id="btnExportFeedbackCsv">📄 Export CSV</button>
+      </div>
+      <div id="feedbackToast" class="fb-toast"></div>
       <div id="feedbackList" class="fb-list"></div>
       <div class="row" style="margin-top:0.65rem;">
         <button type="button" class="btn btn-secondary" id="btnRefreshFeedback">🔄 Osvježi</button>
@@ -205,6 +217,9 @@ function adminDashboardPage(isOn, systemPromptOverride = '', appStatus = '', msg
     el.className = 'msg' + (isErr ? ' err' : '');
     el.style.display = text ? 'block' : 'none';
   }
+  var feedbackItems = [];
+  var feedbackFilter = '';
+  var feedbackToastTimer = null;
   document.querySelectorAll('.tabs button').forEach(function(btn){
     btn.addEventListener('click', function(){
       document.querySelectorAll('.tabs button').forEach(function(b){ b.classList.remove('active'); });
@@ -278,20 +293,128 @@ function adminDashboardPage(isOn, systemPromptOverride = '', appStatus = '', msg
     }).catch(function(){ div.innerHTML = '<p style="color:#f56060;font-size:0.76rem;">Greška učitavanja.</p>'; });
   }
 
+  function formatFeedbackDate(tsRaw){
+    var d = new Date(tsRaw || '');
+    if (isNaN(d.getTime())) return String(tsRaw || '-');
+    return d.toLocaleDateString('hr-HR') + ' ' + d.toLocaleTimeString('hr-HR', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  function getFilteredFeedbackRows(){
+    var rows = feedbackItems.map(function(it, idx){ return { it: it, idx: idx }; });
+    var q = String(feedbackFilter || '').trim().toLowerCase();
+    if (!q) return rows;
+    return rows.filter(function(row){
+      var it = row.it || {};
+      var hay = [
+        it.type || '',
+        it.email || '',
+        it.text || it.message || '',
+        it.ts || it.timestamp || '',
+        it.reply || ''
+      ].join(' ').toLowerCase();
+      return hay.indexOf(q) !== -1;
+    });
+  }
+
+  function exportFeedbackCsv(){
+    var rows = getFilteredFeedbackRows();
+    if (!rows.length) { showFeedbackToast('Nema feedback unosa za export.', true); return; }
+    var escCsv = function(v){ return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; };
+    var lines = ['Date,Type,Message'];
+    rows.forEach(function(row){
+      var it = row.it || {};
+      lines.push([
+        escCsv(formatFeedbackDate(it.ts || it.timestamp || '')),
+        escCsv(it.type || ''),
+        escCsv(it.text || it.message || '')
+      ].join(','));
+    });
+    var blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8' });
+    var href = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = href;
+    a.download = 'feedback-export.csv';
+    a.click();
+    setTimeout(function(){ URL.revokeObjectURL(href); }, 1000);
+    showFeedbackToast('CSV je uspješno exportan.', false);
+  }
+
+  function showFeedbackToast(text, isErr){
+    var el = document.getElementById('feedbackToast');
+    if (!el) return;
+    el.textContent = String(text || '');
+    el.className = 'fb-toast ' + (isErr ? 'err' : 'ok');
+    if (feedbackToastTimer) clearTimeout(feedbackToastTimer);
+    feedbackToastTimer = setTimeout(function(){
+      el.textContent = '';
+      el.className = 'fb-toast';
+    }, 2600);
+  }
+
+  function renderFeedback(){
+    var div = document.getElementById('feedbackList');
+    if (!div) return;
+    var rows = getFilteredFeedbackRows();
+    if (!feedbackItems.length) { div.innerHTML = '<p style="color:#9aa2c0;font-size:0.76rem;">Nema upita.</p>'; return; }
+    if (!rows.length) { div.innerHTML = '<p style="color:#9aa2c0;font-size:0.76rem;">Nema rezultata za zadani filter.</p>'; return; }
+
+    div.innerHTML = rows.slice().reverse().map(function(row){
+      var it = row.it || {};
+      var idx = row.idx;
+      var email = (it.email || '').trim();
+      var text = esc((it.text || it.message || '').slice(0,300));
+      var tsRaw = String(it.ts || it.timestamp || '');
+      var ts = esc(formatFeedbackDate(tsRaw));
+      var replied = it.reply ? '<p style="font-size:0.74rem;color:#4ae8a0;">Odgovoreno: ' + esc(it.reply).slice(0,150) + '</p>' : '';
+      var replyBlock = it.reply ? '' : '<div class="quick-reply"><textarea placeholder="Quick reply" data-idx="' + idx + '" rows="2"></textarea><button type="button" class="btn btn-primary btn-reply" data-idx="' + idx + '">Pošalji odgovor</button></div>';
+      var delBtn = '<button type="button" class="btn btn-danger fb-delete btn-fb-delete" data-idx="' + idx + '" data-ts="' + encodeURIComponent(tsRaw) + '">🗑️ Briši</button>';
+      return '<div class="inquiry-card"><p><strong>' + esc(email || 'Nema email') + '</strong> ' + (it.type ? esc(it.type) : '') + ' <span style="color:#8ea0c2;font-size:0.72rem;">' + ts + '</span></p><p>' + text + '</p>' + replied + replyBlock + delBtn + '</div>';
+    }).join('');
+
+    div.querySelectorAll('.btn-reply').forEach(function(b){
+      b.addEventListener('click', function(){
+        var idx = parseInt(b.getAttribute('data-idx'),10);
+        var ta = div.querySelector('textarea[data-idx="' + idx + '"]');
+        var reply = ta && ta.value ? ta.value.trim() : '';
+        if (!reply) return;
+        api('/admin/api/feedback/reply', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ idx: idx, reply: reply })
+        }).then(function(r){ return r.json(); }).then(function(d){
+          if (!d.error) { loadFeedback(); } else { alert(d.error); }
+        }).catch(function(){ alert('Greška mreže.'); });
+      });
+    });
+
+    div.querySelectorAll('.btn-fb-delete').forEach(function(b){
+      b.addEventListener('click', function(){
+        var idx = parseInt(b.getAttribute('data-idx'), 10);
+        var ts = decodeURIComponent(b.getAttribute('data-ts') || '');
+        if (!confirm('Jesi li siguran da želiš obrisati ovaj feedback?')) return;
+        b.disabled = true;
+        b.textContent = 'Brisanje...';
+        api('/admin/api/feedback/delete', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ idx: idx, ts: ts })
+        }).then(function(r){ return r.json().then(function(d){ return { ok: r.ok, d: d }; }); }).then(function(res){
+          if (!res.ok || !res.d.ok) { showFeedbackToast(res.d.error || 'Greška pri brisanju', true); b.disabled = false; b.textContent = '🗑️ Briši'; return; }
+          loadFeedback();
+          showFeedbackToast('Feedback je obrisan.', false);
+        }).catch(function(){
+          showFeedbackToast('Greška mreže.', true);
+          b.disabled = false;
+          b.textContent = '🗑️ Briši';
+        });
+      });
+    });
+  }
+
   function loadFeedback(){
     api('/admin/api/feedback').then(function(r){ return r.json(); }).then(function(d){
-      const div = document.getElementById('feedbackList');
-      if (!d.items || !d.items.length) { div.innerHTML = '<p style="color:#9aa2c0;font-size:0.76rem;">Nema upita.</p>'; return; }
-      div.innerHTML = d.items.map(function(it, idx){
-        var email = (it.email || '').trim();
-        var text = esc((it.text || it.message || '').slice(0,300));
-        var replied = it.reply ? '<p style="font-size:0.74rem;color:#4ae8a0;">Odgovoreno: ' + esc(it.reply).slice(0,150) + '</p>' : '';
-        var replyBlock = it.reply ? '' : '<div class="quick-reply"><textarea placeholder="Quick reply" data-idx="' + idx + '" rows="2"></textarea><button type="button" class="btn btn-primary btn-reply" data-idx="' + idx + '">Pošalji odgovor</button></div>';
-        return '<div class="inquiry-card"><p><strong>' + esc(email || 'Nema email') + '</strong> ' + (it.type ? esc(it.type) : '') + '</p><p>' + text + '</p>' + replied + replyBlock + '</div>';
-      }).join('');
-      document.getElementById('feedbackList').querySelectorAll('.btn-reply').forEach(function(b){
-        b.addEventListener('click', function(){ var idx = parseInt(b.getAttribute('data-idx'),10); var ta = document.querySelector('textarea[data-idx="' + idx + '"]'); var reply = ta && ta.value ? ta.value.trim() : ''; if (!reply) return; api('/admin/api/feedback/reply', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idx, reply }) }).then(function(r){ return r.json(); }).then(function(d){ if (!d.error) { loadFeedback(); } else { alert(d.error); } }); });
-      });
+      feedbackItems = Array.isArray(d.items) ? d.items : [];
+      renderFeedback();
     }).catch(function(){ document.getElementById('feedbackList').innerHTML = '<p style="color:#f56060;font-size:0.76rem;">Greška učitavanja.</p>'; });
   }
 
@@ -344,6 +467,11 @@ function adminDashboardPage(isOn, systemPromptOverride = '', appStatus = '', msg
   }
 
   document.getElementById('btnRefreshFeedback').addEventListener('click', function(){ loadPolls(); loadFeedback(); });
+  document.getElementById('feedbackSearch').addEventListener('input', function(){
+    feedbackFilter = this.value || '';
+    renderFeedback();
+  });
+  document.getElementById('btnExportFeedbackCsv').addEventListener('click', exportFeedbackCsv);
   document.getElementById('btnRefreshKv').addEventListener('click', loadKvItems);
   document.getElementById('btnResetStats').addEventListener('click', function(){
     if (!confirm('Resetirati live stats?')) return;
@@ -1189,6 +1317,111 @@ async function handleRequest(request, env) {
         } catch (_) {
           return new Response(JSON.stringify({ items: [] }), {
             headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+      }
+
+      // ── API Feedback Delete (single entry) ──
+      if (
+        ((path === '/admin/api/feedback/delete') || (path === '/admin/api/feedback' && request.method === 'DELETE')) &&
+        (request.method === 'DELETE' || request.method === 'POST')
+      ) {
+        if (!isAuthed) {
+          return new Response(JSON.stringify({ error: 'unauthorized' }), {
+            status: 401, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        }
+        try {
+          const body = await request.json().catch(() => ({}));
+          const action = String(body.action || '').toLowerCase();
+          if (request.method === 'POST' && action && action !== 'delete') {
+            return new Response(JSON.stringify({ error: 'Unsupported action' }), {
+              status: 400, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+            });
+          }
+
+          const targetId = String(body.id || body.key || '').trim();
+          const targetTs = String(body.ts || body.timestamp || '').trim();
+          const targetIdx = Number.isInteger(body.idx) ? body.idx : parseInt(body.idx, 10);
+
+          const removeFromArray = (items) => {
+            if (!Array.isArray(items)) return { next: [], removed: null, removedIdx: -1 };
+            let removedIdx = -1;
+
+            if (targetId) {
+              removedIdx = items.findIndex((it) => String(it?.id || '') === targetId);
+            }
+            if (removedIdx === -1 && targetTs) {
+              removedIdx = items.findIndex((it) => String(it?.ts || it?.timestamp || '') === targetTs);
+            }
+            if (removedIdx === -1 && Number.isInteger(targetIdx) && targetIdx >= 0 && targetIdx < items.length) {
+              removedIdx = targetIdx;
+            }
+            if (removedIdx === -1) return { next: items, removed: null, removedIdx: -1 };
+
+            const next = items.slice();
+            const removed = next.splice(removedIdx, 1)[0];
+            return { next, removed, removedIdx };
+          };
+
+          // Primary storage: AI_CONFIG.feedback_log (array payload)
+          const rawFeedback = await env.AI_CONFIG.get('feedback_log');
+          if (rawFeedback) {
+            let feedbackItems = [];
+            try {
+              feedbackItems = JSON.parse(rawFeedback);
+            } catch (_) {
+              feedbackItems = [];
+            }
+            const { next, removed, removedIdx } = removeFromArray(feedbackItems);
+            if (removed) {
+              await env.AI_CONFIG.put('feedback_log', JSON.stringify(next));
+              return new Response(JSON.stringify({
+                ok: true,
+                deleted: { idx: removedIdx, ts: removed.ts || removed.timestamp || null, id: removed.id || null },
+                storage: 'AI_CONFIG.feedback_log',
+              }), {
+                headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+              });
+            }
+          }
+
+          // Fallback A: ANKETE_DATA.feedback_log stored as one JSON array
+          const rawAnketeFeedback = await env.ANKETE_DATA.get('feedback_log');
+          if (rawAnketeFeedback) {
+            let feedbackItems = [];
+            try {
+              feedbackItems = JSON.parse(rawAnketeFeedback);
+            } catch (_) {
+              feedbackItems = [];
+            }
+            const { next, removed, removedIdx } = removeFromArray(feedbackItems);
+            if (removed) {
+              await env.ANKETE_DATA.put('feedback_log', JSON.stringify(next));
+              return new Response(JSON.stringify({
+                ok: true,
+                deleted: { idx: removedIdx, ts: removed.ts || removed.timestamp || null, id: removed.id || null },
+                storage: 'ANKETE_DATA.feedback_log',
+              }), {
+                headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+              });
+            }
+          }
+
+          // Fallback B: ANKETE_DATA individual-key model
+          if (targetId) {
+            await env.ANKETE_DATA.delete(targetId);
+            return new Response(JSON.stringify({ ok: true, storage: 'ANKETE_DATA.key', deleted: { key: targetId } }), {
+              headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+            });
+          }
+
+          return new Response(JSON.stringify({ error: 'Feedback entry not found' }), {
+            status: 404, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+          });
+        } catch (e) {
+          return new Response(JSON.stringify({ error: 'Greška pri brisanju feedbacka: ' + e.message }), {
+            status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
           });
         }
       }

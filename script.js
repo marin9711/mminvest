@@ -3357,6 +3357,9 @@ if (window.location.hash === '#admin') {
 const WORKER_URL = 'https://empty-pine-8e64.marin-marsan.workers.dev';
 let adminToken = sessionStorage.getItem('marsanai_admin') || null;
 let adminAiOn = true;
+let adminFeedbackItems = [];
+let adminFeedbackFilter = '';
+let adminFeedbackToastTimer = null;
 
 // Worker logout redirect signal: clear Pages admin session token too.
 if (new URLSearchParams(window.location.search).get('admin_logout') === '1') {
@@ -3496,100 +3499,210 @@ async function loadFeedbackLog() {
       return;
     }
     const data = await resp.json();
-    const items = data.items || [];
-    if (!items.length) {
-      logEl.textContent = 'Nema feedback unosa.';
-      logEl.className = 'fb-log-empty';
-      return;
-    }
-    const typeIcon = { prijedlog:'💡', pohvala:'👏', greška:'🐛', pitanje:'❓' };
-    logEl.innerHTML = '';
-
-    // Renderaj DOM imperativno kako bismo koristili textContent za user podatke
-    items.slice().reverse().forEach((it, idx) => {
-      const realIdx = items.length - 1 - idx;
-      const d = new Date(it.ts);
-      const ts = d.toLocaleDateString('hr-HR') + ' ' + d.toLocaleTimeString('hr-HR', {hour:'2-digit',minute:'2-digit'});
-      const ratingStars = it.rating && it.rating > 0 ? '⭐'.repeat(Math.min(5, it.rating)) : '';
-
-      const itemDiv = document.createElement('div');
-      itemDiv.className = 'fb-log-item';
-      itemDiv.id = 'fb-item-' + realIdx;
-
-      const metaDiv = document.createElement('div');
-      metaDiv.className = 'fb-log-meta';
-
-      const typeSpan = document.createElement('span');
-      const safeType = ['prijedlog','pohvala','greška','pitanje'].includes(it.type) ? it.type : 'drugo';
-      typeSpan.className = 'fb-log-type ' + safeType;
-      typeSpan.textContent = (typeIcon[safeType] || '') + ' ' + safeType;
-
-      const tsSpan = document.createElement('span');
-      tsSpan.className = 'fb-log-ts';
-      tsSpan.textContent = ts;
-
-      metaDiv.appendChild(typeSpan);
-      metaDiv.appendChild(tsSpan);
-
-      if (it.email) {
-        const statusSpan = document.createElement('span');
-        statusSpan.className = 'fb-log-status ' + (it.reply ? 'odgovoreno' : 'novo');
-        statusSpan.textContent = it.reply ? '✅ odgovoreno' : '🔵 čeka odgovor';
-        metaDiv.appendChild(statusSpan);
-      }
-
-      itemDiv.appendChild(metaDiv);
-
-      if (it.email) {
-        const emailDiv = document.createElement('div');
-        emailDiv.className = 'fb-log-email';
-        emailDiv.textContent = '📧 ' + it.email;
-        itemDiv.appendChild(emailDiv);
-      }
-
-      const textDiv = document.createElement('div');
-      textDiv.className = 'fb-log-text';
-      textDiv.textContent = it.text || '';
-      itemDiv.appendChild(textDiv);
-
-      if (ratingStars) {
-        const ratingDiv = document.createElement('div');
-        ratingDiv.className = 'fb-log-rating';
-        ratingDiv.textContent = ratingStars;
-        itemDiv.appendChild(ratingDiv);
-      }
-
-      if (it.reply) {
-        const replyDiv = document.createElement('div');
-        replyDiv.className = 'fb-log-reply';
-        replyDiv.textContent = '💬 Odgovor: ' + it.reply;
-        itemDiv.appendChild(replyDiv);
-      } else if (it.email) {
-        const replyRow = document.createElement('div');
-        replyRow.className = 'fb-reply-row';
-
-        const input = document.createElement('input');
-        input.className = 'fb-reply-input';
-        input.id = 'reply-input-' + realIdx;
-        input.placeholder = 'Upiši odgovor korisniku...';
-
-        const btn = document.createElement('button');
-        btn.className = 'fb-reply-btn';
-        btn.id = 'reply-btn-' + realIdx;
-        btn.textContent = '📨 Pošalji';
-        btn.onclick = () => sendReply(realIdx);
-
-        replyRow.appendChild(input);
-        replyRow.appendChild(btn);
-        itemDiv.appendChild(replyRow);
-      }
-
-      logEl.appendChild(itemDiv);
-    });
+    adminFeedbackItems = Array.isArray(data.items) ? data.items : [];
+    renderFeedbackLog();
   } catch(e) {
     logEl.textContent = '⚠️ Greška pri dohvaćanju.';
     logEl.className = 'fb-log-empty';
   }
+}
+
+function adminFormatFeedbackDate(tsRaw) {
+  const d = new Date(tsRaw || '');
+  if (Number.isNaN(d.getTime())) return String(tsRaw || '-');
+  return d.toLocaleDateString('hr-HR') + ' ' + d.toLocaleTimeString('hr-HR', { hour: '2-digit', minute: '2-digit' });
+}
+
+function getFilteredAdminFeedbackItems() {
+  const q = adminFeedbackFilter.trim().toLowerCase();
+  const withIdx = adminFeedbackItems.map((item, idx) => ({ item, idx }));
+  if (!q) return withIdx;
+  return withIdx.filter(({ item }) => {
+    const haystack = [
+      item.type || '',
+      item.text || item.message || '',
+      item.email || '',
+      item.ts || item.timestamp || '',
+      item.reply || '',
+    ].join(' ').toLowerCase();
+    return haystack.includes(q);
+  });
+}
+
+function exportAdminFeedbackCsv() {
+  const filtered = getFilteredAdminFeedbackItems();
+  if (!filtered.length) {
+    showAdminFeedbackToast('Nema feedback unosa za export.', true);
+    return;
+  }
+  const escapeCsv = (val) => '"' + String(val == null ? '' : val).replace(/"/g, '""') + '"';
+  const rows = ['Date,Type,Message'];
+  filtered.forEach(({ item }) => {
+    rows.push([
+      escapeCsv(adminFormatFeedbackDate(item.ts || item.timestamp || '')),
+      escapeCsv(item.type || ''),
+      escapeCsv(item.text || item.message || ''),
+    ].join(','));
+  });
+  const blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'feedback-export.csv';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  showAdminFeedbackToast('CSV je uspješno exportan.', false);
+}
+
+function showAdminFeedbackToast(text, isErr) {
+  const el = document.getElementById('admin-feedback-toast');
+  if (!el) return;
+  el.textContent = text || '';
+  el.className = 'admin-feedback-toast ' + (isErr ? 'err' : 'ok');
+  if (adminFeedbackToastTimer) clearTimeout(adminFeedbackToastTimer);
+  adminFeedbackToastTimer = setTimeout(() => {
+    el.textContent = '';
+    el.className = 'admin-feedback-toast';
+  }, 2600);
+}
+
+async function adminDeleteFeedback(realIdx, ts, btnEl) {
+  if (!confirm('Jesi li siguran da želiš obrisati ovaj feedback?')) return;
+  const btn = btnEl || null;
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Brisanje...';
+  }
+  try {
+    const resp = await fetch(WORKER_URL + '/admin/api/feedback/delete', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
+      body: JSON.stringify({ idx: realIdx, ts: ts || '' })
+    });
+    const data = await resp.json();
+    if (resp.status === 401 || data.error === 'unauthorized') { adminLogout(); return; }
+    if (!resp.ok || !data.ok) {
+      showAdminFeedbackToast('Greška pri brisanju: ' + (data.error || 'nepoznata'), true);
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = '🗑️ Briši';
+      }
+      return;
+    }
+    await loadFeedbackLog();
+    showAdminFeedbackToast('Feedback je obrisan.', false);
+  } catch (_) {
+    showAdminFeedbackToast('Greška mreže pri brisanju feedbacka.', true);
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = '🗑️ Briši';
+    }
+  }
+}
+
+function renderFeedbackLog() {
+  const logEl = document.getElementById('admin-feedback-log');
+  if (!logEl) return;
+  logEl.className = 'admin-feedback-log';
+  const items = getFilteredAdminFeedbackItems();
+  if (!adminFeedbackItems.length) {
+    logEl.innerHTML = '<div class="fb-log-empty">Nema feedback unosa.</div>';
+    return;
+  }
+  if (!items.length) {
+    logEl.innerHTML = '<div class="fb-log-empty">Nema rezultata za zadani filter.</div>';
+    return;
+  }
+
+  const typeIcon = { prijedlog:'💡', pohvala:'👏', greška:'🐛', pitanje:'❓' };
+  logEl.innerHTML = '';
+
+  items.slice().reverse().forEach(({ item: it, idx: realIdx }) => {
+    const tsRaw = it.ts || it.timestamp || '';
+    const ts = adminFormatFeedbackDate(tsRaw);
+    const ratingStars = it.rating && it.rating > 0 ? '⭐'.repeat(Math.min(5, it.rating)) : '';
+
+    const itemDiv = document.createElement('div');
+    itemDiv.className = 'fb-log-item';
+    itemDiv.id = 'fb-item-' + realIdx;
+
+    const metaDiv = document.createElement('div');
+    metaDiv.className = 'fb-log-meta';
+
+    const typeSpan = document.createElement('span');
+    const safeType = ['prijedlog','pohvala','greška','pitanje'].includes(it.type) ? it.type : 'drugo';
+    typeSpan.className = 'fb-log-type ' + safeType;
+    typeSpan.textContent = (typeIcon[safeType] || '📝') + ' ' + safeType;
+
+    const tsSpan = document.createElement('span');
+    tsSpan.className = 'fb-log-ts';
+    tsSpan.textContent = ts;
+
+    metaDiv.appendChild(typeSpan);
+    metaDiv.appendChild(tsSpan);
+
+    if (it.email) {
+      const statusSpan = document.createElement('span');
+      statusSpan.className = 'fb-log-status ' + (it.reply ? 'odgovoreno' : 'novo');
+      statusSpan.textContent = it.reply ? '✅ odgovoreno' : '🔵 čeka odgovor';
+      metaDiv.appendChild(statusSpan);
+    }
+
+    itemDiv.appendChild(metaDiv);
+
+    if (it.email) {
+      const emailDiv = document.createElement('div');
+      emailDiv.className = 'fb-log-email';
+      emailDiv.textContent = '📧 ' + it.email;
+      itemDiv.appendChild(emailDiv);
+    }
+
+    const textDiv = document.createElement('div');
+    textDiv.className = 'fb-log-text';
+    textDiv.textContent = it.text || it.message || '';
+    itemDiv.appendChild(textDiv);
+
+    if (ratingStars) {
+      const ratingDiv = document.createElement('div');
+      ratingDiv.className = 'fb-log-rating';
+      ratingDiv.textContent = ratingStars;
+      itemDiv.appendChild(ratingDiv);
+    }
+
+    if (it.reply) {
+      const replyDiv = document.createElement('div');
+      replyDiv.className = 'fb-log-reply';
+      replyDiv.textContent = '💬 Odgovor: ' + it.reply;
+      itemDiv.appendChild(replyDiv);
+    } else if (it.email) {
+      const replyRow = document.createElement('div');
+      replyRow.className = 'fb-reply-row';
+
+      const input = document.createElement('input');
+      input.className = 'fb-reply-input';
+      input.id = 'reply-input-' + realIdx;
+      input.placeholder = 'Upiši odgovor korisniku...';
+
+      const btn = document.createElement('button');
+      btn.className = 'fb-reply-btn';
+      btn.id = 'reply-btn-' + realIdx;
+      btn.textContent = '📨 Pošalji';
+      btn.onclick = () => sendReply(realIdx);
+
+      replyRow.appendChild(input);
+      replyRow.appendChild(btn);
+      itemDiv.appendChild(replyRow);
+    }
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.type = 'button';
+    deleteBtn.className = 'fb-delete-btn';
+    deleteBtn.textContent = '🗑️ Briši';
+    deleteBtn.onclick = () => adminDeleteFeedback(realIdx, tsRaw, deleteBtn);
+    itemDiv.appendChild(deleteBtn);
+
+    logEl.appendChild(itemDiv);
+  });
 }
 
 async function sendReply(idx) {
@@ -4468,6 +4581,19 @@ document.addEventListener('DOMContentLoaded', () => {
   if (tabFb) tabFb.addEventListener('click', () => switchAdminTab('fb'));
   if (tabMgmt) tabMgmt.addEventListener('click', () => switchAdminTab('mgmt'));
   initAdminFundsEditor();
+
+  const feedbackSearch = document.getElementById('admin-feedback-search');
+  if (feedbackSearch) {
+    feedbackSearch.addEventListener('input', (e) => {
+      adminFeedbackFilter = String(e.target.value || '');
+      renderFeedbackLog();
+    });
+  }
+
+  const feedbackExportBtn = document.getElementById('admin-feedback-export');
+  if (feedbackExportBtn) {
+    feedbackExportBtn.addEventListener('click', exportAdminFeedbackCsv);
+  }
 
   const notificationInput = document.getElementById('admin-global-notification-input');
   if (notificationInput) {

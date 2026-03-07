@@ -1168,6 +1168,30 @@ tr:hover td { background: var(--surface2) !important; }
 .fb-reply-btn:hover { opacity:0.85; }
 .fb-reply-btn:disabled { opacity:0.4; cursor:not-allowed; }
 .fb-log-reply { margin-top:0.4rem; padding:0.4rem 0.6rem; background:rgba(74,232,160,0.07); border-left:2px solid var(--etf); border-radius:4px; font-size:0.72rem; color:var(--etf-l); }
+.admin-feedback-toolbar { display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center; margin-bottom:0.6rem; }
+.admin-feedback-search {
+  flex:1; min-width:220px; padding:0.52rem 0.75rem; background:var(--surface2);
+  border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:0.75rem; outline:none;
+}
+.admin-feedback-search:focus { border-color:var(--etf); }
+.admin-feedback-export {
+  padding:0.5rem 0.8rem; border-radius:8px; border:1px solid rgba(74,159,232,0.35);
+  background:rgba(74,159,232,0.12); color:var(--pepp-l); font-size:0.72rem; font-weight:700; cursor:pointer; white-space:nowrap;
+}
+.admin-feedback-export:hover { opacity:0.88; }
+.fb-delete-btn {
+  margin-top:0.45rem; padding:0.38rem 0.65rem; border-radius:7px;
+  border:1px solid rgba(245,96,96,0.35); background:rgba(245,96,96,0.1);
+  color:#f56060; font-size:0.7rem; font-weight:700; cursor:pointer;
+}
+.fb-delete-btn:hover { opacity:0.88; }
+.fb-delete-btn:disabled { opacity:0.45; cursor:not-allowed; }
+.admin-feedback-toast {
+  display:none; margin:0.35rem 0 0.15rem; padding:0.45rem 0.65rem; border-radius:8px;
+  font-size:0.74rem; font-weight:600;
+}
+.admin-feedback-toast.ok { display:block; background:rgba(74,232,160,0.1); border:1px solid rgba(74,232,160,0.3); color:var(--etf-l); }
+.admin-feedback-toast.err { display:block; background:rgba(245,96,96,0.1); border:1px solid rgba(245,96,96,0.3); color:#f56060; }
 .fb-submit-btn {
   margin-top: 0.85rem; padding: 0.65rem 1.75rem;
   background: linear-gradient(135deg, var(--pepp), var(--etf));
@@ -4201,6 +4225,16 @@ tr:hover td { background: var(--surface2) !important; }
 
         <!-- Feedback log -->
         <div style="font-size:0.78rem; font-weight:700; color:var(--muted2); margin-bottom:0.5rem;">💬 Feedback unosi</div>
+        <div class="admin-feedback-toolbar">
+          <input
+            type="text"
+            id="admin-feedback-search"
+            class="admin-feedback-search"
+            placeholder="Pretraži feedback (tip, email, poruka)..."
+          >
+          <button type="button" id="admin-feedback-export" class="admin-feedback-export">📄 Export CSV</button>
+        </div>
+        <div id="admin-feedback-toast" class="admin-feedback-toast"></div>
         <div id="admin-feedback-log" class="admin-feedback-log">
           <div class="fb-log-empty">Učitavanje...</div>
         </div>
