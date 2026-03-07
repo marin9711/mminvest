@@ -1327,6 +1327,192 @@ if ($('p2-infl-toggle')) {
   $('p2-infl-toggle').addEventListener('change', updateP2);
 }
 
+// ============ PAGE 4 ============
+let chart4;
+const p4vis = { dmf: true, etf: true, gold: true, bond: true, reit: false };
+document.querySelectorAll('#p4-toggles .toggle-btn').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const key = btn.dataset.key;
+    p4vis[key] = !p4vis[key];
+    btn.classList.toggle('active', p4vis[key]);
+    updateP4();
+  });
+});
+
+function getP4ReitRate() {
+  const sel = $('p4-reit-select');
+  if (!sel) return 7.5;
+  if (sel.value === 'custom') return +$('p4-reitr-custom').value;
+  return +sel.value;
+}
+
+function getP4ReitName() {
+  const sel = $('p4-reit-select');
+  if (!sel) return 'REIT';
+  const raw = sel.options[sel.selectedIndex]?.text || 'REIT';
+  return raw.split(' (')[0];
+}
+
+function updateP4() {
+  const reitSel = $('p4-reit-select');
+  if (reitSel && $('p4-reit-custom-wrap')) {
+    $('p4-reit-custom-wrap').style.display = reitSel.value === 'custom' ? 'flex' : 'none';
+  }
+  const uplata = +$('p4-uplata').value;
+  const god = +$('p4-god').value;
+  const dmfR = +$('p4-dmfr').value;
+  const etfR = +$('p4-etfr').value;
+  const goldR = +$('p4-goldr').value;
+  const bondR = +$('p4-bondr').value;
+  const reitR = getP4ReitRate();
+
+  const inflationOn = setInflationUiState('p4-infl-toggle', 'p4-infl-toggle-lbl', 'p4-infl-note', god, 100000);
+  const dmfRateUsed = inflationOn ? getRealRatePct(dmfR) : dmfR;
+  const etfRateUsed = inflationOn ? getRealRatePct(etfR) : etfR;
+  const goldRateUsed = inflationOn ? getRealRatePct(goldR) : goldR;
+  const bondRateUsed = inflationOn ? getRealRatePct(bondR) : bondR;
+  const reitRateUsed = inflationOn ? getRealRatePct(reitR) : reitR;
+
+  const pot = calcPoticaj(uplata, 'p4-poticaj-toggle');
+  updatePoticajInfo(uplata, 'p4-poticaj-toggle', 'p4-poticaj-lbl', 'p4-poticaj-info');
+
+  const dmfFinal = compoundFV(uplata + pot, dmfRateUsed, god);
+  const etfFinal = compoundFV(uplata, etfRateUsed, god);
+  const goldFinal = compoundFV(uplata, goldRateUsed, god);
+  const bondFinal = compoundFV(uplata, bondRateUsed, god);
+  const reitFinal = compoundFV(uplata, reitRateUsed, god);
+
+  const dmfFinalNominal = compoundFV(uplata + pot, dmfR, god);
+  const etfFinalNominal = compoundFV(uplata, etfR, god);
+  const goldFinalNominal = compoundFV(uplata, goldR, god);
+  const bondFinalNominal = compoundFV(uplata, bondR, god);
+  const reitFinalNominal = compoundFV(uplata, reitR, god);
+  const reitName = getP4ReitName();
+  if ($('p4-reit-name')) $('p4-reit-name').textContent = reitName;
+
+  const inp = uplata * god;
+  $('p4-dmf-total').textContent = fmt(dmfFinal);
+  $('p4-dmf-earn').textContent = fmt(dmfFinal - inp);
+  $('p4-dmf-multi').textContent = fmtX(dmfFinal / inp);
+  $('p4-etf-total').textContent = fmt(etfFinal);
+  $('p4-etf-earn').textContent = fmt(etfFinal - inp);
+  $('p4-etf-multi').textContent = fmtX(etfFinal / inp);
+  $('p4-gold-total').textContent = fmt(goldFinal);
+  $('p4-gold-earn').textContent = fmt(goldFinal - inp);
+  $('p4-gold-multi').textContent = fmtX(goldFinal / inp);
+  $('p4-bond-total').textContent = fmt(bondFinal);
+  $('p4-bond-earn').textContent = fmt(bondFinal - inp);
+  $('p4-bond-multi').textContent = fmtX(bondFinal / inp);
+  $('p4-reit-total').textContent = fmt(reitFinal);
+  $('p4-reit-earn').textContent = fmt(reitFinal - inp);
+  $('p4-reit-multi').textContent = fmtX(reitFinal / inp);
+
+  if (inflationOn) {
+    $('p4-dmf-total').textContent = `${fmt(dmfFinal)} (${fmt(dmfFinalNominal)} nominalno)`;
+    $('p4-etf-total').textContent = `${fmt(etfFinal)} (${fmt(etfFinalNominal)} nominalno)`;
+    $('p4-gold-total').textContent = `${fmt(goldFinal)} (${fmt(goldFinalNominal)} nominalno)`;
+    $('p4-bond-total').textContent = `${fmt(bondFinal)} (${fmt(bondFinalNominal)} nominalno)`;
+    $('p4-reit-total').textContent = `${fmt(reitFinal)} (${fmt(reitFinalNominal)} nominalno)`;
+  }
+
+  $('p4-sc-dmf').classList.toggle('hidden', !p4vis.dmf);
+  $('p4-sc-etf').classList.toggle('hidden', !p4vis.etf);
+  $('p4-sc-gold').classList.toggle('hidden', !p4vis.gold);
+  $('p4-sc-bond').classList.toggle('hidden', !p4vis.bond);
+  $('p4-sc-reit').classList.toggle('hidden', !p4vis.reit);
+
+  const vals = { dmf: dmfFinal, etf: etfFinal, gold: goldFinal, bond: bondFinal, reit: reitFinal };
+  const names = { dmf: 'DMF', etf: 'ETF', gold: 'Zlato', bond: 'Obveznice/novac', reit: reitName };
+  const cols = { dmf: 'var(--dmf-l)', etf: 'var(--etf-l)', gold: '#fcd34d', bond: '#93c5fd', reit: 'var(--combo-l)' };
+  const visVals = Object.entries(vals).filter(([k]) => p4vis[k]);
+  if (visVals.length) {
+    const [wk, wv] = visVals.reduce((a, b) => (b[1] > a[1] ? b : a));
+    const [lk, lv] = visVals.reduce((a, b) => (b[1] < a[1] ? b : a));
+    $('p4-winner').textContent = names[wk];
+    $('p4-winner').style.color = cols[wk];
+    $('p4-desc').innerHTML = DOMPurify.sanitize(
+      `<strong style="color:${cols[wk]}">${names[wk]}</strong> vodi za <strong>${fmt(wv - lv)}</strong> ispred <strong style="color:${cols[lk]}">${names[lk]}</strong>. Razlika je ${((wv / lv - 1) * 100).toFixed(1)}%.`,
+      { ALLOWED_TAGS: ['strong'], ALLOWED_ATTR: ['style'] }
+    );
+  }
+
+  const milestones = [5, 10, 15, 20, 25, 30, 35, 40].filter(y => y <= god);
+  if (!milestones.includes(god)) milestones.push(god);
+  $('p4-tbody').innerHTML = sanitizeTbody(milestones.map((y) => {
+    const d = compoundFV(uplata + pot, dmfRateUsed, y);
+    const e = compoundFV(uplata, etfRateUsed, y);
+    const g = compoundFV(uplata, goldRateUsed, y);
+    const b = compoundFV(uplata, bondRateUsed, y);
+    const r = compoundFV(uplata, reitRateUsed, y);
+    return `<tr><td>${y}.</td>
+      <td style="color:var(--dmf-l);opacity:${p4vis.dmf ? 1 : 0.3}">${fmt(d)}</td>
+      <td style="color:var(--etf-l);opacity:${p4vis.etf ? 1 : 0.3}">${fmt(e)}</td>
+      <td style="color:#fcd34d;opacity:${p4vis.gold ? 1 : 0.3}">${fmt(g)}</td>
+      <td style="color:#93c5fd;opacity:${p4vis.bond ? 1 : 0.3}">${fmt(b)}</td>
+      <td style="color:var(--combo-l);opacity:${p4vis.reit ? 1 : 0.3}">${fmt(r)}</td></tr>`;
+  }).join(''));
+
+  const labels = [];
+  const dmfArr = [], etfArr = [], goldArr = [], bondArr = [], reitArr = [];
+  for (let i = 1; i <= god; i++) {
+    labels.push(i);
+    dmfArr.push(Math.round(compoundFV(uplata + pot, dmfRateUsed, i)));
+    etfArr.push(Math.round(compoundFV(uplata, etfRateUsed, i)));
+    goldArr.push(Math.round(compoundFV(uplata, goldRateUsed, i)));
+    bondArr.push(Math.round(compoundFV(uplata, bondRateUsed, i)));
+    reitArr.push(Math.round(compoundFV(uplata, reitRateUsed, i)));
+  }
+
+  const ds = [
+    { label: 'DMF', data: dmfArr, borderColor: '#e8a44a', backgroundColor: 'rgba(232,164,74,0.06)', fill: true, borderWidth: p4vis.dmf ? 2.5 : 0, pointRadius: 0, tension: 0.4, hidden: !p4vis.dmf },
+    { label: 'ETF', data: etfArr, borderColor: '#4ae8a0', backgroundColor: 'rgba(74,232,160,0.06)', fill: true, borderWidth: p4vis.etf ? 2.5 : 0, pointRadius: 0, tension: 0.4, hidden: !p4vis.etf },
+    { label: 'Zlato', data: goldArr, borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,0.06)', fill: true, borderWidth: p4vis.gold ? 2.5 : 0, pointRadius: 0, tension: 0.4, hidden: !p4vis.gold },
+    { label: 'Obveznice/novac', data: bondArr, borderColor: '#60a5fa', backgroundColor: 'rgba(96,165,250,0.06)', fill: true, borderWidth: p4vis.bond ? 2.5 : 0, pointRadius: 0, tension: 0.4, hidden: !p4vis.bond },
+    { label: reitName, data: reitArr, borderColor: '#c77af5', backgroundColor: 'rgba(199,122,245,0.08)', fill: true, borderWidth: p4vis.reit ? 2.5 : 0, pointRadius: 0, tension: 0.4, hidden: !p4vis.reit },
+  ];
+  if (inflationOn) {
+    const dmfNomArr = [], etfNomArr = [], goldNomArr = [], bondNomArr = [], reitNomArr = [];
+    for (let i = 1; i <= god; i++) {
+      dmfNomArr.push(Math.round(compoundFV(uplata + pot, dmfR, i)));
+      etfNomArr.push(Math.round(compoundFV(uplata, etfR, i)));
+      goldNomArr.push(Math.round(compoundFV(uplata, goldR, i)));
+      bondNomArr.push(Math.round(compoundFV(uplata, bondR, i)));
+      reitNomArr.push(Math.round(compoundFV(uplata, reitR, i)));
+    }
+    ds.unshift(
+      { label: 'Nominalno DMF', data: dmfNomArr, borderColor: '#f5c87a', backgroundColor: 'transparent', fill: false, borderWidth: p4vis.dmf ? 1.2 : 0, pointRadius: 0, tension: 0.4, borderDash: [4, 3], hidden: !p4vis.dmf },
+      { label: 'Nominalno ETF', data: etfNomArr, borderColor: '#8ef5c8', backgroundColor: 'transparent', fill: false, borderWidth: p4vis.etf ? 1.2 : 0, pointRadius: 0, tension: 0.4, borderDash: [4, 3], hidden: !p4vis.etf },
+      { label: 'Nominalno zlato', data: goldNomArr, borderColor: '#fbd38d', backgroundColor: 'transparent', fill: false, borderWidth: p4vis.gold ? 1.2 : 0, pointRadius: 0, tension: 0.4, borderDash: [4, 3], hidden: !p4vis.gold },
+      { label: 'Nominalno obveznice', data: bondNomArr, borderColor: '#bfdbfe', backgroundColor: 'transparent', fill: false, borderWidth: p4vis.bond ? 1.2 : 0, pointRadius: 0, tension: 0.4, borderDash: [4, 3], hidden: !p4vis.bond },
+      { label: `Nominalno ${reitName}`, data: reitNomArr, borderColor: '#dda5f7', backgroundColor: 'transparent', fill: false, borderWidth: p4vis.reit ? 1.2 : 0, pointRadius: 0, tension: 0.4, borderDash: [4, 3], hidden: !p4vis.reit },
+    );
+  }
+
+  storeChartData('p4-chart', labels, ds);
+  if (!chart4) {
+    chart4 = makeChart('p4-chart', labels, ds);
+  } else {
+    chart4.data.labels = labels;
+    chart4.data.datasets = ds;
+    chart4.update();
+  }
+}
+if ($('p4-reit-select')) {
+  $('p4-reit-select').addEventListener('change', () => {
+    const sel = $('p4-reit-select');
+    $('p4-reit-custom-wrap').style.display = sel.value === 'custom' ? 'flex' : 'none';
+    updateP4();
+  });
+}
+if ($('p4-reitr-custom')) {
+  $('p4-reitr-custom').addEventListener('syncedInput', updateP4);
+}
+['p4-uplata', 'p4-god', 'p4-dmfr', 'p4-etfr', 'p4-goldr', 'p4-bondr'].forEach((id) => $(id).addEventListener('syncedInput', updateP4));
+$('p4-poticaj-toggle').addEventListener('change', updateP4);
+if ($('p4-infl-toggle')) {
+  $('p4-infl-toggle').addEventListener('change', updateP4);
+}
+
 // ============ PAGE 3 ============
 let chart3;
 
@@ -2264,6 +2450,13 @@ const SLIDER_PAIRS = [
   ['p2-dmfr','p2-dmfr-v',1,8,0.1],
   ['p2-peppr','p2-peppr-v',3,14,0.1],
   ['p2-etfr-custom','p2-etfr-custom-v',3,18,0.1],
+  ['p4-uplata','p4-uplata-v',0,8000,0.01],
+  ['p4-god','p4-god-v',5,60,1],
+  ['p4-dmfr','p4-dmfr-v',1,8,0.1],
+  ['p4-etfr','p4-etfr-v',3,16,0.1],
+  ['p4-goldr','p4-goldr-v',0,12,0.1],
+  ['p4-bondr','p4-bondr-v',0,8,0.1],
+  ['p4-reitr-custom','p4-reitr-custom-v',1,14,0.1],
   ['p3-uplata','p3-uplata-v',500,5000,0.01],
   ['p3-god','p3-god-v',5,60,1],
   ['p3-etf-share','p3-etf-share-v',0,100,1],
@@ -2514,6 +2707,7 @@ const CHART_META = [
   ['p0b-chart',     'Rast portfelja'],
   ['p1-chart',      '3. Stup vs PEPP'],
   ['p2-chart',      'Pension vs ETF'],
+  ['p4-chart',      'ETF/DMF vs zlato'],
   ['p3-chart',      'Rast portfelja — Pension + ETF'],
 ];
 
@@ -2609,7 +2803,7 @@ function initApp() {
       }
     });
   }
-  [updateP0a, updateP0b, updateP1, updateP2, updateP3].forEach(fn => {
+  [updateP0a, updateP0b, updateP1, updateP2, updateP4, updateP3].forEach(fn => {
     try { fn(); } catch(e) { console.error('Update error:', fn.name, e); }
   });
   try { updatePeppStrategyModel(); } catch (_) {}
@@ -2623,6 +2817,7 @@ function safeInitApp() {
     try { updateP0b(); } catch(e2) {}
     try { updateP1(); } catch(e2) {}
     try { updateP2(); } catch(e2) {}
+    try { updateP4(); } catch(e2) {}
     try { updateP3(); } catch(e2) {}
   }
 }

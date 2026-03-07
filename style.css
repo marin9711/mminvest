@@ -31,6 +31,29 @@
   color: #dbe4ee !important;
 }
 
+/* Additional asset classes for page p4 */
+.c-gold input[type=range]::-webkit-slider-thumb { background: #f59e0b; }
+.c-gold .ctrl-val-input { color: #fcd34d; }
+.c-bond input[type=range]::-webkit-slider-thumb { background: #60a5fa; }
+.c-bond .ctrl-val-input { color: #93c5fd; }
+.c-reit input[type=range]::-webkit-slider-thumb { background: var(--combo); }
+.c-reit .ctrl-val-input { color: var(--combo-l); }
+.toggle-btn.t-gold { color: #fcd34d; }
+.toggle-btn.t-gold.active { background: rgba(245, 158, 11, 0.12); }
+.toggle-btn.t-bond { color: #93c5fd; }
+.toggle-btn.t-bond.active { background: rgba(96, 165, 250, 0.12); }
+.toggle-btn.t-reit { color: var(--combo-l); }
+.toggle-btn.t-reit.active { background: rgba(199, 122, 245, 0.12); }
+.stat-card.sc-gold::before { background: linear-gradient(90deg, #f59e0b, #fcd34d); }
+.stat-card.sc-bond::before { background: linear-gradient(90deg, #60a5fa, #93c5fd); }
+.stat-card.sc-reit::before { background: linear-gradient(90deg, var(--combo), var(--combo-l)); }
+.sc-gold .sc-label { color: #f59e0b; }
+.sc-bond .sc-label { color: #60a5fa; }
+.sc-reit .sc-label { color: var(--combo); }
+.sc-gold .sr-val { color: #fcd34d; }
+.sc-bond .sr-val { color: #93c5fd; }
+.sc-reit .sr-val { color: var(--combo-l); }
+
 /* CTA/readability: keep explicit high contrast on button text */
 .home-cta,
 .fb-submit-btn,
