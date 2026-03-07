@@ -329,7 +329,7 @@ function adminDashboardPage(isOn, systemPromptOverride = '', appStatus = '', msg
         escCsv(it.text || it.message || '')
       ].join(','));
     });
-    var blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8' });
+    var blob = new Blob([lines.join('\\n')], { type: 'text/csv;charset=utf-8' });
     var href = URL.createObjectURL(blob);
     var a = document.createElement('a');
     a.href = href;
