@@ -1274,9 +1274,7 @@ th, td, .tbl-wrap small, .tbl-wrap span, .liq-info-box span, .rate-note, .sc-row
   z-index: 25;
   max-width: 980px;
   margin: 0 auto 0.95rem auto;
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 0.42rem;
+  display: block;
   padding: 0.45rem;
   border: 1px solid rgba(148, 163, 184, 0.24);
   border-radius: 12px;
@@ -1286,7 +1284,46 @@ th, td, .tbl-wrap small, .tbl-wrap span, .liq-info-box span, .rate-note, .sc-row
 }
 
 .intro-progress-wrap {
-  grid-column: 1 / -1;
+  margin-bottom: 0.42rem;
+}
+
+.intro-stepper-tabs {
+  display: flex;
+  gap: 0.42rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.intro-stepper-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.intro-stepper-fade {
+  position: absolute;
+  top: calc(0.45rem + 34px);
+  bottom: 0.45rem;
+  width: 26px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.intro-stepper-fade-left {
+  left: 0.45rem;
+  background: linear-gradient(90deg, rgba(15, 23, 42, 0.92), rgba(15, 23, 42, 0));
+}
+
+.intro-stepper-fade-right {
+  right: 0.45rem;
+  background: linear-gradient(270deg, rgba(15, 23, 42, 0.92), rgba(15, 23, 42, 0));
+}
+
+.intro-stepper.show-left-fade .intro-stepper-fade-left,
+.intro-stepper.show-right-fade .intro-stepper-fade-right {
+  opacity: 1;
 }
 
 .intro-progress-top {
@@ -1327,10 +1364,13 @@ th, td, .tbl-wrap small, .tbl-wrap span, .liq-info-box span, .rate-note, .sc-row
   border-radius: 10px;
   color: #cbd5e1;
   cursor: pointer;
+  flex: 0 0 auto;
+  min-width: 108px;
   padding: 0.42rem 0.35rem;
   display: grid;
   gap: 0.1rem;
   justify-items: center;
+  scroll-snap-align: start;
 }
 
 .intro-stepper-btn span {
@@ -1348,6 +1388,22 @@ th, td, .tbl-wrap small, .tbl-wrap span, .liq-info-box span, .rate-note, .sc-row
   border-color: rgba(74, 232, 160, 0.5);
   background: linear-gradient(135deg, rgba(74, 232, 160, 0.2), rgba(74, 159, 232, 0.2));
   color: #f8fafc;
+}
+
+@media (min-width: 721px) {
+  .intro-stepper-tabs {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    overflow: visible;
+  }
+
+  .intro-stepper-btn {
+    min-width: 0;
+  }
+
+  .intro-stepper-fade {
+    display: none;
+  }
 }
 
 .intro-lesson {
@@ -1720,7 +1776,7 @@ th, td, .tbl-wrap small, .tbl-wrap span, .liq-info-box span, .rate-note, .sc-row
 
 @media (max-width: 720px) {
   .intro-stepper {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    padding-bottom: 0.5rem;
   }
 
   .intro-entry-card {

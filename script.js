@@ -284,6 +284,9 @@ document.querySelectorAll('.nav-tab').forEach(tab => {
     trackCalculatorVisit(tab.dataset.page, e.isTrusted);
     preventFocusJumpOnPageChange();
     scrollToTopInstant();
+    if (tab.dataset.page === 'p_intro') {
+      requestAnimationFrame(syncIntroStepperProgressFromScroll);
+    }
   });
 });
 
@@ -420,11 +423,13 @@ function setupIntroRevealAnimations() {
   cards.forEach((card) => observer.observe(card));
 }
 
-function setActiveIntroStepper(targetId) {
+function setActiveIntroStepper(targetId, options = {}) {
+  const { scrollTab = true, tabScrollBehavior = 'smooth' } = options;
   const buttons = Array.from(document.querySelectorAll('.intro-stepper-btn'));
   buttons.forEach((btn) => {
     btn.classList.toggle('active', btn.dataset.introTarget === targetId);
   });
+  const activeBtn = buttons.find((btn) => btn.dataset.introTarget === targetId) || null;
   const activeIndex = Math.max(0, buttons.findIndex((btn) => btn.dataset.introTarget === targetId));
   const total = buttons.length || 5;
   const pct = Math.round(((activeIndex + 1) / total) * 100);
@@ -434,10 +439,63 @@ function setActiveIntroStepper(targetId) {
   if (fill) fill.style.width = `${pct}%`;
   if (text) text.textContent = `${pct}%`;
   if (track) track.setAttribute('aria-valuenow', String(pct));
+  if (scrollTab && activeBtn && typeof activeBtn.scrollIntoView === 'function') {
+    activeBtn.scrollIntoView({ behavior: tabScrollBehavior, block: 'nearest', inline: 'center' });
+  }
+  updateIntroStepperFades();
+}
+
+let introStepperScrollTicking = false;
+
+function syncIntroStepperProgressFromScroll() {
+  const introPage = $('p_intro');
+  if (!(introPage instanceof HTMLElement) || !introPage.classList.contains('active')) return;
+  const lessons = Array.from(document.querySelectorAll('#p_intro .intro-lesson[id]'));
+  if (!lessons.length) return;
+
+  const viewportMarker = Math.max(120, Math.round(window.innerHeight * 0.34));
+  let activeLessonId = lessons[0].id;
+
+  lessons.forEach((lesson) => {
+    if (lesson.getBoundingClientRect().top <= viewportMarker) {
+      activeLessonId = lesson.id;
+    }
+  });
+
+  const currentActiveId = document.querySelector('.intro-stepper-btn.active')?.dataset.introTarget || '';
+  if (activeLessonId !== currentActiveId) {
+    setActiveIntroStepper(activeLessonId, { tabScrollBehavior: 'auto' });
+  } else {
+    updateIntroStepperFades();
+  }
+}
+
+function requestIntroStepperProgressSync() {
+  if (introStepperScrollTicking) return;
+  introStepperScrollTicking = true;
+  requestAnimationFrame(() => {
+    introStepperScrollTicking = false;
+    syncIntroStepperProgressFromScroll();
+  });
+}
+
+function updateIntroStepperFades() {
+  const stepper = document.getElementById('intro-stepper');
+  const tabs = stepper ? stepper.querySelector('.intro-stepper-tabs') : null;
+  if (!(stepper instanceof HTMLElement) || !(tabs instanceof HTMLElement)) return;
+
+  const maxScrollLeft = Math.max(0, tabs.scrollWidth - tabs.clientWidth);
+  const current = tabs.scrollLeft;
+  const atStart = current <= 2;
+  const atEnd = current >= maxScrollLeft - 2;
+
+  stepper.classList.toggle('show-left-fade', !atStart);
+  stepper.classList.toggle('show-right-fade', !atEnd);
 }
 
 function initIntroStepper() {
   if (window._introStepperInitDone) return;
+  const stepper = document.getElementById('intro-stepper');
   const buttons = Array.from(document.querySelectorAll('.intro-stepper-btn'));
   if (!buttons.length) return;
   window._introStepperInitDone = true;
@@ -452,16 +510,18 @@ function initIntroStepper() {
     });
   });
 
-  if (!('IntersectionObserver' in window)) return;
-  const lessons = Array.from(document.querySelectorAll('#p_intro .intro-lesson[id]'));
-  const stepObserver = new IntersectionObserver((entries) => {
-    const visible = entries
-      .filter((entry) => entry.isIntersecting)
-      .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
-    if (!visible.length) return;
-    setActiveIntroStepper(visible[0].target.id);
-  }, { threshold: [0.35, 0.5, 0.7] });
-  lessons.forEach((lesson) => stepObserver.observe(lesson));
+  const tabs = stepper ? stepper.querySelector('.intro-stepper-tabs') : null;
+  if (tabs instanceof HTMLElement) {
+    tabs.addEventListener('scroll', updateIntroStepperFades, { passive: true });
+    window.addEventListener('resize', updateIntroStepperFades);
+    requestAnimationFrame(updateIntroStepperFades);
+  }
+
+  window.addEventListener('scroll', requestIntroStepperProgressSync, { passive: true });
+  window.addEventListener('resize', requestIntroStepperProgressSync);
+  const initialTargetId = (document.querySelector('.intro-stepper-btn.active')?.dataset.introTarget) || (buttons[0]?.dataset.introTarget) || '';
+  if (initialTargetId) setActiveIntroStepper(initialTargetId, { tabScrollBehavior: 'auto' });
+  requestAnimationFrame(syncIntroStepperProgressFromScroll);
 }
 
 function openIntroCalculatorChoice() {
